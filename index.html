@@ -1283,6 +1283,21 @@ body.editing .dock-item .dock-item-actions { display: flex; }
   border-bottom:1px solid var(--border); margin-bottom:4px;
 }
 .sidebar-page-header-name { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+/* ── Mode iPad ── */
+.ipad-badge {
+  display:inline-flex; align-items:center; gap:5px;
+  font-family:var(--f-mono); font-size:9px; text-transform:uppercase;
+  letter-spacing:1px; padding:3px 8px; border-radius:10px;
+  background:var(--acc-dim); color:var(--acc); border:1px solid var(--acc);
+}
+.ipad-file-row {
+  display:flex; align-items:center; gap:8px;
+  padding:7px 10px; background:var(--bg2); border:1px solid var(--border);
+  border-radius:var(--r-sm); margin-bottom:4px;
+}
+.ipad-file-row.stored { border-color:var(--ok-border); background:var(--ok-bg); }
+.ipad-file-row.missing { border-color:var(--warn-border); background:var(--warn-bg); }
 </style>
 </head>
 <body data-theme="dark">
@@ -2483,6 +2498,10 @@ function handleItemClick(pageId, groupId, itemId) {
 }
 
 async function openFileItem(item) {
+  // Mode iPad : chercher dans IndexedDB en priorité
+  var idbOk = await _openFromIdb(item.path || '', item);
+  if (idbOk) return;
+
   const path = item.path || '';
   if (!path) { toast('Aucun fichier configuré','warn'); return; }
   const mode = item.fileOpen || 'pdf';
@@ -3178,7 +3197,7 @@ function renderSettings(panelId) {
   // Content
   const content = document.getElementById('settings-content');
   const panel = { dock:renderSettingsDock, labels:renderSettingsLabels, theme:renderSettingsTheme,
-                  identity:renderSettingsIdentity, backup:renderSettingsBackup, diagnostic:renderSettingsDiagnostic }[activeSettingsId];
+                  identity:renderSettingsIdentity, backup:renderSettingsBackup, diagnostic:renderSettingsDiagnostic, files:_isIpad() ? function(el){ renderSettingsFilesIpad(el); } : renderSettingsFiles }[activeSettingsId];
   if (panel) panel(content);
 }
 
@@ -3790,10 +3809,12 @@ function downloadFavicon() {
 }
 
 function renderSettingsBackup(c) {
-  const pgCount = state.pages.length;
+  const pgCount = state.pages.filter(p=>p.type!=='sep').length;
   const itemCount = state.pages.reduce((s,p)=>s+(p.groups||[]).reduce((s2,g)=>s2+(g.items||[]).length,0),0);
+  const idbCount = (state.fileIndex||[]).length;
   c.innerHTML = `<div class="s-panel-title">Sauvegarde</div>
     <div class="s-panel-sub">Export et import de la configuration complète</div>
+
     <div class="s-section">
       <div class="s-section-title">Résumé</div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px">
@@ -3810,9 +3831,33 @@ function renderSettingsBackup(c) {
           <div style="font-size:11px;color:var(--text3);font-family:var(--f-mono)">éléments</div>
         </div>
       </div>
+    </div>
+
+    <div class="s-section">
+      <div class="s-section-title">Configuration JSON</div>
+      <p style="font-size:12px;color:var(--text3);margin-bottom:10px">Pages, groupes, éléments, étiquettes, identité — sans les fichiers.</p>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-pri" onclick="exportBackup()">⬇ Exporter la configuration</button>
-        <label class="btn" for="backup-file" style="cursor:pointer">⬆ Importer une sauvegarde</label>
+        <button class="btn btn-pri btn-sm" onclick="exportBackup()">⬇ Exporter JSON</button>
+        <label class="btn btn-sm" style="cursor:pointer">⬆ Importer JSON…
+          <input type="file" accept=".json" style="display:none" onchange="importBackup(this.files[0])">
+        </label>
+      </div>
+    </div>
+
+    <div class="s-section" style="border-top:2px solid var(--border);padding-top:20px">
+      <div class="s-section-title" style="color:var(--acc)">📦 Transfert complet PC ↔ iPad</div>
+      <p style="font-size:12px;color:var(--text3);margin-bottom:6px">
+        Le ZIP contient la <b>configuration + tous les fichiers</b> stockés localement (IndexedDB).<br>
+        Exportez sur PC → copiez le ZIP → importez sur iPad pour une installation identique.
+      </p>
+      <div style="font-size:11px;font-family:var(--f-mono);color:var(--text4);margin-bottom:12px;padding:8px 10px;background:var(--bg3);border-radius:var(--r-sm)">
+        ${idbCount} fichier(s) indexé(s) · JSZip requis (connexion internet pour le premier usage)
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-pri btn-sm" id="btn-export-zip" onclick="exportZipBackup()">📦 Exporter ZIP (config + fichiers)</button>
+        <label class="btn btn-sm" style="cursor:pointer">📦 Importer ZIP…
+          <input type="file" accept=".zip" style="display:none" onchange="importZipBackup(this.files[0])">
+        </label>
       </div>
     </div>`;
 }
@@ -4268,6 +4313,218 @@ function _initClock() {
   setInterval(_updateClock, 250);
 }
 
+
+
+// ════════════════════════════════════════════════════════════════
+// INDEXEDDB — stockage local des fichiers (mode iPad)
+// ════════════════════════════════════════════════════════════════
+var _idb = null;
+var IDB_NAME = 'pac-files';
+var IDB_STORE = 'files';
+
+function _idbOpen() {
+  return new Promise(function(resolve, reject) {
+    if (_idb) { resolve(_idb); return; }
+    var req = indexedDB.open(IDB_NAME, 1);
+    req.onupgradeneeded = function(e) {
+      e.target.result.createObjectStore(IDB_STORE, { keyPath: 'path' });
+    };
+    req.onsuccess = function(e) { _idb = e.target.result; resolve(_idb); };
+    req.onerror   = function(e) { reject(e.target.error); };
+  });
+}
+
+function _idbPut(path, blob) {
+  return _idbOpen().then(function(db) {
+    return new Promise(function(resolve, reject) {
+      var tx = db.transaction(IDB_STORE, 'readwrite');
+      tx.objectStore(IDB_STORE).put({ path: path, blob: blob, ts: Date.now() });
+      tx.oncomplete = resolve;
+      tx.onerror = function(e) { reject(e.target.error); };
+    });
+  });
+}
+
+function _idbGet(path) {
+  return _idbOpen().then(function(db) {
+    return new Promise(function(resolve, reject) {
+      var tx  = db.transaction(IDB_STORE, 'readonly');
+      var req = tx.objectStore(IDB_STORE).get(path);
+      req.onsuccess = function(e) { resolve(e.target.result || null); };
+      req.onerror   = function(e) { reject(e.target.error); };
+    });
+  });
+}
+
+function _idbGetAll() {
+  return _idbOpen().then(function(db) {
+    return new Promise(function(resolve, reject) {
+      var tx  = db.transaction(IDB_STORE, 'readonly');
+      var req = tx.objectStore(IDB_STORE).getAll();
+      req.onsuccess = function(e) { resolve(e.target.result || []); };
+      req.onerror   = function(e) { reject(e.target.error); };
+    });
+  });
+}
+
+function _idbDelete(path) {
+  return _idbOpen().then(function(db) {
+    return new Promise(function(resolve, reject) {
+      var tx = db.transaction(IDB_STORE, 'readwrite');
+      tx.objectStore(IDB_STORE).delete(path);
+      tx.oncomplete = resolve;
+      tx.onerror = function(e) { reject(e.target.error); };
+    });
+  });
+}
+
+// Détection iPad/iOS/Safari Mac (pas de showDirectoryPicker)
+function _isIpad() {
+  // iOS/iPadOS
+  if (/iPad|iPhone|iPod/.test(navigator.userAgent)) return true;
+  // iPadOS 13+ se présente comme MacIntel avec touch
+  if (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) return true;
+  // Safari macOS (pas showDirectoryPicker)
+  if (!window.showDirectoryPicker && /Safari/.test(navigator.userAgent) && !/Chrome|CriOS|Edg/.test(navigator.userAgent)) return true;
+  return false;
+}
+
+// ── Importer des fichiers dans IDB (mode iPad) ──────────────────
+async function importFilesForIpad(files, basePath) {
+  if (!files || !files.length) return;
+  basePath = (basePath || '').replace(/\/+$/, '');
+  var ok = 0; var errs = 0;
+  for (var i = 0; i < files.length; i++) {
+    var f = files[i];
+    // Conserver le chemin relatif si disponible (webkitRelativePath)
+    var relPath = f.webkitRelativePath || f.name;
+    var storagePath = basePath ? (basePath + '/' + relPath) : relPath;
+    try {
+      await _idbPut(storagePath, f);
+      ok++;
+    } catch(e) { errs++; console.warn('IDB put error:', e); }
+  }
+  toast('✅ ' + ok + ' fichier(s) importé(s)' + (errs ? ' — ' + errs + ' erreur(s)' : ''), ok ? 'ok' : 'warn');
+  // Mettre à jour state.fileIndex avec les nouveaux fichiers
+  var allStored = await _idbGetAll();
+  allStored.forEach(function(entry) {
+    var ext = entry.path.split('.').pop().toLowerCase();
+    var name = entry.path.split('/').pop();
+    var exists = state.fileIndex.some(function(f){ return f.path === entry.path; });
+    if (!exists) {
+      state.fileIndex.push({ dir:'iPad', name:name, path:entry.path,
+        size:entry.blob.size, modified:entry.ts, ext:ext, ico:_extIco(ext) });
+    }
+  });
+  save();
+  if (document.getElementById('page-settings').classList.contains('active')) {
+    renderSettings('files');
+  }
+}
+
+// ── Ouvrir un fichier depuis IDB ─────────────────────────────────
+async function _openFromIdb(path, item) {
+  try {
+    var entry = await _idbGet(path);
+    if (!entry) return false;
+    var blobUrl = URL.createObjectURL(entry.blob);
+    var mode = (item && item.fileOpen) || 'pdf';
+    if (mode === 'pdf') {
+      openPdfViewer(blobUrl, (item && item.name) || path.split('/').pop(), (item && item.pdfFitMode) || 'height');
+      setTimeout(function(){ URL.revokeObjectURL(blobUrl); }, 60000);
+    } else {
+      window.open(blobUrl, '_blank');
+      setTimeout(function(){ URL.revokeObjectURL(blobUrl); }, 10000);
+    }
+    return true;
+  } catch(e) { return false; }
+}
+
+// ── Panel Fichiers iPad dans les réglages ────────────────────────
+async function renderSettingsFilesIpad(c) {
+  var stored = await _idbGetAll();
+  var storedPaths = {};
+  stored.forEach(function(e){ storedPaths[e.path] = e; });
+
+  // Fichiers référencés dans state.fileIndex
+  var indexed = state.fileIndex || [];
+  // Fichiers dans IDB non encore indexés
+  var idbOnly = stored.filter(function(e){
+    return !indexed.some(function(f){ return f.path === e.path; });
+  });
+
+  var totalSize = stored.reduce(function(s,e){ return s+(e.blob?e.blob.size:0); }, 0);
+
+  var rows = indexed.map(function(f) {
+    var inIdb = !!storedPaths[f.path];
+    return '<div class="ipad-file-row '+(inIdb?'stored':'missing')+'">'
+      +'<span style="font-size:16px;flex-shrink:0">'+f.ico+'</span>'
+      +'<div style="flex:1;min-width:0">'
+      +'<div style="font-size:12px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(f.name)+'</div>'
+      +'<div style="font-size:9px;color:var(--text4);font-family:var(--f-mono)">'+esc(f.path)+'</div>'
+      +'</div>'
+      +(inIdb
+        ? '<span style="font-size:10px;color:var(--ok,#4a7400);font-family:var(--f-mono)">✓ Stocké</span>'
+          +'<button class="btn btn-xs btn-danger" onclick="ipadDeleteFile(\''+esc(f.path)+'\')">✕</button>'
+        : '<label class="btn btn-xs" style="cursor:pointer">↑ Importer<input type="file" style="display:none" onchange="ipadImportOne(this,\''+esc(f.path)+'\')"></label>')
+      +'</div>';
+  }).join('');
+
+  c.innerHTML = '<div class="s-panel-title">Fichiers — Mode iPad</div>'
+    +'<div class="s-panel-sub">Stockage local dans le navigateur (IndexedDB) — compatibilité Safari/iPad</div>'
+    +'<div class="s-section">'
+    +'<div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap">'
+    +'<span class="ipad-badge">📱 Mode iPad actif</span>'
+    +'<span style="font-size:11px;color:var(--text3);font-family:var(--f-mono)">'+stored.length+' fichier(s) stocké(s) — '+_fmtSize(totalSize)+'</span>'
+    +'</div>'
+    // Import en lot avec arborescence
+    +'<div class="s-section-title">Importer des fichiers</div>'
+    +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">'
+    +'<label class="btn btn-pri btn-sm" style="cursor:pointer">📁 Importer un dossier…'
+    +'<input type="file" multiple webkitdirectory style="display:none"'
+    +' onchange="importFilesForIpad(this.files)">'
+    +'</label>'
+    +'<label class="btn btn-sm" style="cursor:pointer">📄 Importer des fichiers…'
+    +'<input type="file" multiple style="display:none"'
+    +' onchange="importFilesForIpad(this.files)">'
+    +'</label>'
+    +'<button class="btn btn-sm btn-danger" onclick="ipadClearAll()">🗑 Tout effacer</button>'
+    +'</div>'
+    // Liste des fichiers indexés avec statut IDB
+    +'<div class="s-section-title">Fichiers indexés ('+indexed.length+')</div>'
+    +(rows || '<div style="color:var(--text4);font-size:12px;font-family:var(--f-mono)">Aucun fichier indexé — allez dans Fichiers pour indexer un répertoire</div>')
+    +'</div>';
+}
+
+function ipadImportOne(input, targetPath) {
+  var f = input.files[0];
+  if (!f) return;
+  _idbPut(targetPath, f).then(function(){
+    toast('✅ '+f.name+' importé','ok');
+    if (document.getElementById('page-settings').classList.contains('active')) renderSettings('files');
+  }).catch(function(e){ toast('❌ Erreur: '+e.message,'err'); });
+}
+
+function ipadDeleteFile(path) {
+  _idbDelete(path).then(function(){
+    state.fileIndex = state.fileIndex.filter(function(f){ return f.path !== path; });
+    save();
+    toast('🗑 Fichier supprimé du stockage','info');
+    if (document.getElementById('page-settings').classList.contains('active')) renderSettings('files');
+  });
+}
+
+function ipadClearAll() {
+  if (!confirm('Effacer tous les fichiers stockés ?')) return;
+  _idbOpen().then(function(db){
+    var tx = db.transaction(IDB_STORE,'readwrite');
+    tx.objectStore(IDB_STORE).clear();
+    tx.oncomplete = function(){
+      toast('🗑 Stockage effacé','info');
+      if (document.getElementById('page-settings').classList.contains('active')) renderSettings('files');
+    };
+  });
+}
 
 function init() {
   try { load(); } catch(e) { document.body.innerHTML='<pre style="color:red;padding:20px">load(): '+e.stack+'</pre>'; return; }
