@@ -1842,6 +1842,16 @@ body.editing .dock-item .dock-item-actions { display: flex; }
 <div id="toast-wrap"></div>
 
 
+
+<div id="modal-move-overlay" onclick="if(event.target===this)closeMoveModal()">
+  <div id="modal-move-box">
+    <div class="modal-hd">
+      <span class="modal-title" id="modal-move-title">Choisir une destination</span>
+      <button class="modal-x" onclick="closeMoveModal()">✕</button>
+    </div>
+    <div id="modal-move-list" style="padding:10px;overflow-y:auto;max-height:60vh"></div>
+  </div>
+</div>
 <!-- ══ DOCK BAS macOS ══════════════════════════════════ -->
 <div id="bottom-dock-wrap">
   <div id="bottom-dock"><!-- rendered by JS --></div>
@@ -3197,7 +3207,7 @@ function renderSettings(panelId) {
   // Content
   const content = document.getElementById('settings-content');
   const panel = { dock:renderSettingsDock, labels:renderSettingsLabels, theme:renderSettingsTheme,
-                  identity:renderSettingsIdentity, backup:renderSettingsBackup, diagnostic:renderSettingsDiagnostic, files:_isIpad() ? function(el){ renderSettingsFilesIpad(el); } : renderSettingsFiles }[activeSettingsId];
+                  identity:renderSettingsIdentity, backup:renderSettingsBackup, diagnostic:renderSettingsDiagnostic, files:renderSettingsFiles }[activeSettingsId];
   if (panel) panel(content);
 }
 
@@ -4441,6 +4451,313 @@ async function _openFromIdb(path, item) {
 }
 
 // ── Panel Fichiers iPad dans les réglages ────────────────────────
+
+// ════════════════════════════════════════════════════════════════
+// MODULE FICHIERS — PC/Mac Chrome + Safari/iPad unifié
+// ════════════════════════════════════════════════════════════════
+
+var _fileSearchVal = '';
+var _fileExtVal    = '';
+var _filteredFiles = [];
+var _rootDirHandle = null; // Handle du répertoire racine (Chrome/Edge)
+
+var _EXT_GROUPS = {
+  pdf: ['pdf'],
+  img: ['jpg','jpeg','png','gif','webp','svg','bmp','heic'],
+  doc: ['doc','docx','odt','rtf','txt','md'],
+  xls: ['xls','xlsx','xlsm','ods','csv'],
+  ppt: ['ppt','pptx','odp'],
+};
+
+function _extIco(ext) {
+  var m = {pdf:'📄',doc:'📝',docx:'📝',xls:'📊',xlsx:'📊',ppt:'📽️',pptx:'📽️',
+    txt:'📃',md:'📃',csv:'📊',jpg:'🖼️',jpeg:'🖼️',png:'🖼️',gif:'🖼️',webp:'🖼️',
+    svg:'🖼️',heic:'🖼️',mp4:'🎬',mov:'🎬',mp3:'🎵',wav:'🎵',
+    zip:'🗜️',json:'⚙️',html:'🌐'};
+  return m[ext] || '📋';
+}
+
+function _fmtSize(bytes) {
+  if (!bytes) return '—';
+  if (bytes < 1024) return bytes + ' o';
+  if (bytes < 1048576) return (bytes/1024).toFixed(1) + ' Ko';
+  return (bytes/1048576).toFixed(1) + ' Mo';
+}
+
+// ── Scan répertoire racine (Chrome/Edge) ─────────────────────────
+async function scanRootDirectory() {
+  if (!window.showDirectoryPicker) {
+    toast('⚠ Utilisez le mode iPad pour importer les fichiers', 'warn'); return;
+  }
+  var btn = document.getElementById('scan-root-btn');
+  if (btn) { btn.disabled=true; btn.textContent='⏳ Scan…'; }
+  try {
+    var dirHandle = await window.showDirectoryPicker({ mode:'read' });
+    _rootDirHandle = dirHandle;
+    var dirName = dirHandle.name;
+    var newFiles = [];
+    await _walkDir(dirHandle, dirName, newFiles);
+
+    // Remplacer l'index de ce répertoire
+    state.fileIndex = (state.fileIndex||[]).filter(function(f){ return f.dir !== dirName; });
+    state.fileIndex = state.fileIndex.concat(newFiles);
+    save();
+    renderSettings('files');
+    toast('✅ ' + newFiles.length + ' fichier(s) dans «\u00a0' + dirName + '\u00a0»', 'ok');
+  } catch(e) {
+    if (e.name !== 'AbortError') toast('❌ ' + e.message, 'err');
+  } finally {
+    if (btn) { btn.disabled=false; btn.textContent='📁 Scanner le répertoire de l\'app…'; }
+  }
+}
+
+async function _walkDir(dirHandle, pathSoFar, results) {
+  for await (var entry of dirHandle.values()) {
+    if (entry.kind === 'file') {
+      try {
+        var file = await entry.getFile();
+        var ext  = entry.name.split('.').pop().toLowerCase();
+        // Ignorer l'app elle-même et les sauvegardes
+        if (entry.name === 'index.html' || ext === 'zip') continue;
+        var filePath = pathSoFar + '/' + entry.name;
+        _fileHandles[filePath] = entry;
+        results.push({
+          dir:      pathSoFar.split('/')[0],
+          name:     entry.name,
+          path:     filePath,
+          size:     file.size,
+          modified: file.lastModified,
+          ext:      ext,
+          ico:      _extIco(ext),
+        });
+      } catch(e) {}
+    } else if (entry.kind === 'directory') {
+      // Ignorer les dossiers système
+      if (entry.name.startsWith('.') || entry.name === '__MACOSX') continue;
+      await _walkDir(entry, pathSoFar + '/' + entry.name, results);
+    }
+  }
+}
+
+function removeDirFromIndex(dirName) {
+  state.fileIndex = (state.fileIndex||[]).filter(function(f){ return f.dir !== dirName; });
+  save(); renderSettings('files');
+  toast('🗑 Répertoire retiré', 'info');
+}
+
+// ── Filtrage fichiers ─────────────────────────────────────────────
+function filterFilesList() {
+  var inp = document.getElementById('file-search-inp');
+  if (inp) _fileSearchVal = inp.value;
+  var q      = _fileSearchVal.toLowerCase();
+  var ext    = _fileExtVal;
+  var extList = ext ? (_EXT_GROUPS[ext] || [ext]) : null;
+
+  _filteredFiles = (state.fileIndex||[]).filter(function(f){
+    return (!q || f.name.toLowerCase().includes(q) || f.path.toLowerCase().includes(q))
+      && (!extList || extList.includes(f.ext));
+  });
+
+  var countEl = document.getElementById('files-count');
+  if (countEl) countEl.textContent = _filteredFiles.length + ' / ' + (state.fileIndex||[]).length + ' fichier(s)';
+
+  var wrap = document.getElementById('files-list-wrap');
+  if (!wrap) return;
+
+  if (!_filteredFiles.length) {
+    wrap.innerHTML = '<div class="empty-state" style="padding:24px 0">'
+      +'<div class="empty-state-ico">📭</div>'
+      +'<div class="empty-state-sub">'+(state.fileIndex&&state.fileIndex.length?'Aucun résultat':'Aucun fichier indexé')+'</div></div>';
+    return;
+  }
+
+  wrap.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:6px">'
+    + _filteredFiles.map(function(f, fi) {
+        var date = f.modified ? new Date(f.modified).toLocaleDateString('fr-FR') : '—';
+        return '<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm)">'
+          +'<span style="font-size:18px;flex-shrink:0">'+f.ico+'</span>'
+          +'<div style="flex:1;min-width:0">'
+          +'<div style="font-size:12px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+esc(f.path)+'">'+esc(f.name)+'</div>'
+          +'<div style="font-size:9px;color:var(--text4);font-family:var(--f-mono)">'+_fmtSize(f.size)+' · '+date+'</div>'
+          +'</div>'
+          +'<button class="btn btn-xs" onclick="openAddFileDestModal('+fi+')" title="Ajouter comme élément">＋</button>'
+          +'</div>';
+      }).join('')
+    +'</div>';
+}
+
+function selectFileExt(btn) {
+  _fileExtVal = btn.dataset.ext || '';
+  document.querySelectorAll('.file-ext-btn').forEach(function(b){
+    b.classList.toggle('on', b.dataset.ext === _fileExtVal);
+  });
+  filterFilesList();
+}
+
+// ── Panel unifié Fichiers ─────────────────────────────────────────
+function renderSettingsFiles(c) {
+  var isIpadMode = _isIpad();
+  var dirs = {};
+  (state.fileIndex||[]).forEach(function(f){ dirs[f.dir] = (dirs[f.dir]||0)+1; });
+  var dirNames = Object.keys(dirs);
+
+  // Section scan / import selon le mode
+  var scanSection;
+  if (isIpadMode) {
+    scanSection = '<div class="s-section">'
+      +'<div class="s-section-title">📱 Mode Safari / iPad — import local</div>'
+      +'<p style="font-size:12px;color:var(--text3);margin-bottom:10px">'
+      +'Les fichiers sont stockés dans le navigateur (IndexedDB). Importez le dossier de l\'app entier.</p>'
+      +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">'
+      +'<label class="btn btn-pri btn-sm" style="cursor:pointer">📁 Importer le dossier de l\'app…'
+      +'<input type="file" multiple webkitdirectory style="display:none" onchange="importFilesForIpad(this.files)"></label>'
+      +'<label class="btn btn-sm" style="cursor:pointer">📄 Ajouter des fichiers…'
+      +'<input type="file" multiple style="display:none" onchange="importFilesForIpad(this.files)"></label>'
+      +'</div>'
+      +'<div style="font-size:10px;color:var(--text4);font-family:var(--f-mono)">'
+      +'💡 Conseil : exportez un ZIP depuis PC (Sauvegarde) puis importez-le pour une installation clé en main</div>'
+      +'</div>';
+  } else {
+    scanSection = '<div class="s-section">'
+      +'<div class="s-section-title">🖥 Mode PC / Mac — scan du répertoire</div>'
+      +'<p style="font-size:12px;color:var(--text3);margin-bottom:10px">'
+      +'Placez <b>index.html</b> dans votre dossier de travail avec vos fichiers, puis scannez-le.</p>'
+      +(dirNames.length
+        ? dirNames.map(function(d){
+            return '<div style="display:flex;align-items:center;gap:10px;padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);margin-bottom:4px">'
+              +'<span style="font-size:16px">📁</span>'
+              +'<div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--text)">'+esc(d)+'</div>'
+              +'<div style="font-size:10px;color:var(--text3);font-family:var(--f-mono)">'+dirs[d]+' fichier(s)</div></div>'
+              +'<button class="btn btn-sm" onclick="scanRootDirectory()" title="Rescanner">↺</button>'
+              +'<button class="btn btn-sm btn-danger" onclick="removeDirFromIndex(\''+esc(d)+'\')">✕</button>'
+              +'</div>';
+          }).join('')
+        : '')
+      +'<button class="btn btn-pri btn-sm" id="scan-root-btn" onclick="scanRootDirectory()" style="margin-top:4px">📁 Scanner le répertoire de l\'app…</button>'
+      +'<div style="font-size:10px;color:var(--text4);font-family:var(--f-mono);margin-top:6px">Chrome / Edge uniquement</div>'
+      +'</div>';
+  }
+
+  c.innerHTML = '<div class="s-panel-title">Fichiers</div>'
+    +'<div class="s-panel-sub">Accès aux fichiers du répertoire de l\'application</div>'
+    + scanSection
+    +'<div class="s-section">'
+    +'<div class="s-section-title">Fichiers indexés</div>'
+    +'<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px">'
+    +'<input class="f-inp" id="file-search-inp" placeholder="🔍 Rechercher…" style="flex:1;min-width:160px;max-width:300px" oninput="filterFilesList()">'
+    +'<div style="display:flex;gap:4px;flex-wrap:wrap" id="file-ext-filters">'
+    +'<button class="btn btn-xs file-ext-btn on" data-ext="" onclick="selectFileExt(this)">Tous</button>'
+    +'<button class="btn btn-xs file-ext-btn" data-ext="pdf" onclick="selectFileExt(this)">📄 PDF</button>'
+    +'<button class="btn btn-xs file-ext-btn" data-ext="img" onclick="selectFileExt(this)">🖼️ Images</button>'
+    +'<button class="btn btn-xs file-ext-btn" data-ext="doc" onclick="selectFileExt(this)">📝 Word</button>'
+    +'<button class="btn btn-xs file-ext-btn" data-ext="xls" onclick="selectFileExt(this)">📊 Excel</button>'
+    +'<button class="btn btn-xs file-ext-btn" data-ext="ppt" onclick="selectFileExt(this)">📽️ PPT</button>'
+    +'</div></div>'
+    +'<div id="files-count" style="font-family:var(--f-mono);font-size:10px;color:var(--text4);margin-bottom:8px"></div>'
+    +'<div id="files-list-wrap"></div>'
+    +'</div>';
+
+  // Init input et filtres
+  var inp = document.getElementById('file-search-inp');
+  if (inp) { inp.value = _fileSearchVal; }
+  document.querySelectorAll('.file-ext-btn').forEach(function(b){
+    b.classList.toggle('on', b.dataset.ext === _fileExtVal);
+  });
+  filterFilesList();
+}
+
+// ── Modal destination pour ajout fichier ─────────────────────────
+var _pendingFile = null;
+
+function closeMoveModal() {
+  var el = document.getElementById('modal-move-overlay');
+  if (el) el.classList.remove('open');
+  _pendingFile = null; _moveCtx = null;
+}
+
+function openAddFileDestModal(fileIdx) {
+  _pendingFile = (_filteredFiles || [])[fileIdx];
+  if (!_pendingFile) return;
+
+  var titleEl = document.getElementById('modal-move-title');
+  if (titleEl) titleEl.textContent = 'Ajouter \u00ab\u00a0' + _pendingFile.name + '\u00a0\u00bb\u2026';
+
+  var list = document.getElementById('modal-move-list');
+  if (!list) return;
+
+  var ext = _pendingFile.ext || '';
+  var modeLabel = ext === 'pdf' ? 'Lecteur PDF int\u00e9gr\u00e9' : 'Application syst\u00e8me';
+
+  var html = '<div style="margin-bottom:8px;padding:8px;background:var(--acc-dim);border:1px solid var(--acc);border-radius:var(--r)">'
+    +'<div style="font-family:var(--f-mono);font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--acc);margin-bottom:6px">Dock</div>'
+    +'<div class="move-dest" onclick="confirmAddFileToDock()">'
+    +'<span style="font-size:20px">'+_pendingFile.ico+'</span>'
+    +'<div><div style="font-weight:600">Ajouter au Dock</div>'
+    +'<div class="move-dest-page">Icône directe \u2014 '+modeLabel+'</div>'
+    +'</div></div></div>'
+    +'<div style="font-family:var(--f-mono);font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--text4);margin-bottom:6px;padding:0 2px">Ajouter dans un groupe</div>';
+
+  state.pages.forEach(function(pg) {
+    if (!pg || pg.type==='sep') return;
+    if (!(pg.groups||[]).length) {
+      html += '<div class="move-dest" style="opacity:0.4;cursor:default">'
+        +'<span style="font-size:15px">'+(pg.ico||'📄')+'</span>'
+        +'<div><div>'+esc(pg.name)+'</div><div class="move-dest-page">Aucun groupe</div></div></div>';
+      return;
+    }
+    pg.groups.forEach(function(grp) {
+      html += '<div class="move-dest" onclick="confirmAddFileDest(&quot;'+pg.id+'&quot;,&quot;'+grp.id+'&quot;)">'
+        +'<span style="font-size:15px">'+(grp.ico||'📁')+'</span>'
+        +'<div><div>'+esc(grp.name)+'</div>'
+        +'<div class="move-dest-page">'+(pg.ico||'📄')+' '+esc(pg.name)+'</div>'
+        +'</div></div>';
+    });
+  });
+
+  list.innerHTML = html;
+  document.getElementById('modal-move-overlay').classList.add('open');
+}
+
+function confirmAddFileDest(pageId, groupId) {
+  var file = _pendingFile;
+  closeMoveModal();
+  if (!file) return;
+  var grp = getGroup(pageId, groupId);
+  var pg  = getPage(pageId);
+  if (!grp) return;
+  var ext  = file.ext || '';
+  var mode = ext === 'pdf' ? 'pdf' : 'app';
+  grp.items.push({
+    id:uid(), type:'file',
+    name:     file.name.replace(/\.[^.]+$/, ''),
+    ico:      file.ico||'📄', icoImg:null,
+    tooltip:  file.path, fill:'', border:'',
+    hashtags: ext ? [ext] : [], labels:[],
+    path:     file.path, fileOpen:mode, url:'', note:'',
+  });
+  save(); renderPageContent(); renderSidebar();
+  toast('\u2705 Ajout\u00e9 dans \u00ab\u00a0'+esc(grp.name)+'\u00a0\u00bb \u2014 '+esc(pg?pg.name:''), 'ok');
+  _pendingFile = null;
+}
+
+function confirmAddFileToDock() {
+  var file = _pendingFile;
+  closeMoveModal();
+  if (!file) return;
+  var ext  = file.ext || '';
+  var mode = ext === 'pdf' ? 'tab-pdf' : 'app';
+  state.pages.push({
+    id:uid(), type:undefined,
+    name:    file.name.replace(/\.[^.]+$/, ''),
+    ico:     file.ico||'📄', icoImg:null, icoSize:'cover', icoBg:'',
+    fill:'', desc:file.path, tooltip:file.path,
+    hashtags: ext?[ext]:[], groups:[],
+    action:'file', path:file.path, fileOpen:mode, url:'', openMode:'tab',
+  });
+  save(); renderBottomDock(); renderSidebar();
+  toast('\u2705 Ajout\u00e9 au dock', 'ok');
+  _pendingFile = null;
+}
 async function renderSettingsFilesIpad(c) {
   var stored = await _idbGetAll();
   var storedPaths = {};
