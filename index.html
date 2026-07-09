@@ -2482,20 +2482,49 @@ function handleItemClick(pageId, groupId, itemId) {
   }
 }
 
-function openFileItem(item) {
+async function openFileItem(item) {
   const path = item.path || '';
   if (!path) { toast('Aucun fichier configuré','warn'); return; }
   const mode = item.fileOpen || 'pdf';
-  if (mode === 'pdf' && (path.endsWith('.pdf') || path.includes('.pdf'))) {
-    openPdfViewer(path, item.name);
-  } else if (mode === 'tab') {
-    window.open(path, '_blank');
+  const isLocal = path && !path.startsWith('http') && !path.startsWith('blob');
+
+  if (isLocal) {
+    const handle = (window._fileHandles||{})[path];
+    if (handle) {
+      try {
+        const file = await handle.getFile();
+        const blobUrl = URL.createObjectURL(file);
+        if (mode === 'pdf') {
+          openPdfViewer(blobUrl, item.name, item.pdfFitMode || 'height');
+          setTimeout(()=>URL.revokeObjectURL(blobUrl), 60000);
+        } else {
+          window.open(blobUrl, '_blank');
+          setTimeout(()=>URL.revokeObjectURL(blobUrl), 10000);
+        }
+        return;
+      } catch(e) { toast('⚠ Accès perdu — rechargez le répertoire dans Fichiers', 'warn'); return; }
+    }
+    // Pas de handle — demander à l'utilisateur
+    const inp = document.createElement('input');
+    inp.type = 'file'; inp.style.display = 'none';
+    if (path.toLowerCase().endsWith('.pdf')) inp.accept = '.pdf,application/pdf';
+    inp.onchange = function() {
+      const f = inp.files[0]; if (!f) return;
+      const blobUrl = URL.createObjectURL(f);
+      if (mode === 'pdf') { openPdfViewer(blobUrl, item.name, item.pdfFitMode||'height'); setTimeout(()=>URL.revokeObjectURL(blobUrl),60000); }
+      else { window.open(blobUrl, '_blank'); setTimeout(()=>URL.revokeObjectURL(blobUrl),10000); }
+      document.body.removeChild(inp);
+    };
+    document.body.appendChild(inp); inp.click();
+    toast('📂 Sélectionnez le fichier (accès local requis)','info');
+    return;
+  }
+
+  // URL http/https
+  if (mode === 'pdf') {
+    openPdfViewer(path, item.name, item.pdfFitMode || 'height');
   } else {
-    // Téléchargement / app système
-    const a = document.createElement('a');
-    a.href = path; a.download = item.name || '';
-    document.body.appendChild(a); a.click();
-    document.body.removeChild(a);
+    window.open(path, '_blank');
   }
 }
 
