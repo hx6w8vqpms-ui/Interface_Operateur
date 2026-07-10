@@ -1491,7 +1491,11 @@ body.editing .dock-item .dock-item-actions { display: flex; }
         <div id="dock-fields-file" style="display:none">
           <div class="f-grp">
             <label class="f-lbl">Chemin ou URL du fichier</label>
-            <input class="f-inp" id="dock-file-path" placeholder="/docs/notice.pdf ou https://…">
+            <div style="display:flex;gap:6px;align-items:center">
+              <input class="f-inp" id="dock-file-path" placeholder="/docs/notice.pdf ou https://…" style="flex:1">
+              <button class="btn btn-sm" type="button" onclick="pickFileForDock()" title="Choisir un fichier…">📂</button>
+            </div>
+            <div id="dock-file-pick-status" style="font-size:10px;font-family:var(--f-mono);color:var(--text3);margin-top:4px;display:none"></div>
           </div>
           <div class="f-grp">
             <label class="f-lbl">Ouverture</label>
@@ -1757,7 +1761,11 @@ body.editing .dock-item .dock-item-actions { display: flex; }
         <div id="fields-file" style="display:none">
           <div class="f-grp">
             <label class="f-lbl">Chemin ou URL du fichier</label>
-            <input class="f-inp" id="item-file-path" placeholder="/docs/notice.pdf ou https://…">
+            <div style="display:flex;gap:6px;align-items:center">
+              <input class="f-inp" id="item-file-path" placeholder="/docs/notice.pdf ou https://…" style="flex:1">
+              <button class="btn btn-sm" type="button" onclick="pickFileForItem()" title="Choisir un fichier…">📂</button>
+            </div>
+            <div id="item-file-pick-status" style="font-size:10px;font-family:var(--f-mono);color:var(--text3);margin-top:4px;display:none"></div>
           </div>
           <div class="f-grp">
             <label class="f-lbl">Ouverture</label>
@@ -1925,9 +1933,20 @@ let _pdfFileData    = null;
 // ════════════════════════════════════════════════════════════════
 // PERSISTANCE
 // ════════════════════════════════════════════════════════════════
+var _STATE_IDB_KEY = '__pac_state__';
+
 function save() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+  try {
+    var json = JSON.stringify(state);
+    try { localStorage.setItem(STORAGE_KEY, json); } catch(e) {}
+    // Double sauvegarde dans IDB (résistant aux purges iOS en mode webapp)
+    _idbOpen().then(function(db) {
+      var tx = db.transaction(IDB_STORE, 'readwrite');
+      tx.objectStore(IDB_STORE).put({ path: _STATE_IDB_KEY, blob: new Blob([json], {type:'application/json'}), ts: Date.now() });
+    }).catch(function(){});
+  } catch(e) {}
 }
+
 function load() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -2062,6 +2081,52 @@ function showPage(which, sub) {
 // ════════════════════════════════════════════════════════════════
 
 // ── Dock bas : sélecteur action ──────────────────────────────────
+
+// ── Sélecteur de fichier natif dans les modals ───────────────────
+async function pickFileForItem() {
+  var inp = document.createElement('input');
+  inp.type = 'file'; inp.style.display = 'none';
+  inp.onchange = async function() {
+    var file = inp.files[0];
+    if (!file) { document.body.removeChild(inp); return; }
+    var ext  = file.name.split('.').pop().toLowerCase();
+    var path = 'picked/' + file.name;
+    try { await _idbPut(path, file); } catch(e) { toast('❌ ' + e.message, 'err'); return; }
+    var pathInp = document.getElementById('item-file-path');
+    if (pathInp) pathInp.value = path;
+    _setItemFileOpen(ext === 'pdf' ? 'pdf' : (ext === 'html' || ext === 'htm' ? 'tab' : 'app'));
+    var nameInp = document.getElementById('item-name-inp');
+    if (nameInp && !nameInp.value) nameInp.value = file.name.replace(/\.[^.]+$/, '');
+    var icoInp = document.getElementById('item-ico-inp');
+    if (icoInp && !icoInp.value) icoInp.value = _extIco(ext);
+    var status = document.getElementById('item-file-pick-status');
+    if (status) { status.style.display=''; status.textContent='✅ '+file.name+' — '+_fmtSize(file.size)+' — stocké localement'; }
+    document.body.removeChild(inp);
+    if (typeof updateItemPreview === 'function') updateItemPreview();
+  };
+  document.body.appendChild(inp); inp.click();
+}
+
+async function pickFileForDock() {
+  var inp = document.createElement('input');
+  inp.type = 'file'; inp.style.display = 'none';
+  inp.onchange = async function() {
+    var file = inp.files[0];
+    if (!file) { document.body.removeChild(inp); return; }
+    var ext  = file.name.split('.').pop().toLowerCase();
+    var path = 'picked/' + file.name;
+    try { await _idbPut(path, file); } catch(e) { toast('❌ ' + e.message, 'err'); return; }
+    var pathInp = document.getElementById('dock-file-path');
+    if (pathInp) pathInp.value = path;
+    _setDockFileOpen(ext === 'pdf' ? 'pdf' : (ext === 'html' || ext === 'htm' ? 'tab' : 'app'));
+    var nameInp = document.getElementById('dock-name-inp');
+    if (nameInp && !nameInp.value) nameInp.value = file.name.replace(/\.[^.]+$/, '');
+    var status = document.getElementById('dock-file-pick-status');
+    if (status) { status.style.display=''; status.textContent='✅ '+file.name+' — '+_fmtSize(file.size)+' — stocké localement'; }
+    document.body.removeChild(inp);
+  };
+  document.body.appendChild(inp); inp.click();
+}
 
 function updateItemOpenMode() {
   var isPdf = document.getElementById('item-open-pdf')?.checked;
@@ -3266,12 +3331,20 @@ let activeSettingsId = 'dock';
 
 function renderSettings(panelId) {
   if (panelId) activeSettingsId = panelId;
+  const APP_VERSION = '2026-07-10 r3';
   // Nav
   const nav = document.getElementById('settings-nav');
   nav.innerHTML = settingsSections.map(s => `
     <div class="sn-item${s.id===activeSettingsId?' active':''}" onclick="renderSettings('${s.id}')">
       <span class="sn-item-ico">${s.ico}</span>${esc(s.label)}
-    </div>`).join('');
+    </div>`).join('')
+    + `<div style="margin-top:auto;padding:10px 8px 4px;border-top:1px solid var(--border);margin-top:16px">
+        <div style="font-family:var(--f-mono);font-size:9px;color:var(--text4);line-height:1.6">
+          <div style="font-weight:600;color:var(--text3);margin-bottom:2px">Interface PAC-Man</div>
+          <div>v ${APP_VERSION}</div>
+          <div style="margin-top:2px;word-break:break-all">${location.protocol}//${location.host||'local'}</div>
+        </div>
+      </div>`;
   // Content
   const content = document.getElementById('settings-content');
   const panel = { dock:renderSettingsDock, labels:renderSettingsLabels, theme:renderSettingsTheme,
@@ -3981,14 +4054,18 @@ function _applyManifest(id, fill) {
       iconData[sz] = dataUrl;
       done++;
       if (done === sizes.length) {
+        // Ne pas générer de manifest en file:// — Safari l'ignore de toute façon
+        if (location.protocol === 'file:') return;
         const manifest = {
           name: name,
           short_name: name.slice(0, 12),
           start_url: './',
+          scope: './',
           display: 'standalone',
           background_color: fill,
           theme_color: fill,
           icons: sizes.map(sz => ({
+            // Utiliser dataUrl base64 directement (pas de blob: URL)
             src: iconData[sz],
             sizes: `${sz}x${sz}`,
             type: 'image/png',
@@ -5513,6 +5590,32 @@ function ipadClearAll() {
 
 function init() {
   try { load(); } catch(e) { document.body.innerHTML='<pre style="color:red;padding:20px">load(): '+e.stack+'</pre>'; return; }
+
+  // Si state vide (Safari webapp a purgé localStorage), récupérer depuis IDB
+  if (!state.pages.length || !state.labels.length) {
+    _idbGet(_STATE_IDB_KEY).then(function(entry) {
+      if (entry && entry.blob) {
+        entry.blob.text().then(function(json) {
+          try {
+            var parsed = JSON.parse(json);
+            if (parsed.pages && parsed.pages.length) {
+              Object.assign(state, parsed);
+              state.pages  = state.pages.filter(function(p){ return p!=null; });
+              state.labels = state.labels || [];
+              state.pages.forEach(function(pg){ if(!pg.groups) pg.groups=[]; });
+              if (state.labels.length) _migrateLabels();
+              _finishInit();
+            }
+          } catch(e) {}
+        });
+      }
+    }).catch(function(){});
+  }
+
+  _finishInit();
+}
+
+function _finishInit() {
   try { state.pages.forEach(function(pg){ if (!pg.groups) pg.groups = []; }); } catch(e) {}
   try { _initClock(); } catch(e) { console.warn('_initClock',e); }
   try { applyTheme(state.identity.theme || 'dark'); } catch(e) { console.warn('applyTheme',e); }
