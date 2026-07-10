@@ -3749,45 +3749,44 @@ function _drawPacmanOnCanvas(canvas) {
 }
 
 function _applyAppleTouchIcon(id) {
-  // apple-touch-icon : PNG 180×180 requis par Safari/iOS pour le bureau
   const canvas = document.createElement('canvas');
   canvas.width = 180; canvas.height = 180;
   const ctx = canvas.getContext('2d');
 
-  const isPacman = id.icoImg && id.icoImg.startsWith('data:image/svg+xml') &&
-    id.icoImg.includes('ffe000');
-
-  if (isPacman) {
-    // Fond blanc arrondi (iOS ajoute les coins automatiquement)
+  if (id.icoImg && id.icoImg.includes('svg')) {
+    // Toujours dessiner le Pac-Man sur canvas (SVG = Pac-Man par défaut)
     ctx.fillStyle = '#1a1816';
     ctx.fillRect(0, 0, 180, 180);
     _drawPacmanOnCanvas(canvas);
-  } else if (id.icoImg && !id.icoImg.startsWith('data:image/svg+xml')) {
-    const fill = id.fill || '#c5003e';
-    ctx.fillStyle = fill;
-    ctx.fillRect(0, 0, 180, 180);
+    _setAppleTouchIcon(canvas.toDataURL('image/png'));
+    return;
+  }
+
+  const fill = id.fill || '#c5003e';
+  ctx.fillStyle = fill;
+  ctx.fillRect(0, 0, 180, 180);
+
+  if (id.icoImg) {
     const img = new Image();
     img.onload = () => {
       ctx.drawImage(img, 10, 10, 160, 160);
       _setAppleTouchIcon(canvas.toDataURL('image/png'));
     };
     img.src = id.icoImg;
-    return;
   } else {
-    const fill = id.fill || '#c5003e';
-    ctx.fillStyle = fill;
-    ctx.fillRect(0, 0, 180, 180);
     ctx.font = "100px 'Apple Color Emoji','Segoe UI Emoji',sans-serif";
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText(id.ico || '🎮', 90, 98);
+    _setAppleTouchIcon(canvas.toDataURL('image/png'));
   }
-  _setAppleTouchIcon(canvas.toDataURL('image/png'));
 }
 
 function _setAppleTouchIcon(dataUrl) {
   document.querySelectorAll('link[rel="apple-touch-icon"]').forEach(l=>l.remove());
   const link = document.createElement('link');
-  link.rel = 'apple-touch-icon'; link.href = dataUrl;
+  link.rel = 'apple-touch-icon';
+  link.href = dataUrl;
+  link.setAttribute('sizes', '180x180');
   document.head.appendChild(link);
 }
 
