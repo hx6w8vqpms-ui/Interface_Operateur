@@ -1769,11 +1769,26 @@ body.editing .dock-item .dock-item-actions { display: flex; }
           </div>
           <div class="f-grp">
             <label class="f-lbl">Ouverture</label>
-            <select class="f-sel" id="item-file-open" style="width:100%">
-              <option value="pdf">Lecteur PDF intégré</option>
-              <option value="tab">Nouvel onglet navigateur</option>
-              <option value="app">Application du système (téléchargement)</option>
-            </select>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px">
+                <input type="radio" name="item-open-mode" id="item-open-tab" value="tab" onchange="updateItemOpenMode()">
+                <span>🌐 Nouvel onglet Edge <span style="font-size:10px;color:var(--text3)">(page principale préservée)</span></span>
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px">
+                <input type="radio" name="item-open-mode" id="item-open-pdf" value="pdf" onchange="updateItemOpenMode()">
+                <span>📖 Lecteur PDF intégré <span style="font-size:10px;color:var(--text3)">(remplace la vue actuelle)</span></span>
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px">
+                <input type="radio" name="item-open-mode" id="item-open-app" value="app" onchange="updateItemOpenMode()">
+                <span>💾 Application système</span>
+              </label>
+            </div>
+            <div id="item-also-tab-wrap" style="display:none;margin-top:8px;padding:8px 10px;background:var(--bg3);border-radius:var(--r-sm);border:1px solid var(--border)">
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px">
+                <input type="checkbox" id="item-also-tab">
+                <span>Bouton ⇗ sur la carte pour ouvrir aussi en onglet</span>
+              </label>
+            </div>
           </div>
         </div>
         <!-- Note -->
@@ -2141,22 +2156,22 @@ function updateDockOpenMode() {
 function _getItemFileOpen() {
   var radios = document.querySelectorAll('input[name="item-open-mode"]');
   for (var i=0;i<radios.length;i++) { if(radios[i].checked) return radios[i].value; }
-  return 'pdf';
+  return 'tab';
 }
 function _getDockFileOpen() {
   var radios = document.querySelectorAll('input[name="dock-open-mode"]');
   for (var i=0;i<radios.length;i++) { if(radios[i].checked) return radios[i].value; }
-  return 'pdf';
+  return 'tab';
 }
 function _setItemFileOpen(val) {
-  var r = document.getElementById('item-open-'+(val||'pdf'));
-  if (!r) r = document.getElementById('item-open-pdf');
+  var r = document.getElementById('item-open-'+(val||'tab'));
+  if (!r) r = document.getElementById('item-open-tab');
   if (r) r.checked = true;
   updateItemOpenMode();
 }
 function _setDockFileOpen(val) {
-  var r = document.getElementById('dock-open-'+(val||'pdf'));
-  if (!r) r = document.getElementById('dock-open-pdf');
+  var r = document.getElementById('dock-open-'+(val||'tab'));
+  if (!r) r = document.getElementById('dock-open-tab');
   if (r) r.checked = true;
   updateDockOpenMode();
 }
@@ -2634,56 +2649,44 @@ function handleItemClick(pageId, groupId, itemId) {
 }
 
 async function openFileItem(item) {
-  // Fichier HTML → onglet natif
-  var ext = (item.path||'').split('.').pop().toLowerCase();
+  var path = item.path || '';
+  if (!path) { toast('Aucun fichier configuré', 'warn'); return; }
+  var mode = item.fileOpen || 'tab';
+  var ext  = path.split('.').pop().toLowerCase();
+
+  // HTML → onglet natif (toujours)
   if (ext==='html'||ext==='htm') { await openHtmlItem(item); return; }
-  // Mode iPad/IDB : chercher dans IndexedDB en priorité
-  var idbOk = await _openFromIdb(item.path || '', item);
+
+  // Chercher dans IDB en premier (fonctionne partout : PC, Mac, iPad)
+  var idbOk = await _openFromIdb(path, item);
   if (idbOk) return;
 
-  const path = item.path || '';
-  if (!path) { toast('Aucun fichier configuré','warn'); return; }
-  const mode = item.fileOpen || 'pdf';
-  const isLocal = path && !path.startsWith('http') && !path.startsWith('blob');
+  // Handle FileSystem (session Chrome/Edge uniquement)
+  var handle = (window._fileHandles||{})[path];
+  if (handle) {
+    try {
+      var file = await handle.getFile();
+      var blobUrl = URL.createObjectURL(file);
+      if (mode === 'pdf') {
+        openPdfViewer(blobUrl, item.name, item.pdfFitMode || 'height');
+        setTimeout(function(){ URL.revokeObjectURL(blobUrl); }, 60000);
+      } else {
+        window.open(blobUrl, '_blank');
+        setTimeout(function(){ URL.revokeObjectURL(blobUrl); }, 30000);
+      }
+      return;
+    } catch(e) {}
+  }
 
-  if (isLocal) {
-    var handle = (window._fileHandles||{})[path];
-    if (handle) {
-      try {
-        const file = await handle.getFile();
-        const blobUrl = URL.createObjectURL(file);
-        if (mode === 'pdf') {
-          openPdfViewer(blobUrl, item.name, item.pdfFitMode || 'height');
-          setTimeout(()=>URL.revokeObjectURL(blobUrl), 60000);
-        } else {
-          window.open(blobUrl, '_blank');
-          setTimeout(()=>URL.revokeObjectURL(blobUrl), 10000);
-        }
-        return;
-      } catch(e) { toast('⚠ Accès perdu — rechargez le répertoire dans Fichiers', 'warn'); return; }
-    }
-    // Pas de handle — demander à l'utilisateur
-    const inp = document.createElement('input');
-    inp.type = 'file'; inp.style.display = 'none';
-    if (path.toLowerCase().endsWith('.pdf')) inp.accept = '.pdf,application/pdf';
-    inp.onchange = function() {
-      const f = inp.files[0]; if (!f) return;
-      const blobUrl = URL.createObjectURL(f);
-      if (mode === 'pdf') { openPdfViewer(blobUrl, item.name, item.pdfFitMode||'height'); setTimeout(()=>URL.revokeObjectURL(blobUrl),60000); }
-      else { window.open(blobUrl, '_blank'); setTimeout(()=>URL.revokeObjectURL(blobUrl),10000); }
-      document.body.removeChild(inp);
-    };
-    document.body.appendChild(inp); inp.click();
-    toast('📂 Sélectionnez le fichier (accès local requis)','info');
+  // URL http/https → direct
+  if (path.startsWith('http')) {
+    if (mode === 'pdf') openPdfViewer(path, item.name, item.pdfFitMode || 'height');
+    else window.open(path, '_blank');
     return;
   }
 
-  // URL http/https
-  if (mode === 'pdf') {
-    openPdfViewer(path, item.name, item.pdfFitMode || 'height');
-  } else {
-    window.open(path, '_blank');
-  }
+  // Fichier local sans handle ni IDB → demander à l'utilisateur de le sélectionner
+  toast('📂 Fichier non accessible — cliquez 📂 pour le sélectionner manuellement', 'warn');
 }
 
 function toggleGroup(pageId, groupId) {
@@ -4856,13 +4859,15 @@ async function _openFromIdb(path, item) {
     var entry = await _idbGet(path);
     if (!entry) return false;
     var blobUrl = URL.createObjectURL(entry.blob);
-    var mode = (item && item.fileOpen) || 'pdf';
+    var mode = (item && item.fileOpen) || 'tab';
     if (mode === 'pdf') {
+      // Lecteur intégré : seul cas où on reste dans la page
       openPdfViewer(blobUrl, (item && item.name) || path.split('/').pop(), (item && item.pdfFitMode) || 'height');
       setTimeout(function(){ URL.revokeObjectURL(blobUrl); }, 60000);
     } else {
+      // Tout le reste → nouvel onglet Edge, page principale préservée
       window.open(blobUrl, '_blank');
-      setTimeout(function(){ URL.revokeObjectURL(blobUrl); }, 10000);
+      setTimeout(function(){ URL.revokeObjectURL(blobUrl); }, 30000);
     }
     return true;
   } catch(e) { return false; }
