@@ -2137,7 +2137,9 @@ function handleBottomDockClick(pgId) {
     return;
   }
   if (pg.action === 'file' && pg.path) {
-    openFileItem(pg); // réutilise la même logique que les éléments
+    var _ext = (pg.path||'').split('.').pop().toLowerCase();
+    if (_ext==='html'||_ext==='htm') { openHtmlItem(pg); return; }
+    openFileItem(pg);
     return;
   }
   // Par défaut : naviguer vers la page
@@ -2508,7 +2510,10 @@ function handleItemClick(pageId, groupId, itemId) {
 }
 
 async function openFileItem(item) {
-  // Mode iPad : chercher dans IndexedDB en priorité
+  // Fichier HTML → onglet natif
+  var ext = (item.path||'').split('.').pop().toLowerCase();
+  if (ext==='html'||ext==='htm') { await openHtmlItem(item); return; }
+  // Mode iPad/IDB : chercher dans IndexedDB en priorité
   var idbOk = await _openFromIdb(item.path || '', item);
   if (idbOk) return;
 
@@ -3894,15 +3899,125 @@ function _fallbackDownload(data, filename) {
 }
 function importBackup(file) {
   if (!file) return;
-  const r = new FileReader();
-  r.onload = ev => {
+  var r = new FileReader();
+  r.onload = function(ev) {
     try {
-      const parsed = JSON.parse(ev.target.result);
-      if (!parsed.pages) throw new Error('Format invalide');
-      Object.assign(state, parsed);
-      save(); init();
-      toast('✅ Configuration restaurée','ok');
-    } catch(e) { toast('❌ Fichier invalide : ' + e.message,'err'); }
+      var parsed = JSON.parse(ev.target.result);
+
+      // Détecter le format
+      // Format json-2 : { app, schemaVersion, state:{pages,...}, embeddedImages, embeddedFiles }
+      // Format simple : { pages, labels, identity, ... }
+      var data = parsed;
+      if (parsed.state && parsed.state.pages) data = parsed.state;
+      else if (parsed.data && parsed.data.pages) data = parsed.data;
+
+      if (!data.pages || !Array.isArray(data.pages)) {
+        toast('❌ Format inconnu — clés : ' + Object.keys(parsed).join(', '), 'err');
+        return;
+      }
+
+      // Restaurer embeddedImages dans les items si présentes
+      var imgs  = parsed.embeddedImages || {};
+      var files = parsed.embeddedFiles  || {};
+
+      // Helper : résoudre un id ou une valeur directe
+      function resolveImg(id) {
+        if (!id) return null;
+        var entry = imgs[id];
+        if (!entry) return null;
+        return entry.dataUrl || entry.data || (typeof entry === 'string' ? entry : null);
+      }
+      function resolveFile(id) {
+        if (!id) return null;
+        var entry = files[id];
+        if (!entry) return null;
+        return entry.dataUrl || entry.data || (typeof entry === 'string' ? entry : null);
+      }
+
+      // Remplacement complet
+      state.version   = data.version  || 1;
+      state.pages     = (data.pages   || []).filter(function(p){ return p != null; });
+      state.labels    = (data.labels  || []).filter(function(l){ return l != null; });
+      state.identity  = data.identity || {};
+      state.fileIndex = data.fileIndex|| [];
+
+      // Réinjecter les images dans pages et items
+      var restoredFileCount = 0;
+      var fileRestorePromises = [];
+
+      state.pages.forEach(function(pg) {
+        if (!pg) return;
+        if (!pg.groups) pg.groups = [];
+        // Icône page via icoImgId
+        if (pg.icoImgId) pg.icoImg = resolveImg(pg.icoImgId) || pg.icoImg;
+        pg.groups.forEach(function(grp) {
+          (grp.items||[]).forEach(function(item) {
+            // Icône item via icoImgId
+            if (item.icoImgId) item.icoImg = resolveImg(item.icoImgId) || item.icoImg;
+            // Image contenu via imgDataId
+            if (item.imgDataId) item.imgData = resolveImg(item.imgDataId) || item.imgData;
+            // Fichier stocké via storedFileId → IndexedDB
+            if (item.storedFileId && files[item.storedFileId]) {
+              var entry = files[item.storedFileId];
+              var fileName = entry.name || item.storedFileName || item.storedFileId;
+              var mimeType = entry.mimeType || 'application/octet-stream';
+              var storagePath = 'imported/' + fileName;
+              // Convertir dataUrl en Blob et stocker dans IDB
+              if (entry.dataUrl) {
+                var p = (function(spath, dataUrl, mime, itm, fname) {
+                  return fetch(dataUrl)
+                    .then(function(r){ return r.blob(); })
+                    .then(function(blob){
+                      return _idbPut(spath, blob).then(function(){
+                        // Mettre à jour l'item avec le path IDB
+                        itm.path = spath;
+                        itm.storedFileName = fname;
+                        restoredFileCount++;
+                      });
+                    })
+                    .catch(function(e){ console.warn('File restore error:', e); });
+                })(storagePath, entry.dataUrl, mimeType, item, fileName);
+                fileRestorePromises.push(p);
+              }
+            }
+          });
+        });
+      });
+      // Icône identité
+      if (state.identity.icoImgId)
+        state.identity.icoImg = resolveImg(state.identity.icoImgId) || state.identity.icoImg;
+
+      // Normalisation
+      state.pages.forEach(function(pg){ if (!pg.groups) pg.groups = []; });
+      if (state.labels.length) _migrateLabels(); else _initDefaultLabels();
+
+      // Attendre que tous les fichiers soient dans IDB puis finaliser
+      Promise.all(fileRestorePromises).then(function() {
+        save();
+
+        // Réinitialiser
+        currentPageId = null; editMode = false;
+        activeFilters = new Set(); searchQuery = ''; clipboard = null;
+        document.body.classList.remove('editing');
+
+        applyTheme(state.identity.theme || 'dark');
+        applyIdentity();
+
+        var firstPage = state.pages.find(function(p){ return p.type !== 'sep'; });
+        currentPageId = firstPage ? firstPage.id : null;
+        showPage(currentPageId);
+        runStartupDiagnostic();
+
+        var nbPg  = state.pages.filter(function(p){ return p.type!=='sep'; }).length;
+        var nbLbl = state.labels.filter(function(l){ return l.type!=='sep'; }).length;
+        var nbImg = Object.keys(imgs).length;
+        toast('✅ Restauré — ' + nbPg + ' page(s), ' + nbLbl + ' étiquette(s)'
+          + (nbImg ? ', ' + nbImg + ' icône(s)' : '')
+          + (restoredFileCount ? ', ' + restoredFileCount + ' fichier(s) dans IndexedDB' : ''), 'ok');
+      });
+    } catch(e) {
+      toast('❌ ' + e.message, 'err');
+    }
   };
   r.readAsText(file);
 }
@@ -3942,7 +4057,12 @@ function renderSettingsDiagnostic(c) {
         ${o.page?`<span style="color:var(--text3);font-family:var(--f-mono);font-size:10px">${esc(o.page)}</span>`:''}
       </div>`).join('')}
     </div>` : ''}
-    <button class="btn btn-sm" onclick="renderSettings('diagnostic')">↺ Relancer le scan</button>`;
+    <button class="btn btn-sm" onclick="renderSettings('diagnostic')">↺ Relancer le scan</button>
+    <div class="s-section" style="margin-top:20px">
+      <div class="s-section-title">Fichiers — accessibilité</div>
+      <button class="btn btn-sm" id="diag-files-btn" onclick="checkAllFiles()">🔍 Vérifier tous les fichiers</button>
+      <div id="diag-files-wrap" style="margin-top:10px"></div>
+    </div>`;
   updateStatusBar(dead, orphans);
 }
 function runDiagnostic() { renderSettings('diagnostic'); }
@@ -4595,6 +4715,331 @@ function selectFileExt(btn) {
 }
 
 // ── Panel unifié Fichiers ─────────────────────────────────────────
+
+// ════════════════════════════════════════════════════════════════
+// FEATURE 1 : DOSSIER RACINE → IDB AUTOMATIQUE
+// ════════════════════════════════════════════════════════════════
+
+var _rootDirName = ''; // Nom du dossier racine stocké
+
+async function scanAndImportRoot() {
+  if (!window.showDirectoryPicker) {
+    // Safari/iPad : input webkitdirectory
+    var inp = document.createElement('input');
+    inp.type='file'; inp.multiple=true; inp.webkitdirectory=true; inp.style.display='none';
+    inp.onchange = function(){ importFilesForIpad(inp.files); document.body.removeChild(inp); };
+    document.body.appendChild(inp); inp.click();
+    return;
+  }
+
+  var btn = document.getElementById('scan-root-btn');
+  if (btn){ btn.disabled=true; btn.textContent='⏳ Scan…'; }
+
+  try {
+    var dirHandle = await window.showDirectoryPicker({ mode:'read' });
+    _rootDirName = dirHandle.name;
+
+    // Vider l'ancien index de ce dossier
+    state.fileIndex = (state.fileIndex||[]).filter(function(f){ return f.dir !== _rootDirName; });
+
+    var newFiles = [];
+    var imported = 0;
+    var total    = 0;
+
+    if (btn) btn.textContent = '⏳ Import en cours…';
+
+    await _walkDirAndStore(dirHandle, _rootDirName, newFiles, function(n,t){
+      imported=n; total=t;
+      if (btn) btn.textContent = '⏳ ' + n + '/' + t + ' fichiers…';
+    });
+
+    state.fileIndex = (state.fileIndex||[]).concat(newFiles);
+    save();
+    renderSettings('files');
+    toast('✅ ' + imported + ' fichier(s) importés et stockés — accès sans reconnexion', 'ok');
+  } catch(e) {
+    if (e.name !== 'AbortError') toast('❌ ' + e.message, 'err');
+  } finally {
+    if (btn){ btn.disabled=false; btn.textContent='📁 Scanner et importer le dossier…'; }
+  }
+}
+
+async function _walkDirAndStore(dirHandle, pathSoFar, results, onProgress) {
+  var entries = [];
+  for await (var entry of dirHandle.values()) entries.push(entry);
+
+  for (var i=0; i<entries.length; i++) {
+    var entry = entries[i];
+    if (entry.kind === 'file') {
+      // Ignorer fichiers système
+      if (entry.name.startsWith('.') || entry.name === 'index.html') continue;
+      var ext = entry.name.split('.').pop().toLowerCase();
+      if (ext === 'zip') continue;
+      try {
+        var file = await entry.getFile();
+        var filePath = pathSoFar + '/' + entry.name;
+        // Stocker dans IDB (remplace si déjà là)
+        await _idbPut(filePath, file);
+        _fileHandles[filePath] = entry;
+        results.push({
+          dir:      _rootDirName,
+          name:     entry.name,
+          path:     filePath,
+          size:     file.size,
+          modified: file.lastModified,
+          ext:      ext,
+          ico:      _extIco(ext),
+        });
+        if (onProgress) onProgress(results.length, results.length);
+      } catch(e){ console.warn('Skip:', entry.name, e); }
+    } else if (entry.kind === 'directory') {
+      if (entry.name.startsWith('.') || entry.name === '__MACOSX') continue;
+      await _walkDirAndStore(entry, pathSoFar+'/'+entry.name, results, onProgress);
+    }
+  }
+}
+
+// Vérifier qu'un fichier est accessible (dans IDB)
+async function checkFileAvailable(path) {
+  if (!path) return false;
+  try {
+    var entry = await _idbGet(path);
+    return !!entry;
+  } catch(e){ return false; }
+}
+
+
+// ════════════════════════════════════════════════════════════════
+// FEATURE 2 : SCAN RÉPERTOIRE → CRÉATION AUTO D'ÉLÉMENTS DANS UN GROUPE
+// ════════════════════════════════════════════════════════════════
+
+async function scanDirIntoGroup(pageId, groupId) {
+  var grp = getGroup(pageId, groupId);
+  if (!grp) return;
+
+  if (!window.showDirectoryPicker) {
+    // Safari/iPad : input file multiple
+    var inp = document.createElement('input');
+    inp.type='file'; inp.multiple=true; inp.webkitdirectory=true; inp.style.display='none';
+    inp.onchange = function(){
+      _importFilesIntoGroup(Array.from(inp.files), pageId, groupId, '');
+      document.body.removeChild(inp);
+    };
+    document.body.appendChild(inp); inp.click();
+    return;
+  }
+
+  try {
+    var dirHandle = await window.showDirectoryPicker({ mode:'read' });
+    var dirPath = _rootDirName ? _rootDirName+'/'+dirHandle.name : dirHandle.name;
+    var newItems = [];
+    await _scanDirForItems(dirHandle, dirPath, newItems);
+
+    if (!newItems.length) { toast('Aucun fichier trouvé dans ce dossier', 'warn'); return; }
+
+    // Ajouter au groupe (éviter les doublons par nom)
+    var existing = new Set(grp.items.map(function(i){ return i.name; }));
+    var added = 0;
+    newItems.forEach(function(item) {
+      if (!existing.has(item.name)) {
+        grp.items.push(item);
+        added++;
+      }
+    });
+
+    save(); renderPageContent(); renderSidebar();
+    toast('✅ ' + added + ' élément(s) ajouté(s) dans «\u00a0'+grp.name+'\u00a0»', 'ok');
+  } catch(e) {
+    if (e.name !== 'AbortError') toast('❌ ' + e.message, 'err');
+  }
+}
+
+async function _scanDirForItems(dirHandle, pathSoFar, results) {
+  for await (var entry of dirHandle.values()) {
+    if (entry.kind === 'file') {
+      if (entry.name.startsWith('.') || entry.name === 'index.html') continue;
+      var ext  = entry.name.split('.').pop().toLowerCase();
+      var name = entry.name.replace(/\.[^.]+$/, '');
+      var path = pathSoFar + '/' + entry.name;
+      var type, fileOpen;
+      var imgs = ['jpg','jpeg','png','gif','webp','svg','bmp','heic'];
+      if (ext === 'pdf') { type='file'; fileOpen='pdf'; }
+      else if (imgs.indexOf(ext)>=0) { type='image'; fileOpen='tab'; }
+      else { type='file'; fileOpen='tab'; }
+
+      // Stocker dans IDB si handle disponible
+      try {
+        var file = await entry.getFile();
+        await _idbPut(path, file);
+        _fileHandles[path] = entry;
+      } catch(e){}
+
+      results.push({
+        id:uid(), type:type,
+        name:     name,
+        ico:      _extIco(ext),
+        icoImg:   null, icoSize:'cover', icoBg:'',
+        tooltip:  entry.name,
+        fill:'', border:'',
+        hashtags: [ext], labels:[],
+        path:     path,
+        fileOpen: fileOpen,
+        url:'', note:'',
+        pdfFitMode:'height',
+      });
+    } else if (entry.kind === 'directory') {
+      if (entry.name.startsWith('.')) continue;
+      await _scanDirForItems(entry, pathSoFar+'/'+entry.name, results);
+    }
+  }
+}
+
+async function _importFilesIntoGroup(files, pageId, groupId, basePath) {
+  var grp = getGroup(pageId, groupId);
+  if (!grp) return;
+  var added = 0;
+  var existing = new Set(grp.items.map(function(i){ return i.name; }));
+  for (var i=0; i<files.length; i++) {
+    var file = files[i];
+    var rel  = file.webkitRelativePath || file.name;
+    var path = basePath ? basePath+'/'+rel : rel;
+    var ext  = file.name.split('.').pop().toLowerCase();
+    var name = file.name.replace(/\.[^.]+$/, '');
+    if (existing.has(name)) continue;
+    try { await _idbPut(path, file); } catch(e){}
+    var imgs = ['jpg','jpeg','png','gif','webp','svg','bmp','heic'];
+    var type = (imgs.indexOf(ext)>=0) ? 'image' : 'file';
+    grp.items.push({
+      id:uid(), type:type, name:name,
+      ico:_extIco(ext), icoImg:null, icoSize:'cover', icoBg:'',
+      tooltip:file.name, fill:'', border:'',
+      hashtags:[ext], labels:[],
+      path:path, fileOpen:ext==='pdf'?'pdf':'tab',
+      url:'', note:'', pdfFitMode:'height',
+    });
+    added++;
+  }
+  save(); renderPageContent(); renderSidebar();
+  toast('✅ '+added+' élément(s) ajouté(s)', 'ok');
+}
+
+
+// ════════════════════════════════════════════════════════════════
+// FEATURE 3 : OUVERTURE D'UN FICHIER HTML DANS UN ONGLET EDGE
+// ════════════════════════════════════════════════════════════════
+
+async function openHtmlItem(item) {
+  var path = item.path || '';
+  // Chercher dans IDB
+  try {
+    var entry = await _idbGet(path);
+    if (entry && entry.blob) {
+      var blob = new Blob([await entry.blob.text()], {type:'text/html'});
+      var url  = URL.createObjectURL(blob);
+      window.open(url, '_blank');
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 10000);
+      return;
+    }
+  } catch(e){}
+
+  // Fallback handle
+  var handle = (_fileHandles||{})[path];
+  if (handle) {
+    try {
+      var file = await handle.getFile();
+      var url  = URL.createObjectURL(file);
+      window.open(url, '_blank');
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 10000);
+      return;
+    } catch(e){}
+  }
+
+  // Dernière chance : URL directe
+  if (path.startsWith('http')) { window.open(path,'_blank'); return; }
+  toast('⚠ Fichier HTML introuvable — importez-le via Réglages → Fichiers', 'warn');
+}
+
+// Importer un fichier HTML dans IDB (pour Bloc Cabine etc.)
+async function importHtmlFile() {
+  var inp = document.createElement('input');
+  inp.type='file'; inp.accept='.html,.htm'; inp.style.display='none';
+  inp.onchange = async function() {
+    var file = inp.files[0];
+    if (!file) return;
+    var path = 'html/' + file.name;
+    await _idbPut(path, file);
+    // Ajouter au fileIndex si pas déjà là
+    if (!state.fileIndex.some(function(f){ return f.path===path; })) {
+      state.fileIndex.push({ dir:'html', name:file.name, path:path,
+        size:file.size, modified:Date.now(), ext:'html', ico:'🌐' });
+      save();
+    }
+    toast('✅ '+file.name+' importé — ajoutez-le au dock via Fichiers', 'ok');
+    document.body.removeChild(inp);
+  };
+  document.body.appendChild(inp); inp.click();
+}
+
+
+// ════════════════════════════════════════════════════════════════
+// DIAGNOSTIC FICHIERS
+// ════════════════════════════════════════════════════════════════
+
+async function checkAllFiles() {
+  var btn = document.getElementById('diag-files-btn');
+  if (btn){ btn.disabled=true; btn.textContent='⏳ Vérification…'; }
+
+  var results = [];
+  var allItems = [];
+  state.pages.forEach(function(pg){
+    if (!pg||pg.type==='sep') return;
+    (pg.groups||[]).forEach(function(grp){
+      (grp.items||[]).forEach(function(item){
+        if ((item.type==='file'||item.type==='image') && item.path) {
+          allItems.push({item:item, pg:pg, grp:grp});
+        }
+      });
+    });
+  });
+
+  for (var i=0; i<allItems.length; i++) {
+    var e = allItems[i];
+    var ok = await checkFileAvailable(e.item.path);
+    results.push({ name:e.item.name, path:e.item.path, page:e.pg.name, group:e.grp.name, ok:ok });
+  }
+
+  var missing = results.filter(function(r){ return !r.ok; });
+  var present = results.filter(function(r){ return r.ok; });
+
+  var wrap = document.getElementById('diag-files-wrap');
+  if (!wrap) return;
+
+  if (!results.length) {
+    wrap.innerHTML = '<div style="color:var(--text3);font-family:var(--f-mono);font-size:12px">Aucun élément fichier trouvé</div>';
+  } else {
+    var html = '<div style="margin-bottom:8px;font-family:var(--f-mono);font-size:11px">'
+      +'<span style="color:var(--ok,#4a7400)">✓ '+present.length+' accessible(s)</span>'
+      +' &nbsp; <span style="color:var(--warn)">✗ '+missing.length+' manquant(s)</span>'
+      +'</div>';
+    if (missing.length) {
+      html += missing.map(function(r){
+        return '<div class="ipad-file-row missing">'
+          +'<span style="font-size:14px">⚠</span>'
+          +'<div style="flex:1;min-width:0">'
+          +'<div style="font-size:12px;font-weight:500;color:var(--text)">'+esc(r.name)+'</div>'
+          +'<div style="font-size:9px;color:var(--text4);font-family:var(--f-mono)">'+esc(r.path)+'</div>'
+          +'<div style="font-size:9px;color:var(--text3)">'+esc(r.page)+' › '+esc(r.group)+'</div>'
+          +'</div></div>';
+      }).join('');
+    } else {
+      html += '<div style="color:var(--ok,#4a7400);font-family:var(--f-mono);font-size:12px;padding:8px 0">✅ Tous les fichiers sont accessibles</div>';
+    }
+    wrap.innerHTML = html;
+  }
+
+  if (btn){ btn.disabled=false; btn.textContent='↺ Revérifier'; }
+}
+
 function renderSettingsFiles(c) {
   var isIpadMode = _isIpad();
   var dirs = {};
@@ -4633,7 +5078,7 @@ function renderSettingsFiles(c) {
               +'</div>';
           }).join('')
         : '')
-      +'<button class="btn btn-pri btn-sm" id="scan-root-btn" onclick="scanRootDirectory()" style="margin-top:4px">📁 Scanner le répertoire de l\'app…</button>'
+      +'<button class="btn btn-pri btn-sm" id="scan-root-btn" onclick="scanAndImportRoot()">📁 Scanner et importer le dossier…</button>'
       +'<div style="font-size:10px;color:var(--text4);font-family:var(--f-mono);margin-top:6px">Chrome / Edge uniquement</div>'
       +'</div>';
   }
@@ -4806,6 +5251,7 @@ async function renderSettingsFilesIpad(c) {
     +' onchange="importFilesForIpad(this.files)">'
     +'</label>'
     +'<button class="btn btn-sm btn-danger" onclick="ipadClearAll()">🗑 Tout effacer</button>'
+    +'<button class="btn btn-sm" onclick="importHtmlFile()">🌐 Importer un HTML (Bloc Cabine…)</button>'
     +'</div>'
     // Liste des fichiers indexés avec statut IDB
     +'<div class="s-section-title">Fichiers indexés ('+indexed.length+')</div>'
