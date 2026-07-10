@@ -1495,11 +1495,26 @@ body.editing .dock-item .dock-item-actions { display: flex; }
           </div>
           <div class="f-grp">
             <label class="f-lbl">Ouverture</label>
-            <select class="f-sel" id="dock-file-open" style="width:100%">
-              <option value="pdf">Lecteur PDF intégré</option>
-              <option value="tab">Nouvel onglet</option>
-              <option value="app">Application du système</option>
-            </select>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px">
+                <input type="radio" name="dock-open-mode" id="dock-open-pdf" value="pdf" onchange="updateDockOpenMode()" checked>
+                <span>📖 Lecteur PDF intégré</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px">
+                <input type="radio" name="dock-open-mode" id="dock-open-tab" value="tab" onchange="updateDockOpenMode()">
+                <span>🌐 Nouvel onglet (navigateur natif)</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px">
+                <input type="radio" name="dock-open-mode" id="dock-open-app" value="app" onchange="updateDockOpenMode()">
+                <span>💾 Application du système</span>
+              </label>
+            </div>
+            <div id="dock-also-tab-wrap" style="margin-top:8px;padding:8px 10px;background:var(--bg3);border-radius:var(--r-sm);border:1px solid var(--border)">
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px">
+                <input type="checkbox" id="dock-also-tab">
+                <span>Aussi disponible en <b>nouvel onglet</b></span>
+              </label>
+            </div>
           </div>
         </div>
       </div>
@@ -1858,6 +1873,8 @@ body.editing .dock-item .dock-item-actions { display: flex; }
 </div>
 <script>
 'use strict';
+window._fileHandles = window._fileHandles || {};
+console.log('%c Interface PAC-Man v2026-07-10 ', 'background:#c5003e;color:#fff;font-weight:bold;font-size:14px');
 // ════════════════════════════════════════════════════════════════
 // ÉTAT GLOBAL
 // ════════════════════════════════════════════════════════════════
@@ -2045,6 +2062,48 @@ function showPage(which, sub) {
 // ════════════════════════════════════════════════════════════════
 
 // ── Dock bas : sélecteur action ──────────────────────────────────
+
+function updateItemOpenMode() {
+  var isPdf = document.getElementById('item-open-pdf')?.checked;
+  var wrap = document.getElementById('item-also-tab-wrap');
+  if (wrap) wrap.style.display = isPdf ? '' : 'none';
+}
+function updateDockOpenMode() {
+  var isPdf = document.getElementById('dock-open-pdf')?.checked;
+  var wrap = document.getElementById('dock-also-tab-wrap');
+  if (wrap) wrap.style.display = isPdf ? '' : 'none';
+}
+function _getItemFileOpen() {
+  var radios = document.querySelectorAll('input[name="item-open-mode"]');
+  for (var i=0;i<radios.length;i++) { if(radios[i].checked) return radios[i].value; }
+  return 'pdf';
+}
+function _getDockFileOpen() {
+  var radios = document.querySelectorAll('input[name="dock-open-mode"]');
+  for (var i=0;i<radios.length;i++) { if(radios[i].checked) return radios[i].value; }
+  return 'pdf';
+}
+function _setItemFileOpen(val) {
+  var r = document.getElementById('item-open-'+(val||'pdf'));
+  if (!r) r = document.getElementById('item-open-pdf');
+  if (r) r.checked = true;
+  updateItemOpenMode();
+}
+function _setDockFileOpen(val) {
+  var r = document.getElementById('dock-open-'+(val||'pdf'));
+  if (!r) r = document.getElementById('dock-open-pdf');
+  if (r) r.checked = true;
+  updateDockOpenMode();
+}
+async function openItemInTab(itemId, pageId, groupId) {
+  var grp  = getGroup(pageId, groupId);
+  var item = grp && grp.items.find(function(i){ return i.id===itemId; });
+  if (!item) return;
+  var saved = item.fileOpen;
+  item.fileOpen = 'tab';
+  await openFileItem(item);
+  item.fileOpen = saved;
+}
 function selectDockAction(action, el) {
   _dockAction = action;
   document.querySelectorAll('#dock-action-grid .type-opt').forEach(function(o){ o.classList.remove('on'); });
@@ -2523,7 +2582,7 @@ async function openFileItem(item) {
   const isLocal = path && !path.startsWith('http') && !path.startsWith('blob');
 
   if (isLocal) {
-    const handle = (window._fileHandles||{})[path];
+    var handle = (window._fileHandles||{})[path];
     if (handle) {
       try {
         const file = await handle.getFile();
@@ -2739,7 +2798,8 @@ function openModalDockItem(id) {
   var dockTooltip  = document.getElementById('dock-tooltip-inp');
   if (dockUrlInp)   dockUrlInp.value   = pg?.url    || '';
   if (dockFilePath) dockFilePath.value = pg?.path   || '';
-  if (dockFileOpen) dockFileOpen.value = pg?.fileOpen|| 'pdf';
+  _setDockFileOpen(pg?.fileOpen||'pdf');
+  var _dat=document.getElementById('dock-also-tab');if(_dat)_dat.checked=!!(pg?.alsoTab);
   if (dockOpenSel)  dockOpenSel.value  = pg?.openMode|| 'tab';
   if (dockTooltip)  dockTooltip.value  = pg?.tooltip || '';
   _dockHashtags = [...(pg?.hashtags || [])];
@@ -2820,7 +2880,8 @@ function saveDockItem() {
     url:     document.getElementById('dock-url-inp')?.value.trim()    || '',
     openMode:document.getElementById('dock-open-sel')?.value          || 'tab',
     path:    document.getElementById('dock-file-path')?.value.trim()  || '',
-    fileOpen:document.getElementById('dock-file-open')?.value         || 'pdf',
+    fileOpen:_getDockFileOpen(),
+    alsoTab:document.getElementById('dock-also-tab')?.checked||false,
     tooltip: document.getElementById('dock-tooltip-inp')?.value.trim()|| '',
     hashtags:[..._dockHashtags],
   };
@@ -2902,7 +2963,8 @@ function openModalItem(pageId, groupId, itemId) {
   document.getElementById('item-url-inp').value      = item?.url || '';
   document.getElementById('item-open-sel').value     = item?.openMode || 'tab';
   document.getElementById('item-file-path').value    = item?.path || '';
-  document.getElementById('item-file-open').value    = item?.fileOpen || 'pdf';
+  _setItemFileOpen(item?.fileOpen||'pdf');
+  var _iat=document.getElementById('item-also-tab');if(_iat)_iat.checked=!!(item?.alsoTab);
   document.getElementById('item-note-inp').value     = item?.note || '';
 
   // Icône image
@@ -3172,7 +3234,8 @@ function saveItem() {
     openMode: document.getElementById('item-open-sel').value,
     // Fichier
     path:     document.getElementById('item-file-path').value.trim(),
-    fileOpen: document.getElementById('item-file-open').value,
+    fileOpen: _getItemFileOpen(),
+    alsoTab:  document.getElementById('item-also-tab')?.checked||false,
     // Note
     note:     document.getElementById('item-note-inp').value,
     imgData:  _itemType==='image' ? _itemImgData : null,
@@ -4763,31 +4826,6 @@ function _fmtSize(bytes) {
 }
 
 // ── Scan répertoire racine (Chrome/Edge) ─────────────────────────
-async function scanRootDirectory() {
-  if (!window.showDirectoryPicker) {
-    toast('⚠ Utilisez le mode iPad pour importer les fichiers', 'warn'); return;
-  }
-  var btn = document.getElementById('scan-root-btn');
-  if (btn) { btn.disabled=true; btn.textContent='⏳ Scan…'; }
-  try {
-    var dirHandle = await window.showDirectoryPicker({ mode:'read' });
-    _rootDirHandle = dirHandle;
-    var dirName = dirHandle.name;
-    var newFiles = [];
-    await _walkDir(dirHandle, dirName, newFiles);
-
-    // Remplacer l'index de ce répertoire
-    state.fileIndex = (state.fileIndex||[]).filter(function(f){ return f.dir !== dirName; });
-    state.fileIndex = state.fileIndex.concat(newFiles);
-    save();
-    renderSettings('files');
-    toast('✅ ' + newFiles.length + ' fichier(s) dans «\u00a0' + dirName + '\u00a0»', 'ok');
-  } catch(e) {
-    if (e.name !== 'AbortError') toast('❌ ' + e.message, 'err');
-  } finally {
-    if (btn) { btn.disabled=false; btn.textContent='📁 Scanner le répertoire de l\'app…'; }
-  }
-}
 
 async function _walkDir(dirHandle, pathSoFar, results) {
   for await (var entry of dirHandle.values()) {
@@ -4798,7 +4836,7 @@ async function _walkDir(dirHandle, pathSoFar, results) {
         // Ignorer l'app elle-même et les sauvegardes
         if (entry.name === 'index.html' || ext === 'zip') continue;
         var filePath = pathSoFar + '/' + entry.name;
-        _fileHandles[filePath] = entry;
+        window._fileHandles[filePath] = entry;
         results.push({
           dir:      pathSoFar.split('/')[0],
           name:     entry.name,
@@ -4880,13 +4918,31 @@ function selectFileExt(btn) {
 
 var _rootDirName = ''; // Nom du dossier racine stocké
 
+
+function diagScan() {
+  var lines = [];
+  lines.push('API picker : ' + (typeof window.showDirectoryPicker));
+  lines.push('Utilisable : ' + (!!window.showDirectoryPicker && location.protocol!=='file:'));
+  lines.push('isSecureContext : ' + window.isSecureContext);
+  lines.push('protocol : ' + location.protocol);
+  lines.push('href : ' + location.href.slice(0,60));
+  lines.push('userAgent : ' + navigator.userAgent.slice(0,80));
+  toast(lines.join('\n'), 'info');
+  console.log('[DIAG SCAN]', lines.join(' | '));
+}
 async function scanAndImportRoot() {
-  if (!window.showDirectoryPicker) {
-    // Safari/iPad : input webkitdirectory
+  // Sur file:// ou sans showDirectoryPicker → fallback input webkitdirectory
+  var usePickerAPI = window.showDirectoryPicker && location.protocol !== 'file:';
+  if (!usePickerAPI) {
+    toast('📁 Sélectionnez votre dossier de travail (tous les fichiers seront importés)', 'info');
     var inp = document.createElement('input');
     inp.type='file'; inp.multiple=true; inp.webkitdirectory=true; inp.style.display='none';
-    inp.onchange = function(){ importFilesForIpad(inp.files); document.body.removeChild(inp); };
-    document.body.appendChild(inp); inp.click();
+    inp.onchange = function(){
+      if (inp.files.length) importFilesForIpad(inp.files);
+      setTimeout(function(){ document.body.removeChild(inp); }, 100);
+    };
+    document.body.appendChild(inp);
+    setTimeout(function(){ inp.click(); }, 100);
     return;
   }
 
@@ -4894,6 +4950,10 @@ async function scanAndImportRoot() {
   if (btn){ btn.disabled=true; btn.textContent='⏳ Scan…'; }
 
   try {
+    if (location.protocol === 'file:') {
+      toast('⚠ Protocole file:// détecté. Dans Edge, allez dans edge://flags et activez "File System Access API" ou ouvrez via un serveur local (Live Server, etc.)', 'warn');
+      // Tenter quand même
+    }
     var dirHandle = await window.showDirectoryPicker({ mode:'read' });
     _rootDirName = dirHandle.name;
 
@@ -4916,7 +4976,10 @@ async function scanAndImportRoot() {
     renderSettings('files');
     toast('✅ ' + imported + ' fichier(s) importés et stockés — accès sans reconnexion', 'ok');
   } catch(e) {
-    if (e.name !== 'AbortError') toast('❌ ' + e.message, 'err');
+    if (e.name !== 'AbortError') {
+      console.error('Scan error:', e);
+      toast('❌ ' + (e.message || e.toString()), 'err');
+    }
   } finally {
     if (btn){ btn.disabled=false; btn.textContent='📁 Scanner et importer le dossier…'; }
   }
@@ -4938,7 +5001,7 @@ async function _walkDirAndStore(dirHandle, pathSoFar, results, onProgress) {
         var filePath = pathSoFar + '/' + entry.name;
         // Stocker dans IDB (remplace si déjà là)
         await _idbPut(filePath, file);
-        _fileHandles[filePath] = entry;
+        window._fileHandles[filePath] = entry;
         results.push({
           dir:      _rootDirName,
           name:     entry.name,
@@ -5029,7 +5092,7 @@ async function _scanDirForItems(dirHandle, pathSoFar, results) {
       try {
         var file = await entry.getFile();
         await _idbPut(path, file);
-        _fileHandles[path] = entry;
+        window._fileHandles[path] = entry;
       } catch(e){}
 
       results.push({
@@ -5101,7 +5164,7 @@ async function openHtmlItem(item) {
   } catch(e){}
 
   // Fallback handle
-  var handle = (_fileHandles||{})[path];
+  var handle = (window._fileHandles||{})[path];
   if (handle) {
     try {
       var file = await handle.getFile();
@@ -5231,12 +5294,13 @@ function renderSettingsFiles(c) {
               +'<span style="font-size:16px">📁</span>'
               +'<div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--text)">'+esc(d)+'</div>'
               +'<div style="font-size:10px;color:var(--text3);font-family:var(--f-mono)">'+dirs[d]+' fichier(s)</div></div>'
-              +'<button class="btn btn-sm" onclick="scanRootDirectory()" title="Rescanner">↺</button>'
+              +'<button class="btn btn-sm" onclick="scanAndImportRoot()" title="Rescanner">↺</button>'
               +'<button class="btn btn-sm btn-danger" onclick="removeDirFromIndex(\''+esc(d)+'\')">✕</button>'
               +'</div>';
           }).join('')
         : '')
       +'<button class="btn btn-pri btn-sm" id="scan-root-btn" onclick="scanAndImportRoot()">📁 Scanner et importer le dossier…</button>'
+    +'<button class="btn btn-sm" onclick="diagScan()" style="margin-left:6px">🔍 Diagnostic</button>'
       +'<div style="font-size:10px;color:var(--text4);font-family:var(--f-mono);margin-top:6px">Chrome / Edge uniquement</div>'
       +'</div>';
   }
