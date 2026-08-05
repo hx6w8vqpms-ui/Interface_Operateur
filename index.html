@@ -137,9 +137,6 @@ html[data-mode="read"] #brandEditBtn{display:none !important}
 .side-add:hover{background:var(--accent-soft)}
 .side-mini{width:22px;height:22px;border-radius:7px;color:var(--muted);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center}
 .side-mini:hover{background:var(--accent-soft);color:var(--accent)}
-#homeLink{margin:4px 10px;display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:11px;font-size:13.5px;font-weight:600;transition:background .12s}
-#homeLink:hover{background:var(--bg-soft)}
-#homeLink.active{background:var(--accent-soft);color:var(--accent)}
 #tree{flex:1;padding:2px 10px 16px;overflow-y:auto}
 .tree-item{border-radius:11px}
 .tree-row{display:flex;align-items:center;gap:4px;padding:6px 6px;border-radius:11px;cursor:pointer;position:relative;font-size:13.5px;transition:background .12s;min-height:34px}
@@ -310,6 +307,10 @@ html[data-mode="read"] #brandEditBtn{display:none !important}
 #nodeTitle:empty:before{content:"Titre de la fiche…";color:var(--muted)}
 .node-actions{display:flex;gap:3px;padding-top:8px}
 #tagBar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:2px 0 20px;padding-left:2px}
+#nodeEquipSugs{display:none;align-items:center;gap:6px;flex-wrap:wrap;margin:-12px 0 18px;padding-left:2px}
+.eq-sugbtn{border:1px solid var(--border-strong);background:var(--panel);color:var(--accent);font-weight:700;
+  font-size:11.5px;padding:4px 10px;border-radius:16px;cursor:pointer;font-family:inherit}
+.eq-sugbtn:hover{border-color:var(--accent);background:var(--accent-soft)}
 .tag{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;background:var(--accent-soft);color:var(--accent);
   padding:4px 10px;border-radius:20px;cursor:pointer;transition:all .12s}
 .tag:hover{background:var(--accent);color:#fff}
@@ -444,6 +445,116 @@ html[data-mode="read"] .contact-tools,html[data-mode="read"] #addContactBtn{disp
 .child-card.add:hover{border-color:var(--accent);color:var(--accent);transform:none}
 .empty-hint{color:var(--muted);font-size:12.5px;padding:6px 2px;font-style:italic}
 
+/* ---------- Module Équipements ---------- */
+.eq-bar{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+#eqSearch{width:100%;height:44px;border-radius:13px;border:1px solid var(--border-strong);background:var(--panel);
+  padding:0 16px;font-size:15px;outline:none;box-shadow:var(--shadow)}
+#eqSearch:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.eq-cats{display:flex;gap:6px;flex-wrap:wrap}
+.eq-main{display:grid;grid-template-columns:minmax(260px,340px) 1fr;gap:16px;align-items:start}
+@media (max-width:1000px){.eq-main{grid-template-columns:1fr}}
+.eq-list{background:var(--panel);border:1px solid var(--border);border-radius:14px;max-height:calc(100vh - 300px);min-height:200px;overflow-y:auto;padding:6px}
+.eq-row{display:flex;flex-direction:column;gap:1px;padding:8px 10px;border-radius:9px;cursor:pointer;transition:background .1s}
+.eq-row:hover{background:var(--bg-soft)}
+.eq-row.sel{background:var(--accent-soft)}
+.eq-row .eq-code{font-size:12px;font-weight:800;color:var(--accent);font-family:ui-monospace,Menlo,monospace}
+.eq-row .eq-des{font-size:12.5px;font-weight:600;line-height:1.3}
+.eq-row .eq-zone{font-size:10.5px;color:var(--muted)}
+.eq-detail{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:18px 20px;box-shadow:var(--shadow);min-width:0}
+.eq-abbrs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.eq-abbr{font-family:ui-monospace,Menlo,monospace;font-size:13px;font-weight:800;background:var(--accent);color:#fff;padding:3px 10px;border-radius:8px}
+.eq-detail h2{font-size:19px;letter-spacing:-.01em;margin:2px 0 4px}
+.eq-meta{font-size:12px;color:var(--muted);margin-bottom:12px}
+.eq-head{display:flex;gap:12px;align-items:flex-start}
+.eq-img{max-width:100%;max-height:300px;border-radius:12px;border:1px solid var(--border);margin:4px 0 8px;cursor:zoom-in;display:block}
+.eq-comment{background:var(--accent-soft);border-left:3px solid var(--accent);padding:8px 12px;border-radius:8px;font-size:13px;margin:4px 0 10px;white-space:pre-wrap}
+.tag-kwbtn{border:1px dashed var(--border-strong);background:transparent;border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer;color:var(--muted);font-family:inherit}
+.tag-kwbtn:hover{border-color:var(--accent);color:var(--accent)}
+.tag .ed{opacity:.55;cursor:pointer;font-size:10px;margin-left:2px}
+.tag .ed:hover{opacity:1}
+.tag.dragover{outline:2px dashed var(--accent);outline-offset:2px}
+.tag-editin{border:1px solid var(--accent);background:var(--panel);border-radius:20px;padding:4px 11px;font-size:11.5px;outline:none;width:110px}
+.ne-lbl{font-size:11px;font-weight:700;color:var(--muted);white-space:nowrap}
+.eq-sugbtn.linked{background:var(--accent-soft);border-color:var(--accent)}
+.eq-sugbtn.linked .x{opacity:.6;margin-left:2px}
+.eq-sugbtn.linked .x:hover{opacity:1}
+.eq-sugbtn.linked.dragover{outline:2px dashed var(--accent);outline-offset:2px}
+.eq-sugbtn.ghost{border-style:dashed;color:var(--muted)}
+.eq-sugbtn.addbtn{border-style:dashed}
+.eq-serchips{display:flex;gap:6px;flex-wrap:wrap;margin:2px 0 10px}
+.eq-serchip{border:1px solid var(--border-strong);background:var(--panel);border-radius:16px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+.eq-serchip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.eq-panel.gp{background:#8d8a84;border-color:#6f6c66;padding:12px 10px;overflow-x:auto}
+html[data-theme="dark"] .eq-panel.gp{background:#4d4b47;border-color:#333}
+.eq-panel.gp .eq-panel-title{color:#fff}
+.eq-panel.gp .eq-panel-title span{color:#e5e2dc}
+.gp-row{display:flex;flex-wrap:nowrap;gap:5px;margin-bottom:9px;padding-bottom:7px;border-bottom:1px solid #00000022;justify-content:flex-start;min-width:max-content}
+.gp-row:last-of-type{border-bottom:none;margin-bottom:0}
+.gp-cell{display:inline-flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;padding:4px 3px 5px;border-radius:6px;cursor:pointer;min-width:44px;max-width:78px;flex-shrink:0;background:#00000012;transition:transform .1s,background .1s}
+.gp-cell:hover{background:#00000030;transform:translateY(-1px)}
+.gp-lbl{font-family:ui-monospace,Menlo,monospace;font-size:7.5px;font-weight:700;color:#fff;background:#3a3a3a;border:1px solid #222;border-radius:3px;padding:1.5px 3px;text-align:center;line-height:1.15;max-width:74px;overflow:hidden;word-break:break-all}
+.gp-led{width:13px;height:13px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff7b6d,#b3170c 65%);border:2px solid #2e2e2e;box-shadow:inset 0 0 3px #00000066}
+.gp-cc{display:flex;flex-direction:column;align-items:center;gap:2px}
+.gp-cc i{width:15px;height:15px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#9ff09b,#1c8a17 65%);border:2px solid #2e2e2e;display:block}
+.gp-cc b{width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff8b7d,#a01208 65%);border:2px solid #2e2e2e;display:block}
+.gp-z{width:32px;height:32px;border-radius:5px;background:url(data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5Ojf/2wBDAQoKCg0MDRoPDxo3JR8lNzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzf/wAARCABIAEgDASIAAhEBAxEB/8QAHAAAAgIDAQEAAAAAAAAAAAAAAAUEBgIDBwEI/8QANxAAAQMDAgQDBgQFBQAAAAAAAQIDBAAFEQYhEjFBUQcTcRQiMmGBwSMzkdEVFjRysVJkssLw/8QAGAEAAwEBAAAAAAAAAAAAAAAAAAECAwT/xAAcEQEBAAMBAQEBAAAAAAAAAAAAAQIRMSFBIkL/2gAMAwEAAhEDEQA/AKNHZYwAWwdqkJjxyfykgVHjHYelT4zfGc7EVvpmuto8LHJ1vZlSJLEcvJC0teWVEJO4yc86xd8PrUwt1C7xHCmSQ6PZlngx33ry3a7vVvhNREGM820nhQp5slWByGQRW9euJqiXnoVrKt1Fao+/Xfn61Osj8RkaEs6zhN9i522MZYO/1qe54RZbJauEcrx7oLKgCfXNQGddy5PEpu32o8XurzF39DvTyPrS7KjhLaIaOEYAS0fd9N6cxyo8cwnWtEV1bTjQC21FCh2IODS16OzjZAFWW9ElxalkqWpRUpR6k8zVdeIO4IPoaeiWPROUw3WwfdCiQPqaKNF/073r9zRXPl1tOLB4O2eDPlz5E6Mh9UdDflJcHElJUTk477VZ/Eq0W+PZm5seIyzIS8lvjaQE5Sc5BA58qVeEIVGbvLiUBRS02QknGccXXpTzXbyrlo5LgQG1KkpHDxBWMFQ5jatf6Z/HI5MtmM0X3yeDOEISd1nt8h3NL0XWTPfZjhTbSHFgcAPCkJ68R7d80tvz5Vc3GAcoj/hJ+nM/U5rVbncOkgEqOEJAGSSf/ClllbRIuGqEMWa9xjarmzMivshK1skYDg5ggDHfHy9Kaabu0aW97LIARJO6CPhc7gdj8qpV7blQwuLOjOxpCAlwNuoKVDqD9Rmoapa0eW+yopWghaFDoRuKUysPTsunbJEnamSicyl5lDSnA2r4SRjGR1G/KnHiZZLWNIzJTcCO2/H4S0422EFOVAHlzGDWnw+kJuCo9yQPeciqyPntUzVUl66aCua3m0oWSkAJO2ApJ7mqt3lBOOX6NGGHvX7mis9Jp4EyEnor7missurnF68PWCIt5bZBK1MIACTgk4VW7XBfh6CY81JQ6JSMjGMZKunT0qP4QyfaFXM55Ia/7U08WU8Wk8f7pv71pb+to+Pm+4LP8QklXMuE/rvWmNJejyEusqwptYUn1qdf4a2nw+lOUq2VSxsErUCCDgbGpoNL/qC532aqdcpBcf4Aji5YA5CoZXwxkDsmtLySGlH6Vvix3ZspqO0kkkgYpB3zwcQf5aZz8flrAFPLtFdhaLnMyGghQKT+YV8W6d8n9MdMUs8OUpiOMwWzs3HVn12qw67XwaTnq7JT/wAhVcsDk1hATJmAcuP70VhppzzHJa+6/uaKjLqpwm05fJ9nke026QplzHCrbIUOxB503u+pLrfggXKT5iEbpbQkISD3wOtVCOrAFOYfvo+fSq2l69HS+2UrTkHpVdutvEQtlClFBJASenWvorTVg085ZIi0xIklSmwXHXUhSirrnPLB2xVN8VLO0zp2Q+i0wIjbElBRIYA4lJKiMHfbYjoaKHFlMqeKGkHClrABrpGjrBGhMqdX+I9/q7Un8OLc3cNTtgxWJqGW1OKZdIx2HMjJrv4s1iQySYENpvhyrZKeEeudqJ4HLZU962yA9AdU06g5StPSl2oNX3i7RDGmyh5OclDaAgK9cc61XaQ0h2QlpfG2FqDau6cnB/SqxMeKgadoWPRquJl891H/ACaKw0R/Su/3H/JorO9XCtFhkIGA1KP0TUlqBMYGQzIAHU8Ioop7LSSXJpTw+W5j+5H71DmQn5bK2nUvcK+fvI/eiijY0gRtOmM55iBI4sY+JH71PRDkIGAHvqpH70UUbGmSrdLcGfJkEHqOGtK7HJWDlqV+iaKKNjR5peC7BadbcQ4kZ2K8ZPXpRRRSN//Z) center/cover;border:1px solid #1a1a1a;box-shadow:0 1px 3px #00000066}
+.gp-bp{width:14px;height:26px;border-radius:7px;background:linear-gradient(#555,#2c2c2c);border:2px solid #1c1c1c;position:relative}
+.gp-bp::after{content:'';position:absolute;left:50%;top:3px;transform:translateX(-50%);width:6px;height:9px;border-radius:3px;background:#cfcfcf}
+.gp-meter{width:27px;height:46px;border-radius:5px;background:url(data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5Ojf/2wBDAQoKCg0MDRoPDxo3JR8lNzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzf/wAARCABkADkDASIAAhEBAxEB/8QAGwAAAgMBAQEAAAAAAAAAAAAABgcABAUDAgH/xAA6EAACAQMCAwQHBQcFAAAAAAABAgMABBEFIQYSMQcTIlEUI0FhgZGxJEJiccEVJTJToaKyY2Rz0eH/xAAWAQEBAQAAAAAAAAAAAAAAAAABAAL/xAAaEQEBAQEAAwAAAAAAAAAAAAAAARECITFB/9oADAMBAAIRAxEAPwC5WTZ8faboeqSXFu8N2xiMLIXZMeLOQQpBrpxJdGz0G+nVsMsJCnyJ2H1pMfGiGnTqHarpepd16bpEMndklR6bIOuM9I/cK9wdomm3Vu9tBoUBiCs5Vb5xgYAOPB5Abe6knn8619D1aLTJkklto7gKcmOQZVx5H3UozG7SdFEof9iwrIr8/ML2QEt5n1e5q+nbJaIzsmmQAyNzN9rfc4A/l+QFJO6mFxcyzqixiRywRc4XJ6DPsFcagc8nG9pxRrUB5I7eRYWiSNZGfnJPMTkqMbCtGk/wrk67aHJ2kBpxVmtQL9oc3dcNuuT62ZF+p/Sleq56UxO06TGm2UWd2nLY88L/AO0vY8jfPWmCpsBvmoVB86110K69GE7SIEZQ2wJP9BVU2ojlVZJgMkAjlII+dIUgv5/KvjLjrn4itSS3hjRmE3iC8wGRg71mysWO/wAsVJq8Jj982x6+sX604KUXCQ/ekB8pU+tN2itQBdqD76dH/wAjfQUEwg8w9u9GHacc3tgvlC5/uH/VCllGXuI1O2WFMH0cahHyaQiAZ2UYxn9RQVdRySXbrGjEg9Au/wAt6PNaj+xogUnxDoqn2fiOKDHvpYrklEQchYD1YU+W+KoFQ2t1gDuZMlcjw9RVVuuN/jW0dXmJyY4+meh6+dY8nUknfNSbnCYxfW5851ps0qOFQReWx87haa9Fahc9pm+qWY/25/yND+koDdRZG3OMgdTvRP2g200+r2phjd+W3+6pP3jVHh3RNQuL+F4bK4ZFlGSIiQN/yrUg2CHVmFzEipBNs2cvbq3+VCbaRO913ciiHvOYoXGAcb9B0phcQaRc93F3llIQGO72jyAfLpQSuk6ks7mG3mBOR4YyNj7qpKtjIvLJ7N4g5Vu8QMCvTBqlKu+N6Nk4O4gvIVnl0+9eNF5VPdE4HuFZOrcL6xZvGZtNu4hIeVS0LeKnKE4dWNb237osU9IXBfY+ymhS30e1ktL+2imRkcTKSrrgjemRWK0xNV4sveGdSjFmsbCWIMwcdcE1R07i3VJdZ7xLx4vSbjvHjjbCgsd6x+0dymp2fkYD/kayNFuC+s2zttzSrsPhWplFhp8Ra7fPHFHNe+EscCR3x/bQ9a6pc+klBq5PgZgUYqFPsySKs8QTd2sJMvd5J39J7rP9Dml5POxmfcnJO+c/1oBnX/FusWtvFDa65KA2c+NSSNsHONqoaxrur6fbWGqpq8lxO0mAkkvPjbOQtLzvyTk1r6xclNO01sBvDuD+VGHGs+pXura1a3eouzzsyAkj2Z+m9G9L7Tr46jeWk5jRCJVTCdNsUwaL4Jfdpy4u9PcDcxuM/EUOaK/LqFsf9VfrRT2nr6vTn/FIM/AUHac3LdwnOwdfrWuRTK4ikKRRkM6+I/wyIufi/wClBtvcabDeFnEnKFcOJQsgZj06fWjHiDBtI2yBh+vq/L8e1L1LVru/miR1XBZiTggAb/d2+VUTvqtzazNbG1AUiILIFXAzXrWZUk0qwCspdRggHpVF4Bb3jW9znwNhuU+z3V11iySxZQrluZiVz7U9lSbHCpJFvnf7SPqKZtLrg7lksv4Rzx3SNnG+CQMUxaKYC+00D9m2R9vpBH9tAEbsjZU4I9tSpTBWxJrupSR8sl0WAGwZVP6VVl1K8aRGMxDKfCVAUj5VKlKUpZHeVndizE5JPU15lkeRl7xi2BgZPQVKlAFfBJJhlXJx30Z69fEKZNSpR17Mf//Z) center/cover;border:1px solid #1a1a1a;box-shadow:0 1px 3px #00000055}
+.gp-sec{width:38px;height:72px;border-radius:5px;background:url(data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5Ojf/2wBDAQoKCg0MDRoPDxo3JR8lNzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzf/wAARCACWAEsDASIAAhEBAxEB/8QAGwAAAgMBAQEAAAAAAAAAAAAAAQYAAgQDBQf/xAA6EAABBAECAwMJBwIHAAAAAAABAAIDEQQSIQcxUUFxsQUTIjI0YXJzoQYUIzNSgZEkkkJUYmOCotH/xAAXAQEBAQEAAAAAAAAAAAAAAAAAAQID/8QAFxEBAQEBAAAAAAAAAAAAAAAAAAExEf/aAAwDAQACEQMRAD8AVeJO48nj5h8Ej0nnibG+GfHhkLS6GaaJxbdEtIFhIyQqKUipaqJSNKIoDSICCKA0jsoogdOKcjZ81k0d6JcrIkZqBBLS4UaSKPenXiSfS8nj3SHwSUVItRFBRVBARpAKw5oDSKCKAooBH9kDbxJ/M8n/AAyeISWE58ST+NgDs0P8QktSYt1sysmCXDxoY8VkUkV65Qd5L6rKgrAKoiI3UAV4mGWRsbANTiALPaUAqlF1yIXY8pjfp1Doqg9UACspQ7FKKBq4k/n4HwP8Qkwc06cR98jA+B/iEmAbqTFuijSgCJ2CqLRRPldpY2+vQLRHiStkDopIXPabDdQK5ZDvMwRRiwHt1PrtV2RRhltIDqtpCgmS6WaTVMae0BtaaAA7FxFtNOFFd53mXHhmd65trj1pc6D2AjkeXeqArLmwkrpXuQNXEf2jA+W/xCTaTlxH/PwPgf4hJzdypMW634GHHOzU8vvURTe4f+qmXjMjg1NLrsU6wWuvmB3LLXVA8lestkbI82BkTnBs0WwDv8QXYYL2GiRX6jsAvNO41Dmupa843nC69+RKir5b4w1sUJtkY2PUrhjk6SPff0XFjjIaG56LeIzFBbhen6kqwZ2+u/4iuu6jW0d+Z3KvQQMvEc/1WD8t/iEnt5pw4j+1YPy3+IScFJi3Vyd0FBupSqBuNwe8dV33+5/uVyra11d7GO8oM+E/zbjTC7v2Wo6nO1ym3dgHIdyyQXfNaxugIVlKVq70QxcR/acH5b/EJOTjxG9qwflO8Qk/tUjV1Ytc2tTSLFixVogLvPmTZEUUUpaWxABvogGqrmqMHMns5BVFCDp5LpJ7HH1NqO9Q9ytMKxYR7kGWAG1rDD7lmh9ZbQNggDWq1IgI6Sqhg4jAeewOuh/iEnUnLiJf3nB6ebf4hKOlZmNXVQNl1YOxANXQBVAkFRO7lfIH4EI/0qsp/CcuuUKjhHboCDJCPTW5rdliivWV6DPUF0kQA1WoqwCP7Kj2+IO+ThDpG/xCUwE6/bnElmdiTRttrQ5p910UpjEm/R/2CzMauuICtS6jHl/T9QiYZACS3Yb8wqjNKPQPetGc2nRD/bC8vIy3Pdpj2aCgcqdzg6R7nUK9Log0xj016ETfQCx4sb5x5yNhIveuxelHFJW7CEAAR0BXEL+n1VvNv/SP7lUfRnNa9pa9oc08wRYXL7pjf5eH+wKKLm6LiCEcoox/xC8j7XMZH9nM5zGMa7QBYaOoUUQfL/J7oWyXPEZBY2Dq7d1p8pyYssgOJjugbvbS/V3fRRRbYMXDwkZ0w7HR7hP9DoP4UUWa1EodB/ClDoP4UUUV/9k=) center/cover;border:1px solid #0a0a0a;box-shadow:0 1px 3px #00000066}
+.gp-cell.hit{background:var(--accent);box-shadow:0 0 0 2px #fff,0 0 14px var(--accent);animation:gpPulse 1.4s infinite}
+.gp-cell.hit .gp-lbl{background:#fff;color:var(--accent);border-color:#fff}
+@keyframes gpPulse{0%,100%{box-shadow:0 0 0 2px #fff,0 0 8px var(--accent)}50%{box-shadow:0 0 0 3px #fff,0 0 22px var(--accent)}}
+html[data-mode="read"] #eqAddBtn,html[data-mode="read"] #eqImpBtn{display:none}
+.eq-train{width:100%;height:auto;margin:4px 0 8px}
+.eq-veh{width:100%;height:auto;margin:2px 0 8px}
+.eq-rep.hot circle{filter:drop-shadow(0 1px 3px #0004)}
+.eq-panel{border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin:8px 0;background:var(--panel-2)}
+.eq-panel-title{font-size:11px;font-weight:800;letter-spacing:.05em;color:var(--muted);margin-bottom:8px}
+.eq-panel-title span{font-weight:600;opacity:.7}
+.eq-prow{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:4px;padding-bottom:4px;border-bottom:1px dashed var(--border)}
+.eq-prow:last-child{border-bottom:none}
+.eq-cell{font-family:ui-monospace,Menlo,monospace;font-size:9.5px;font-weight:600;padding:3px 5px;border-radius:5px;
+  background:var(--panel);border:1px solid var(--border);color:var(--muted);white-space:nowrap}
+.eq-cell.rb{background:#e8f5e0;color:#3d6b1f;border-color:#b6d89a}
+html[data-theme="dark"] .eq-cell.rb{background:#22301a;color:#9fce7a;border-color:#3a5227}
+.eq-cell.hit{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:800;font-size:10.5px;
+  box-shadow:0 0 0 3px var(--accent-soft);animation:pulseWarn 1.6s ease-in-out infinite}
+.eq-atrep{font-size:12px;color:var(--muted);margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.eq-replink{font-size:11px;font-weight:700;font-family:ui-monospace,Menlo,monospace;padding:3px 8px;border-radius:7px;
+  background:var(--accent-soft);color:var(--accent)}
+.eq-replink:hover{background:var(--accent);color:#fff}
+.eq-src{font-size:10.5px;color:var(--muted);margin-top:10px;font-style:italic}
+.side-big{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 10px 6px}
+.bigbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;height:76px;padding:6px;border-radius:14px;
+  border:1px solid var(--border-strong);background:var(--panel);font-size:12px;font-weight:700;
+  white-space:nowrap;overflow:hidden;box-shadow:0 1px 2px #0000000d;transition:all .15s}
+.bigbtn span{font-size:24px;line-height:1.1}
+.bigbtn:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
+.bigbtn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+#docSide{display:flex;flex-direction:column;flex:1;min-height:0}
+#docSide #tree{flex:1;overflow-y:auto}
+#eqSide{display:none;flex-direction:column;flex:1;min-height:0;padding:0 10px 10px;gap:8px}
+#eqSide.on{display:flex}
+#eqSide .eq-list{flex:1;max-height:none;min-height:80px}
+.eq-select{border:1px solid var(--border-strong);background:var(--bg-soft);border-radius:10px;
+  padding:8px 10px;font-size:12.5px;outline:none;width:100%}
+#eqSide #eqSearch{width:100%;height:38px;border-radius:11px;border:1px solid var(--border-strong);
+  background:var(--panel);padding:0 12px;font-size:13px;outline:none}
+#eqSide #eqSearch:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.sug-row{display:flex;align-items:center;gap:9px;padding:8px 11px;border-radius:11px;background:var(--panel-2);
+  border:1px solid var(--border);cursor:pointer;font-size:12.5px;transition:all .12s;margin-bottom:6px}
+.sug-row:hover{border-color:var(--accent)}
+.sug-row .tt{font-weight:650;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sug-row .why{font-size:10px;color:var(--accent);font-weight:700;white-space:nowrap}
+.eq-zonehead{display:flex;align-items:center;justify-content:space-between;margin:16px 0 8px}
+.eq-zonehead h3{font-size:13.5px;font-weight:750}
+.eq-nodecard{display:flex;align-items:center;gap:11px;padding:12px 14px;border-radius:13px;background:var(--panel-2);
+  border:1px solid var(--border)}
+.eq-nodecard .ic{font-size:22px}
+.eq-nodecard .tt{font-weight:700;font-size:13.5px}
+.eq-nodecard .sub{font-size:11px;color:var(--muted);margin-top:2px}
+
 /* ---------- Modales / menus / toast ---------- */
 #overlay{position:fixed;inset:0;background:#0007;backdrop-filter:blur(3px);z-index:90;display:none;opacity:0;transition:opacity .18s}
 #overlay.on{display:block;opacity:1}
@@ -552,15 +663,35 @@ html[data-mode="read"] .contact-tools,html[data-mode="read"] #addContactBtn{disp
 
   <!-- ======= Panneau latéral : arborescence ======= -->
   <nav id="sidebar">
-    <button id="homeLink"><span>🏠</span> Accueil — Mur d'accès rapide</button>
-    <div class="side-head"><span>Documentation</span>
-      <div style="display:flex;gap:2px;align-items:center">
-        <button class="side-mini" id="expandAllBtn" title="Tout déplier">＋</button>
-        <button class="side-mini" id="collapseAllBtn" title="Tout replier">−</button>
-        <button class="side-add" id="addRootBtn">＋ Ajouter</button>
-      </div>
+    <div class="side-big">
+      <button id="homeLink" class="bigbtn" title="Accueil — documentation et mur d'accès rapide"><span>📚</span>Accueil</button>
+      <button id="equipLink" class="bigbtn" title="Ouvrir les appareillages dans un nouvel onglet"><span>🔍</span>Appareillages</button>
     </div>
-    <div id="tree"></div>
+    <div id="docSide">
+      <div class="side-head"><span>Documentation</span>
+        <div style="display:flex;gap:2px;align-items:center">
+          <button class="side-mini" id="expandAllBtn" title="Tout déplier">＋</button>
+          <button class="side-mini" id="collapseAllBtn" title="Tout replier">−</button>
+          <button class="side-add" id="addRootBtn">＋ Ajouter</button>
+        </div>
+      </div>
+      <div id="tree"></div>
+    </div>
+    <div id="eqSide">
+      <div class="side-head" style="padding:8px 4px 2px"><span>Appareillages</span>
+        <div style="display:flex;gap:2px;align-items:center">
+          <button class="side-mini" id="eqAddBtn" title="Ajouter un appareil au catalogue">＋</button>
+          <button class="side-mini" id="eqExpBtn" title="Exporter le catalogue d'appareillages (JSON : flotte, appareils ajoutés/modifiés, mots-clés, images)">⤓</button>
+          <button class="side-mini" id="eqImpBtn" title="Importer un catalogue d'appareillages (JSON)">⤒</button>
+          <button class="side-mini" id="fleetBtn" title="Gérer la flotte TGV : séries, sous-séries, tranches de rames et motrices">⚙</button>
+        </div>
+      </div>
+      <select id="eqSerie" class="eq-select" title="Filtrer par série"></select>
+      <select id="eqFam" class="eq-select" title="Filtrer par famille d'appareils"></select>
+      <input id="eqSearch" type="text" placeholder="🔍 Rechercher un appareil…" autocomplete="off" spellcheck="false">
+      <div id="eqCount" style="font-size:10.5px;color:var(--muted);font-weight:700;padding:0 2px"></div>
+      <div class="eq-list" id="eqList"></div>
+    </div>
     <div class="side-foot"><span id="statsLine"></span><span id="verLine" title="Informations sur la version">RailDoc</span></div>
   </nav>
   <div id="sideBackdrop"></div>
@@ -586,6 +717,19 @@ html[data-mode="read"] .contact-tools,html[data-mode="read"] #addContactBtn{disp
       </div>
     </section>
 
+    <!-- Vue Équipements -->
+    <section id="equipView" class="view">
+      <div class="container">
+        <div class="home-hero">
+          <div>
+            <h1>🧰 Équipements — TGV Duplex</h1>
+            <p>Noms, abréviations et emplacements (GDA, annexes 2A/2B). Cliquez un repère du schéma pour voir ce qui s'y trouve.</p>
+          </div>
+        </div>
+        <div class="eq-detail" id="eqDetail"></div>
+      </div>
+    </section>
+
     <!-- Vue Fiche -->
     <section id="nodeView" class="view">
       <div class="container">
@@ -603,6 +747,7 @@ html[data-mode="read"] .contact-tools,html[data-mode="read"] #addContactBtn{disp
           </div>
         </div>
         <div id="tagBar"></div>
+        <div id="nodeEquipSugs"></div>
 
         <!-- Mur d'accès rapide de la fiche -->
         <div class="zone" id="nodeWallZone">
@@ -714,6 +859,9 @@ html[data-mode="read"] .contact-tools,html[data-mode="read"] #addContactBtn{disp
 <input type="file" id="fiScanDir" webkitdirectory hidden>
 <input type="file" id="fiScanFiles" accept=".pdf,application/pdf,.doc,.docx,.docm,.xls,.xlsx,.xlsm,.ppt,.pptx,.pptm" multiple hidden>
 <input type="file" id="fiPack" accept=".json,application/json" hidden>
+<input type="file" id="fiKw" accept=".pdf,application/pdf,.doc,.docx,.docm,.xls,.xlsx,.xlsm,.ppt,.pptx,.pptm" hidden>
+<input type="file" id="fiEqImg" accept="image/*" hidden>
+<input type="file" id="fiEqImp" accept=".json,application/json" hidden>
 
 <script>
 'use strict';
@@ -730,9 +878,15 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='7.14';
-const APP_VERSION_DATE='4 août 2026';
+const APP_VERSION='8.5';
+const APP_VERSION_DATE='5 août 2026';
 const CHANGELOG=[
+  ['v8.5',"Armoire graphique : vrais visuels photo extraits de la planche ATL 300 (commutateur rotatif Z avec positions NORMAL/ISOLÉ, voltmètre batterie à aiguille, manipulateur Z-SEC/ISO) · chaque rangée de disrupteurs CC tient désormais sur une seule ligne (défilement horizontal si l'écran est étroit)"],
+  ['v8.4',"Armoire BLOC CABINE graphique et interactive (voyants, disrupteurs vert/rouge, commutateurs rotatifs, voltmètres… cliquables — un clic sur une commande ouvre son appareil) · appareils multi-séries : onglets de série sur la fiche appareil avec emplacement spécifique par série (schéma, repères, position armoire) éditable · mots-clés des fiches : modification ✏️, tri A→Z et réorganisation par glisser-déposer · appareillages liés à une fiche : ajout via recherche ＋, suppression, tri, suggestions adoptables en un clic · extraction de mots-clés désormais depuis les fichiers importés dans la fiche (liste déroulante)"],
+  ['v8.3',"Nouveau catalogue 🚄 TGV Atlantique (TVM 300) : ~170 appareils extraits du GDA TGV A (annexes 2A/2B) — schémas motrice, remorques R1/R10 et R2 à R9 avec repères cliquables, armoire BLOC CABINE ATL 300 fidèle à la planche photo, bloc auxiliaire pneumatique (repère 22) · rame de 12 caisses dessinée · série TGV Atlantique ajoutée à la flotte (rames 301 à 405) · le module gère désormais plusieurs catalogues en parallèle (Duplex + Atlantique + vos ajouts)"],
+  ['v8.2',"Appareillages éditables : ajout ＋, modification ✏️ et suppression 🗑 des appareils · appartenance à une ou plusieurs séries TGV (cases à cocher) devenue le premier filtre · position dans l'armoire du bloc cabine (ligne / colonne, sélection par clic sur la case) mise en évidence 📍 sur le visuel · image et commentaire par appareil · import / export du catalogue (⤒ / ⤓, avec flotte, mots-clés et images) · boutons Accueil / Appareillages de taille identique · extraction de mots-clés depuis un PDF/Office disponible dans toutes les fiches (bouton 📄 à côté des mots-clés)"],
+  ['v8.1',"Appareillages ✚ : deux grands boutons 📚 Accueil / 🔍 Appareillages (la loupe ouvre un nouvel onglet) · liste et recherche des appareils déplacées dans le panneau de gauche avec filtres série et famille · gestion de la flotte TGV éditable (séries, sous-séries, tranches de rames, motrices) · mots-clés par appareil (manuels + automatiques + extraction depuis un PDF/Office) · suggestions croisées : fiches proposées sur l'appareil et appareils proposés sur les fiches · fiche liée par appareil (notes, liens, contacts, fichiers, sous-fiches, accès rapide)"],
+  ['v8.0',"Module 🧰 Équipements TGV Duplex : catalogue complet du GDA (annexes 2A/2B) — recherche instantanée, filtres par famille (CC, DJ, Z, RB, BP…), fiche détail avec schéma de rame, schéma du véhicule et repères cliquables, armoire BLOC CABINE et bloc pneumatique interactifs avec surbrillance de l'appareil ; intégré à la recherche globale"],
   ['v7.14',"Boutons ＋ / − dans le panneau de gauche pour tout déplier ou tout replier l'arborescence"],
   ['v7.13',"Contacts : zone 📞 dans chaque fiche (numéros cliquables pour appeler, copie en un clic, n° de secours, notes) · répertoire global 📞 dans la barre du haut avec filtre instantané · contacts intégrés à la recherche et aux packs · tuiles d'appel possibles sur le mur (lien tel:)"],
   ['v7.12',"Aperçus automatiques pour illustrer un lien : 📸 capture du site (internet, sites publics), 🔖 logo/favicon, 🅰 monogramme généré hors ligne (couleur unique par site — idéal intranet/VPN)"],
@@ -796,6 +950,8 @@ function fileRefCount(id){let n=0;
   for(const nd of data.nodes){for(const a of nd.files)if(a.fileId===id)n++;
     if(nd.iconImg===id)n++;
     for(const l of nd.links||[])if(l.type==='file'&&l.target===id)n++;}
+  for(const it of data.equipCustom||[])if(it.img===id)n++;
+  for(const k in data.equipOver||{})if(data.equipOver[k].img===id)n++;
   const walls=[data.tiles,...data.nodes.map(nd=>nd.tiles||[])];
   for(const list of walls)for(const t of list){if(t.img&&t.img.type==='file'&&t.img.value===id)n++;
     if(t.action&&t.action.type==='file'&&t.action.value===id)n++;}
@@ -996,7 +1152,32 @@ function normalizeData(){
   if(!data.settings.open)data.settings.open=[];
   if(!data.settings.mode)data.settings.mode='edit';
   if(!Array.isArray(data.log))data.log=[];
-  for(const n of data.nodes){if(!n.tiles)n.tiles=[];if(!n.contacts)n.contacts=[];}
+  for(const n of data.nodes){if(!n.tiles)n.tiles=[];if(!n.contacts)n.contacts=[];if(!n.equip)n.equip=[];}
+  if(!data.equipMeta)data.equipMeta={};
+  if(!Array.isArray(data.equipCustom))data.equipCustom=[];
+  if(!data.equipOver)data.equipOver={};
+  if(!Array.isArray(data.fleet)||!data.fleet.length)data.fleet=[
+    {id:'serie_duplex',name:'TGV Duplex',catalog:'duplex',subs:[
+      {name:'Duplex (DUP)',rames:'201 à 294',motrices:'29201 à 29388'},
+      {name:'Réseau Duplex (RD)',rames:'601 à 619',motrices:''},
+      {name:'DASYE',rames:'701 à 756',motrices:''}]},
+    {id:'serie_atl',name:'TGV Atlantique (TVM 300)',catalog:'atl',subs:[
+      {name:'Atlantique (ATL)',rames:'301 à 405',motrices:'24001 à 24210'}]},
+    {id:'serie_2n2',name:'Euroduplex (2N2)',catalog:null,subs:[
+      {name:'3UA',rames:'801 à 825',motrices:''},
+      {name:'3UF / Océane',rames:'', motrices:''}]},
+    {id:'serie_reseau',name:'TGV Réseau',catalog:null,subs:[
+      {name:'Bicourant',rames:'501 à 554',motrices:''},
+      {name:'Tricourant',rames:'4501 à 4530',motrices:''}]},
+    {id:'serie_pos',name:'TGV POS',catalog:null,subs:[
+      {name:'POS',rames:'4401 à 4419',motrices:''}]},
+    {id:'serie_pbka',name:'Thalys PBKA',catalog:null,subs:[
+      {name:'PBKA',rames:'4301 à 4346',motrices:''}]},
+    {id:'serie_pba',name:'Thalys PBA',catalog:null,subs:[
+      {name:'PBA',rames:'4532 à 4540',motrices:''}]}];
+  if(Array.isArray(data.fleet)&&data.fleet.length&&!data.fleet.some(s=>s.id==='serie_atl'))
+    data.fleet.splice(1,0,{id:'serie_atl',name:'TGV Atlantique (TVM 300)',catalog:'atl',subs:[
+      {name:'Atlantique (ATL)',rames:'301 à 405',motrices:'24001 à 24210'}]});
   const walls=[data.tiles,...data.nodes.map(n=>n.tiles)];
   for(const list of walls)for(const t of list){if(!t.kind)t.kind='tile';if(t.kind==='tile'&&!t.size)t.size='s';}}
 const nodeById=id=>data.nodes.find(n=>n.id===id)||null;
@@ -1063,6 +1244,8 @@ function navigate(hash){if(location.hash!==hash)location.hash=hash;else route();
 function route(){const h=location.hash;
   const m=h.match(/^#\/node\/(.+)$/);
   if(m&&nodeById(m[1])){state.view='node';state.nodeId=m[1];}
+  else if(/^#\/equip/.test(h)){state.view='equip';state.nodeId=null;
+    const em=h.match(/^#\/equip\/(.+)$/);if(em)state.eqSel=decodeURIComponent(em[1]);}
   else{state.view='home';state.nodeId=null;}
   closeSearch();closeCtx();
   state.editWallOwner=null;
@@ -1071,9 +1254,15 @@ function route(){const h=location.hash;
 function render(){
   $('#homeView').classList.toggle('on',state.view==='home');
   $('#nodeView').classList.toggle('on',state.view==='node');
+  $('#equipView').classList.toggle('on',state.view==='equip');
   $('#homeLink').classList.toggle('active',state.view==='home');
+  $('#equipLink').classList.toggle('active',state.view==='equip');
+  $('#eqSide').classList.toggle('on',state.view==='equip');
+  $('#docSide').style.display=state.view==='equip'?'none':'flex';
   renderTree();
-  if(state.view==='home')renderHome();else{renderNode();updateQuickBar();}
+  if(state.view==='home')renderHome();
+  else if(state.view==='equip'){renderEquip();updateQuickBar();}
+  else{renderNode();updateQuickBar();}
   $('#main').scrollTop=0;}
 
 /* ---------- Arborescence ---------- */
@@ -1423,7 +1612,7 @@ function renderNode(){const n=nodeById(state.nodeId);if(!n){navigate('#/home');r
   else ni.textContent=n.icon;
   const tEl=$('#nodeTitle');if(tEl.textContent!==n.title)tEl.textContent=n.title;
   const ed=$('#editor');if(ed.innerHTML!==n.html)ed.innerHTML=n.html;
-  renderTags(n);renderNodeWall(n);renderLinks(n);renderContacts(n);renderFiles(n);renderChildren(n);
+  renderTags(n);renderNodeEquip(n);renderNodeWall(n);renderLinks(n);renderContacts(n);renderFiles(n);renderChildren(n);
   /* en lecture seule, masquer les zones vides et la note vide */
   const emptyNote=!(n.html&&n.html.replace(/<br\s*\/?>/gi,'').replace(/&nbsp;/g,'').trim());
   $('#editorCard').style.display=(!isEdit()&&emptyNote)?'none':'';
@@ -1431,6 +1620,48 @@ function renderNode(){const n=nodeById(state.nodeId);if(!n){navigate('#/home');r
   $('#contactsList').closest('.zone').style.display=(!isEdit()&&!(n.contacts||[]).length)?'none':'';
   $('#filesList').closest('.zone').style.display=(!isEdit()&&!n.files.length)?'none':'';
   $('#childrenList').closest('.zone').style.display=(!isEdit()&&!childrenOf(n.id).length)?'none':'';}
+function renderNodeEquip(n){const box=$('#nodeEquipSugs');
+  const E=isEdit();
+  n.equip=n.equip||[];
+  const items=n.equip.map(id=>eqById(id)).filter(Boolean);
+  const sugs=(typeof nodeSuggestEquip==='function'?nodeSuggestEquip(n):[]);
+  if(!E&&!items.length){box.innerHTML='';box.style.display='none';return;}
+  box.style.display='flex';box.innerHTML='';
+  const lbl=document.createElement('span');lbl.className='ne-lbl';lbl.textContent='🔍 Appareillages :';
+  box.appendChild(lbl);
+  const saveQ=()=>{touch(n);renderNodeEquip(n);};
+  items.forEach((it,i)=>{const c=document.createElement('button');c.className='eq-sugbtn linked';
+    c.draggable=E;
+    c.title=`${it.z}${it.r.length?' — schéma '+it.s+', repère '+it.r.join(', '):''} — cliquer : ouvrir dans un nouvel onglet`;
+    c.innerHTML=`${esc(it.a[0]!=='—'?it.a[0]:it.d)}${E?' <span class="x" title="Délier">✕</span>':''}`;
+    if(E){
+      c.querySelector('.x').onclick=e=>{e.stopPropagation();n.equip.splice(i,1);saveQ();};
+      c.addEventListener('dragstart',ev=>{ev.dataTransfer.setData('text/neq',String(i));ev.dataTransfer.effectAllowed='move';});
+      c.addEventListener('dragover',ev=>{if([...ev.dataTransfer.types].includes('text/neq')){ev.preventDefault();c.classList.add('dragover');}});
+      c.addEventListener('dragleave',()=>c.classList.remove('dragover'));
+      c.addEventListener('drop',ev=>{ev.preventDefault();c.classList.remove('dragover');
+        const from=+ev.dataTransfer.getData('text/neq');
+        if(isNaN(from)||from===i)return;
+        const mv=n.equip.splice(from,1)[0];n.equip.splice(i,0,mv);saveQ();});}
+    c.onclick=()=>openURLNewTab(location.href.split('#')[0]+'#/equip/'+it.id);
+    box.appendChild(c);});
+  sugs.slice(0,4).forEach(s=>{const g=document.createElement('button');g.className='eq-sugbtn ghost';
+    g.title=`Suggestion (${s.common.length?s.common.slice(0,3).map(c=>'#'+c).join(' '):'titre'}) — ${s.it.z}${E?' — cliquer : lier à la fiche':''}`;
+    g.innerHTML=`${esc(s.it.a[0]!=='—'?s.it.a[0]:s.it.d)}${E?' ＋':''}`;
+    g.onclick=()=>{if(E){n.equip.push(s.it.id);saveQ();}
+      else openURLNewTab(location.href.split('#')[0]+'#/equip/'+s.it.id);};
+    box.appendChild(g);});
+  if(E){
+    const add=document.createElement('button');add.className='eq-sugbtn addbtn';add.textContent='＋ Ajouter…';
+    add.title='Rechercher un appareillage et le lier à cette fiche';
+    add.onclick=()=>eqPickerModal(it=>{if(!n.equip.includes(it.id)){n.equip.push(it.id);saveQ();}});
+    box.appendChild(add);
+    if(items.length>2){const az=document.createElement('button');az.className='eq-sugbtn addbtn';az.textContent='A→Z';
+      az.title='Trier les appareillages liés par ordre alphabétique';
+      az.onclick=()=>{n.equip.sort((x,y)=>{const a=eqById(x),b=eqById(y);
+        const la=a?(a.a[0]!=='—'?a.a[0]:a.d):'',lb=b?(b.a[0]!=='—'?b.a[0]:b.d):'';
+        return la.localeCompare(lb,'fr');});saveQ();};
+      box.appendChild(az);}}}
 function renderNodeWall(n){const zone=$('#nodeWallZone');
   n.tiles=n.tiles||[];
   zone.style.display=(n.tiles.length||isEdit())?'':'none';
@@ -1441,16 +1672,47 @@ function renderNodeWall(n){const zone=$('#nodeWallZone');
   btn.classList.toggle('primary',editing);
   renderWall(n.id);}
 function renderTags(n){const bar=$('#tagBar');bar.innerHTML='';
-  for(const t of n.tags){const chip=document.createElement('span');chip.className='tag';
-    chip.innerHTML=`#${esc(t)} <span class="x" title="Retirer">✕</span>`;
-    chip.querySelector('.x').onclick=e=>{e.stopPropagation();n.tags=n.tags.filter(x=>x!==t);touch(n);renderTags(n);};
-    chip.onclick=()=>{$('#searchInput').value=t;doSearch();$('#searchInput').focus();};
-    bar.appendChild(chip);}
-  const inp=document.createElement('input');inp.id='tagInput';inp.placeholder='＋ mot-clé';
-  inp.onkeydown=e=>{if(e.key==='Enter'||e.key===','){e.preventDefault();
-    const v=inp.value.trim().replace(/^#/,'').toLowerCase();
-    if(v&&!n.tags.includes(v)){n.tags.push(v);touch(n);renderTags(n);$('#tagInput').focus();}else inp.value='';}};
-  bar.appendChild(inp);}
+  const E=isEdit();
+  const saveT=()=>{touch(n);renderTags(n);};
+  n.tags.forEach((t,i)=>{const chip=document.createElement('span');chip.className='tag';
+    chip.draggable=E;
+    chip.innerHTML=`#${esc(t)}${E?' <span class="ed" title="Modifier ce mot-clé">✏️</span><span class="x" title="Retirer">✕</span>':''}`;
+    if(E){
+      chip.querySelector('.x').onclick=e=>{e.stopPropagation();n.tags.splice(i,1);saveT();};
+      chip.querySelector('.ed').onclick=e=>{e.stopPropagation();
+        const inp=document.createElement('input');inp.className='tag-editin';inp.value=t;
+        chip.replaceWith(inp);inp.focus();inp.select();
+        let done=false;
+        const fin=()=>{if(done)return;done=true;
+          const v=inp.value.trim().replace(/^#/,'').toLowerCase();
+          if(v)n.tags[i]=v;else n.tags.splice(i,1);saveT();};
+        inp.onkeydown=ev=>{if(ev.key==='Enter'){ev.preventDefault();fin();}
+          if(ev.key==='Escape'){done=true;renderTags(n);}};
+        inp.onblur=fin;};
+      chip.addEventListener('dragstart',ev=>{ev.dataTransfer.setData('text/tag',String(i));ev.dataTransfer.effectAllowed='move';});
+      chip.addEventListener('dragover',ev=>{if([...ev.dataTransfer.types].includes('text/tag')){ev.preventDefault();chip.classList.add('dragover');}});
+      chip.addEventListener('dragleave',()=>chip.classList.remove('dragover'));
+      chip.addEventListener('drop',ev=>{ev.preventDefault();chip.classList.remove('dragover');
+        const from=+ev.dataTransfer.getData('text/tag');
+        if(isNaN(from)||from===i)return;
+        const mv=n.tags.splice(from,1)[0];n.tags.splice(i,0,mv);saveT();});}
+    chip.onclick=()=>{if(!E){$('#searchInput').value=t;doSearch();$('#searchInput').focus();}};
+    bar.appendChild(chip);});
+  if(E){
+    const inp=document.createElement('input');inp.id='tagInput';inp.placeholder='＋ mot-clé';
+    inp.onkeydown=e=>{if(e.key==='Enter'||e.key===','){e.preventDefault();
+      const v=inp.value.trim().replace(/^#/,'').toLowerCase();
+      if(v&&!n.tags.includes(v)){n.tags.push(v);touch(n);renderTags(n);$('#tagInput').focus();}else inp.value='';}};
+    bar.appendChild(inp);
+    if(n.tags.length>2){const az=document.createElement('button');az.className='tag-kwbtn';az.textContent='A→Z';
+      az.title='Trier les mots-clés par ordre alphabétique (vous pouvez aussi les réordonner en les glissant)';
+      az.onclick=()=>{n.tags.sort((a,b)=>a.localeCompare(b,'fr'));touch(n);renderTags(n);};
+      bar.appendChild(az);}
+    const kb=document.createElement('button');kb.className='tag-kwbtn';
+    kb.textContent='📄 Depuis un document';
+    kb.title='Extraire des mots-clés d\'un fichier déjà importé dans cette fiche';
+    kb.onclick=()=>kwPickFromFiles(n.files,sel=>{n.tags=[...new Set([...n.tags,...sel])];touch(n);renderTags(n);});
+    bar.appendChild(kb);}}
 function renderLinks(n){const list=$('#linksList');list.innerHTML='';
   $('#linksCount').textContent=n.links.length||'';
   for(const l of n.links){const chip=document.createElement('button');chip.className='link-chip';
@@ -2268,6 +2530,14 @@ function doSearch(){
     for(const r of rFiles.slice(0,8))html+=`<div class="sr-item" data-go="file:${r.f.fileId}">
       <span class="ic">${/pdf/i.test(r.f.mime)?'📕':'🖼'}</span><div style="min-width:0"><div class="tt">${hi(r.f.name)}</div>
       <div class="path">dans : ${esc(r.n.title||'Sans titre')}</div></div></div>`;}
+  /* équipements TGV Duplex */
+  lastSearchEquip=[];
+  const rEquip=eqAllItems().filter(it=>eqMatches(it,q)).slice(0,6);
+  if(q.length>=2&&rEquip.length){html+='<div class="sr-group">Appareillages</div>';
+    for(const it of rEquip){lastSearchEquip.push(it);
+      html+=`<div class="sr-item" data-go="equip:${lastSearchEquip.length-1}">
+      <span class="ic">🧰</span><div style="min-width:0"><div class="tt">${it.a[0]!=='—'?hi(it.a[0])+' — ':''}${hi(it.d)}</div>
+      <div class="path">${esc(it.z)}${it.r.length?` · schéma ${it.s}, repère ${it.r.join(', ')}`:''}</div></div></div>`;}}
   if(rContacts.length){html+='<div class="sr-group">Contacts</div>';
     for(const r of rContacts.slice(0,8))html+=`<div class="sr-item" data-go="node:${r.n.id}">
       <span class="ic">📞</span><div style="min-width:0"><div class="tt">${hi(r.c.name)} — <span style="color:var(--accent)">${hi(r.c.phone)}</span></div>
@@ -2292,8 +2562,13 @@ function doSearch(){
     else if(kind==='file')openFileNewTab(val);
     else if(kind==='url')openURLNewTab(val);
     else if(kind==='tile'){const t=lastSearchTiles[+val];if(t)runAction(t.action,true);}
-    if(kind==='node'||kind==='tile')closeSearch(true);});}
+    else if(kind==='equip'){const it=lastSearchEquip[+val];
+      if(it){state.eqSel=it.id;state.eqQuery='';state.eqCat='ALL';state.eqRep=null;
+        const inp=$('#eqSearch');if(inp)inp.value='';
+        navigate('#/equip');}}
+    if(kind==='node'||kind==='tile'||kind==='equip')closeSearch(true);});}
 let lastSearchTiles=[];
+let lastSearchEquip=[];
 function closeSearch(clear){$('#searchResults').classList.remove('on');
   if(clear){$('#searchInput').value='';$('#searchInput').blur();}}
 
@@ -2740,6 +3015,1157 @@ async function importPack(file){
   toast(`📥 Pack importé : ${total} fiche(s) ajoutée(s)`);}
 
 /* ==========================================================
+   MODULE ÉQUIPEMENTS — TGV DUPLEX
+   Source : GDA TGV Duplex TT00235 (éd. 12-12-2014), annexes 2A/2B
+   + planche « Bloc Cabine TGV Duplex ».
+   Schémas stylisés : repères approximatifs, se référer au GDA.
+   ========================================================== */
+const EQ_GROUPS={CC:'Disrupteurs (CC)',DJ:'Disjoncteurs (DJ)',Z:'Interrupteurs (Z)',RB:'Robinets (RB)',BP:'Boutons-poussoirs (BP)',H:'Sectionneurs (H)',FU:'Fusibles BT',AU:'Autres appareils'};
+/* [abréviation(s)] , désignation , schéma , repères , groupe , zone */
+const EQ_RAW=[
+[['—'],'Attelages de secours',2,[55],'AU','R1 & R8'],
+[['—'],'Afficheurs défauts remorques (R1 et R8)',2,[49,50],'AU','R1 & R8'],
+[['—'],'Afficheurs défauts remorques (R2-3-5-6-7)',3,[65,66],'AU','R2 à R7 (sauf R4)'],
+[['—'],'Afficheurs défauts remorques (R4)',4,[73],'AU','R4'],
+[['BVR'],'Boîte de verrouillage (motrice)',1,[16],'AU','Motrice'],
+[['BP(A)ECL'],'Arrêt éclairage motrices',1,[38],'BP','Motrice'],
+[['BP(A)DF'],'Acquittement défauts remorques (R1 et R8)',2,[49,50],'BP','R1 & R8'],
+[['BP(A)DF'],'Acquittement défauts remorques (R2-3-5-6-7)',3,[65,66],'BP','R2 à R7 (sauf R4)'],
+[['BP(A)DF'],'Acquittement défauts remorques (R4)',4,[73],'BP','R4'],
+[['BP(A-IS)AFP'],"Annulation isolement de l'amélioration du facteur de puissance",1,[35],'BP','Bloc moteur'],
+[['BP(A-IS)BC'],'Annulation isolement du bloc commun électrique',1,[29],'BP','Bloc commun'],
+[['BP(A-IS AU)FP'],'Annulation isolement automatique du frein pneumatique',1,[35],'BP','Bloc moteur'],
+[['BP(A-IS)LMT'],"Annulation isolement de l'écrêteur actif",1,[29],'BP','Bloc commun'],
+[['BP(A-IS)M'],'Annulation isolement bloc moteur',1,[35],'BP','Bloc moteur'],
+[['BP(A-IS)H-AUX'],'Annulation isolement du hacheur auxiliaire',1,[33],'BP','Bloc AUX'],
+[['BP(A-MT)S'],"Annulation d'urgence du maintien de service",1,[3],'BP','Motrice — avant'],
+[['BP(A)Q-BA'],'Arrêt relais batteries',1,[8],'BP','Bloc cabine'],
+[['BP(A)Q-ML'],'Arrêt relais machine à laver',1,[8],'BP','Bloc cabine'],
+[['BP-ECL'],'Éclairage motrices',1,[38],'BP','Motrice'],
+[['BP(ESMT)DJ(C)'],'Essai maintien DJ continu',1,[29],'BP','Bloc commun'],
+[['BP(ES)SA'],'Essai sablage',1,[25,40],'BP','Motrice'],
+[['BP(OV)HT'],'Ouverture forcée en monophasé',1,[8],'BP','Bloc cabine'],
+[['BP-Q-BA'],'Relais batteries',1,[8],'BP','Bloc cabine'],
+[['BP-Q-ML'],'Relais machine à laver',1,[8],'BP','Bloc cabine'],
+[['—'],'Commande de déverrouillage des trappes',1,[1],'AU','Motrice — nez avant'],
+[['—'],'Commande manuelle du H(HT)',2,[47],'AU','R1 — toiture'],
+[['—'],'Commande manuelle du H(MC)',1,[15],'AU','Motrice'],
+[['H(MC)'],'Commutateur mono-continu',1,[15],'H','Motrice'],
+[['DJ(DF)CAB-A'],'Défaut chaîne A CAB SIGNAL',1,[8],'DJ','Bloc cabine'],
+[['DJ(DF)CAB-B'],'Défaut chaîne B CAB SIGNAL',1,[8],'DJ','Bloc cabine'],
+[['DJ(SI)DV'],'Discordance vitesse',1,[8],'DJ','Bloc cabine'],
+[['DJ(SI-DF)ARM'],'Défaut armement',1,[8],'DJ','Bloc cabine'],
+[['DJ(SI)AS-BC'],"Défaut d'alimentation stabilisée du bloc commun électrique",1,[29],'DJ','Bloc commun'],
+[['DJ(SI)ENR'],'Défaut enregistrement',1,[8],'DJ','Bloc cabine'],
+[['DJ(SI)IV'],"Défaut contrôle du dispositif de l'indicateur de vitesse",1,[8],'DJ','Bloc cabine'],
+[['DJ(SI)MAFE'],'Discordance des manostats de frein des blocs moteurs',1,[35],'DJ','Bloc moteur'],
+[['DJ(SI)SV1'],'Discordance vitesse (SV1)',1,[8],'DJ','Bloc cabine'],
+[['DJ(SI)SV2'],'Discordance vitesse (SV2)',1,[8],'DJ','Bloc cabine'],
+[['DJ(SI)U-ENT'],'Défaut unité évaluation',1,[8],'DJ','Bloc cabine'],
+[['DJ(SI)VA'],'Veille automatique',1,[8],'DJ','Bloc cabine'],
+[['DJ(SI)V-ENR'],'Défaut enregistrement vitesse',1,[8],'DJ','Bloc cabine'],
+[['DJ(SI)VER-A'],'Verrouillage chaîne A CAB SIGNAL',1,[8],'DJ','Bloc cabine'],
+[['DJ(SI)VER-B'],'Verrouillage chaîne B CAB SIGNAL',1,[8],'DJ','Bloc cabine'],
+[['DJ(SI)VIT'],'Défaut de la centrale ATESS',1,[8],'DJ','Bloc cabine'],
+[['DJ(SEC)RECE'],"Réchauffeur d'eau toilettes (disjoncteur)",1,[8],'DJ','Bloc cabine'],
+[['—'],'Clé de commande manuelle du H(HT) et du H(MC)',1,[37],'AU','Motrice'],
+[['CC1(SE)RAD','CC2(SE)RAD'],'Coupe-circuit radio',1,[8],'CC','Bloc cabine'],
+[['CC-STORE'],'Coupe-circuit store',1,[8],'CC','Bloc cabine'],
+[['CC(AS)BC'],'Alimentation stabilisée « bloc commun »',1,[8],'CC','Bloc cabine'],
+[['CC-FRD'],'Coupe-circuit frigo',1,[8],'CC','Bloc cabine'],
+[['CC(CO)PT(M)'],'Alimentation carte panto Cx mono',1,[8],'CC','Bloc cabine'],
+[['CC(CO)PT(C)'],'Alimentation carte panto Cx continu',1,[8],'CC','Bloc cabine'],
+[['CC1','CC2','CC3'],'Unité multiple',1,[8],'CC','Bloc cabine'],
+[['CC-R(AB)'],'Résistances antibuée',1,[8],'CC','Bloc cabine'],
+[['CC1(SI-AL)','CC2(SI-AL)','CC3(SI-AL)'],"Signal d'alarme",1,[8],'CC','Bloc cabine'],
+[['CC(AL)'],"Signal d'alerte lumineux",1,[8],'CC','Bloc cabine'],
+[['CC(ALI-SI)AL'],'Alimentation signalisation alarme',1,[8],'CC','Bloc cabine'],
+[['CC(AUX)BT'],'Alimentation des auxiliaires BT',1,[8],'CC','Bloc cabine'],
+[['CC-BM1'],'Alimentation bloc moteur 1',1,[8],'CC','Bloc cabine'],
+[['CC-BM2'],'Alimentation bloc moteur 2',1,[8],'CC','Bloc cabine'],
+[['CC-CAB-A'],'Informations continu chaîne A CAB SIGNAL',1,[8],'CC','Bloc cabine'],
+[['CC-CAB-B'],'Informations continu chaîne B CAB SIGNAL',1,[8],'CC','Bloc cabine'],
+[['CC-CAB-AUX'],'Signalisation de cabine',1,[8],'CC','Bloc cabine'],
+[['CC-C-BA1','CC-C-BA2'],'Contacteur batterie',1,[8],'CC','Bloc cabine'],
+[['CC(C)'],'Alimentation en continu',1,[8],'CC','Bloc cabine'],
+[['CC-CBL1','CC-CBL2'],'Contacteur de boîte à leviers',1,[8],'CC','Bloc cabine'],
+[['CC(CH)CM(UM-AU)'],'Réchauffage attelage automatique',1,[8],'CC','Bloc cabine'],
+[['CC(CO)CLM'],'Commande climatisation',1,[8],'CC','Bloc cabine'],
+[['CC-COD1','CC-COD2'],'Commande des codeurs',1,[8],'CC','Bloc cabine'],
+[['CC(CO)ECL'],'Commande éclairage',1,[8],'CC','Bloc cabine'],
+[['CC(CO)VIT'],'Contrôle indicateur de vitesse',1,[8],'CC','Bloc cabine'],
+[['CC-CD-SR'],"Commande sécheur d'air",1,[8],'CC','Bloc cabine'],
+[['CC-CPRA'],'Compresseur auxiliaire',1,[8],'CC','Bloc cabine'],
+[['CC-DJ'],'Disjoncteur',1,[8],'CC','Bloc cabine'],
+[['CC(ECL)'],'Éclairage',1,[8],'CC','Bloc cabine'],
+[['CC(VE)AN'],"Électrovanne gaine d'air",1,[8],'CC','Bloc cabine'],
+[['CC(C)RECE'],"Réchauffeur d'eau toilettes",1,[8],'CC','Bloc cabine'],
+[['CC-ENR'],'Enregistreur',1,[8],'CC','Bloc cabine'],
+[['CC(ES)FEP'],'Essai frein à commande électropneumatique',1,[8],'CC','Bloc cabine'],
+[['CC-FEP'],'Frein à commande électropneumatique',1,[8],'CC','Bloc cabine'],
+[['CC(FP)'],'Fermeture des portes',1,[8],'CC','Bloc cabine'],
+[['CC-FPB'],'Frein presse-bouton',1,[8],'CC','Bloc cabine'],
+[['CC-F(SE)'],'Commande frein de secours',1,[8],'CC','Bloc cabine'],
+[['CC-GRB'],'Graisseurs de boudins',1,[8],'CC','Bloc cabine'],
+[['CC-IV'],'Indicateur de vitesse',1,[8],'CC','Bloc cabine'],
+[['CC-KVB'],'Contrôle de vitesse par balises KVB',1,[8],'CC','Bloc cabine'],
+[['CC-LFR1'],'Lampe feu rouge gauche',1,[8],'CC','Bloc cabine'],
+[['CC-LFR2'],'Lampe feu rouge droit',1,[8],'CC','Bloc cabine'],
+[['CC1-LP','CC2-LP','CC3-LP'],'Lampes pupitre de conduite',1,[8],'CC','Bloc cabine'],
+[['CC-LPRF1'],'Lampe projecteur fanal gauche',1,[8],'CC','Bloc cabine'],
+[['CC-LPRF2'],'Lampe projecteur fanal droit',1,[8],'CC','Bloc cabine'],
+[['CC-LS'],'Lampes de signalisation',1,[8],'CC','Bloc cabine'],
+[['CC-LT-ECC1'],'Essai fusibles HT',1,[8],'CC','Bloc cabine'],
+[['CC-LT-ECC2'],'Essai fusibles BT',1,[8],'CC','Bloc cabine'],
+[['CC(M)'],'Alimentation en monophasé',1,[8],'CC','Bloc cabine'],
+[['CC(MM)ATESS'],'Mémorisation ATESS',1,[8],'CC','Bloc cabine'],
+[['CC(MEN)ENR'],'Centrale ATESS',1,[8],'CC','Bloc cabine'],
+[['CC-MINIMA'],"Minima d'alimentation TSF",1,[8],'CC','Bloc cabine'],
+[['CC(PAM)SON'],'Préamplification de sonorisation',1,[8],'CC','Bloc cabine'],
+[['CC-PL'],'Pendule',1,[8],'CC','Bloc cabine'],
+[['CC-PT'],'Pantographes',1,[8],'CC','Bloc cabine'],
+[['CC-Q(IS)DJ(M)'],"Relais d'isolement DJ(M)",1,[8],'CC','Bloc cabine'],
+[['CC-Q(IS)H(HT)'],"Relais d'isolement du sectionneur H(HT)",1,[8],'CC','Bloc cabine'],
+[['CC-Q(OV)HT'],"Relais d'ouverture forcée",1,[8],'CC','Bloc cabine'],
+[['CC-Q(DF)DJ-C'],'Relais défaut DJ(C)',1,[8],'CC','Bloc cabine'],
+[['CC-QEV'],'Relais de vitesse',1,[8],'CC','Bloc cabine'],
+[['CC-Q-VE-VA'],'Relais de VA',1,[8],'CC','Bloc cabine'],
+[['CC-Q500'],'Relais Q 500',1,[8],'CC','Bloc cabine'],
+[['CC-RG-BA'],'Régulation charge BA',1,[8],'CC','Bloc cabine'],
+[['CC-RS'],'Répétition des signaux',1,[8],'CC','Bloc cabine'],
+[['CC-SA'],'Sablage',1,[8],'CC','Bloc cabine'],
+[['CC-N-SA'],'Neutralisation sablage',1,[8],'CC','Bloc cabine'],
+[['CC-QQ-SA'],'Relais de sablage',1,[8],'CC','Bloc cabine'],
+[['CC(SE)LF1'],'Secours lampe fanal gauche',1,[8],'CC','Bloc cabine'],
+[['CC(SE)LF2'],'Secours lampe fanal droit',1,[8],'CC','Bloc cabine'],
+[['CC1-UTP','CC2-UTP'],'Ordinateur principal de cabine',1,[8],'CC','Bloc cabine'],
+[['CC1-UTA','CC2-UTA'],'Ordinateur auxiliaire de cabine',1,[8],'CC','Bloc cabine'],
+[['CC-TEST'],'Test tachymétrie',1,[8],'CC','Bloc cabine'],
+[['CC-VA'],'Veille automatique',1,[8],'CC','Bloc cabine'],
+[['CC-VE-VA'],'Électrovalve VA',1,[8],'CC','Bloc cabine'],
+[['CC-VE-LGV'],'Électrovalve LGV',1,[8],'CC','Bloc cabine'],
+[['CC-VI'],'Vitesse imposée',1,[8],'CC','Bloc cabine'],
+[['CC-VISU'],'Écran et clavier',1,[8],'CC','Bloc cabine'],
+[['CC-VIT'],'Indicateur de vitesse',1,[8],'CC','Bloc cabine'],
+[['CC(VN)FEN'],'Électrovanne fréon',1,[8],'CC','Bloc cabine'],
+[['CC-VT-CLM'],'Ventilateur de climatiseur',1,[8],'CC','Bloc cabine'],
+[['CC1(VT-GA)AC','CC2(VT-GA)AC','CC3(VT-GA)AC','CC4(VT-GA)AC'],'Ventilation armoire cabine',1,[8],'CC','Bloc cabine'],
+[['CC-VY(URG)'],"Contrôle des voyants d'urgence",1,[8],'CC','Bloc cabine'],
+[['CC-VY'],'Voyants des équipements de sécurité',1,[8],'CC','Bloc cabine'],
+[['CC-Z-PT(C)'],'ZPT en continu',1,[8],'CC','Bloc cabine'],
+[['CC-Z-PT(M)'],'ZPT en monophasé',1,[8],'CC','Bloc cabine'],
+[['CC(AL)GTO-AUX'],'Platine allumeur GTO-AUX',1,[29],'CC','Bloc commun'],
+[['CC-Q-44'],'Relais Q 44',1,[29],'CC','Bloc commun'],
+[['CC(AS)BM'],'Alimentation stabilisée « blocs moteurs »',1,[35],'CC','Bloc moteur'],
+[['CC(AL)GTO'],'Relais de commande (allumeur GTO)',1,[35],'CC','Bloc moteur'],
+[['CC-Q-DJ(M)'],'Relais Q-DJ(M)',1,[35],'CC','Bloc moteur'],
+[['CC-TF-VLM'],'Transformateur tension ligne MONO',1,[35],'CC','Bloc moteur'],
+[['CC(B)153'],'Alimentation générale « BM »',1,[35],'CC','Bloc moteur'],
+[['—'],'Documents de bord',1,[7],'AU','Motrice — cabine'],
+[['—'],"Échelle d'accès à la toiture",1,[21],'AU','Motrice'],
+[['—'],'Enregistreur de vitesse « ATESS »',1,[9],'AU','Motrice'],
+[['—'],'Escabeaux de secours (R1 et R8)',2,[56],'AU','R1 & R8 — local de service'],
+[['—'],'Essai fusibles BT',1,[39],'AU','Motrice'],
+[['—'],'Essai fusibles HT',1,[28],'AU','Motrice'],
+[['—'],"Freins d'immobilisation à ressort",1,[6,19,24,36],'AU','Motrice'],
+[['CC1-CPR-CLM','CC2-CPR-CLM','CC3-CPR-CLM'],'Compresseur du climatiseur (fusibles)',1,[39],'FU','Bloc cabine'],
+[['CC1-VT-CDR','CC2-VT-CDR','CC3-VT-CDR'],'Ventilateur de condenseur (fusibles)',1,[39],'FU','Bloc cabine'],
+[['CC-G'],'Alimentation générale (fusible)',1,[39],'FU','Bloc cabine'],
+[['CC2-RECA'],'Chauffage cabine (fusible)',1,[39],'FU','Bloc cabine'],
+[['CC1-RECA'],'Climatisation cabine (fusible)',1,[39],'FU','Bloc cabine'],
+[['Z-BA1'],'Batterie 1',1,[8],'Z','Bloc cabine'],
+[['Z-BA2'],'Batterie 2',1,[8],'Z','Bloc cabine'],
+[['Z-CAB'],'CAB SIGNAL',1,[8],'Z','Bloc cabine'],
+[['Z-CH(UM-AU)'],'Chauffage attelage « Scharfenberg »',1,[8],'Z','Bloc cabine'],
+[['Z(CO)DJ'],'Contrôle disjoncteur',1,[8],'Z','Bloc cabine'],
+[['Z(CO)VIT'],'Contrôle de vitesse',1,[8],'Z','Bloc cabine'],
+[['Z(DI)CPR'],'Alimentation directe du compresseur',1,[8],'Z','Bloc cabine'],
+[['Z(ECL)EXT'],"Alimentation extérieure de l'éclairage",1,[8],'Z','Bloc cabine'],
+[['Z(ENT)'],'Test entretien',1,[8],'Z','Bloc cabine'],
+[['Z(ES)CAB'],'Essai CAB SIGNAL',1,[8],'Z','Bloc cabine'],
+[['Z(IS)CLIM'],'Isolement climatisation cabine',1,[8],'Z','Bloc cabine'],
+[['Z(IS)CO'],'Isolement de la commande (commande double)',1,[8],'Z','Bloc cabine'],
+[['Z(IS)CPR'],'Isolement compresseur',1,[8],'Z','Bloc cabine'],
+[['Z(IS)FEP'],'Isolement du frein à commande électropneumatique',1,[8],'Z','Bloc cabine'],
+[['Z-LPRF1'],'Lampe projecteur fanal gauche',1,[8],'Z','Bloc cabine'],
+[['Z-LPRF2'],'Lampe projecteur fanal droit',1,[8],'Z','Bloc cabine'],
+[['Z(N-SE)'],'Neutre frein de secours',1,[8],'Z','Bloc cabine'],
+[['Z-KVB'],'Contrôle de vitesse KVB',1,[8],'Z','Bloc cabine'],
+[['Z-RS'],'Répétition des signaux',1,[8],'Z','Bloc cabine'],
+[['Z-SE-RAD'],'Commande de secours radio',1,[8],'Z','Bloc cabine'],
+[['Z-SEC'],'Boîte de sécurité (contrôle panto)',1,[8],'Z','Bloc cabine'],
+[['Z-UTP'],'Ordinateur principal de cabine',1,[8],'Z','Bloc cabine'],
+[['Z(SIG)VA'],'Shuntage QQ(SIG)VA',1,[8],'Z','Bloc cabine'],
+[['Z-VA'],'Veille automatique',1,[8],'Z','Bloc cabine'],
+[['Z-VIT'],'Indicateur de vitesse',1,[8],'Z','Bloc cabine'],
+[['Z(IS)ECL-CLM'],'Éclairage-climatisation remorques',1,[8],'Z','Bloc cabine'],
+[['Z(IS)SG-SI-AL'],'Isolement signalisation signal alarme',1,[8],'Z','Bloc cabine'],
+[['Z(IS)AFP'],"Isolement de l'amélioration du facteur de puissance",1,[35],'Z','Bloc moteur'],
+[['Z(IS)M'],'Isolement bloc moteur',1,[35],'Z','Bloc moteur'],
+[['ZL-BM'],'Éclairage bloc moteur',1,[35],'Z','Bloc moteur'],
+[['Z(IS)H-AUX'],'Isolement du hacheur auxiliaire 500 V',1,[33],'Z','Bloc AUX'],
+[['Z-LB-AUX'],'Éclairage bloc AUX',1,[33],'Z','Bloc AUX'],
+[['Z-BB'],'Essai à blanc',1,[29],'Z','Bloc commun'],
+[['Z(IS)AUX'],'Isolement contacteur AUX',1,[29],'Z','Bloc commun'],
+[['Z(IS)DJ(C)'],'Isolement disjoncteur continu',1,[29],'Z','Bloc commun'],
+[['ZL-BC'],'Éclairage bloc commun',1,[29],'Z','Bloc commun'],
+[['Z(IS)H(HT)'],'Isolement H(HT)',2,[45],'Z','R1'],
+[['—'],"Lampes témoins capacités des filtres (FP, principal et auxiliaire)",1,[17],'AU','Motrice'],
+[['—'],'Pupitre',1,[4],'AU','Motrice — cabine'],
+[['RB(A)CG'],'Arrêt CG (motrice)',1,[23],'RB','Motrice'],
+[['RB(A)CG'],'Arrêt CG (R1 et R8)',2,[54],'RB','R1 & R8'],
+[['RB(A)CG'],'Arrêt CG (R4, coffre niveau inférieur)',4,[78],'RB','R4 — niveau inférieur'],
+[['RB(A)CG-AC'],'Arrêt CG attelage automatique',1,[2],'RB','Motrice — nez avant'],
+[['RB(A)CP'],'Arrêt CP (motrice)',1,[22],'RB','Motrice'],
+[['RB(A)CP'],'Arrêt CP (R1 et R8)',2,[53],'RB','R1 & R8'],
+[['RB(A)CP-AC'],'Arrêt CP attelage automatique',1,[2],'RB','Motrice — nez avant'],
+[['RB(CO)VRN'],'Commande du vérin des trappes',1,[1],'RB','Motrice — nez avant'],
+[['RB(DA)AT(AU)'],"Désaccouplement de l'attelage automatique",1,[4],'RB','Motrice — cabine'],
+[['RB-FI-F'],'Filtre de frein',1,[2],'RB','Motrice — nez avant'],
+[['RB-F(SE)'],'Frein de secours',1,[41],'RB','Motrice'],
+[['RB(SE)ALI-PT'],'Secours circuit auxiliaire',1,[26],'RB','Motrice — bloc pneumatique'],
+[['RB(URG)'],"Robinet d'urgence (R1 et R8)",2,[57],'RB','R1 & R8'],
+[['RB(URG)'],"Robinet d'urgence (R4)",4,[72],'RB','R4'],
+[['RB(IS)ALI-PT'],'Isolement circuits auxiliaires',1,[26],'RB','Motrice — bloc pneumatique'],
+[['RB(IS)AVER'],'Isolement avertisseur',1,[41],'RB','Motrice'],
+[['RB(IS)BC(E)'],'Isolement bloc commun',1,[18],'RB','Motrice'],
+[['RB(IS)BM1'],'Isolement bloc moteur 1',1,[10],'RB','Motrice'],
+[['RB(IS)BM2'],'Isolement bloc moteur 2',1,[34],'RB','Motrice'],
+[['RB(IS)CP-CG'],'Isolement frein automatique motrice (jumelé CP-CG)',1,[12,13],'RB','Motrice'],
+[['RB(IS)EV-LV'],'Isolement essuie-vitre / lave-vitre',1,[41],'RB','Motrice'],
+[['RB(IS)LV'],'Isolement lave-vitre',1,[42],'RB','Motrice'],
+[['RB(IS)FI-F'],'Isolement filtre de frein',1,[2],'RB','Motrice — nez avant'],
+[['RB(IS)MA-CP'],'Isolement manostat CP',1,[26],'RB','Motrice — bloc pneumatique'],
+[['RB(IS)MA-F'],'Isolement manostat frein',1,[14],'RB','Motrice'],
+[['RB(IS)PR-AT(AU)'],'Isolement vérin des trappes',1,[2],'RB','Motrice — nez avant'],
+[['RB(IS)PT(C)'],'Isolement pantographe continu',1,[20],'RB','Motrice'],
+[['RB(IS)PT(M)'],'Isolement pantographe monophasé',1,[27],'RB','Motrice'],
+[['RB(IS)REG-CPR'],'Isolement régulateur de pression',1,[26],'RB','Motrice — bloc pneumatique'],
+[['RB(IS)SA'],'Isolement sablage',1,[2],'RB','Motrice — nez avant'],
+[['RB(IS)VE-VP3'],'Isolement électrovalve de purge du sécheur principal',1,[26],'RB','Motrice — bloc pneumatique'],
+[['RB(IS)VE-RGN-SR(AUX)'],'Isolement électrovalve du régénérateur du sécheur auxiliaire',1,[26],'RB','Motrice — bloc pneumatique'],
+[['RB(IS)RGN-SR(AUX)'],'Isolement régénérateur du sécheur auxiliaire',1,[26],'RB','Motrice — bloc pneumatique'],
+[['RB(IS)Q(ECH)VA'],'Isolement valve de veille automatique',1,[5],'RB','Motrice — avant'],
+[['RB(IS)MA-C101'],'Isolement contacteur C101 et manostat',4,[81],'RB','R4'],
+[['RB(IS)C107'],'Isolement contacteur C107',4,[81],'RB','R4'],
+[['RB(IS)CP-CG'],'Isolement frein automatique (R1 et R8)',2,[58],'RB','R1 & R8'],
+[['RB(IS)CP-CG'],'Isolement frein automatique (R2 à R7 sauf R4)',3,[70],'RB','R2 à R7 (sauf R4)'],
+[['RB(IS)GRB'],'Isolement graisseurs de boudins',2,[51],'RB','R1 & R8'],
+[['RB(IS)H(HT)'],'Isolement sectionneur de toiture',2,[46],'RB','R1'],
+[['RB(IS)MA(SUS)'],'Isolement manostat de suspension (R1 et R8)',2,[59,63],'RB','R1 & R8'],
+[['RB(IS)MA(SUS)'],'Isolement manostat de suspension (R2 à R7 sauf R4)',3,[71],'RB','R2 à R7 (sauf R4)'],
+[['RB(IS)MA(SUS)'],'Isolement manostat de suspension (R4)',4,[82],'RB','R4'],
+[['RB(IS)P(AC)'],"Isolement portes d'accès (R1 et R8)",2,[48],'RB','R1 & R8'],
+[['RB(IS)P(AC)'],"Isolement portes d'accès (R2 à R7 sauf R4)",3,[67],'RB','R2 à R7 (sauf R4)'],
+[['RB(IS)P(AC)'],"Isolement portes d'accès (R4)",4,[74],'RB','R4'],
+[['RB(IS)P(AC)CB'],'Isolement portes compartiment bagages',2,[52],'RB','R1 & R8'],
+[['RB(IS)JP(AC)'],"Isolement joints portes d'accès (R1 et R8)",2,[61],'RB','R1 & R8'],
+[['RB(IS)JP(AC)'],"Isolement joints portes d'accès (R2 à R7 sauf R4)",3,[69],'RB','R2 à R7 (sauf R4)'],
+[['RB(IS)JP(AC)'],"Isolement joints portes d'accès (R4)",4,[75],'RB','R4'],
+[['RB(IS)SUS(PN)'],'Isolement joints portes compartiment bagages',2,[52],'RB','R1 & R8'],
+[['RB(IS)SUS(PN)'],'Isolement suspension pneumatique (R1 et R8)',2,[60],'RB','R1 & R8'],
+[['RB(IS)SUS(PN)'],'Isolement suspension pneumatique (R2 à R7 sauf R4)',3,[68],'RB','R2 à R7 (sauf R4)'],
+[['RB(IS)SUS(PN)'],'Isolement suspension pneumatique (R4)',4,[76,79],'RB','R4'],
+[['RB(PU)FI-F'],'Purge du filtre de frein',1,[2],'RB','Motrice — nez avant'],
+[['RB(PU)FI-SR(AUX)'],'Purge du sécheur des auxiliaires',1,[26],'RB','Motrice — bloc pneumatique'],
+[['H-BA1'],'Sectionneur batterie 1',1,[32],'H','Motrice'],
+[['H-BA2'],'Sectionneur batterie 2',1,[30],'H','Motrice'],
+[['H(HT)'],'Sectionneur de ligne de toiture',2,[47],'H','R1 — toiture'],
+[['H(O)M'],'Mise à la terre de la ligne de toiture',1,[31],'H','Motrice'],
+[['—'],"Trappe d'accès à la toiture",1,[21],'AU','Motrice'],
+[['—'],'Valve de purge des équipements de frein — bogies moteurs',1,[11,44],'AU','Motrice'],
+[['—'],'Valve de purge des équipements de frein — bogies porteurs (R1 et R8)',2,[58,62],'AU','R1 & R8'],
+[['—'],'Valve de purge des équipements de frein — bogies porteurs (R2 à R7 sauf R4)',3,[70],'AU','R2 à R7 (sauf R4)'],
+[['V-BA1'],'Voltmètre batterie 1',1,[8],'AU','Bloc cabine'],
+[['V-BA2'],'Voltmètre batterie 2',1,[8],'AU','Bloc cabine']];
+const EQ_ITEMS=EQ_RAW.map((e,i)=>({id:'eq'+i,a:e[0],d:e[1],s:e[2],r:e[3],g:e[4],z:e[5],cat:'duplex'}));
+const eqNorm=s=>String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+const eqFold=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+const eqHay=it=>eqFold(it.a.join(' ')+' '+it.d+' '+it.z+' '+EQ_GROUPS[it.g]);
+const eqMatches=(it,q)=>{const qn=eqNorm(q);
+  if(qn&&it.a.some(a=>eqNorm(a).includes(qn)))return true;
+  const words=eqFold(q).split(/\s+/).filter(Boolean);
+  if(!words.length)return true;
+  const hay=eqHay(it);
+  return words.every(w=>hay.includes(w));};
+/* Repères → position approx. (x: 0=avant/côté motrice, 1=arrière ; side t=haut b=bas) */
+const EQ_POS={
+1:{1:[.06,'t'],2:[.09,'t'],3:[.13,'t'],4:[.17,'t'],5:[.20,'t'],6:[.24,'t'],7:[.28,'t'],8:[.335,'t'],9:[.38,'t'],10:[.44,'t'],11:[.52,'t'],12:[.55,'t'],13:[.60,'t'],14:[.63,'t'],15:[.66,'t'],16:[.71,'t'],17:[.76,'t'],18:[.79,'t'],19:[.815,'t'],20:[.84,'t'],21:[.88,'t'],22:[.93,'t'],
+   23:[.95,'b'],24:[.93,'b'],25:[.90,'b'],26:[.87,'b'],27:[.83,'b'],28:[.80,'b'],29:[.775,'b'],30:[.72,'b'],31:[.69,'b'],32:[.66,'b'],33:[.625,'b'],34:[.55,'b'],35:[.48,'b'],36:[.42,'b'],37:[.38,'b'],38:[.35,'b'],39:[.32,'b'],40:[.27,'b'],41:[.24,'b'],42:[.21,'b'],44:[.50,'b']},
+2:{45:[.10,'t'],46:[.125,'t'],47:[.15,'t'],48:[.75,'t'],49:[.86,'t'],50:[.86,'b'],51:[.33,'b'],52:[.20,'b'],53:[.06,'t'],54:[.05,'b'],55:[.08,'b'],56:[.16,'b'],57:[.185,'b'],58:[.22,'b'],59:[.245,'b'],60:[.275,'b'],61:[.78,'b'],62:[.84,'b'],63:[.885,'b']},
+3:{65:[.80,'t'],66:[.86,'t'],67:[.82,'t'],68:[.06,'b'],69:[.78,'b'],70:[.85,'b'],71:[.90,'b']},
+4:{72:[.08,'t'],73:[.11,'t'],74:[.45,'t'],75:[.50,'t'],76:[.93,'b'],77:[.85,'b'],78:[.50,'b'],79:[.05,'b'],80:[.86,'b'],81:[.89,'b'],82:[.95,'b']}};
+/* Zones de la motrice (x1,x2,label) */
+const EQ_M_ZONES=[[.03,.155,'CABINE'],[.19,.30,'ARMOIRE CABINE'],[.33,.475,'BM 1'],[.50,.615,'BM 2'],[.62,.70,'BLOC AUX'],[.73,.825,'BLOC COMMUN'],[.845,.925,'COMPR.']];
+/* Panneau BLOC CABINE (agencement d'après la planche) */
+const EQ_PANEL=[
+{k:'meter',t:'Voltmètres & manipulateur',c:['V-BA1','Z-SEC','V-BA2']},
+{k:'led',t:'Disjoncteurs de signalisation',c:['DJ(SI)VER-A','DJ(SI)VER-B','DJ(SI)VA','DJ(SI-DF)ARM','DJ(SI)ENR','DJ(SI)VIT','DJ(SI)SV1','DJ(SI)SV2','DJ(SI)DV','DJ(SI)IV']},
+{k:'cc',t:'Rangée disjoncteurs / alimentations',c:['DJ(DF)CAB-A','DJ(DF)CAB-B','DJ(SI)U-ENT','DJ(SI)V-ENR','CC1(SE)RAD','CC2(SE)RAD','CC1(VT-GA)AC','CC2(VT-GA)AC','CC3(VT-GA)AC','CC4(VT-GA)AC','CC1-LP','CC2-LP','CC-KARM','CC3-LP','CC-STORE','CC(AS)BC','DJ(SEC)RECE']},
+{k:'bp',t:'Boutons-poussoirs',c:['BP-Q-BA','BP(A)Q-BA','Z(DI)CPR','BP(R)MPX1','BP(R)MPX2','BP(OV)HT','BP-Q-ML','BP(A)Q-ML']},
+{k:'cc',t:'Disrupteurs — rangée 1',c:['CC-Q(IS)DJ(M)','CC-Q(OV)HT','CC-Q(IS)H(HT)','CC-ENR','CC(MM)ATESS','CC-LT-ECC1','CC-LT-ECC2','CC-Q-VE-VA','CC-Q(DF)DJ-C','CC-CD-SR','CC-N-SA','CC-RG-BA','CC-LV','CC-QQ-SA','CC-SA','CC-GRB','CC-EP-CBL1','CC-EP-CBL2']},
+{k:'cc',t:'Disrupteurs — rangée 2',c:['CC-C-BA1','CC-C-BA2','CC-CBL1','CC-CBL2','CC-BM1','CC-BM2','CC-COD1','CC-COD2','CC-VI','CC-VY','CC-VY(URG)','CC-VA','CC-RS','CC-VIT','CC-CAB-AUX','CC-CAB-A','CC-CAB-B','CC(CO)VIT','CC-KVB']},
+{k:'cc',t:'Disrupteurs — rangée 3',c:['CC-MINIMA','CC(MEN)ENR','CC-VISU','CC(FP)','CC-PL','CC-CPRA','CC-Q500','CC-VE-LGV','CC(CO)PT(M)','CC-FPB','CC-FEP','CC-F(SE)','CC-VE-VA','CC-QEV','CC(CO)PT(C)','CC-TEST','CC(ES)FEP']},
+{k:'cc',t:'Disrupteurs — rangée 4',c:['CC1-UTP','CC1-UTA','CC2-UTP','CC2-UTA','CC1','CC2','CC3','CC(C)','CC(M)','CC(AUX)BT','CC-DJ','CC-PT','CC-Z-PT(C)','CC-Z-PT(M)','CC-Q-KUM-US','CC(ALI-SI)AL','CC3(SI-AL)','CC2(SI-AL)','CC1(SI-AL)']},
+{k:'cc',t:'Disrupteurs — rangée 5',c:['CC(C)RECE','CC-R(AB)','CC(CH)CM(UM-AU)','CC(VN)FEN','CC-VT-CLM','CC(CO)CLM','CC(PAM)SON','CC-LS','CC-FRD','CC-USB','CC(ECL)','CC(CO)ECL','CC-LPRF1','CC-LPRF2','CC-LFR1','CC-LFR2','CC(SE)LF1','CC(SE)LF2','CC(AL)','CC(VE)AN']},
+{k:'z',t:'Commutateurs — rangée 1',c:['Z(ES)CAB','Z-CAB','Z-BA1','Z-BA2']},
+{k:'z',t:'Commutateurs — rangée 2',c:['Z-RS','Z(CO)DJ','Z(CO)VIT','Z(IS)CO']},
+{k:'z',t:'Commutateurs — rangée 3',c:['Z-KVB','Z(ECL)EXT']},
+{k:'z',t:'Commutateurs — rangée 4',c:['Z-VA','Z-UTP','Z(IS)CPR','Z(IS)CLIM','Z(IS)FEP','Z-SE-RAD']},
+{k:'z',t:'Commutateurs — rangée 5',c:['Z-VIT','Z(SIG)VA','Z-LPRF1','Z-LPRF2','Z(N-SE)','Z-CH(UM-AU)']},
+{k:'z',t:'Commutateurs — rangée 6',c:['Z(ENT)','Z(IS)ECL-CLM','Z(IS)SG-SI-AL']}];
+const EQ_PNEU=['RB(SE)ALI-PT','RB(PU)FI-SR(AUX)','RB(IS)ALI-PT','RB(IS)MA-CPR','RB(IS)MA-CP','RB(IS)VE-RGN-SR(AUX)','RB(IS)REG-CPR','RB(IS)VE-VP3','RB(IS)RGN-SR(AUX)'];
+const EQ_ALIASES={'RBISREGCPR':'RBISREGCOMPR','RBISMACPR':'RBISMACP'};
+/* ============ TGV ATLANTIQUE (TVM 300) — GDA annexes 2A/2B ============ */
+/* [abréviation(s)] , désignation , schéma , repères , groupe , zone */
+const EQ_RAW_A=[
+[['—'],'Attelage de secours (R1)',2,[30],'AU','Remorque 1'],
+[['—'],'Attelage de secours (R10)',2,[58],'AU','Remorque 10'],
+[['—'],'Afficheurs défauts remorques (R2 à R9)',3,[35,49],'AU','Remorques 2 à 9'],
+[['—'],'Afficheurs défauts remorques (R1 et R10)',2,[61],'AU','Remorques 1 et 10'],
+[['BVR'],'Boîte de verrouillage',1,[17],'AU','Motrice'],
+[['BP(A)CL'],'Arrêt éclairage motrices',1,[79],'BP','Motrice'],
+[['BP(A)DF'],'Acquittement défauts remorques (R2 à R9)',3,[35,49],'BP','Remorques 2 à 9'],
+[['BP(A)DF'],'Acquittement défauts remorques (R1 et R10)',2,[61],'BP','Remorques 1 et 10'],
+[['BP(A-IS)AFP'],'Annulation isolement de l\'amélioration du facteur de puissance (lumineux)',1,[76],'BP','Motrice — bloc moteur'],
+[['BP(A-IS)BC'],'Annulation isolement du bloc commun électrique',1,[70],'BP','Motrice — bloc commun'],
+[['BP(A-IS AU)FP'],'Annulation isolement de l\'isolement automatique du frein pneumatique',1,[76],'BP','Motrice — bloc moteur'],
+[['BP(A-IS)LMT'],'Annulation isolement de l\'écrêteur actif',1,[70],'BP','Motrice — bloc commun'],
+[['BP(A-IS)M'],'Annulation isolement bloc moteur',1,[76],'BP','Motrice — bloc moteur'],
+[['BP(A-IS)H-HAUX'],'Annulation isolement du hâcheur auxiliaire',1,[73],'BP','Motrice — bloc AUX'],
+[['BP(A-MT)S'],'Annulation d\'urgence du maintien de service',1,[4],'BP','Motrice — cabine'],
+[['BP(A)Q-BA'],'Arrêt relais batteries',1,[8],'BP','Motrice — armoire bloc cabine'],
+[['BP(A)QML'],'Arrêt relais machine à laver',1,[8],'BP','Motrice — armoire bloc cabine'],
+[['BP-ECL'],'Éclairage motrices',1,[79],'BP','Motrice'],
+[['BP(ESMT)DJ(C)'],'Essai maintien DJ continu',1,[70],'BP','Motrice — bloc commun'],
+[['BP(ES)SA'],'Essai sablage',1,[66,81],'BP','Motrice'],
+[['BP(OV)HT'],'Ouverture forcée en monophasé',1,[8],'BP','Motrice — armoire bloc cabine'],
+[['BP-Q-BA'],'Relais batteries',1,[8],'BP','Motrice — armoire bloc cabine'],
+[['BP-Q-ML'],'Relais machine à laver',1,[8],'BP','Motrice — armoire bloc cabine'],
+[['—'],'Commande de déverrouillage des trappes',1,[1],'AU','Motrice — avant'],
+[['—'],'Carnet d\'inventaire d\'outillage de bord',1,[5],'AU','Motrice — cabine'],
+[['—'],'Commande manuelle du DJ(M)',1,[15],'AU','Motrice'],
+[['—'],'Commande manuelle du H(HT)',2,[27],'AU','Remorques 1 et 10'],
+[['—'],'Commande manuelle du H(MC)',1,[14],'AU','Motrice'],
+[['—'],'Coffre à outillage (R1)',2,[30],'AU','Remorque 1'],
+[['—'],'Coffre à outillage (R10)',2,[58],'AU','Remorque 10'],
+[['H(MC)'],'Commutateur mono-continu',1,[14],'H','Motrice'],
+[['H(ACP)'],'Sectionneur configuration « Vendée »',1,[70],'H','Motrice — bloc commun'],
+[['DJ(SI-D)CV1'],'Défaut chaîne 1 CAB SIGNAL',1,[8],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI-D)CV2'],'Défaut chaîne 2 CAB SIGNAL',1,[8],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI-)ALIM'],'Défaut d\'alimentation bloc moteur',1,[76],'DJ','Motrice — bloc moteur'],
+[['DJ(SI-DF)ARM'],'Défaut armement',1,[8],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)AS-BC'],'Défaut d\'alimentation stabilisée du bloc commun électrique',1,[70],'DJ','Motrice — bloc commun'],
+[['DJ(SI-D)VIT'],'Défaut contrôle du dispositif de l\'indicateur de vitesse',1,[8],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI-DF-ACP)'],'Défaut désaccouplement « Vendée »',1,[70],'DJ','Motrice — bloc commun'],
+[['DJ(SI)MAFE'],'Discordance des manostats de frein des blocs moteurs',1,[76],'DJ','Motrice — bloc moteur'],
+[['DJ(SI-O)N'],'Masse neutre ligne 380V',1,[8],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)VA'],'Veille automatique (signalisation)',1,[8],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI-VER1)'],'Verrouillage chaîne 1 CAB SIGNAL',1,[8],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI-VER2)'],'Verrouillage chaîne 2 CAB SIGNAL',1,[8],'DJ','Motrice — armoire bloc cabine'],
+[['—'],'Clé de commande manuelle du DJ(M), H(HT) et H(MC)',1,[77],'AU','Motrice'],
+[['CC1','CC2','CC3'],'Unité multiple',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC1-R(AB)','CC2-R(AB)'],'Résistances antibuée',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC1(SI-AL)','CC2(SI-AL)','CC3(SI-AL)'],'Signal d\'alarme',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(AL)'],'Signal d\'alerte lumineux',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(ALI-SI)AL'],'Alimentation signalisation alarme',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(AUX)BT'],'Alimentation des auxiliaires BT',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-BM1'],'Alimentation bloc moteur 1',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-BM2'],'Alimentation bloc moteur 2',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-CBA1','CC-CBA2'],'Contacteur batterie',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(C)'],'Alimentation en continu',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-CBL1','CC-CBL2'],'Contacteur de boîte à leviers',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(CH)CM(UM-AU)'],'Chauffe attelage',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(CO)CLM'],'Commande climatisation',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-COD1','CC-COD2'],'Commande des codeurs',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(CO)ECL'],'Commande éclairage',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(CO)VIT'],'Contrôle indicateur de vitesse',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-PRA'],'Compresseur auxiliaire',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-DJ'],'Disjoncteur',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(ECL)'],'Éclairage',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-ACP'],'Accouplement « Vendée »',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(ES)FEP'],'Essai frein à commande électropneumatique',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-FEP'],'Frein à commande électropneumatique',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(FP)'],'Fermeture des portes',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-FPB'],'Frein presse bouton',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-F(SE)'],'Commande frein de secours',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-GRB'],'Graisseurs de boudins',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-ICA1'],'Informations continues chaîne 1 CAB-SIGNAL',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-ICA2'],'Informations continues chaîne 2 CAB-SIGNAL',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-IPTR'],'Informations ponctuelles CAB-SIGNAL',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-KVB'],'Contrôle de vitesse par balises KVB',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-LFR1'],'Lampe feu rouge gauche',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-LFR2'],'Lampe feu rouge droit',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-LP'],'Lampe pupitre de conduite',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-LPRF1'],'Lampe projecteurs fanal gauche',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-LPRF2'],'Lampe projecteurs fanal droit',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-LS'],'Lampe de signalisation',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-LT-ECC1'],'Essai fusibles HT (disrupteur)',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-LT-ECC2'],'Essai fusibles BT (disrupteur)',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(M)'],'Alimentation en monophasé',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-MEM'],'Mémoire permanente',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-MINIMA'],'Minima d\'alimentation TSF',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-PA'],'Préannonce',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(PAM)SON'],'Préamplification de sonorisation',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-PL'],'Pendule',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-PT'],'Pantographes',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-RS'],'Répétition des signaux',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-SA'],'Sablage',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(SE)LF1'],'Secours lampe fanal gauche',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(SE)LF2'],'Secours lampe fanal droit',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-SFC'],'Ordinateur fonction cabine',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-SM'],'Ordinateur système multiplexé',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-TEST'],'Test tachymétrie',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-VA'],'Veille automatique (disrupteur)',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-VE-VA'],'Électrovalve veille automatique',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-VI'],'Vitesse imposée',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-VISU'],'Écran et clavier',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-VIT'],'Indicateur de vitesse (disrupteur)',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-VN-EFN'],'Électrovanne fréon',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-VT-CLM'],'Ventilateur de climatiseur',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-VY'],'Voyants des équipements de sécurité',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-VY-URG'],'Contrôle des voyants d\'urgence',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-TF-VLM'],'Transformateur tension ligne MONO (bloc moteur)',1,[76],'CC','Motrice — bloc moteur'],
+[['—'],'Échelle d\'accès à la toiture',1,[23],'AU','Motrice — arrière'],
+[['—'],'Enregistreur de vitesse',1,[9],'AU','Motrice — bloc cabine'],
+[['—'],'Escabeau de secours (R4)',3,[42],'AU','Remorque 4'],
+[['—'],'Escabeau de secours (R7)',3,[47],'AU','Remorque 7'],
+[['—'],'Essai fusibles BT',1,[9],'AU','Motrice — bloc cabine'],
+[['—'],'Essai fusibles HT',1,[69],'AU','Motrice'],
+[['—'],'Frein d\'immobilisation à ressort',1,[20,78],'AU','Motrice'],
+[['CC1-CPR-CLM','CC2-CPR-CLM','CC3-CPR-CLM'],'Fusibles BT — compresseur du climatiseur',1,[9],'FU','Motrice — bloc cabine'],
+[['CC1-VT-CDR','CC2-VT-CDR','CC3-VT-CDR'],'Fusibles BT — ventilateur de condenseur',1,[9],'FU','Motrice — bloc cabine'],
+[['CC-AS-BC'],'Fusible — alimentation stabilisée du bloc commun',1,[9],'FU','Motrice — bloc cabine'],
+[['CC-G'],'Fusible — alimentation générale',1,[9],'FU','Motrice — bloc cabine'],
+[['CC-RECA'],'Fusible — chauffage cabine',1,[9],'FU','Motrice — bloc cabine'],
+[['CC-ALG'],'Fusible — alimentation stabilisée blocs moteurs',1,[76],'FU','Motrice — bloc moteur'],
+[['Z-BA1'],'Batterie 1',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z-BA2'],'Batterie 2',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z-CAB'],'CAB SIGNAL',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z-CH(UM-AU)'],'Chauffage SCHARFENBERG',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z(CO)DJ'],'Contrôle disjoncteur',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z(CO)VIT'],'Contrôle de vitesse',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z(DI)CPR'],'Alimentation directe du compresseur',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z(ECL)EXT'],'Alimentation extérieure de l\'éclairage',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z(ES)CAB'],'Essai CAB SIGNAL',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)CLIM'],'Isolement climatisation',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)CO'],'Isolement de la commande',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)CPR'],'Isolement compresseur',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)FEP'],'Isolement du frein à commande électropneumatique',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z-LPRF1'],'Lampe projecteur fanal gauche (interrupteur)',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z-LPRF2'],'Lampe projecteur fanal droit (interrupteur)',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z(N-SE)'],'Neutre frein de secours',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z-PA'],'Préannonce (interrupteur)',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z-KVB'],'Contrôle de vitesse KVB',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z-RS'],'Répétition des signaux (interrupteur)',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z-SE'],'Commande de secours',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z-SEC'],'Boîte de sécurité',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z(SIG)VA'],'Shuntage QQ(SIG)VA',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z-VA'],'Veille automatique (interrupteur)',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z-VIT'],'Indicateur de vitesse (interrupteur)',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)ECL-CLM'],'Éclairage-climatisation remorques',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)AFP'],'Isolement de l\'amélioration du facteur de puissance',1,[76],'Z','Motrice — bloc moteur'],
+[['Z(IS)M'],'Isolement bloc moteur',1,[76],'Z','Motrice — bloc moteur'],
+[['ZL-BM'],'Éclairage bloc moteur',1,[76],'Z','Motrice — bloc moteur'],
+[['Z(IS)C-H-AUX'],'Isolement du hâcheur auxiliaire 500V',1,[73],'Z','Motrice — bloc AUX'],
+[['Z-LB-AUX'],'Éclairage bloc AUX',1,[73],'Z','Motrice — bloc AUX'],
+[['Z-BB'],'Essai à blanc',1,[70],'Z','Motrice — bloc commun'],
+[['Z(IS)AUX'],'Isolement contacteur AUX',1,[70],'Z','Motrice — bloc commun'],
+[['Z(IS)DJ(C)'],'Isolement disjoncteur continu',1,[70],'Z','Motrice — bloc commun'],
+[['ZL-BC'],'Éclairage bloc commun',1,[70],'Z','Motrice — bloc commun'],
+[['Z(IS)H(HT)'],'Isolement H(HT) (sur remorque 1)',2,[60],'Z','Remorque 1'],
+[['—'],'Lampes témoins : capacité filtre AFP / filtre principal et auxiliaires',1,[18],'AU','Motrice'],
+[['—'],'Pupitre',1,[7],'AU','Motrice — cabine'],
+[['RB(A)CG'],'Arrêt CG — R1 et R10 côté motrices',2,[65],'RB','Remorques 1 et 10'],
+[['RB(A)CG'],'Arrêt CG — R1 et R10 côté remorques',2,[31],'RB','Remorques 1 et 10'],
+[['RB(A)CG'],'Arrêt CG — R2 à R9 sauf R4',3,[31,40],'RB','Remorques 2 à 9 (sauf R4)'],
+[['RB(A)CG'],'Arrêt CG — R4',3,[31,38],'RB','Remorque 4'],
+[['RB(A)CG-AC'],'Arrêt CG attelage automatique',1,[3],'RB','Motrice — avant'],
+[['RB(A)CP'],'Arrêt CP — R1 et R10 côté motrices',2,[24],'RB','Remorques 1 et 10'],
+[['RB(A)CP'],'Arrêt CP — R1 et R10 côté remorques',2,[51],'RB','Remorques 1 et 10'],
+[['RB(A)CP'],'Arrêt CP — R2 à R9 sauf R4',3,[51,41],'RB','Remorques 2 à 9 (sauf R4)'],
+[['RB(A)CP'],'Arrêt CP — R4',3,[51,37],'RB','Remorque 4'],
+[['RB(A)CP-AC'],'Arrêt CP attelage automatique',1,[3],'RB','Motrice — avant'],
+[['RB(CO)VRN'],'Commande du vérin des trappes',1,[2],'RB','Motrice — avant'],
+[['RB(DA)AT(AU)'],'Désaccouplement de l\'attelage automatique',1,[7],'RB','Motrice — cabine'],
+[['RB-FI-F'],'Filtre de frein (robinet)',1,[3],'RB','Motrice — avant'],
+[['RB-F(SE)'],'Frein de secours',1,[80],'RB','Motrice'],
+[['RB(SE)AUX'],'Secours circuit auxiliaire',1,[22],'RB','Motrice — bloc auxiliaire pneumatique'],
+[['RB(URG)'],'Robinet d\'urgence (R1)',2,[64],'RB','Remorque 1'],
+[['RB(URG)'],'Robinet d\'urgence (R4)',3,[34],'RB','Remorque 4'],
+[['RB(IS)ALI-PT'],'Isolement circuits auxiliaires',1,[22],'RB','Motrice — bloc auxiliaire pneumatique'],
+[['RB(IS)AVER'],'Isolement avertisseur',1,[6],'RB','Motrice — cabine'],
+[['RB(IS)BC(E)'],'Isolement bloc commun',1,[19],'RB','Motrice'],
+[['RB(IS)BM1'],'Isolement bloc moteur 1',1,[75],'RB','Motrice — bloc moteur'],
+[['RB(IS)BM2'],'Isolement bloc moteur 2',1,[74],'RB','Motrice — bloc moteur'],
+[['RB(IS)CP-CG'],'Isolement frein automatique motrice (jumelé CP-CG)',1,[10,12],'RB','Motrice'],
+[['RB(IS)EV-LV'],'Isolement essuie-vitre, lave-vitre',1,[6],'RB','Motrice — cabine'],
+[['RB(IS)FI-F'],'Isolement filtre de frein',1,[3],'RB','Motrice — avant'],
+[['RB(IS)MANOSTAT-CP'],'Isolement manostat CP',1,[22],'RB','Motrice — bloc auxiliaire pneumatique'],
+[['RB(IS)MA-F'],'Isolement manostat frein',1,[22],'RB','Motrice — bloc auxiliaire pneumatique'],
+[['RB(IS)PR-AT(AU)'],'Isolement vérin des trappes',1,[3],'RB','Motrice — avant'],
+[['RB(IS)PT(C)'],'Isolement pantographe continu',1,[21],'RB','Motrice'],
+[['RB(IS)PT(M)'],'Isolement pantographe monophasé',1,[68],'RB','Motrice'],
+[['RB(IS)REGULATEUR COMPR.'],'Isolement régulateur de pression',1,[22],'RB','Motrice — bloc auxiliaire pneumatique'],
+[['RB(IS)SA'],'Isolement sablage',1,[3],'RB','Motrice — avant'],
+[['RB(IS)SR-AUX'],'Isolement sécheur auxiliaire',1,[22],'RB','Motrice — bloc auxiliaire pneumatique'],
+[['RB(IS)VE-LGV'],'Isolement électrovalve ligne à grande vitesse',1,[67],'RB','Motrice'],
+[['RB(IS)VE(PU)SR'],'Isolement électrovalve de purge de la valve de purge 3',1,[22],'RB','Motrice — bloc auxiliaire pneumatique'],
+[['RB(IS)VE-VA'],'Isolement électrovalve de veille automatique',1,[6],'RB','Motrice — cabine'],
+[['RB(IS)VE-VN(P)RGN-SECHEUR(AUX)'],'Isolement électrovalve de valve de purge du régénérateur auxiliaire',1,[22],'RB','Motrice — bloc auxiliaire pneumatique'],
+[['RB(IS)VN(P)RGN-SR(AUX)'],'Valve de purge du régénérateur du sécheur auxiliaire',1,[22],'RB','Motrice — bloc auxiliaire pneumatique'],
+[['RB(IS)VV-VA'],'Isolement valve de veille automatique',1,[6],'RB','Motrice — cabine'],
+[['RB(IS)ALIM'],'Isolement alimentation extérieure — R1 et R10',2,[53,56],'RB','Remorques 1 et 10'],
+[['RB(IS)ALIM'],'Isolement alimentation extérieure — R2 à R9 sauf R4',3,[44],'RB','Remorques 2 à 9 (sauf R4)'],
+[['RB(IS)C-CH-C101'],'Isolement contacteur C101 et manostat',3,[46],'RB','Remorques 2 à 9'],
+[['RB(IS)CP-CG'],'Isolement frein automatique (jumelé CP-CG) — R1 et R10',2,[54,57],'RB','Remorques 1 et 10'],
+[['RB(IS)CP-CG'],'Isolement frein automatique — R2 à R9 sauf R4',3,[45],'RB','Remorques 2 à 9 (sauf R4)'],
+[['RB(IS)GRB'],'Isolement graisseurs de boudins',2,[25],'RB','Remorques 1 et 10'],
+[['RB(IS)H(HT)'],'Isolement sectionneur de toiture',2,[26],'RB','Remorques 1 et 10'],
+[['RB(IS)MA(SUS)'],'Isolement manostat de suspension — R1 et R10',2,[63],'RB','Remorques 1 et 10'],
+[['RB(IS)MA(SUS)'],'Isolement manostat de suspension — R2 à R9 sauf R4',3,[32],'RB','Remorques 2 à 9 (sauf R4)'],
+[['RB(IS)MA(SUS)'],'Isolement manostat de suspension — R4',3,[32,39],'RB','Remorque 4'],
+[['RB(IS)P(AC)'],'Isolement portes d\'accès — R1 et R10',2,[59],'RB','Remorques 1 et 10'],
+[['RB(IS)P(AC)'],'Isolement portes d\'accès — R2 à R9 sauf R4',3,[33],'RB','Remorques 2 à 9 (sauf R4)'],
+[['RB(IS)P(AC)'],'Isolement portes d\'accès — R4',3,[48],'RB','Remorque 4'],
+[['RB(IS)P(AC)CB'],'Isolement porte compartiment à bagages',2,[62],'RB','Remorque 1'],
+[['RB(IS)SUS(PN)'],'Isolement suspension pneumatique — R1 et R10',2,[28],'RB','Remorques 1 et 10'],
+[['RB(IS)SUS(PN)'],'Isolement suspension pneumatique — R2 à R9 sauf R4',3,[50],'RB','Remorques 2 à 9 (sauf R4)'],
+[['RB(IS)SUS(PN)'],'Isolement suspension pneumatique — R4',3,[36,50],'RB','Remorque 4'],
+[['RB(PU)DJ(M)'],'Purge disjoncteur monophasé',1,[71],'RB','Motrice'],
+[['RB(PU)FI-F'],'Purge filtre de frein',1,[3],'RB','Motrice — avant'],
+[['RB(PU)FI-SR(AUX)'],'Purge sécheur des auxiliaires',1,[22],'RB','Motrice — bloc auxiliaire pneumatique'],
+[['H-BA1'],'Sectionneur batterie 1',1,[72],'H','Motrice'],
+[['H-BA2'],'Sectionneur batterie 2',1,[72],'H','Motrice'],
+[['H(HT)'],'Sectionneur ligne de toiture',2,[27],'H','Remorques 1 et 10'],
+[['H(O)M'],'Mise à la terre de la ligne de toiture',1,[16],'H','Motrice'],
+[['—'],'Trappe d\'accès à la toiture',1,[23],'AU','Motrice — arrière'],
+[['—'],'Valve de purge des équipements de frein — bogies moteurs',1,[11,13],'AU','Motrice'],
+[['—'],'Valve de purge des équipements de frein — bogies porteurs R1 et R10',2,[52,55],'AU','Remorques 1 et 10'],
+[['—'],'Valve de purge des équipements de frein — bogies porteurs R2 à R9 sauf R4',3,[42],'AU','Remorques 2 à 9 (sauf R4)'],
+[['V-BA1'],'Voltmètre batterie 1',1,[8],'AU','Motrice — armoire bloc cabine'],
+[['V-BA2'],'Voltmètre batterie 2',1,[8],'AU','Motrice — armoire bloc cabine']];
+const EQ_ITEMS_A=EQ_RAW_A.map((e,i)=>({id:'aeq'+i,a:e[0],d:e[1],s:e[2],r:e[3],g:e[4],z:e[5],cat:'atl'}));
+/* Positions des repères (schémas stylisés — 0=avant, 1=arrière) */
+const EQ_POS_A={
+1:{1:[.03,'t'],2:[.05,'t'],3:[.07,'t'],4:[.10,'t'],5:[.13,'t'],6:[.16,'t'],7:[.19,'t'],8:[.23,'t'],9:[.27,'t'],10:[.44,'t'],11:[.47,'t'],12:[.50,'t'],13:[.53,'t'],14:[.57,'t'],15:[.60,'t'],16:[.63,'t'],17:[.66,'t'],18:[.69,'t'],19:[.72,'t'],20:[.75,'t'],21:[.78,'t'],22:[.83,'t'],23:[.88,'t'],
+   66:[.86,'b'],67:[.83,'b'],68:[.80,'b'],69:[.71,'b'],70:[.66,'b'],71:[.62,'b'],72:[.58,'b'],73:[.52,'b'],74:[.46,'b'],75:[.42,'b'],76:[.36,'b'],77:[.24,'b'],78:[.21,'b'],79:[.17,'b'],80:[.12,'b'],81:[.09,'b']},
+2:{64:[.03,'t'],65:[.055,'t'],24:[.09,'t'],25:[.12,'t'],26:[.15,'t'],27:[.18,'t'],28:[.28,'t'],29:[.48,'t'],30:[.62,'t'],31:[.95,'t'],
+   63:[.06,'b'],62:[.10,'b'],61:[.30,'b'],60:[.34,'b'],59:[.38,'b'],58:[.44,'b'],57:[.48,'b'],56:[.51,'b'],55:[.54,'b'],54:[.57,'b'],53:[.60,'b'],52:[.63,'b'],51:[.93,'b']},
+3:{31:[.03,'t'],32:[.06,'t'],33:[.20,'t'],34:[.80,'t'],35:[.83,'t'],36:[.86,'t'],37:[.89,'t'],38:[.92,'t'],39:[.95,'t'],
+   51:[.04,'b'],50:[.07,'b'],49:[.11,'b'],48:[.22,'b'],47:[.36,'b'],46:[.50,'b'],45:[.56,'b'],44:[.59,'b'],43:[.62,'b'],42:[.67,'b'],41:[.90,'b'],40:[.93,'b']}};
+const EQ_M_ZONES_A=[[.02,.14,'CABINE'],[.16,.27,'ARMOIRE CABINE'],[.31,.43,'BM 1'],[.43,.54,'BM 2'],[.54,.60,'BLOC AUX'],[.61,.71,'TRANSFO'],[.72,.81,'BLOC COMMUN'],[.82,.94,'COMPR. / PNEU']];
+/* Armoire BLOC CABINE — TGV Atlantique (d'après la planche photo) */
+const EQ_PANEL_A=[
+{k:'led',t:'Disjoncteurs de signalisation',c:['DJ(SI-VER1)','DJ(SI-VER2)','DJ(SI)VA','DJ(SI-DF)ARM','DJ(SI-O)N','DJ(SI-D)VIT','DJ(SI-D)CV1','DJ(SI-D)CV2','DJ(SI-U)ENT']},
+{k:'meter',t:'Voltmètres, ISO et contrôle panto',c:['V-BA1','DJ(DF)VT LORIENT','ISO','Z(SEC) CONTR PANTO','V-BA2']},
+{k:'bp',t:'Boutons-poussoirs',c:['BP-Q-BA','BP(A)Q-BA','Z(DI)CPR','BP(R)MPX1','BP(R)MPX2','BP(OV)HT','BP-Q-ML','BP(A)QML']},
+{k:'cc',t:'Disrupteurs — rangée 1',c:['CC-Q(IS)DJ(M)','CC-Q(OV)HT','CC-QQ-SA','CC-QEV','CC-Q(TFP)','CC-VELGV','CC-EV','CC(ES)EV-LV']},
+{k:'cc',t:'Disrupteurs — rangée 2',c:['CC(SUR)VT LORIENT','CC-CBA1','CC-CBA2','CC-CBL1','CC-CBL2','CC-BM1','CC-BM2','CC-FC','CC-VY','CC-VY(URG)','CC-VA','CC-RS','CC-KVB','CC-VIT','CC-IPTR','CC-ICA1','CC-ICA2','CC(CO)VIT','CC-LORIENT']},
+{k:'cc',t:'Disrupteurs — rangée 3',c:['CC-MINIMA','CC-MEM','CC-VISU','CC-PL','CC(FP)','CC-QS00','CC1-VELGV','CC-ZPT(C)','CC-ZPT(M)','CC-Q(DF)DJC','CC-FPB','CC-FEP','CC-F(SE)','CC-VEVA','CC-TEST','CC(ES)FEP','CC1(VT)LORIENT']},
+{k:'cc',t:'Disrupteurs — rangée 4',c:['CC-SFC','CC-SM','CC1','CC2','CC3','CC(C)','CC(M)','CC(AUX)BT','CC-PT','CC-DJ','CC-COD1','CC-COD2','CC-VI','CC(ALI-SI)AL','CC3(SI-AL)','CC2(SI-AL)','CC-CPRA','CC-SA','CC-GRB','CC2(VT)LORIENT']},
+{k:'cc',t:'Disrupteurs — rangée 5',c:['CC1-R(AB)','CC2-R(AB)','CC(CO)CLM','CC-VT-CLM','CC-VN-EFN','CC(CH)CM(UM-AU)','CC(PAM)SON','CC-LS','CC-LP','CC(ECL)','CC(CO)ECL','CC-LPRF1','CC-LPRF2','CC-LFR1','CC-LFR2','CC(SE)LF1','CC(SE)LF2','CC(AL)','CC1(SI-AL)']},
+{k:'z',t:'Commutateurs — rangée 1',c:['Z(ES)CAB','Z-CAB','Z-BA1','Z-BA2']},
+{k:'z',t:'Commutateurs — rangée 2',c:['Z-RS','Z(CO)DJ','Z(IS)ECL-CLM','Z(IS-CO)DOUBLES']},
+{k:'z',t:'Commutateurs — rangée 3',c:['Z-KVB','Z-CH(UM-AU)','Z(ECL)EXT']},
+{k:'z',t:'Commutateurs — rangée 4',c:['Z-VA','Z(SE)RAD','Z(IS)BG-SI-AL','Z(IS)CPR','Z(IS)CLIM','Z(IS)FEP','CC-PC-C']},
+{k:'z',t:'Commutateurs — rangée 5',c:['Z(CO)VIT','Z-VIT','Z(SIG)VA','Z-LPRF1','Z-LPRF2','Z(N-SE)']}];
+/* Bloc auxiliaire pneumatique (schéma 4 — motrice, repère 22) */
+const EQ_PNEU_A=['RB(IS)SR-AUX','RB(PU)FI-SR(AUX)','RB(SE)ALI-PT','RB(IS)VE(PU)SR','RB(IS)ALI-PT','RB(IS)MA-F','RB(IS)VE-VN(P)RGN-SECHEUR(AUX)','RB(IS)MANOSTAT-CP','RB(IS)REGULATEUR COMPR.','CPR(AUX)','RB(IS)VN(P)RGN-SR(AUX)'];
+const EQ_ALIASES_A={'CCCPRA':'CCPRA','ZISCODOUBLES':'ZISCO','RBSEALIPT':'RBSEAUX'};
+/* ---------- Catalogues (une entrée par série documentée) ---------- */
+const EQ_CATALOGS={
+duplex:{key:'duplex',label:'TGV Duplex',serie:'serie_duplex',deck:2,
+  cars:[['M1',1],['R1',2],['R2',3],['R3',3],['R4',4],['R5',3],['R6',3],['R7',3],['R8',2],['M2',1]],
+  schemas:{1:'Motrices 1 et 2',2:'Remorques 1 et 8',3:'Remorques 2-3-5-6-7',4:'Remorque 4',5:'Bloc pneumatique'},
+  maxVeh:4,pneuSchema:5,
+  pos:EQ_POS,mzones:EQ_M_ZONES,
+  panel:EQ_PANEL,panelRep:8,panelTitle:'ARMOIRE CABINE — BLOC CABINE TGV DUPLEX',panelSub:'(repère 8)',
+  pneu:EQ_PNEU,pneuRep:26,pneuTitle:'BLOC PNEUMATIQUE',pneuSub:'(schéma 5 — motrice, repère 26)',
+  aliases:EQ_ALIASES,
+  src:'Source : GDA TGV Duplex — TT00235 (éd. 12-12-2014), annexes 2A/2B. Schéma stylisé : positions indicatives.'},
+atl:{key:'atl',label:'TGV Atlantique (TVM 300)',serie:'serie_atl',deck:1,
+  cars:[['M1',1],['R1',2],['R2',3],['R3',3],['R4',3],['R5',3],['R6',3],['R7',3],['R8',3],['R9',3],['R10',2],['M2',1]],
+  schemas:{1:'Motrices 1 et 2',2:'Remorques 1 et 10',3:'Remorques 2 à 9',4:'Bloc auxiliaire pneumatique'},
+  maxVeh:3,pneuSchema:4,
+  pos:EQ_POS_A,mzones:EQ_M_ZONES_A,
+  panel:EQ_PANEL_A,panelRep:8,panelTitle:'ARMOIRE CABINE — BLOC CABINE TGV ATLANTIQUE',panelSub:'(repère 8)',
+  pneu:EQ_PNEU_A,pneuRep:22,pneuTitle:'BLOC AUXILIAIRE PNEUMATIQUE',pneuSub:'(schéma 4 — motrice, repère 22)',
+  aliases:EQ_ALIASES_A,
+  src:'Source : GDA TGV A (TVM 300), annexes 2A/2B (éd. 13-12-2012) et planche BLOC CABINE ATL 300. Schéma stylisé : positions indicatives.'}};
+const eqCatOf=it=>EQ_CATALOGS[(it&&it.cat)||'duplex']||EQ_CATALOGS.duplex;
+
+/* ---------- Rendu du module ---------- */
+function eqMatchCodes(item){return item.a.map(eqNorm).filter(x=>x&&x!=='—');}
+function eqSvgTrain(schema,cat){
+  cat=cat||EQ_CATALOGS.duplex;
+  let x=4;const w=96,g=4;const last=cat.cars.length-1;
+  const parts=cat.cars.map(([lbl,s],i)=>{
+    const hot=s===schema||(schema===cat.pneuSchema&&s===1);
+    const nose=i===0?'M12 34 L4 20 Q2 10 14 8 L96 8 L96 34 Z':(i===last?'M4 8 L86 8 Q98 10 96 20 L88 34 L4 34 Z':null);
+    const bx=x;x+=w+g;
+    const fill=hot?'var(--accent)':'var(--bg-soft)';
+    const txt=hot?'#fff':'var(--muted)';
+    const shape=nose?`<path transform="translate(${bx},0)" d="${nose}" fill="${fill}" stroke="var(--border-strong)"/>`
+      :`<rect x="${bx}" y="8" width="${w}" height="26" rx="4" fill="${fill}" stroke="var(--border-strong)"/>`;
+    return shape+`<text x="${bx+w/2}" y="25" text-anchor="middle" font-size="13" font-weight="700" fill="${txt}">${lbl}</text>`;});
+  return `<svg viewBox="0 0 ${x+2} 42" class="eq-train">${parts.join('')}</svg>`;}
+function eqSvgVehicle(schema,reps,selRep,cat){
+  cat=cat||EQ_CATALOGS.duplex;
+  const W=1000,H=230,bx=20,bw=W-40,by=55,bh=110;
+  let body='';
+  if(schema===1){
+    body=`<path d="M${bx+55} ${by} H${bx+bw} V${by+bh} H${bx+55} L${bx} ${by+bh/2} Z" fill="var(--panel)" stroke="var(--border-strong)" stroke-width="2"/>`
+      +cat.mzones.map(z=>`<rect x="${bx+58+z[0]*(bw-70)}" y="${by+18}" width="${(z[1]-z[0])*(bw-70)}" height="${bh-36}" rx="7" fill="var(--bg-soft)" stroke="var(--border)"/>
+        <text x="${bx+58+(z[0]+z[1])/2*(bw-70)}" y="${by+bh/2+4}" text-anchor="middle" font-size="11" font-weight="700" fill="var(--muted)">${z[2]}</text>`).join('');
+  }else if(cat.deck===2){
+    body=`<rect x="${bx}" y="${by}" width="${bw}" height="${bh}" rx="10" fill="var(--panel)" stroke="var(--border-strong)" stroke-width="2"/>
+      <line x1="${bx}" y1="${by+bh/2}" x2="${bx+bw}" y2="${by+bh/2}" stroke="var(--border)" stroke-dasharray="5 5"/>
+      <text x="${bx+10}" y="${by+18}" font-size="10" fill="var(--muted)">NIVEAU SUPÉRIEUR</text>
+      <text x="${bx+10}" y="${by+bh-8}" font-size="10" fill="var(--muted)">NIVEAU INFÉRIEUR</text>`;
+    if(schema===2)body+=`<rect x="${bx+bw*.12}" y="${by+14}" width="${bw*.10}" height="${bh-28}" rx="6" fill="var(--bg-soft)" stroke="var(--border)"/>
+      <text x="${bx+bw*.17}" y="${by+bh/2+3}" text-anchor="middle" font-size="9.5" font-weight="700" fill="var(--muted)">LOCAL SERV.</text>`;
+    if(schema===4)body+=`<rect x="${bx+bw*.30}" y="${by+bh/2+8}" width="${bw*.42}" height="${bh/2-22}" rx="6" fill="var(--bg-soft)" stroke="var(--border)"/>
+      <text x="${bx+bw*.51}" y="${by+bh*0.78}" text-anchor="middle" font-size="9.5" font-weight="700" fill="var(--muted)">APPAREILLAGE ÉLECTRIQUE</text>`;
+    body+=`<text x="${bx}" y="${by-14}" font-size="10.5" font-weight="700" fill="var(--muted)">← côté motrice${schema===4?' 1':''}</text>
+      <text x="${bx+bw}" y="${by-14}" text-anchor="end" font-size="10.5" font-weight="700" fill="var(--muted)">côté ${schema===4?'motrice 2':'remorques'} →</text>`;
+  }else{
+    body=`<rect x="${bx}" y="${by}" width="${bw}" height="${bh}" rx="10" fill="var(--panel)" stroke="var(--border-strong)" stroke-width="2"/>`;
+    if(schema===2)body+=`<rect x="${bx+bw*.06}" y="${by+14}" width="${bw*.12}" height="${bh-28}" rx="6" fill="var(--bg-soft)" stroke="var(--border)"/>
+      <text x="${bx+bw*.12}" y="${by+bh/2+3}" text-anchor="middle" font-size="9.5" font-weight="700" fill="var(--muted)">BAGAGES (R1)</text>`;
+    body+=`<text x="${bx}" y="${by-14}" font-size="10.5" font-weight="700" fill="var(--muted)">← côté motrice</text>
+      <text x="${bx+bw}" y="${by-14}" text-anchor="end" font-size="10.5" font-weight="700" fill="var(--muted)">côté remorques →</text>`;}
+  const pos=cat.pos[schema]||{};
+  const dots=Object.entries(pos).map(([rep,[fx,side]])=>{
+    const cx=schema===1?bx+58+fx*(bw-70):bx+30+fx*(bw-60);
+    const cy=side==='t'?by-8:by+bh+8;
+    const hot=reps.includes(+rep);
+    const sel=selRep===+rep;
+    return `<g class="eq-rep${hot?' hot':''}${sel?' selr':''}" data-rep="${rep}" style="cursor:pointer">
+      <line x1="${cx}" y1="${cy}" x2="${cx}" y2="${side==='t'?by+4:by+bh-4}" stroke="${hot?'var(--accent)':'var(--border-strong)'}" stroke-width="${hot?2:1}"/>
+      <circle cx="${cx}" cy="${cy}" r="${hot?11:8}" fill="${hot?'var(--accent)':'var(--panel)'}" stroke="${hot?'var(--accent)':'var(--border-strong)'}" stroke-width="1.5"/>
+      <text x="${cx}" y="${cy+3.5}" text-anchor="middle" font-size="${hot?10:8.5}" font-weight="700" fill="${hot?'#fff':'var(--muted)'}">${rep}</text>
+      ${hot?`<circle cx="${cx}" cy="${cy}" r="15" fill="none" stroke="var(--accent)" opacity=".45"><animate attributeName="r" values="12;19;12" dur="1.6s" repeatCount="indefinite"/><animate attributeName="opacity" values=".5;0;.5" dur="1.6s" repeatCount="indefinite"/></circle>`:''}
+    </g>`;}).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" class="eq-veh">${body}${dots}</svg>`;}
+function eqPanelHtml(codes,pos,cat){
+  cat=cat||EQ_CATALOGS.duplex;
+  const al=cat.aliases||{};
+  const want=new Set(codes.map(c=>al[c]||c));
+  const rows=cat.panel.map((row,ri)=>{
+    const k=row.k||'cc';
+    return `<div class="gp-row" data-k="${k}">${row.c.map((c,ci)=>{
+      const n=al[eqNorm(c)]||eqNorm(c);
+      const hit=want.has(n)||(pos&&pos.row===ri+1&&pos.col===ci+1);
+      let g;
+      if(k==='led')g='<span class="gp-led"></span>';
+      else if(k==='meter')g=/^V-/i.test(c)?'<span class="gp-meter"></span>':(/^(ISO$|Z-SEC|Z\(SEC\))/i.test(c)?'<span class="gp-sec"></span>':'<span class="gp-led"></span>');
+      else if(k==='bp')g='<span class="gp-bp"></span>';
+      else if(k==='z')g='<span class="gp-z"></span>';
+      else g='<span class="gp-cc"><i></i><b></b></span>';
+      return `<span class="gp-cell${hit?' hit':''}" data-code="${eqNorm(c)}" data-r="${ri+1}" data-c="${ci+1}" title="${esc(c)} — ${esc(row.t)} (ligne ${ri+1}, colonne ${ci+1})"><span class="gp-lbl">${esc(c)}</span>${g}</span>`;
+    }).join('')}</div>`;}).join('');
+  return `<div class="eq-panel gp"><div class="eq-panel-title">${cat.panelTitle} <span>${cat.panelSub}</span></div>${rows}
+    ${pos?`<div style="font-size:11px;font-weight:800;color:#fff;margin-top:6px">📍 Position : ligne ${pos.row}, colonne ${pos.col}</div>`:''}
+  </div>`;}
+function eqPneuHtml(codes,cat){
+  cat=cat||EQ_CATALOGS.duplex;
+  const al=cat.aliases||{};
+  const want=new Set(codes.map(c=>al[c]||c));
+  return `<div class="eq-panel"><div class="eq-panel-title">${cat.pneuTitle} <span>${cat.pneuSub}</span></div>
+    <div class="eq-prow">${cat.pneu.map(c=>{
+      const n=al[eqNorm(c)]||eqNorm(c);
+      return `<span class="eq-cell rb${want.has(n)?' hit':''}">${esc(c)}</span>`;}).join('')}</div></div>`;}
+function eqSchemaLabel(s,cat){return ((cat||EQ_CATALOGS.duplex).schemas)[s]||'';}
+function eqKey(it){return eqNorm(it.a[0])+'|'+it.s+'|'+(it.r[0]||'')+'|'+eqNorm(it.d).slice(0,12);}
+/* Catalogue effectif : catalogue de base (GDA Duplex) + modifications + appareils personnalisés */
+function eqAllItems(){
+  const over=data.equipOver||{};
+  return EQ_ITEMS.concat(EQ_ITEMS_A).map(it=>{const o=over[it.id];return o?Object.assign({},it,o,{id:it.id,cat:it.cat}):it;})
+    .filter(it=>!it.deleted)
+    .concat(data.equipCustom||[]);}
+function eqById(id){return eqAllItems().find(i=>i.id===id)||null;}
+function eqSeriesOf(it){return(it.series&&it.series.length)?it.series:[eqCatOf(it).serie];}
+function eqSerieNames(it){return eqSeriesOf(it).map(id=>{const s=(data.fleet||[]).find(f=>f.id===id);return s?s.name:null;}).filter(Boolean).join(', ');}
+function eqMeta(it,create){data.equipMeta=data.equipMeta||{};
+  const lk=eqKey(it);
+  if(data.equipMeta[lk]&&!data.equipMeta[it.id]){data.equipMeta[it.id]=data.equipMeta[lk];delete data.equipMeta[lk];}
+  if(!data.equipMeta[it.id]&&create)data.equipMeta[it.id]={tags:[],nodeId:null};
+  return data.equipMeta[it.id]||null;}
+function eqManualTags(it){const m=eqMeta(it);return(m&&m.tags)||[];}
+function eqAutoTags(it){return keywordsOf(it.d+' '+it.z+' '+(it.comment||''),6);}
+function eqEffTags(it){const man=eqManualTags(it);return man.length?man:eqAutoTags(it);}
+function eqLinkedNode(it){const m=eqMeta(it);return m&&m.nodeId?nodeById(m.nodeId):null;}
+/* Suggestions de fiches pour un appareil (mots-clés communs + abréviation dans le titre/tags) */
+function eqSuggestNodes(it){
+  const tags=new Set(eqEffTags(it).map(eqFold));
+  const abbrs=it.a.filter(a=>a!=='—').map(eqNorm);
+  const linked=eqLinkedNode(it);
+  return data.nodes.map(n=>{
+    if(linked&&n.id===linked.id)return null;
+    const nt=n.tags.map(eqFold);
+    const common=nt.filter(t=>tags.has(t));
+    let score=common.length*2;
+    const tn=eqNorm(n.title);
+    if(abbrs.some(a=>a&&tn.includes(a)))score+=3;
+    const body=eqFold(n.title);
+    for(const t of tags)if(t.length>4&&body.includes(t))score+=1;
+    return score>0?{n,score,common}:null;
+  }).filter(Boolean).sort((a,b)=>b.score-a.score).slice(0,6);}
+/* Appareils suggérés pour une fiche (réciproque) */
+function nodeSuggestEquip(n){
+  const nt=new Set(n.tags.map(eqFold));
+  if(!nt.size&&!n.title)return[];
+  const tn=eqNorm(n.title);
+  const linkedIds=new Set(n.equip||[]);
+  return eqAllItems().map(it=>{
+    if(linkedIds.has(it.id))return null;
+    const et=eqEffTags(it).map(eqFold);
+    const common=et.filter(t=>nt.has(t));
+    let score=common.length*2;
+    if(it.a.some(a=>a!=='—'&&tn.includes(eqNorm(a))))score+=3;
+    return score>0?{it,score,common}:null;
+  }).filter(Boolean).sort((a,b)=>b.score-a.score).slice(0,4);}
+function createEquipNode(it){
+  let root=nodeById(data.settings.equipRootId);
+  if(!root){root=newNode(null,'🧰 Appareillages','🧰');root.icon='🧰';
+    root.html='<p>Fiches liées aux appareillages : notes, procédures, liens, contacts et fichiers rattachés à un appareil précis du module 🔍 Appareillages.</p>';
+    data.nodes.push(root);data.settings.equipRootId=root.id;}
+  const title=(it.a[0]!=='—'?it.a[0]+' — ':'')+it.d;
+  const n=newNode(root.id,title,'🧰');
+  n.tags=[...eqEffTags(it)];
+  n.html=`<p><b>Appareil :</b> ${esc(it.d)}${it.a[0]!=='—'?` (<b>${esc(it.a.join(', '))}</b>)`:''}<br>
+<b>Famille :</b> ${esc(EQ_GROUPS[it.g]||it.g)}<br>
+<b>Emplacement :</b> ${esc(it.z)}${it.r.length?` — schéma ${it.s} (${eqSchemaLabel(it.s,eqCatOf(it))}), repère ${it.r.join(', ')}`:''}${it.panel?` — armoire cabine : ligne ${it.panel.row}, colonne ${it.panel.col}`:''}<br>
+<b>Série(s) :</b> ${esc(eqSerieNames(it)||'—')}</p><p>Notez ici vos procédures, particularités et retours d'expérience pour cet appareil.</p>`;
+  data.nodes.push(n);
+  eqMeta(it,true).nodeId=n.id;
+  n.equip=[it.id];
+  state.open.add(root.id);
+  logEvt(`🧰 Fiche d'appareil créée : « ${title} »`);
+  save();
+  return n;}
+/* ---------- Gestion de la flotte ---------- */
+function fleetModal(){
+  if(!isEdit()){toast('🔒 Mode lecture seule');return;}
+  const work=JSON.parse(JSON.stringify(data.fleet||[]));
+  const draw=()=>{
+    $('#mFleetList').innerHTML=work.map((s,si)=>`
+      <div style="border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:10px;background:var(--panel-2)">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+          <input type="text" data-f="name" data-si="${si}" value="${esc(s.name)}" placeholder="Nom de la série (ex : TGV Duplex)" style="flex:1;border:1px solid var(--border-strong);background:var(--panel);border-radius:9px;padding:7px 10px;font-size:13px;font-weight:700">
+          ${s.catalog?'<span style="font-size:10px;font-weight:700;color:var(--accent);white-space:nowrap">catalogue ✓</span>':''}
+          <button class="side-mini" data-a="delserie" data-si="${si}" title="Supprimer la série">🗑</button>
+        </div>
+        ${s.subs.map((u,ui)=>`
+          <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr auto;gap:6px;margin-bottom:6px">
+            <input type="text" data-f="sname" data-si="${si}" data-ui="${ui}" value="${esc(u.name)}" placeholder="Sous-série" style="border:1px solid var(--border-strong);background:var(--panel);border-radius:8px;padding:6px 9px;font-size:12px">
+            <input type="text" data-f="rames" data-si="${si}" data-ui="${ui}" value="${esc(u.rames||'')}" placeholder="Rames (ex : 201 à 294)" style="border:1px solid var(--border-strong);background:var(--panel);border-radius:8px;padding:6px 9px;font-size:12px">
+            <input type="text" data-f="motrices" data-si="${si}" data-ui="${ui}" value="${esc(u.motrices||'')}" placeholder="Motrices (ex : 29201…)" style="border:1px solid var(--border-strong);background:var(--panel);border-radius:8px;padding:6px 9px;font-size:12px">
+            <button class="side-mini" data-a="delsub" data-si="${si}" data-ui="${ui}" title="Supprimer">✕</button>
+          </div>`).join('')}
+        <button class="btn small ghost" data-a="addsub" data-si="${si}">＋ sous-série</button>
+      </div>`).join('')||'<div class="empty-hint">Aucune série — ajoutez-en une.</div>';
+    $('#mFleetList').querySelectorAll('input').forEach(inp=>inp.oninput=()=>{
+      const si=+inp.dataset.si,ui=inp.dataset.ui;
+      if(inp.dataset.f==='name')work[si].name=inp.value;
+      else work[si].subs[+ui][inp.dataset.f==='sname'?'name':inp.dataset.f]=inp.value;});
+    $('#mFleetList').querySelectorAll('button[data-a]').forEach(b=>b.onclick=async()=>{
+      const si=+b.dataset.si;
+      if(b.dataset.a==='addsub')work[si].subs.push({name:'',rames:'',motrices:''});
+      else if(b.dataset.a==='delsub')work[si].subs.splice(+b.dataset.ui,1);
+      else if(b.dataset.a==='delserie'){
+        if(work[si].catalog&&!await confirmDlg('Supprimer la série','Cette série est liée au catalogue d\'appareillages — la supprimer masquera son filtre. Continuer ?'))return;
+        work.splice(si,1);}
+      draw();});};
+  openModal('⚙ Gestion de la flotte TGV',`
+    <p style="font-size:12px;color:var(--muted);margin-bottom:10px">Séries et sous-séries, tranches de numéros de rames et numéros de motrices. Ces séries alimentent le filtre du module Appareillages et le rattachement des appareils.</p>
+    <div id="mFleetList" style="max-height:340px;overflow-y:auto"></div>
+    <button class="btn small" id="mFleetAdd">＋ Ajouter une série</button>`,
+    [{label:'Annuler'},{label:'Enregistrer',primary:true,fn:()=>{
+      data.fleet=work.filter(s=>s.name.trim()).map(s=>({
+        id:s.id||('serie_'+uid()),name:s.name.trim(),catalog:s.catalog||null,
+        subs:s.subs.filter(u=>u.name.trim()||u.rames||u.motrices)}));
+      save();logEvt('⚙ Flotte TGV mise à jour');renderEquip();toast('Flotte enregistrée');}}]);
+  $('#mFleetAdd').onclick=()=>{work.push({name:'',catalog:null,subs:[{name:'',rames:'',motrices:''}]});draw();};
+  draw();}
+/* ---------- Édition d'un appareil ---------- */
+function eqEditModal(it){
+  if(!isEdit()){toast('🔒 Mode lecture seule');return;}
+  const isNew=!it;
+  const mcat=it?eqCatOf(it):(Object.values(EQ_CATALOGS).find(c=>c.serie===state.eqSerie)||EQ_CATALOGS.duplex);
+  const w={d:it?it.d:'',a:it?it.a.filter(x=>x!=='—').join(', '):'',g:it?it.g:'CC',
+    s:it?it.s:1,r:it?it.r.join(', '):'',z:it?it.z:'',
+    series:it?[...eqSeriesOf(it)]:[state.eqSerie&&state.eqSerie!=='ALL'?state.eqSerie:mcat.serie],
+    panel:it&&it.panel?Object.assign({},it.panel):null,
+    variants:it&&it.variants?JSON.parse(JSON.stringify(it.variants)):{},
+    img:it?(it.img||null):null,comment:it?(it.comment||''):''};
+  const origImg=w.img;
+  const ic='width:100%;border:1px solid var(--border-strong);background:var(--panel);border-radius:9px;padding:7px 10px;font-size:13px;box-sizing:border-box;font-family:inherit';
+  const lb='display:block;font-size:11px;font-weight:700;color:var(--muted);margin:10px 0 4px';
+  openModal(isNew?'＋ Nouvel appareil':'✏️ Modifier l\'appareil',`
+    <label style="${lb};margin-top:0">Désignation</label><input id="eD" style="${ic}" value="${esc(w.d)}" placeholder="ex : Disjoncteur">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div><label style="${lb}">Abréviations <span style="font-weight:400">(virgules)</span></label><input id="eA" style="${ic}" value="${esc(w.a)}" placeholder="ex : DJ, DJ(M)"></div>
+      <div><label style="${lb}">Famille</label><select id="eG" style="${ic}">${Object.entries(EQ_GROUPS).map(([k,v])=>`<option value="${k}"${w.g===k?' selected':''}>${v}</option>`).join('')}</select></div>
+    </div>
+    <label style="${lb}">Séries TGV <span style="font-weight:400">(plusieurs choix possibles)</span></label>
+    <div id="eSer" style="display:flex;flex-wrap:wrap;gap:6px">${(data.fleet||[]).map(s=>`
+      <label style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;border:1px solid var(--border-strong);padding:5px 10px;border-radius:16px;cursor:pointer">
+      <input type="checkbox" value="${s.id}"${w.series.includes(s.id)?' checked':''} style="accent-color:var(--accent)">${esc(s.name)}</label>`).join('')}</div>
+    <label style="${lb}">Emplacement principal — ${esc(mcat.label)} <span style="font-weight:400">(texte libre)</span></label>
+    <input id="eZ" style="${ic}" value="${esc(w.z)}" placeholder="ex : Motrice — armoire bloc cabine">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div><label style="${lb}">Schéma (type de véhicule)</label><select id="eS" style="${ic}">${Object.keys(mcat.schemas).map(s=>`<option value="${s}"${w.s===+s?' selected':''}>${s} — ${mcat.schemas[s]}</option>`).join('')}</select></div>
+      <div><label style="${lb}">Repères <span style="font-weight:400">(virgules)</span></label><input id="eR" style="${ic}" value="${esc(w.r)}" placeholder="ex : 8, 26"></div>
+    </div>
+    <label style="${lb}">Position dans l\'armoire du bloc cabine — ${esc(mcat.label)} <span style="font-weight:400">(cliquez sur une commande, ou saisissez ligne / colonne)</span></label>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+      <input id="eRow" type="number" min="1" max="${mcat.panel.length}" style="${ic};width:100px" placeholder="Ligne" value="${w.panel?w.panel.row:''}">
+      <input id="eCol" type="number" min="1" max="20" style="${ic};width:100px" placeholder="Colonne" value="${w.panel?w.panel.col:''}">
+      <button class="btn small ghost" id="ePosClr">Effacer</button>
+    </div>
+    <div id="ePanelGrid" style="margin:0 0 6px"></div>
+    <div id="eVarBox"></div>
+    <label style="${lb}">Image <span style="font-weight:400">(photo de l\'appareil, schéma…)</span></label>
+    <div style="display:flex;gap:10px;align-items:center">
+      <button class="btn small" id="eImgBtn">🖼 Choisir…</button>
+      <img id="eImgPrev" alt="" style="max-height:70px;max-width:140px;border-radius:8px;border:1px solid var(--border);display:none">
+      <button class="btn small ghost" id="eImgDel" style="display:none">✕ Retirer</button>
+    </div>
+    <label style="${lb}">Commentaire</label>
+    <textarea id="eCom" style="${ic};min-height:64px;resize:vertical" placeholder="Particularités, pièges, retours d\'expérience…">${esc(w.comment)}</textarea>`,
+    [{label:'Annuler'},{label:isNew?'Ajouter':'Enregistrer',primary:true,fn:async()=>{
+      const d=$('#eD').value.trim();
+      if(!d){toast('Indiquez une désignation');return false;}
+      const abbrs=$('#eA').value.split(',').map(x=>x.trim()).filter(Boolean);
+      const obj={a:abbrs.length?abbrs:['—'],d,g:$('#eG').value,
+        s:+$('#eS').value||1,
+        r:$('#eR').value.split(',').map(x=>parseInt(x,10)).filter(x=>!isNaN(x)&&x>0),
+        z:$('#eZ').value.trim(),
+        series:[...$('#eSer').querySelectorAll('input:checked')].map(i=>i.value),
+        panel:w.panel,variants:w.variants,img:w.img,comment:$('#eCom').value.trim()};
+      if(!obj.series.length)obj.series=[mcat.serie];
+      for(const sid in obj.variants)if(!obj.series.includes(sid))delete obj.variants[sid];
+      const catBySer=Object.values(EQ_CATALOGS).find(c=>obj.series.includes(c.serie));
+      obj.cat=catBySer?catBySer.key:(it?(it.cat||'duplex'):mcat.key);
+      if(isNew){obj.id='ceq_'+uid();obj.custom=true;
+        data.equipCustom.push(obj);state.eqSel=obj.id;
+        logEvt('🧰 Appareil ajouté au catalogue : « '+d+' »');}
+      else if(it.custom){const tgt=(data.equipCustom||[]).find(x=>x.id===it.id);
+        if(tgt)Object.assign(tgt,obj);
+        logEvt('✏️ Appareil modifié : « '+d+' »');}
+      else{data.equipOver[it.id]=obj;logEvt('✏️ Appareil modifié : « '+d+' »');}
+      save();
+      if(origImg&&origImg!==w.img)await maybeDeleteBlob(origImg);
+      renderEquip();toast(isNew?'Appareil ajouté':'Appareil enregistré');}}]);
+  const drawGrid=()=>{$('#ePanelGrid').innerHTML=eqPanelHtml([],w.panel,mcat);
+    $('#ePanelGrid').querySelectorAll('.gp-cell').forEach(el=>el.onclick=()=>{
+      w.panel={row:+el.dataset.r,col:+el.dataset.c};
+      $('#eRow').value=w.panel.row;$('#eCol').value=w.panel.col;drawGrid();});};
+  drawGrid();
+  const posInp=()=>{const r=+$('#eRow').value,c=+$('#eCol').value;
+    w.panel=(r>=1&&c>=1)?{row:r,col:c}:null;drawGrid();};
+  $('#eRow').oninput=posInp;$('#eCol').oninput=posInp;
+  $('#ePosClr').onclick=()=>{w.panel=null;$('#eRow').value='';$('#eCol').value='';drawGrid();};
+  /* variantes d'emplacement par série */
+  const drawVars=()=>{
+    const sers=[...$('#eSer').querySelectorAll('input:checked')].map(i=>i.value).filter(sid=>sid!==mcat.serie);
+    $('#eVarBox').innerHTML=sers.length?`<label style="${lb}">Emplacement spécifique par série <span style="font-weight:400">(si différent de l\'emplacement principal)</span></label>`+
+      sers.map(sid=>{const s=(data.fleet||[]).find(f=>f.id===sid);const v=w.variants[sid];
+        const vc=Object.values(EQ_CATALOGS).find(c=>c.serie===sid);
+        return `<div style="border:1px dashed var(--border-strong);border-radius:10px;padding:8px 10px;margin-bottom:6px">
+          <label style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;cursor:pointer">
+            <input type="checkbox" data-vs="${sid}"${v?' checked':''} style="accent-color:var(--accent)">${esc(s?s.name:sid)} : emplacement différent</label>
+          ${v?`<div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:6px;margin-top:7px">
+            <input type="text" data-vf="z" data-vs2="${sid}" value="${esc(v.z||'')}" placeholder="Emplacement (texte)" style="${ic}">
+            ${vc?`<select data-vf="s" data-vs2="${sid}" style="${ic}">${Object.keys(vc.schemas).map(sc=>`<option value="${sc}"${(v.s||1)===+sc?' selected':''}>schéma ${sc}</option>`).join('')}</select>
+            <input type="text" data-vf="r" data-vs2="${sid}" value="${esc((v.r||[]).join(', '))}" placeholder="Repères" style="${ic}">`
+            :`<span style="font-size:11px;color:var(--muted);align-self:center;grid-column:span 2">catalogue de cette série à venir — texte libre</span>`}
+          </div>
+          ${vc?`<div style="display:flex;gap:6px;align-items:center;margin-top:6px;font-size:11px;font-weight:700;color:var(--muted)">
+            Armoire : <input type="number" min="1" data-vf="prow" data-vs2="${sid}" value="${v.panel?v.panel.row:''}" placeholder="Ligne" style="${ic};width:80px">
+            <input type="number" min="1" data-vf="pcol" data-vs2="${sid}" value="${v.panel?v.panel.col:''}" placeholder="Col." style="${ic};width:80px"></div>`:''}`:''}
+        </div>`;}).join(''):'';
+    $('#eVarBox').querySelectorAll('input[data-vs]').forEach(cb=>cb.onchange=()=>{
+      const sid=cb.dataset.vs;
+      if(cb.checked)w.variants[sid]=w.variants[sid]||{z:'',s:1,r:[],panel:null};
+      else delete w.variants[sid];
+      drawVars();});
+    $('#eVarBox').querySelectorAll('[data-vf]').forEach(inp=>inp.oninput=()=>{
+      const sid=inp.dataset.vs2;const v=w.variants[sid];if(!v)return;
+      const f=inp.dataset.vf;
+      if(f==='z')v.z=inp.value;
+      else if(f==='s')v.s=+inp.value||1;
+      else if(f==='r')v.r=inp.value.split(',').map(x=>parseInt(x,10)).filter(x=>!isNaN(x)&&x>0);
+      else{const rEl=$('#eVarBox').querySelector(`[data-vf="prow"][data-vs2="${sid}"]`);
+        const cEl=$('#eVarBox').querySelector(`[data-vf="pcol"][data-vs2="${sid}"]`);
+        const r=rEl?+rEl.value:0,c=cEl?+cEl.value:0;
+        v.panel=(r>=1&&c>=1)?{row:r,col:c}:null;}});};
+  drawVars();
+  $('#eSer').querySelectorAll('input').forEach(cb=>cb.addEventListener('change',drawVars));
+  const showImg=async()=>{const pv=$('#eImgPrev'),dl=$('#eImgDel');
+    if(w.img){const u=await fileURL(w.img);
+      if(u){pv.src=u;pv.style.display='';dl.style.display='';return;}}
+    pv.style.display='none';dl.style.display='none';};
+  showImg();
+  $('#eImgBtn').onclick=()=>{const fi=$('#fiEqImg');
+    fi.onchange=async e=>{const f=e.target.files[0];fi.value='';
+      if(f){w.img=await storeFile(f);showImg();}};
+    fi.click();};
+  $('#eImgDel').onclick=()=>{w.img=null;showImg();};}
+async function eqDelete(it){
+  if(!isEdit()){toast('🔒 Mode lecture seule');return;}
+  if(!await confirmDlg('Supprimer l\'appareil','Supprimer « '+it.d+' » du catalogue ? La fiche liée éventuelle n\'est pas supprimée.'))return;
+  const img=it.img;
+  if(it.custom)data.equipCustom=(data.equipCustom||[]).filter(x=>x.id!==it.id);
+  else data.equipOver[it.id]=Object.assign({},data.equipOver[it.id]||{},{deleted:true});
+  if(data.equipMeta)delete data.equipMeta[it.id];
+  for(const nd of data.nodes)if(nd.equip&&nd.equip.length)nd.equip=nd.equip.filter(x=>x!==it.id);
+  state.eqSel=null;
+  save();logEvt('🗑 Appareil supprimé du catalogue : « '+it.d+' »');
+  if(img)await maybeDeleteBlob(img);
+  renderEquip();toast('Appareil supprimé');}
+/* ---------- Import / export du catalogue ---------- */
+async function eqExport(){
+  toast('⏳ Préparation de l\'export…');
+  const ids=new Set();
+  for(const x of data.equipCustom||[])if(x.img)ids.add(x.img);
+  for(const k in data.equipOver||{})if(data.equipOver[k].img)ids.add(data.equipOver[k].img);
+  const images={};
+  for(const id of ids){const f=await idb.get('files',id);
+    if(f)images[id]={name:f.name,mime:f.mime,size:f.size,b64:await blobToB64(f.blob)};}
+  const payload={app:'RailDoc-appareillages',version:1,exported:new Date().toISOString(),
+    fleet:data.fleet||[],equipCustom:data.equipCustom||[],equipOver:data.equipOver||{},
+    equipMeta:data.equipMeta||{},images};
+  const blob=new Blob([JSON.stringify(payload)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  const dd=new Date();
+  a.download=`RailDoc-appareillages-${dd.getFullYear()}-${String(dd.getMonth()+1).padStart(2,'0')}-${String(dd.getDate()).padStart(2,'0')}.json`;
+  a.click();
+  logEvt('⤓ Catalogue d\'appareillages exporté');toast('Catalogue exporté 👍');}
+async function eqImport(file){
+  try{
+    const payload=JSON.parse(await file.text());
+    if(payload.app!=='RailDoc-appareillages')throw new Error('format');
+    const nc=(payload.equipCustom||[]).length,no=Object.keys(payload.equipOver||{}).length;
+    if(!await confirmDlg('Importer le catalogue',`Remplacer la flotte et les personnalisations d'appareillages par le contenu de « ${esc(file.name)} » (${nc} appareil(s) personnalisé(s), ${no} modification(s)) ? Les fiches de documentation ne sont pas touchées.`))return;
+    for(const id in payload.images||{}){const f=payload.images[id];
+      await idb.put('files',id,{name:f.name,mime:f.mime,size:f.size,blob:b64ToBlob(f.b64,f.mime)});}
+    if(Array.isArray(payload.fleet)&&payload.fleet.length)data.fleet=payload.fleet;
+    data.equipCustom=payload.equipCustom||[];
+    data.equipOver=payload.equipOver||{};
+    data.equipMeta=Object.assign({},data.equipMeta||{},payload.equipMeta||{});
+    save();logEvt('⤒ Catalogue d\'appareillages importé : '+file.name);
+    renderEquip();toast('Catalogue importé 👍');
+  }catch(e){toast('⚠️ Fichier de catalogue invalide');}}
+/* ---------- Extraction de mots-clés depuis un document ---------- */
+async function eqKwFromPdf(blob,name,apply){
+  toast('⏳ Lecture du document…');
+  const off=officeInfo(name);
+  const text=off?await extractOfficeText(blob,name):await extractPdfText(blob);
+  const kws=keywordsOf(text,14);
+  if(!kws.length){toast('Aucun mot-clé extractible de ce document');return;}
+  openModal('🏷 Mots-clés extraits de « '+esc(name)+' »',`
+    <p style="font-size:12px;color:var(--muted);margin-bottom:10px">Décochez ce qui ne convient pas, puis ajoutez : ces mots-clés servent aux <b>suggestions croisées</b> entre fiches et appareillages.</p>
+    <div id="mKwList" style="display:flex;flex-wrap:wrap;gap:7px">
+      ${kws.map(k=>`<label style="display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;background:var(--accent-soft);color:var(--accent);padding:5px 10px;border-radius:16px;cursor:pointer">
+        <input type="checkbox" checked value="${esc(k)}" style="accent-color:var(--accent)">#${esc(k)}</label>`).join('')}
+    </div>`,
+    [{label:'Annuler'},{label:'Ajouter les mots-clés cochés',primary:true,fn:()=>{
+      const sel=[...$('#mKwList').querySelectorAll('input:checked')].map(i=>i.value);
+      if(sel.length)apply(sel);}}]);}
+/* Choix d'un fichier déjà importé dans la fiche, puis extraction */
+function kwPickFromFiles(files,apply){
+  const ok=(files||[]).filter(f=>/\.pdf$/i.test(f.name||'')||/pdf/i.test(f.mime||'')||officeInfo(f.name));
+  if(!ok.length){toast('Importez d\'abord un PDF ou un document Office dans les fichiers de la fiche');return;}
+  openModal('📄 Extraire les mots-clés d\'un fichier de la fiche',`
+    <p style="font-size:12px;color:var(--muted);margin-bottom:10px">Choisissez un des fichiers importés dans la fiche : ses mots-clés seront analysés puis proposés (cochables).</p>
+    <select id="mKwFile" style="width:100%;box-sizing:border-box;border:1px solid var(--border-strong);background:var(--panel);border-radius:9px;padding:8px 10px;font-size:13px">
+      ${ok.map(f=>`<option value="${f.fileId}">${esc(f.name)}</option>`).join('')}
+    </select>`,
+    [{label:'Annuler'},{label:'Analyser',primary:true,fn:async()=>{
+      const id=$('#mKwFile').value;
+      const rec=await idb.get('files',id);
+      if(!rec){toast('Fichier introuvable');return;}
+      setTimeout(()=>eqKwFromPdf(rec.blob,rec.name,apply),100);}}]);}
+/* Sélecteur d'appareillage (pour lier un appareil à une fiche) */
+function eqPickerModal(onPick){
+  openModal('🔍 Lier un appareillage',`
+    <input id="mEqQ" type="text" placeholder="Rechercher (nom, abréviation, emplacement…)" autocomplete="off" style="width:100%;box-sizing:border-box;border:1px solid var(--border-strong);background:var(--panel);border-radius:9px;padding:8px 10px;font-size:13px;margin-bottom:8px">
+    <div id="mEqList" style="max-height:300px;overflow-y:auto"></div>`,
+    [{label:'Fermer'}]);
+  const draw=()=>{const q=$('#mEqQ').value.trim();
+    const items=eqAllItems().filter(it=>!q||eqMatches(it,q)).slice(0,40);
+    $('#mEqList').innerHTML=items.map(it=>`<div class="sug-row" data-id="${it.id}">
+      <span style="font-family:ui-monospace,Menlo,monospace;font-weight:800;font-size:11px;color:var(--accent);flex-shrink:0">${esc(it.a[0]==='—'?'●':it.a[0])}</span>
+      <span class="tt">${esc(it.d)}</span>
+      <span class="why">${esc(it.z)}</span></div>`).join('')||'<div class="empty-hint" style="padding:10px">Aucun appareil pour cette recherche.</div>';
+    $('#mEqList').querySelectorAll('.sug-row').forEach(el=>el.onclick=()=>{
+      const it=eqById(el.dataset.id);closeModal();if(it)onPick(it);});};
+  $('#mEqQ').oninput=draw;setTimeout(()=>$('#mEqQ').focus(),60);draw();}
+/* ---------- Rendu du module ---------- */
+function renderEquip(){
+  const q=(state.eqQuery||'').trim();
+  const all=eqAllItems();
+  let ser=state.eqSerie||'ALL';
+  if(ser!=='ALL'&&!(data.fleet||[]).some(s=>s.id===ser))ser=state.eqSerie='ALL';
+  const serSel=$('#eqSerie');
+  serSel.innerHTML=`<option value="ALL">🚄 Toutes les séries</option>`+
+    (data.fleet||[]).map(s=>{
+      const n=all.filter(it=>eqSeriesOf(it).includes(s.id)).length;
+      return `<option value="${s.id}">${esc(s.name)} (${n})</option>`;}).join('');
+  serSel.value=ser;
+  const inSerie=ser==='ALL'?all:all.filter(it=>eqSeriesOf(it).includes(ser));
+  const famSel=$('#eqFam');
+  famSel.innerHTML=`<option value="ALL">Toutes les familles</option>`+
+    Object.entries(EQ_GROUPS).map(([k,v])=>`<option value="${k}">${v} (${inSerie.filter(i=>i.g===k).length})</option>`).join('');
+  famSel.value=state.eqCat||'ALL';
+  if(famSel.value!==(state.eqCat||'ALL')){state.eqCat='ALL';famSel.value='ALL';}
+  const cat=state.eqCat||'ALL';
+  const items=inSerie.filter(it=>{
+    if(cat!=='ALL'&&it.g!==cat)return false;
+    return !q||eqMatches(it,q);});
+  const list=$('#eqList');
+  let sel=all.find(i=>i.id===state.eqSel);
+  if(!sel||(items.length&&!items.includes(sel)))sel=items[0]||sel||null;
+  state.eqSel=sel?sel.id:null;
+  list.innerHTML=items.map(it=>`
+    <div class="eq-row${sel&&it.id===sel.id?' sel':''}" data-id="${it.id}">
+      <span class="eq-code">${esc(it.a[0]==='—'?'●':it.a[0])}</span>
+      <span class="eq-des">${it.custom?'<span title="Appareil ajouté par vous">✎</span> ':''}${esc(it.d)}</span>
+      <span class="eq-zone">${esc(it.z)}</span>
+    </div>`).join('')||`<div class="empty-hint" style="padding:12px">${ser!=='ALL'&&!inSerie.length?'Aucun appareil rattaché à cette série — ajoutez-en avec ＋, modifiez l\'appartenance d\'appareils existants (✏️), ou importez un catalogue (⤒).':'Aucun appareil pour cette recherche.'}</div>`;
+  list.querySelectorAll('.eq-row').forEach(el=>el.onclick=()=>{state.eqSel=el.dataset.id;state.eqRep=null;state.eqVarSerie=null;renderEquip();});
+  const serName=ser!=='ALL'?((data.fleet||[]).find(s=>s.id===ser)||{}).name:'';
+  $('#eqCount').textContent=`${items.length} / ${all.length} appareils${serName?' — '+serName:''}`;
+  /* détail */
+  const det=$('#eqDetail');
+  if(!sel){det.innerHTML='<div class="empty-hint" style="padding:20px">Sélectionnez un appareil dans la liste de gauche.</div>';return;}
+  const codes=eqMatchCodes(sel);
+  const baseCat=eqCatOf(sel);
+  /* série active pour l'emplacement (onglets si l'appareil appartient à plusieurs séries) */
+  const selSeries=eqSeriesOf(sel);
+  let vSer=state.eqVarSerie&&selSeries.includes(state.eqVarSerie)?state.eqVarSerie
+    :(ser!=='ALL'&&selSeries.includes(ser)?ser:(selSeries.includes(baseCat.serie)?baseCat.serie:selSeries[0]));
+  const vv=(sel.variants||{})[vSer]||null;
+  const vCat=Object.values(EQ_CATALOGS).find(c=>c.serie===vSer)||null;
+  const isBaseSer=vSer===baseCat.serie;
+  const eff={
+    s:vv&&vv.s?vv.s:sel.s,
+    r:vv&&vv.r&&vv.r.length?vv.r:(isBaseSer||vv?sel.r:sel.r),
+    z:vv&&vv.z?vv.z:sel.z,
+    panel:vv&&vv.panel?vv.panel:(isBaseSer?sel.panel:null)};
+  const showSch=!!vCat;
+  const catObj=vCat||baseCat;
+  const repTxt=eff.r.join(', ');
+  const atRep=state.eqRep?all.filter(i=>(i.cat||'duplex')===catObj.key&&i.s===eff.s&&i.r.includes(state.eqRep)):[];
+  const manual=eqManualTags(sel);
+  const auto=eqAutoTags(sel).filter(t=>!manual.includes(t));
+  const sugs=eqSuggestNodes(sel);
+  const linked=eqLinkedNode(sel);
+  const serNames=eqSerieNames(sel);
+  const E=isEdit();
+  det.innerHTML=`
+    <div class="eq-head">
+      <div style="flex:1;min-width:0">
+        <div class="eq-abbrs">${sel.a.map(a=>a==='—'?'':`<span class="eq-abbr">${esc(a)}</span>`).join('')}</div>
+        <h2>${esc(sel.d)}</h2>
+        <div class="eq-meta">${esc(EQ_GROUPS[sel.g]||sel.g)} · <b>${esc(eff.z)}</b>${eff.r.length&&showSch?` · schéma ${eff.s} (${eqSchemaLabel(eff.s,catObj)}), repère ${repTxt}`:''}${serNames?` · ${esc(serNames)}`:''}${eff.panel?` · <b style="color:var(--accent)">armoire : ligne ${eff.panel.row}, colonne ${eff.panel.col}</b>`:''}</div>
+      </div>
+      ${E?`<div style="display:flex;gap:6px;flex-shrink:0">
+        <button class="btn small" id="eqEditBtn" title="Modifier cet appareil (désignation, séries, emplacements, image, commentaire…)">✏️ Modifier</button>
+        <button class="btn small danger" id="eqDelBtn" title="Supprimer cet appareil du catalogue">🗑</button>
+      </div>`:''}
+    </div>
+    ${selSeries.length>1?`<div class="eq-serchips">${selSeries.map(sid=>{const s=(data.fleet||[]).find(f=>f.id===sid);
+      return `<button class="eq-serchip${sid===vSer?' on':''}" data-ser="${sid}" title="Afficher l'emplacement pour cette série">${esc(s?s.name:sid)}${(sel.variants||{})[sid]?' 📍':''}</button>`;}).join('')}</div>`:''}
+    ${sel.img?`<img class="eq-img" alt="" title="Cliquer pour ouvrir dans un nouvel onglet">`:''}
+    ${sel.comment?`<div class="eq-comment">💬 ${esc(sel.comment)}</div>`:''}
+    ${showSch?eqSvgTrain(eff.s,catObj):''}
+    ${showSch&&eff.s<=catObj.maxVeh?eqSvgVehicle(eff.s,eff.r,state.eqRep,catObj):''}
+    ${showSch&&(eff.panel||(eff.r.includes(catObj.panelRep)&&eff.s===1))?eqPanelHtml(codes,eff.panel,catObj):''}
+    ${showSch&&eff.r.includes(catObj.pneuRep)&&eff.s===1?eqPneuHtml(codes,catObj):''}
+    ${!showSch?`<div class="eq-comment" style="border-left-color:var(--border-strong);background:var(--bg-soft)">📍 Emplacement pour cette série : <b>${esc(eff.z||'non renseigné')}</b>${eff.r.length?` — repère ${eff.r.join(', ')}`:''}<br><span style="font-size:11px;color:var(--muted)">Schémas de cette série à venir — fournissez son GDA à Claude pour les intégrer.</span></div>`:''}
+    ${atRep.length?`<div class="eq-atrep"><b>Au repère ${state.eqRep} :</b> ${atRep.map(i=>`<button class="eq-replink" data-id="${i.id}">${esc(i.a[0]==='—'?i.d:i.a[0])}</button>`).join('')}</div>`:''}
+    <div class="eq-zonehead"><h3>🏷 Mots-clés</h3>
+      ${E?`<button class="btn small" id="eqKwPdf" title="Extraire les mots-clés d'un fichier importé dans la fiche liée">📄 Depuis un document</button>`:''}
+    </div>
+    <div id="eqTagBar" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+      ${manual.map(t=>`<span class="tag">#${esc(t)}${E?` <span class="x" data-t="${esc(t)}" title="Retirer">✕</span>`:''}</span>`).join('')}
+      ${auto.map(t=>`<span class="tag" style="background:transparent;border:1px dashed var(--border-strong);color:var(--muted)" data-auto="${esc(t)}" title="Mot-clé automatique — cliquer pour l'adopter">#${esc(t)}${E?' ＋':''}</span>`).join('')}
+      ${E?`<input type="text" id="eqTagInput" placeholder="＋ mot-clé" style="border:1px dashed var(--border-strong);background:transparent;border-radius:20px;padding:4px 11px;font-size:11.5px;outline:none;width:110px;color:var(--muted)">`:''}
+    </div>
+    <div class="eq-zonehead"><h3>💡 Fiches suggérées <span style="font-size:10px;color:var(--muted)">(mots-clés communs)</span></h3></div>
+    <div id="eqSugs">
+      ${sugs.map(s=>`<div class="sug-row" data-node="${s.n.id}">
+        <span class="nicon" data-nicon="${s.n.id}"></span>
+        <span class="tt">${esc(s.n.title||'Sans titre')}</span>
+        <span class="why">${s.common.length?s.common.slice(0,3).map(c=>'#'+esc(c)).join(' '):'titre'}</span>
+      </div>`).join('')||'<div class="empty-hint">Aucune fiche en corrélation pour l\'instant — ajoutez des mots-clés ici et sur vos fiches, les suggestions apparaîtront des deux côtés.</div>'}
+    </div>
+    <div class="eq-zonehead"><h3>📄 Fiche de l'appareil <span style="font-size:10px;color:var(--muted)">(notes, liens, contacts, fichiers, sous-fiches, accès rapide)</span></h3></div>
+    <div id="eqNodeBox">
+      ${linked?`<div class="eq-nodecard">
+          <span class="ic nicon" data-nicon="${linked.id}"></span>
+          <div style="flex:1;min-width:0">
+            <div class="tt">${esc(linked.title)}</div>
+            <div class="sub">${linked.links.length} lien(s) · ${(linked.contacts||[]).length} contact(s) · ${linked.files.length} fichier(s) · ${childrenOf(linked.id).length} sous-fiche(s) · ${(linked.tiles||[]).filter(t=>t.kind!=='section').length} tuile(s)</div>
+          </div>
+          <button class="btn small primary" id="eqNodeOpen">Ouvrir</button>
+          <button class="btn small" id="eqNodeTab" title="Ouvrir dans un nouvel onglet">↗</button>
+        </div>`
+      :(E?`<button class="btn" id="eqNodeCreate">＋ Créer la fiche de cet appareil</button>
+        <p style="font-size:11px;color:var(--muted);margin-top:6px">La fiche héritera des mots-clés et de l'emplacement, et offrira notes, liens, contacts, fichiers, sous-fiches et mur d'accès rapide — reliés à cet appareil.</p>`
+      :'<div class="empty-hint">Aucune fiche liée à cet appareil.</div>')}
+    </div>
+    <p class="eq-src">${sel.custom?'Appareil ajouté au catalogue par vos soins.':catObj.src}</p>`;
+  hydrateIcons(det);
+  if(sel.img)fileURL(sel.img).then(u=>{const im=det.querySelector('.eq-img');
+    if(im&&u){im.src=u;im.onclick=()=>openFileNewTab(sel.img);}});
+  det.querySelectorAll('.eq-serchip').forEach(b=>b.onclick=()=>{
+    state.eqVarSerie=b.dataset.ser;state.eqRep=null;renderEquip();});
+  const ebtn=det.querySelector('#eqEditBtn');if(ebtn)ebtn.onclick=()=>eqEditModal(sel);
+  const dbtn=det.querySelector('#eqDelBtn');if(dbtn)dbtn.onclick=()=>eqDelete(sel);
+  det.querySelectorAll('.eq-rep').forEach(g=>g.addEventListener('click',()=>{
+    state.eqRep=state.eqRep===+g.dataset.rep?null:+g.dataset.rep;renderEquip();}));
+  det.querySelectorAll('.eq-replink').forEach(b=>b.onclick=()=>{state.eqSel=b.dataset.id;state.eqVarSerie=null;
+    state.eqQuery='';const si=$('#eqSearch');if(si)si.value='';renderEquip();});
+  /* armoire graphique : cliquer une commande sélectionne l'appareil correspondant */
+  det.querySelectorAll('.eq-panel.gp .gp-cell').forEach(el=>el.onclick=()=>{
+    const code=el.dataset.code;
+    const al=catObj.aliases||{};
+    const eq=(al[code]||code);
+    const hitIt=all.find(i=>(i.cat||'duplex')===catObj.key&&i.a.some(a=>{const n1=eqNorm(a);return n1===code||(al[n1]||n1)===eq;}));
+    if(hitIt&&hitIt.id!==sel.id){state.eqSel=hitIt.id;state.eqRep=null;state.eqVarSerie=null;
+      state.eqQuery='';const si=$('#eqSearch');if(si)si.value='';renderEquip();}
+    else if(!hitIt)toast('Aucune fiche appareil pour « '+el.title.split(' — ')[0]+' »');});
+  det.querySelectorAll('.sug-row').forEach(el=>el.onclick=()=>navigate('#/node/'+el.dataset.node));
+  const saveTags=arr=>{const m=eqMeta(sel,true);m.tags=[...new Set(arr)];
+    const ln=eqLinkedNode(sel);
+    if(ln){ln.tags=[...new Set([...ln.tags,...m.tags])];touch(ln);}else save();
+    renderEquip();};
+  if(E){
+    det.querySelectorAll('#eqTagBar .x').forEach(x=>x.onclick=e=>{e.stopPropagation();
+      saveTags(manual.filter(t=>t!==x.dataset.t));});
+    det.querySelectorAll('[data-auto]').forEach(ch=>ch.onclick=()=>saveTags([...manual,ch.dataset.auto]));
+    const ti=det.querySelector('#eqTagInput');
+    if(ti)ti.onkeydown=e=>{if(e.key==='Enter'||e.key===','){e.preventDefault();
+      const v=ti.value.trim().replace(/^#/,'').toLowerCase();
+      if(v)saveTags([...manual,v]);}};
+    const kb=det.querySelector('#eqKwPdf');
+    if(kb)kb.onclick=()=>{const ln2=eqLinkedNode(sel);
+      if(!ln2||!(ln2.files||[]).length){toast('Créez d\'abord la fiche de l\'appareil et importez-y un PDF ou un document Office');return;}
+      kwPickFromFiles(ln2.files,sel2=>saveTags([...manual,...sel2]));};
+    const cb=det.querySelector('#eqNodeCreate');
+    if(cb)cb.onclick=()=>{createEquipNode(sel);renderEquip();renderTree();};}
+  const ob=det.querySelector('#eqNodeOpen');
+  if(ob)ob.onclick=()=>navigate('#/node/'+linked.id);
+  const tb=det.querySelector('#eqNodeTab');
+  if(tb)tb.onclick=()=>openURLNewTab(location.href.split('#')[0]+'#/node/'+linked.id);}
+
+
+/* ==========================================================
    Initialisation & événements globaux
    ========================================================== */
 async function init(){
@@ -2756,6 +4182,19 @@ async function init(){
   /* navigation */
   window.addEventListener('hashchange',route);
   $('#homeLink').onclick=()=>navigate('#/home');
+  $('#equipLink').onclick=()=>{
+    if(state.view==='equip')return;
+    openURLNewTab(location.href.split('#')[0]+'#/equip');};
+  $('#eqSearch').addEventListener('input',e=>{state.eqQuery=e.target.value;renderEquip();});
+  $('#fleetBtn').onclick=fleetModal;
+  $('#eqAddBtn').onclick=()=>eqEditModal(null);
+  $('#eqExpBtn').onclick=eqExport;
+  $('#eqImpBtn').onclick=()=>{if(!isEdit()){toast('🔒 Mode lecture seule');return;}
+    const fi=$('#fiEqImp');
+    fi.onchange=async e=>{const f=e.target.files[0];fi.value='';if(f)await eqImport(f);};
+    fi.click();};
+  $('#eqSerie').onchange=e=>{state.eqSerie=e.target.value;renderEquip();};
+  $('#eqFam').onchange=e=>{state.eqCat=e.target.value;renderEquip();};
   $('#brandBox').onclick=()=>navigate('#/home');
   $('#brandBox').oncontextmenu=e=>{e.preventDefault();if(isEdit())brandModal();};
   $('#brandBox').ondblclick=e=>{e.preventDefault();if(isEdit())brandModal();};
