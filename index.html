@@ -505,7 +505,7 @@ html[data-theme="dark"] .eq-panel.gp{background:#4d4b47;border-color:#333}
 .gp-cell.hit{background:var(--accent);box-shadow:0 0 0 2px #fff,0 0 14px var(--accent);animation:gpPulse 1.4s infinite}
 .gp-cell.hit .gp-lbl{background:#fff;color:var(--accent);border-color:#fff}
 @keyframes gpPulse{0%,100%{box-shadow:0 0 0 2px #fff,0 0 8px var(--accent)}50%{box-shadow:0 0 0 3px #fff,0 0 22px var(--accent)}}
-html[data-mode="read"] #eqAddBtn,html[data-mode="read"] #eqImpBtn{display:none}
+html[data-mode="read"] #eqAddBtn,html[data-mode="read"] #famBtn{display:none}
 .eq-train{width:100%;height:auto;margin:4px 0 8px}
 .eq-veh{width:100%;height:auto;margin:2px 0 8px}
 .eq-rep.hot circle{filter:drop-shadow(0 1px 3px #0004)}
@@ -647,17 +647,11 @@ html[data-theme="dark"] .eq-cell.rb{background:#22301a;color:#9fce7a;border-colo
     </div>
     <div class="topbar-actions">
       <button class="icon-btn" id="dirBtn" title="Répertoire : tous les contacts de toutes les fiches" style="font-size:15px">📞</button>
-      <button class="icon-btn" id="logsBtn" title="Journal : dernières actions et fiches modifiées récemment" style="font-size:15px">🕑</button>
       <button class="icon-btn" id="modeBtn" title="Basculer édition / lecture seule">✏️</button>
       <button class="icon-btn" id="themeBtn" title="Basculer clair / sombre">
         <svg viewBox="0 0 24 24" id="themeIconLight"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5 5l1.6 1.6M17.4 17.4 19 19M19 5l-1.6 1.6M6.6 17.4 5 19"/></svg>
       </button>
-      <button class="icon-btn" id="exportBtn" title="Sauvegarder (exporter un fichier de sauvegarde)">
-        <svg viewBox="0 0 24 24"><path d="M12 14V3m0 0L8 7m4-4 4 4"/><path d="M4 17v2.4A1.6 1.6 0 0 0 5.6 21h12.8a1.6 1.6 0 0 0 1.6-1.6V17"/></svg>
-      </button>
-      <button class="icon-btn" id="importBtn" title="Restaurer (importer une sauvegarde)">
-        <svg viewBox="0 0 24 24"><path d="M12 3v11m0 0 4-4m-4 4-4-4"/><path d="M4 17v2.4A1.6 1.6 0 0 0 5.6 21h12.8a1.6 1.6 0 0 0 1.6-1.6V17"/></svg>
-      </button>
+      <button class="icon-btn" id="settingsBtn" title="Réglages : journal, sauvegarde et restauration" style="font-size:15px">⚙️</button>
     </div>
   </header>
 
@@ -681,8 +675,7 @@ html[data-theme="dark"] .eq-cell.rb{background:#22301a;color:#9fce7a;border-colo
       <div class="side-head" style="padding:8px 4px 2px"><span>Appareillages</span>
         <div style="display:flex;gap:2px;align-items:center">
           <button class="side-mini" id="eqAddBtn" title="Ajouter un appareil au catalogue">＋</button>
-          <button class="side-mini" id="eqExpBtn" title="Exporter le catalogue d'appareillages (JSON : flotte, appareils ajoutés/modifiés, mots-clés, images)">⤓</button>
-          <button class="side-mini" id="eqImpBtn" title="Importer un catalogue d'appareillages (JSON)">⤒</button>
+          <button class="side-mini" id="famBtn" title="Gérer les familles d'appareils et les emplacements">🗂</button>
           <button class="side-mini" id="fleetBtn" title="Gérer la flotte TGV : séries, sous-séries, tranches de rames et motrices">⚙</button>
         </div>
       </div>
@@ -861,7 +854,6 @@ html[data-theme="dark"] .eq-cell.rb{background:#22301a;color:#9fce7a;border-colo
 <input type="file" id="fiPack" accept=".json,application/json" hidden>
 <input type="file" id="fiKw" accept=".pdf,application/pdf,.doc,.docx,.docm,.xls,.xlsx,.xlsm,.ppt,.pptx,.pptm" hidden>
 <input type="file" id="fiEqImg" accept="image/*" hidden>
-<input type="file" id="fiEqImp" accept=".json,application/json" hidden>
 
 <script>
 'use strict';
@@ -878,9 +870,10 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='8.6';
+const APP_VERSION='8.7';
 const APP_VERSION_DATE='5 août 2026';
 const CHANGELOG=[
+  ['v8.7',"Menu ⚙ Réglages en haut à droite (journal, export et import de la sauvegarde) pour alléger la barre · appareils portant le même nom fusionnés entre séries : une seule fiche, onglets de série pour la localisation propre à chaque TGV · gestion des appareillages 100 % manuelle (plus de suggestions automatiques dans les fiches) · sources retirées du bas des fiches appareil · import/export du catalogue retiré (tout passe par la sauvegarde globale) · famille Lampes (LS) · familles et emplacements (Motrice, Bloc Cabine, Bloc Moteur, Bloc H-AUX…) créables, renommables et supprimables (🗂) · fiche appareil réorganisée : image et commentaire avant le bloc cabine, armoire affichée uniquement après choix d'une série équipée et activation « au bloc cabine »"],
   ['v8.6',"Sauvegarde fiabilisée sur tous les appareils : nouveau format d'export « en flux » (une ligne par fichier, assemblé par morceaux) — corrige l'export impossible sur iPad (erreur interne WebKit) et l'import « fichier illisible » sur PC pour les grosses sauvegardes · l'import lit le fichier en continu sans jamais le charger entièrement en mémoire · les anciennes sauvegardes (v1) restent importables"],
   ['v8.5',"Armoire graphique : vrais visuels photo extraits de la planche ATL 300 (commutateur rotatif Z avec positions NORMAL/ISOLÉ, voltmètre batterie à aiguille, manipulateur Z-SEC/ISO) · chaque rangée de disrupteurs CC tient désormais sur une seule ligne (défilement horizontal si l'écran est étroit)"],
   ['v8.4',"Armoire BLOC CABINE graphique et interactive (voyants, disrupteurs vert/rouge, commutateurs rotatifs, voltmètres… cliquables — un clic sur une commande ouvre son appareil) · appareils multi-séries : onglets de série sur la fiche appareil avec emplacement spécifique par série (schéma, repères, position armoire) éditable · mots-clés des fiches : modification ✏️, tri A→Z et réorganisation par glisser-déposer · appareillages liés à une fiche : ajout via recherche ＋, suppression, tri, suggestions adoptables en un clic · extraction de mots-clés désormais depuis les fichiers importés dans la fiche (liste déroulante)"],
@@ -1155,6 +1148,18 @@ function normalizeData(){
   if(!Array.isArray(data.log))data.log=[];
   for(const n of data.nodes){if(!n.tiles)n.tiles=[];if(!n.contacts)n.contacts=[];if(!n.equip)n.equip=[];}
   if(!data.equipMeta)data.equipMeta={};
+  if(!Array.isArray(data.equipPlaces)||!data.equipPlaces.length)
+    data.equipPlaces=['Motrice','Remorques','Bloc Cabine','Bloc Moteur','Bloc H-AUX','Bloc Commun','Armoire Pneumatique'];
+  if(!data.equipGroups)data.equipGroups={};
+  if(!Array.isArray(data.equipGroupsDel))data.equipGroupsDel=[];
+  if(typeof EQ_MERGE_MAP!=='undefined'){
+    for(const n of data.nodes)if(n.equip&&n.equip.length)n.equip=[...new Set(n.equip.map(id=>EQ_MERGE_MAP[id]||id))];
+    for(const k of Object.keys(data.equipMeta||{}))if(EQ_MERGE_MAP[k]){
+      if(!data.equipMeta[EQ_MERGE_MAP[k]])data.equipMeta[EQ_MERGE_MAP[k]]=data.equipMeta[k];
+      delete data.equipMeta[k];}
+    for(const k of Object.keys(data.equipOver||{}))if(EQ_MERGE_MAP[k]){
+      if(!data.equipOver[EQ_MERGE_MAP[k]])data.equipOver[EQ_MERGE_MAP[k]]=data.equipOver[k];
+      delete data.equipOver[k];}}
   if(!Array.isArray(data.equipCustom))data.equipCustom=[];
   if(!data.equipOver)data.equipOver={};
   if(!Array.isArray(data.fleet)||!data.fleet.length)data.fleet=[
@@ -1625,7 +1630,6 @@ function renderNodeEquip(n){const box=$('#nodeEquipSugs');
   const E=isEdit();
   n.equip=n.equip||[];
   const items=n.equip.map(id=>eqById(id)).filter(Boolean);
-  const sugs=(typeof nodeSuggestEquip==='function'?nodeSuggestEquip(n):[]);
   if(!E&&!items.length){box.innerHTML='';box.style.display='none';return;}
   box.style.display='flex';box.innerHTML='';
   const lbl=document.createElement('span');lbl.className='ne-lbl';lbl.textContent='🔍 Appareillages :';
@@ -1646,12 +1650,7 @@ function renderNodeEquip(n){const box=$('#nodeEquipSugs');
         const mv=n.equip.splice(from,1)[0];n.equip.splice(i,0,mv);saveQ();});}
     c.onclick=()=>openURLNewTab(location.href.split('#')[0]+'#/equip/'+it.id);
     box.appendChild(c);});
-  sugs.slice(0,4).forEach(s=>{const g=document.createElement('button');g.className='eq-sugbtn ghost';
-    g.title=`Suggestion (${s.common.length?s.common.slice(0,3).map(c=>'#'+c).join(' '):'titre'}) — ${s.it.z}${E?' — cliquer : lier à la fiche':''}`;
-    g.innerHTML=`${esc(s.it.a[0]!=='—'?s.it.a[0]:s.it.d)}${E?' ＋':''}`;
-    g.onclick=()=>{if(E){n.equip.push(s.it.id);saveQ();}
-      else openURLNewTab(location.href.split('#')[0]+'#/equip/'+s.it.id);};
-    box.appendChild(g);});
+
   if(E){
     const add=document.createElement('button');add.className='eq-sugbtn addbtn';add.textContent='＋ Ajouter…';
     add.title='Rechercher un appareillage et le lier à cette fiche';
@@ -3092,7 +3091,12 @@ async function importPack(file){
    + planche « Bloc Cabine TGV Duplex ».
    Schémas stylisés : repères approximatifs, se référer au GDA.
    ========================================================== */
-const EQ_GROUPS={CC:'Disrupteurs (CC)',DJ:'Disjoncteurs (DJ)',Z:'Interrupteurs (Z)',RB:'Robinets (RB)',BP:'Boutons-poussoirs (BP)',H:'Sectionneurs (H)',FU:'Fusibles BT',AU:'Autres appareils'};
+const EQ_GROUPS={CC:'Disrupteurs (CC)',DJ:'Disjoncteurs (DJ)',Z:'Interrupteurs (Z)',RB:'Robinets (RB)',BP:'Boutons-poussoirs (BP)',H:'Sectionneurs (H)',LS:'Lampes (LS)',FU:'Fusibles BT',AU:'Autres appareils'};
+/* Familles effectives : familles de base + ajouts/renommages de l'utilisateur, moins les supprimées */
+function eqGroups(){
+  const g=Object.assign({},EQ_GROUPS,(typeof data!=='undefined'&&data&&data.equipGroups)||{});
+  for(const k of (typeof data!=='undefined'&&data&&data.equipGroupsDel)||[])delete g[k];
+  return g;}
 /* [abréviation(s)] , désignation , schéma , repères , groupe , zone */
 const EQ_RAW=[
 [['—'],'Attelages de secours',2,[55],'AU','R1 & R8'],
@@ -3353,7 +3357,7 @@ const EQ_RAW=[
 const EQ_ITEMS=EQ_RAW.map((e,i)=>({id:'eq'+i,a:e[0],d:e[1],s:e[2],r:e[3],g:e[4],z:e[5],cat:'duplex'}));
 const eqNorm=s=>String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
 const eqFold=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
-const eqHay=it=>eqFold(it.a.join(' ')+' '+it.d+' '+it.z+' '+EQ_GROUPS[it.g]);
+const eqHay=it=>eqFold(it.a.join(' ')+' '+it.d+' '+(it.pl||'')+' '+it.z+' '+(eqGroups()[it.g]||''));
 const eqMatches=(it,q)=>{const qn=eqNorm(q);
   if(qn&&it.a.some(a=>eqNorm(a).includes(qn)))return true;
   const words=eqFold(q).split(/\s+/).filter(Boolean);
@@ -3666,6 +3670,22 @@ atl:{key:'atl',label:'TGV Atlantique (TVM 300)',serie:'serie_atl',deck:1,
   aliases:EQ_ALIASES_A,
   src:'Source : GDA TGV A (TVM 300), annexes 2A/2B (éd. 13-12-2012) et planche BLOC CABINE ATL 300. Schéma stylisé : positions indicatives.'}};
 const eqCatOf=it=>EQ_CATALOGS[(it&&it.cat)||'duplex']||EQ_CATALOGS.duplex;
+/* Fusion : un appareil portant le même nom et les mêmes abréviations dans plusieurs
+   catalogues devient UN SEUL appareil multi-séries — la localisation propre à chaque
+   série est portée par ses variantes (onglets de série dans la fiche). */
+const EQ_MERGE_MAP={};
+const EQ_ITEMS_A_LIVE=(function(){
+  const key=it=>eqNorm(it.d)+'|'+it.a.map(eqNorm).sort().join(',');
+  const idx={};
+  for(const it of EQ_ITEMS)idx[key(it)]=it;
+  const rest=[];
+  for(const at of EQ_ITEMS_A){
+    const m=idx[key(at)];
+    if(m){EQ_MERGE_MAP[at.id]=m.id;
+      m.series=['serie_duplex','serie_atl'];
+      m.variants=Object.assign({},m.variants,{serie_atl:{s:at.s,r:at.r,z:at.z,panel:null}});}
+    else rest.push(at);}
+  return rest;})();
 
 /* ---------- Rendu du module ---------- */
 function eqMatchCodes(item){return item.a.map(eqNorm).filter(x=>x&&x!=='—');}
@@ -3753,10 +3773,10 @@ function eqKey(it){return eqNorm(it.a[0])+'|'+it.s+'|'+(it.r[0]||'')+'|'+eqNorm(
 /* Catalogue effectif : catalogue de base (GDA Duplex) + modifications + appareils personnalisés */
 function eqAllItems(){
   const over=data.equipOver||{};
-  return EQ_ITEMS.concat(EQ_ITEMS_A).map(it=>{const o=over[it.id];return o?Object.assign({},it,o,{id:it.id,cat:it.cat}):it;})
+  return EQ_ITEMS.concat(EQ_ITEMS_A_LIVE).map(it=>{const o=over[it.id];return o?Object.assign({},it,o,{id:it.id,cat:it.cat}):it;})
     .filter(it=>!it.deleted)
     .concat(data.equipCustom||[]);}
-function eqById(id){return eqAllItems().find(i=>i.id===id)||null;}
+function eqById(id){id=EQ_MERGE_MAP[id]||id;return eqAllItems().find(i=>i.id===id)||null;}
 function eqSeriesOf(it){return(it.series&&it.series.length)?it.series:[eqCatOf(it).serie];}
 function eqSerieNames(it){return eqSeriesOf(it).map(id=>{const s=(data.fleet||[]).find(f=>f.id===id);return s?s.name:null;}).filter(Boolean).join(', ');}
 function eqMeta(it,create){data.equipMeta=data.equipMeta||{};
@@ -3807,8 +3827,8 @@ function createEquipNode(it){
   const n=newNode(root.id,title,'🧰');
   n.tags=[...eqEffTags(it)];
   n.html=`<p><b>Appareil :</b> ${esc(it.d)}${it.a[0]!=='—'?` (<b>${esc(it.a.join(', '))}</b>)`:''}<br>
-<b>Famille :</b> ${esc(EQ_GROUPS[it.g]||it.g)}<br>
-<b>Emplacement :</b> ${esc(it.z)}${it.r.length?` — schéma ${it.s} (${eqSchemaLabel(it.s,eqCatOf(it))}), repère ${it.r.join(', ')}`:''}${it.panel?` — armoire cabine : ligne ${it.panel.row}, colonne ${it.panel.col}`:''}<br>
+<b>Famille :</b> ${esc(eqGroups()[it.g]||it.g)}<br>
+<b>Emplacement :</b> ${esc([it.pl,it.z].filter(Boolean).join(' — ')||'—')}${it.r.length?` — schéma ${it.s} (${eqSchemaLabel(it.s,eqCatOf(it))}), repère ${it.r.join(', ')}`:''}${it.panel?` — armoire cabine : ligne ${it.panel.row}, colonne ${it.panel.col}`:''}<br>
 <b>Série(s) :</b> ${esc(eqSerieNames(it)||'—')}</p><p>Notez ici vos procédures, particularités et retours d'expérience pour cet appareil.</p>`;
   data.nodes.push(n);
   eqMeta(it,true).nodeId=n.id;
@@ -3862,12 +3882,60 @@ function fleetModal(){
   $('#mFleetAdd').onclick=()=>{work.push({name:'',catalog:null,subs:[{name:'',rames:'',motrices:''}]});draw();};
   draw();}
 /* ---------- Édition d'un appareil ---------- */
+/* ---------- Familles & emplacements (création, édition, suppression) ---------- */
+function famPlaceModal(){
+  if(!isEdit()){toast('🔒 Mode lecture seule');return;}
+  const grp=JSON.parse(JSON.stringify(data.equipGroups||{}));
+  const del=[...(data.equipGroupsDel||[])];
+  const places=[...(data.equipPlaces||[])];
+  const usedG=new Set(eqAllItems().map(i=>i.g));
+  const usedP=new Set();
+  for(const i of eqAllItems()){if(i.pl)usedP.add(i.pl);
+    for(const k in i.variants||{})if(i.variants[k]&&i.variants[k].pl)usedP.add(i.variants[k].pl);}
+  const inCss='flex:1;border:1px solid var(--border-strong);background:var(--panel);border-radius:8px;padding:6px 9px;font-size:12.5px;min-width:0';
+  const draw=()=>{
+    const eff=Object.assign({},EQ_GROUPS,grp);
+    for(const k of del)delete eff[k];
+    $('#mFams').innerHTML=Object.entries(eff).map(([k,v])=>`
+      <div style="display:flex;gap:6px;align-items:center;margin-bottom:5px">
+        <input type="text" data-g="${k}" value="${esc(v)}" style="${inCss}">
+        <button class="side-mini" data-dg="${k}" ${usedG.has(k)?'disabled style="opacity:.3" title="Utilisée par des appareils — réaffectez-les d\'abord"':'title="Supprimer cette famille"'}>🗑</button>
+      </div>`).join('')||'<div class="empty-hint">Aucune famille.</div>';
+    $('#mPlaces').innerHTML=places.map((p,i)=>`
+      <div style="display:flex;gap:6px;align-items:center;margin-bottom:5px">
+        <input type="text" data-p="${i}" value="${esc(p)}" style="${inCss}">
+        <button class="side-mini" data-dp="${i}" ${usedP.has(p)?'disabled style="opacity:.3" title="Utilisé par des appareils — réaffectez-les d\'abord"':'title="Supprimer cet emplacement"'}>🗑</button>
+      </div>`).join('')||'<div class="empty-hint">Aucun emplacement.</div>';
+    $('#mFams').querySelectorAll('input[data-g]').forEach(inp=>inp.oninput=()=>{grp[inp.dataset.g]=inp.value;});
+    $('#mFams').querySelectorAll('button[data-dg]').forEach(b=>b.onclick=()=>{
+      const k=b.dataset.dg;
+      if(EQ_GROUPS[k])del.push(k);
+      delete grp[k];draw();});
+    $('#mPlaces').querySelectorAll('input[data-p]').forEach(inp=>inp.oninput=()=>{places[+inp.dataset.p]=inp.value;});
+    $('#mPlaces').querySelectorAll('button[data-dp]').forEach(b=>b.onclick=()=>{places.splice(+b.dataset.dp,1);draw();});};
+  openModal('🗂 Familles & emplacements',`
+    <p style="font-size:12px;color:var(--muted);margin-bottom:10px">Renommez librement ; la suppression n'est possible que si aucun appareil n'utilise l'élément. Le tout est inclus dans la sauvegarde globale.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div><div style="font-size:12px;font-weight:800;margin-bottom:6px">Familles d'appareils</div>
+        <div id="mFams" style="max-height:250px;overflow-y:auto"></div>
+        <button class="btn small ghost" id="mFamAdd">＋ famille</button></div>
+      <div><div style="font-size:12px;font-weight:800;margin-bottom:6px">Emplacements</div>
+        <div id="mPlaces" style="max-height:250px;overflow-y:auto"></div>
+        <button class="btn small ghost" id="mPlaceAdd">＋ emplacement</button></div>
+    </div>`,
+    [{label:'Annuler'},{label:'Enregistrer',primary:true,fn:()=>{
+      data.equipGroups=grp;data.equipGroupsDel=[...new Set(del)];
+      data.equipPlaces=places.map(p=>p.trim()).filter(Boolean);
+      save();logEvt('🗂 Familles / emplacements mis à jour');renderEquip();toast('Enregistré');}}]);
+  $('#mFamAdd').onclick=()=>{grp['g_'+uid()]='Nouvelle famille';draw();};
+  $('#mPlaceAdd').onclick=()=>{places.push('Nouvel emplacement');draw();};
+  draw();}
 function eqEditModal(it){
   if(!isEdit()){toast('🔒 Mode lecture seule');return;}
   const isNew=!it;
   const mcat=it?eqCatOf(it):(Object.values(EQ_CATALOGS).find(c=>c.serie===state.eqSerie)||EQ_CATALOGS.duplex);
   const w={d:it?it.d:'',a:it?it.a.filter(x=>x!=='—').join(', '):'',g:it?it.g:'CC',
-    s:it?it.s:1,r:it?it.r.join(', '):'',z:it?it.z:'',
+    s:it?it.s:1,r:it?it.r.join(', '):'',z:it?it.z:'',pl:it?(it.pl||''):'',
     series:it?[...eqSeriesOf(it)]:[state.eqSerie&&state.eqSerie!=='ALL'?state.eqSerie:mcat.serie],
     panel:it&&it.panel?Object.assign({},it.panel):null,
     variants:it&&it.variants?JSON.parse(JSON.stringify(it.variants)):{},
@@ -3875,38 +3943,36 @@ function eqEditModal(it){
   const origImg=w.img;
   const ic='width:100%;border:1px solid var(--border-strong);background:var(--panel);border-radius:9px;padding:7px 10px;font-size:13px;box-sizing:border-box;font-family:inherit';
   const lb='display:block;font-size:11px;font-weight:700;color:var(--muted);margin:10px 0 4px';
+  const plOpts=sel2=>`<option value="">— emplacement —</option>`+(data.equipPlaces||[]).map(p=>`<option value="${esc(p)}"${sel2===p?' selected':''}>${esc(p)}</option>`).join('');
   openModal(isNew?'＋ Nouvel appareil':'✏️ Modifier l\'appareil',`
     <label style="${lb};margin-top:0">Désignation</label><input id="eD" style="${ic}" value="${esc(w.d)}" placeholder="ex : Disjoncteur">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
       <div><label style="${lb}">Abréviations <span style="font-weight:400">(virgules)</span></label><input id="eA" style="${ic}" value="${esc(w.a)}" placeholder="ex : DJ, DJ(M)"></div>
-      <div><label style="${lb}">Famille</label><select id="eG" style="${ic}">${Object.entries(EQ_GROUPS).map(([k,v])=>`<option value="${k}"${w.g===k?' selected':''}>${v}</option>`).join('')}</select></div>
+      <div><label style="${lb}">Famille</label><select id="eG" style="${ic}">${Object.entries(eqGroups()).map(([k,v])=>`<option value="${k}"${w.g===k?' selected':''}>${v}</option>`).join('')}</select></div>
     </div>
     <label style="${lb}">Séries TGV <span style="font-weight:400">(plusieurs choix possibles)</span></label>
     <div id="eSer" style="display:flex;flex-wrap:wrap;gap:6px">${(data.fleet||[]).map(s=>`
       <label style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;border:1px solid var(--border-strong);padding:5px 10px;border-radius:16px;cursor:pointer">
       <input type="checkbox" value="${s.id}"${w.series.includes(s.id)?' checked':''} style="accent-color:var(--accent)">${esc(s.name)}</label>`).join('')}</div>
-    <label style="${lb}">Emplacement principal — ${esc(mcat.label)} <span style="font-weight:400">(texte libre)</span></label>
-    <input id="eZ" style="${ic}" value="${esc(w.z)}" placeholder="ex : Motrice — armoire bloc cabine">
+    <label style="${lb}">Emplacement principal — ${esc(mcat.label)}</label>
+    <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:8px">
+      <select id="ePl" style="${ic}">${plOpts(w.pl)}</select>
+      <input id="eZ" style="${ic}" value="${esc(w.z)}" placeholder="Précision (ex : face arrière, rangée du haut…)">
+    </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
       <div><label style="${lb}">Schéma (type de véhicule)</label><select id="eS" style="${ic}">${Object.keys(mcat.schemas).map(s=>`<option value="${s}"${w.s===+s?' selected':''}>${s} — ${mcat.schemas[s]}</option>`).join('')}</select></div>
       <div><label style="${lb}">Repères <span style="font-weight:400">(virgules)</span></label><input id="eR" style="${ic}" value="${esc(w.r)}" placeholder="ex : 8, 26"></div>
     </div>
-    <label style="${lb}">Position dans l\'armoire du bloc cabine — ${esc(mcat.label)} <span style="font-weight:400">(cliquez sur une commande, ou saisissez ligne / colonne)</span></label>
-    <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
-      <input id="eRow" type="number" min="1" max="${mcat.panel.length}" style="${ic};width:100px" placeholder="Ligne" value="${w.panel?w.panel.row:''}">
-      <input id="eCol" type="number" min="1" max="20" style="${ic};width:100px" placeholder="Colonne" value="${w.panel?w.panel.col:''}">
-      <button class="btn small ghost" id="ePosClr">Effacer</button>
-    </div>
-    <div id="ePanelGrid" style="margin:0 0 6px"></div>
     <div id="eVarBox"></div>
-    <label style="${lb}">Image <span style="font-weight:400">(photo de l\'appareil, schéma…)</span></label>
+    <label style="${lb}">Image <span style="font-weight:400">(photo de l'appareil, schéma…)</span></label>
     <div style="display:flex;gap:10px;align-items:center">
       <button class="btn small" id="eImgBtn">🖼 Choisir…</button>
       <img id="eImgPrev" alt="" style="max-height:70px;max-width:140px;border-radius:8px;border:1px solid var(--border);display:none">
       <button class="btn small ghost" id="eImgDel" style="display:none">✕ Retirer</button>
     </div>
     <label style="${lb}">Commentaire</label>
-    <textarea id="eCom" style="${ic};min-height:64px;resize:vertical" placeholder="Particularités, pièges, retours d\'expérience…">${esc(w.comment)}</textarea>`,
+    <textarea id="eCom" style="${ic};min-height:64px;resize:vertical" placeholder="Particularités, pièges, retours d'expérience…">${esc(w.comment)}</textarea>
+    <div id="eCabBox"></div>`,
     [{label:'Annuler'},{label:isNew?'Ajouter':'Enregistrer',primary:true,fn:async()=>{
       const d=$('#eD').value.trim();
       if(!d){toast('Indiquez une désignation');return false;}
@@ -3914,11 +3980,14 @@ function eqEditModal(it){
       const obj={a:abbrs.length?abbrs:['—'],d,g:$('#eG').value,
         s:+$('#eS').value||1,
         r:$('#eR').value.split(',').map(x=>parseInt(x,10)).filter(x=>!isNaN(x)&&x>0),
-        z:$('#eZ').value.trim(),
+        z:$('#eZ').value.trim(),pl:$('#ePl').value,
         series:[...$('#eSer').querySelectorAll('input:checked')].map(i=>i.value),
         panel:w.panel,variants:w.variants,img:w.img,comment:$('#eCom').value.trim()};
       if(!obj.series.length)obj.series=[mcat.serie];
-      for(const sid in obj.variants)if(!obj.series.includes(sid))delete obj.variants[sid];
+      for(const sid in obj.variants){
+        const v=obj.variants[sid];
+        if(v)delete v.on;
+        if(!obj.series.includes(sid)||!v||(!v.z&&!v.pl&&!(v.r&&v.r.length)&&!v.panel))delete obj.variants[sid];}
       const catBySer=Object.values(EQ_CATALOGS).find(c=>obj.series.includes(c.serie));
       obj.cat=catBySer?catBySer.key:(it?(it.cat||'duplex'):mcat.key);
       if(isNew){obj.id='ceq_'+uid();obj.custom=true;
@@ -3931,51 +4000,79 @@ function eqEditModal(it){
       save();
       if(origImg&&origImg!==w.img)await maybeDeleteBlob(origImg);
       renderEquip();toast(isNew?'Appareil ajouté':'Appareil enregistré');}}]);
-  const drawGrid=()=>{$('#ePanelGrid').innerHTML=eqPanelHtml([],w.panel,mcat);
-    $('#ePanelGrid').querySelectorAll('.gp-cell').forEach(el=>el.onclick=()=>{
-      w.panel={row:+el.dataset.r,col:+el.dataset.c};
-      $('#eRow').value=w.panel.row;$('#eCol').value=w.panel.col;drawGrid();});};
-  drawGrid();
-  const posInp=()=>{const r=+$('#eRow').value,c=+$('#eCol').value;
-    w.panel=(r>=1&&c>=1)?{row:r,col:c}:null;drawGrid();};
-  $('#eRow').oninput=posInp;$('#eCol').oninput=posInp;
-  $('#ePosClr').onclick=()=>{w.panel=null;$('#eRow').value='';$('#eCol').value='';drawGrid();};
-  /* variantes d'emplacement par série */
+  /* --- variantes d'emplacement par série (hors armoire) --- */
   const drawVars=()=>{
     const sers=[...$('#eSer').querySelectorAll('input:checked')].map(i=>i.value).filter(sid=>sid!==mcat.serie);
-    $('#eVarBox').innerHTML=sers.length?`<label style="${lb}">Emplacement spécifique par série <span style="font-weight:400">(si différent de l\'emplacement principal)</span></label>`+
+    $('#eVarBox').innerHTML=sers.length?`<label style="${lb}">Emplacement spécifique par série <span style="font-weight:400">(si différent de l'emplacement principal)</span></label>`+
       sers.map(sid=>{const s=(data.fleet||[]).find(f=>f.id===sid);const v=w.variants[sid];
         const vc=Object.values(EQ_CATALOGS).find(c=>c.serie===sid);
+        const on=v&&(v.on!==undefined?v.on:(v.z||v.pl||(v.r&&v.r.length)));
         return `<div style="border:1px dashed var(--border-strong);border-radius:10px;padding:8px 10px;margin-bottom:6px">
           <label style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;cursor:pointer">
-            <input type="checkbox" data-vs="${sid}"${v?' checked':''} style="accent-color:var(--accent)">${esc(s?s.name:sid)} : emplacement différent</label>
-          ${v?`<div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:6px;margin-top:7px">
-            <input type="text" data-vf="z" data-vs2="${sid}" value="${esc(v.z||'')}" placeholder="Emplacement (texte)" style="${ic}">
-            ${vc?`<select data-vf="s" data-vs2="${sid}" style="${ic}">${Object.keys(vc.schemas).map(sc=>`<option value="${sc}"${(v.s||1)===+sc?' selected':''}>schéma ${sc}</option>`).join('')}</select>
-            <input type="text" data-vf="r" data-vs2="${sid}" value="${esc((v.r||[]).join(', '))}" placeholder="Repères" style="${ic}">`
-            :`<span style="font-size:11px;color:var(--muted);align-self:center;grid-column:span 2">catalogue de cette série à venir — texte libre</span>`}
+            <input type="checkbox" data-vs="${sid}"${on?' checked':''} style="accent-color:var(--accent)">${esc(s?s.name:sid)} : emplacement différent</label>
+          ${on?`<div style="display:grid;grid-template-columns:1fr 1.3fr;gap:6px;margin-top:7px">
+            <select data-vf="pl" data-vs2="${sid}" style="${ic}">${plOpts(v.pl||'')}</select>
+            <input type="text" data-vf="z" data-vs2="${sid}" value="${esc(v.z||'')}" placeholder="Précision (texte)" style="${ic}">
           </div>
-          ${vc?`<div style="display:flex;gap:6px;align-items:center;margin-top:6px;font-size:11px;font-weight:700;color:var(--muted)">
-            Armoire : <input type="number" min="1" data-vf="prow" data-vs2="${sid}" value="${v.panel?v.panel.row:''}" placeholder="Ligne" style="${ic};width:80px">
-            <input type="number" min="1" data-vf="pcol" data-vs2="${sid}" value="${v.panel?v.panel.col:''}" placeholder="Col." style="${ic};width:80px"></div>`:''}`:''}
+          ${vc?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
+            <select data-vf="s" data-vs2="${sid}" style="${ic}">${Object.keys(vc.schemas).map(sc=>`<option value="${sc}"${(v.s||1)===+sc?' selected':''}>schéma ${sc} — ${vc.schemas[sc]}</option>`).join('')}</select>
+            <input type="text" data-vf="r" data-vs2="${sid}" value="${esc((v.r||[]).join(', '))}" placeholder="Repères" style="${ic}">
+          </div>`:''}`:''}
         </div>`;}).join(''):'';
     $('#eVarBox').querySelectorAll('input[data-vs]').forEach(cb=>cb.onchange=()=>{
       const sid=cb.dataset.vs;
-      if(cb.checked)w.variants[sid]=w.variants[sid]||{z:'',s:1,r:[],panel:null};
-      else delete w.variants[sid];
+      if(cb.checked)w.variants[sid]=Object.assign({z:'',pl:'',s:1,r:[],panel:null},w.variants[sid]||{},{on:true});
+      else{const pan=w.variants[sid]&&w.variants[sid].panel;w.variants[sid]={z:'',pl:'',s:1,r:[],panel:pan||null,on:false};}
       drawVars();});
-    $('#eVarBox').querySelectorAll('[data-vf]').forEach(inp=>inp.oninput=()=>{
-      const sid=inp.dataset.vs2;const v=w.variants[sid];if(!v)return;
-      const f=inp.dataset.vf;
-      if(f==='z')v.z=inp.value;
-      else if(f==='s')v.s=+inp.value||1;
-      else if(f==='r')v.r=inp.value.split(',').map(x=>parseInt(x,10)).filter(x=>!isNaN(x)&&x>0);
-      else{const rEl=$('#eVarBox').querySelector(`[data-vf="prow"][data-vs2="${sid}"]`);
-        const cEl=$('#eVarBox').querySelector(`[data-vf="pcol"][data-vs2="${sid}"]`);
-        const r=rEl?+rEl.value:0,c=cEl?+cEl.value:0;
-        v.panel=(r>=1&&c>=1)?{row:r,col:c}:null;}});};
-  drawVars();
-  $('#eSer').querySelectorAll('input').forEach(cb=>cb.addEventListener('change',drawVars));
+    $('#eVarBox').querySelectorAll('[data-vf]').forEach(inp=>{
+      const h=()=>{const sid=inp.dataset.vs2;
+        w.variants[sid]=w.variants[sid]||{z:'',pl:'',s:1,r:[],panel:null};
+        const v=w.variants[sid];const f=inp.dataset.vf;
+        if(f==='z')v.z=inp.value;
+        else if(f==='pl')v.pl=inp.value;
+        else if(f==='s')v.s=+inp.value||1;
+        else if(f==='r')v.r=inp.value.split(',').map(x=>parseInt(x,10)).filter(x=>!isNaN(x)&&x>0);};
+      inp.oninput=h;inp.onchange=h;});};
+  /* --- bloc cabine : uniquement pour les séries cochées disposant d'un catalogue --- */
+  const setPan=(sid,p)=>{if(sid===mcat.serie)w.panel=p;
+    else{w.variants[sid]=w.variants[sid]||{z:'',pl:'',s:1,r:[],panel:null};w.variants[sid].panel=p;}};
+  const getPan=sid=>sid===mcat.serie?w.panel:(w.variants[sid]&&w.variants[sid].panel)||null;
+  const drawOneGrid=sid=>{const gd=$('#eCabBox').querySelector(`[data-grid="${sid}"]`);
+    if(!gd)return;
+    const c=Object.values(EQ_CATALOGS).find(x=>x.serie===sid);
+    gd.innerHTML=eqPanelHtml([],getPan(sid),c);
+    gd.querySelectorAll('.gp-cell').forEach(el=>el.onclick=()=>{
+      setPan(sid,{row:+el.dataset.r,col:+el.dataset.c});
+      const rr=$('#eCabBox').querySelector(`input[data-cr="${sid}"]`);
+      const cc=$('#eCabBox').querySelector(`input[data-cc2="${sid}"]`);
+      if(rr)rr.value=el.dataset.r;if(cc)cc.value=el.dataset.c;
+      drawOneGrid(sid);});};
+  const drawCab=()=>{
+    const checked=[...$('#eSer').querySelectorAll('input:checked')].map(i=>i.value);
+    const cats=checked.map(sid=>({sid,c:Object.values(EQ_CATALOGS).find(x=>x.serie===sid)})).filter(x=>x.c);
+    $('#eCabBox').innerHTML=cats.length?`<label style="${lb}">Bloc cabine <span style="font-weight:400">(cochez pour situer l'appareil dans l'armoire — tous les appareils n'y sont pas)</span></label>`+
+      cats.map(({sid,c})=>{
+        const pan=getPan(sid);
+        return `<div style="border:1px dashed var(--border-strong);border-radius:10px;padding:8px 10px;margin-bottom:6px">
+          <label style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;cursor:pointer">
+            <input type="checkbox" data-cb="${sid}"${pan?' checked':''} style="accent-color:var(--accent)">${esc(c.label)} : position dans l'armoire du bloc cabine</label>
+          ${pan?`<div style="display:flex;gap:8px;align-items:center;margin:7px 0">
+              <input type="number" data-cr="${sid}" min="1" max="${c.panel.length}" value="${pan.row||''}" placeholder="Ligne" style="${ic};width:95px">
+              <input type="number" data-cc2="${sid}" min="1" value="${pan.col||''}" placeholder="Colonne" style="${ic};width:95px">
+            </div>
+            <div data-grid="${sid}"></div>`:''}
+        </div>`;}).join(''):'';
+    $('#eCabBox').querySelectorAll('input[data-cb]').forEach(cb=>cb.onchange=()=>{
+      setPan(cb.dataset.cb,cb.checked?{row:1,col:1}:null);drawCab();});
+    $('#eCabBox').querySelectorAll('input[data-cr],input[data-cc2]').forEach(inp=>inp.oninput=()=>{
+      const sid=inp.dataset.cr||inp.dataset.cc2;
+      const rr=$('#eCabBox').querySelector(`input[data-cr="${sid}"]`);
+      const cc=$('#eCabBox').querySelector(`input[data-cc2="${sid}"]`);
+      const r=rr?+rr.value:0,c2=cc?+cc.value:0;
+      if(r>=1&&c2>=1){setPan(sid,{row:r,col:c2});drawOneGrid(sid);}});
+    cats.forEach(({sid})=>drawOneGrid(sid));};
+  drawVars();drawCab();
+  $('#eSer').querySelectorAll('input').forEach(cb=>cb.addEventListener('change',()=>{drawVars();drawCab();}));
   const showImg=async()=>{const pv=$('#eImgPrev'),dl=$('#eImgDel');
     if(w.img){const u=await fileURL(w.img);
       if(u){pv.src=u;pv.style.display='';dl.style.display='';return;}}
@@ -3998,40 +4095,6 @@ async function eqDelete(it){
   save();logEvt('🗑 Appareil supprimé du catalogue : « '+it.d+' »');
   if(img)await maybeDeleteBlob(img);
   renderEquip();toast('Appareil supprimé');}
-/* ---------- Import / export du catalogue ---------- */
-async function eqExport(){
-  toast('⏳ Préparation de l\'export…');
-  const ids=new Set();
-  for(const x of data.equipCustom||[])if(x.img)ids.add(x.img);
-  for(const k in data.equipOver||{})if(data.equipOver[k].img)ids.add(data.equipOver[k].img);
-  const images={};
-  for(const id of ids){const f=await idb.get('files',id);
-    if(f)images[id]={name:f.name,mime:f.mime,size:f.size,b64:await blobToB64(f.blob)};}
-  const payload={app:'RailDoc-appareillages',version:1,exported:new Date().toISOString(),
-    fleet:data.fleet||[],equipCustom:data.equipCustom||[],equipOver:data.equipOver||{},
-    equipMeta:data.equipMeta||{},images};
-  const blob=new Blob([JSON.stringify(payload)],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-  const dd=new Date();
-  a.download=`RailDoc-appareillages-${dd.getFullYear()}-${String(dd.getMonth()+1).padStart(2,'0')}-${String(dd.getDate()).padStart(2,'0')}.json`;
-  a.click();
-  logEvt('⤓ Catalogue d\'appareillages exporté');toast('Catalogue exporté 👍');}
-async function eqImport(file){
-  try{
-    const payload=JSON.parse(await file.text());
-    if(payload.app!=='RailDoc-appareillages')throw new Error('format');
-    const nc=(payload.equipCustom||[]).length,no=Object.keys(payload.equipOver||{}).length;
-    if(!await confirmDlg('Importer le catalogue',`Remplacer la flotte et les personnalisations d'appareillages par le contenu de « ${esc(file.name)} » (${nc} appareil(s) personnalisé(s), ${no} modification(s)) ? Les fiches de documentation ne sont pas touchées.`))return;
-    for(const id in payload.images||{}){const f=payload.images[id];
-      await idb.put('files',id,{name:f.name,mime:f.mime,size:f.size,blob:b64ToBlob(f.b64,f.mime)});}
-    if(Array.isArray(payload.fleet)&&payload.fleet.length)data.fleet=payload.fleet;
-    data.equipCustom=payload.equipCustom||[];
-    data.equipOver=payload.equipOver||{};
-    data.equipMeta=Object.assign({},data.equipMeta||{},payload.equipMeta||{});
-    save();logEvt('⤒ Catalogue d\'appareillages importé : '+file.name);
-    renderEquip();toast('Catalogue importé 👍');
-  }catch(e){toast('⚠️ Fichier de catalogue invalide');}}
-/* ---------- Extraction de mots-clés depuis un document ---------- */
 async function eqKwFromPdf(blob,name,apply){
   toast('⏳ Lecture du document…');
   const off=officeInfo(name);
@@ -4078,6 +4141,7 @@ function eqPickerModal(onPick){
   $('#mEqQ').oninput=draw;setTimeout(()=>$('#mEqQ').focus(),60);draw();}
 /* ---------- Rendu du module ---------- */
 function renderEquip(){
+  if(state.eqSel&&EQ_MERGE_MAP[state.eqSel])state.eqSel=EQ_MERGE_MAP[state.eqSel];
   const q=(state.eqQuery||'').trim();
   const all=eqAllItems();
   let ser=state.eqSerie||'ALL';
@@ -4091,7 +4155,7 @@ function renderEquip(){
   const inSerie=ser==='ALL'?all:all.filter(it=>eqSeriesOf(it).includes(ser));
   const famSel=$('#eqFam');
   famSel.innerHTML=`<option value="ALL">Toutes les familles</option>`+
-    Object.entries(EQ_GROUPS).map(([k,v])=>`<option value="${k}">${v} (${inSerie.filter(i=>i.g===k).length})</option>`).join('');
+    Object.entries(eqGroups()).map(([k,v])=>`<option value="${k}">${v} (${inSerie.filter(i=>i.g===k).length})</option>`).join('');
   famSel.value=state.eqCat||'ALL';
   if(famSel.value!==(state.eqCat||'ALL')){state.eqCat='ALL';famSel.value='ALL';}
   const cat=state.eqCat||'ALL';
@@ -4125,8 +4189,9 @@ function renderEquip(){
   const isBaseSer=vSer===baseCat.serie;
   const eff={
     s:vv&&vv.s?vv.s:sel.s,
-    r:vv&&vv.r&&vv.r.length?vv.r:(isBaseSer||vv?sel.r:sel.r),
-    z:vv&&vv.z?vv.z:sel.z,
+    r:vv&&vv.r&&vv.r.length?vv.r:sel.r,
+    z:vv&&vv.z?vv.z.trim():sel.z,
+    pl:vv&&vv.pl?vv.pl:(isBaseSer?(sel.pl||''):''),
     panel:vv&&vv.panel?vv.panel:(isBaseSer?sel.panel:null)};
   const showSch=!!vCat;
   const catObj=vCat||baseCat;
@@ -4143,7 +4208,7 @@ function renderEquip(){
       <div style="flex:1;min-width:0">
         <div class="eq-abbrs">${sel.a.map(a=>a==='—'?'':`<span class="eq-abbr">${esc(a)}</span>`).join('')}</div>
         <h2>${esc(sel.d)}</h2>
-        <div class="eq-meta">${esc(EQ_GROUPS[sel.g]||sel.g)} · <b>${esc(eff.z)}</b>${eff.r.length&&showSch?` · schéma ${eff.s} (${eqSchemaLabel(eff.s,catObj)}), repère ${repTxt}`:''}${serNames?` · ${esc(serNames)}`:''}${eff.panel?` · <b style="color:var(--accent)">armoire : ligne ${eff.panel.row}, colonne ${eff.panel.col}</b>`:''}</div>
+        <div class="eq-meta">${esc(eqGroups()[sel.g]||sel.g)} · <b>${esc([eff.pl,eff.z].filter(Boolean).join(' — ')||'—')}</b>${eff.r.length&&showSch?` · schéma ${eff.s} (${eqSchemaLabel(eff.s,catObj)}), repère ${repTxt}`:''}${serNames?` · ${esc(serNames)}`:''}${eff.panel?` · <b style="color:var(--accent)">armoire : ligne ${eff.panel.row}, colonne ${eff.panel.col}</b>`:''}</div>
       </div>
       ${E?`<div style="display:flex;gap:6px;flex-shrink:0">
         <button class="btn small" id="eqEditBtn" title="Modifier cet appareil (désignation, séries, emplacements, image, commentaire…)">✏️ Modifier</button>
@@ -4158,7 +4223,7 @@ function renderEquip(){
     ${showSch&&eff.s<=catObj.maxVeh?eqSvgVehicle(eff.s,eff.r,state.eqRep,catObj):''}
     ${showSch&&(eff.panel||(eff.r.includes(catObj.panelRep)&&eff.s===1))?eqPanelHtml(codes,eff.panel,catObj):''}
     ${showSch&&eff.r.includes(catObj.pneuRep)&&eff.s===1?eqPneuHtml(codes,catObj):''}
-    ${!showSch?`<div class="eq-comment" style="border-left-color:var(--border-strong);background:var(--bg-soft)">📍 Emplacement pour cette série : <b>${esc(eff.z||'non renseigné')}</b>${eff.r.length?` — repère ${eff.r.join(', ')}`:''}<br><span style="font-size:11px;color:var(--muted)">Schémas de cette série à venir — fournissez son GDA à Claude pour les intégrer.</span></div>`:''}
+    ${!showSch?`<div class="eq-comment" style="border-left-color:var(--border-strong);background:var(--bg-soft)">📍 Emplacement pour cette série : <b>${esc([eff.pl,eff.z].filter(Boolean).join(' — ')||'non renseigné')}</b>${eff.r.length?` — repère ${eff.r.join(', ')}`:''}<br><span style="font-size:11px;color:var(--muted)">Schémas de cette série à venir — fournissez son GDA à Claude pour les intégrer.</span></div>`:''}
     ${atRep.length?`<div class="eq-atrep"><b>Au repère ${state.eqRep} :</b> ${atRep.map(i=>`<button class="eq-replink" data-id="${i.id}">${esc(i.a[0]==='—'?i.d:i.a[0])}</button>`).join('')}</div>`:''}
     <div class="eq-zonehead"><h3>🏷 Mots-clés</h3>
       ${E?`<button class="btn small" id="eqKwPdf" title="Extraire les mots-clés d'un fichier importé dans la fiche liée">📄 Depuis un document</button>`:''}
@@ -4191,7 +4256,7 @@ function renderEquip(){
         <p style="font-size:11px;color:var(--muted);margin-top:6px">La fiche héritera des mots-clés et de l'emplacement, et offrira notes, liens, contacts, fichiers, sous-fiches et mur d'accès rapide — reliés à cet appareil.</p>`
       :'<div class="empty-hint">Aucune fiche liée à cet appareil.</div>')}
     </div>
-    <p class="eq-src">${sel.custom?'Appareil ajouté au catalogue par vos soins.':catObj.src}</p>`;
+    `;
   hydrateIcons(det);
   if(sel.img)fileURL(sel.img).then(u=>{const im=det.querySelector('.eq-img');
     if(im&&u){im.src=u;im.onclick=()=>openFileNewTab(sel.img);}});
@@ -4260,11 +4325,7 @@ async function init(){
   $('#eqSearch').addEventListener('input',e=>{state.eqQuery=e.target.value;renderEquip();});
   $('#fleetBtn').onclick=fleetModal;
   $('#eqAddBtn').onclick=()=>eqEditModal(null);
-  $('#eqExpBtn').onclick=eqExport;
-  $('#eqImpBtn').onclick=()=>{if(!isEdit()){toast('🔒 Mode lecture seule');return;}
-    const fi=$('#fiEqImp');
-    fi.onchange=async e=>{const f=e.target.files[0];fi.value='';if(f)await eqImport(f);};
-    fi.click();};
+  $('#famBtn').onclick=famPlaceModal;
   $('#eqSerie').onchange=e=>{state.eqSerie=e.target.value;renderEquip();};
   $('#eqFam').onchange=e=>{state.eqCat=e.target.value;renderEquip();};
   $('#brandBox').onclick=()=>navigate('#/home');
@@ -4282,7 +4343,13 @@ async function init(){
   $('#collapseAllBtn').onclick=()=>{state.open.clear();save();renderTree();};
   checkAppVersion();
   $('#verLine').onclick=versionModal;
-  $('#logsBtn').onclick=logsModal;
+  $('#settingsBtn').onclick=e=>{e.stopPropagation();
+    const r=e.currentTarget.getBoundingClientRect();
+    openCtx(r.right-210,r.bottom+6,[
+      {ic:'🕑',label:'Journal des actions',fn:logsModal},
+      {sep:true},
+      {ic:'💾',label:'Exporter la sauvegarde',fn:exportAll},
+      {ic:'📂',label:'Importer une sauvegarde…',fn:()=>$('#fiImport').click()}]);};
   $('#dirBtn').onclick=directoryModal;
   $('#addContactBtn').onclick=()=>{if(currentNode&&isEdit())contactModal(currentNode,null);};
 
@@ -4347,8 +4414,7 @@ async function init(){
 
   /* thème / sauvegarde */
   $('#themeBtn').onclick=()=>{data.settings.theme=data.settings.theme==='dark'?'light':'dark';applyTheme();save();};
-  $('#exportBtn').onclick=exportAll;
-  $('#importBtn').onclick=()=>$('#fiImport').click();
+
   $('#fiImport').addEventListener('change',e=>{const f=e.target.files[0];e.target.value='';if(f)importAll(f);});
 
   /* recherche */
