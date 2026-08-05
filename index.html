@@ -878,9 +878,10 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='8.5';
+const APP_VERSION='8.6';
 const APP_VERSION_DATE='5 août 2026';
 const CHANGELOG=[
+  ['v8.6',"Sauvegarde fiabilisée sur tous les appareils : nouveau format d'export « en flux » (une ligne par fichier, assemblé par morceaux) — corrige l'export impossible sur iPad (erreur interne WebKit) et l'import « fichier illisible » sur PC pour les grosses sauvegardes · l'import lit le fichier en continu sans jamais le charger entièrement en mémoire · les anciennes sauvegardes (v1) restent importables"],
   ['v8.5',"Armoire graphique : vrais visuels photo extraits de la planche ATL 300 (commutateur rotatif Z avec positions NORMAL/ISOLÉ, voltmètre batterie à aiguille, manipulateur Z-SEC/ISO) · chaque rangée de disrupteurs CC tient désormais sur une seule ligne (défilement horizontal si l'écran est étroit)"],
   ['v8.4',"Armoire BLOC CABINE graphique et interactive (voyants, disrupteurs vert/rouge, commutateurs rotatifs, voltmètres… cliquables — un clic sur une commande ouvre son appareil) · appareils multi-séries : onglets de série sur la fiche appareil avec emplacement spécifique par série (schéma, repères, position armoire) éditable · mots-clés des fiches : modification ✏️, tri A→Z et réorganisation par glisser-déposer · appareillages liés à une fiche : ajout via recherche ＋, suppression, tri, suggestions adoptables en un clic · extraction de mots-clés désormais depuis les fichiers importés dans la fiche (liste déroulante)"],
   ['v8.3',"Nouveau catalogue 🚄 TGV Atlantique (TVM 300) : ~170 appareils extraits du GDA TGV A (annexes 2A/2B) — schémas motrice, remorques R1/R10 et R2 à R9 avec repères cliquables, armoire BLOC CABINE ATL 300 fidèle à la planche photo, bloc auxiliaire pneumatique (repère 22) · rame de 12 caisses dessinée · série TGV Atlantique ajoutée à la flotte (rames 301 à 405) · le module gère désormais plusieurs catalogues en parallèle (Duplex + Atlantique + vos ajouts)"],
@@ -2582,22 +2583,94 @@ const b64ToBlob=(b64,mime)=>{const bin=atob(b64);const arr=new Uint8Array(bin.le
 async function exportAll(){
   toast('⏳ Préparation de la sauvegarde…');
   try{
-    const keys=await idb.keys('files');const files={};
+    const keys=await idb.keys('files');
+    /* Format v2 « NDJSON » : 1re ligne = données, puis une ligne par fichier.
+       Construit par morceaux (Blob de Blobs) pour rester léger en mémoire :
+       indispensable sur iPad (WebKit) et pour relire de grosses sauvegardes sur PC. */
+    const parts=[new Blob([JSON.stringify({app:'RailDoc',version:2,format:'ndjson',exported:new Date().toISOString(),data})+'\n'])];
+    let n=0;
     for(const k of keys){const f=await idb.get('files',k);
-      files[k]={name:f.name,mime:f.mime,size:f.size,b64:await blobToB64(f.blob)};}
-    const payload={app:'RailDoc',version:1,exported:new Date().toISOString(),data,files};
-    const blob=new Blob([JSON.stringify(payload)],{type:'application/json'});
-    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+      if(!f)continue;
+      const head=JSON.stringify({file:k,name:f.name,mime:f.mime,size:f.size||0});
+      parts.push(new Blob([head.slice(0,-1)+',"b64":"',await blobToB64(f.blob),'"}\n']));
+      n++;if(n%5===0)toast(`⏳ Préparation… ${n} fichier(s)`);}
+    const blob=new Blob(parts,{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.href=url;
     const d=new Date();
     a.download=`RailDoc-sauvegarde-${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}.json`;
-    document.body.appendChild(a);a.click();a.remove();
-    setTimeout(()=>URL.revokeObjectURL(a.href),4000);
-    logEvt(`💾 Sauvegarde exportée (${fmtSize(blob.size)})`);
+    document.body.appendChild(a);a.click();
+    setTimeout(()=>{URL.revokeObjectURL(url);a.remove();},8000);
+    logEvt(`💾 Sauvegarde exportée (${fmtSize(blob.size)}, ${n} fichier(s))`);
     toast(`💾 Sauvegarde exportée (${fmtSize(blob.size)})`);
-  }catch(e){console.error(e);toast('⚠️ Échec de l\'export');}}
+  }catch(e){console.error(e);toast('⚠️ Échec de l\'export : '+(e&&e.message?e.message:'erreur'));}}
+/* Lecture en flux d'un fichier texte, ligne par ligne (jamais tout en mémoire) */
+async function rdFirstLine(file){
+  const reader=file.stream().getReader();const dec=new TextDecoder();let buf='';
+  try{
+    while(true){const{done,value}=await reader.read();
+      if(done)break;
+      buf+=dec.decode(value,{stream:true});
+      const i=buf.indexOf('\n');
+      if(i>=0){try{reader.cancel();}catch(_){}return buf.slice(0,i);}
+      if(buf.length>64*1024*1024)break;}
+  }catch(_){}
+  return buf;}
+async function rdLines(file,onLine){
+  const reader=file.stream().getReader();const dec=new TextDecoder();let buf='';
+  while(true){const{done,value}=await reader.read();
+    if(done)break;
+    buf+=dec.decode(value,{stream:true});
+    let i;
+    while((i=buf.indexOf('\n'))>=0){const line=buf.slice(0,i);buf=buf.slice(i+1);
+      if(line.trim())await onLine(line);}}
+  buf+=dec.decode();
+  if(buf.trim())await onLine(buf);}
 async function importAll(file){
+  /* détection du format v2 (NDJSON) */
+  let meta=null;
+  if(file.stream){
+    try{const fl=await rdFirstLine(file);
+      const o=JSON.parse(fl);
+      if(o&&o.app==='RailDoc'&&o.format==='ndjson'&&o.data&&Array.isArray(o.data.nodes))meta=o;
+    }catch(_){meta=null;}}
+  if(meta){
+    const nb=meta.data.nodes.length;
+    const when=meta.exported?new Date(meta.exported).toLocaleString('fr-FR'):'date inconnue';
+    if(!await confirmDlg('Restaurer la sauvegarde',
+      `Cette sauvegarde (${when}) contient <b>${nb} fiche(s)</b> et ses fichiers (${fmtSize(file.size)} au total).<br><br>⚠️ Elle <b>remplacera intégralement</b> le contenu actuel de l'application sur cet appareil.`))return;
+    toast('⏳ Restauration en cours…');
+    try{
+      await idb.clear('files');
+      for(const u of Object.values(urlCache))URL.revokeObjectURL(u);urlCache={};
+      try{for(const k of await idb.keys('kv'))if(String(k).startsWith('thumb_'))await idb.del('kv',k);}catch(_){}
+      for(const k of Object.keys(thumbCache))delete thumbCache[k];
+      let first=true,nf=0;
+      await rdLines(file,async line=>{
+        if(first){first=false;return;}
+        let rec=null;
+        try{rec=JSON.parse(line);}catch(_){return;}
+        if(rec&&rec.file){
+          await idb.put('files',rec.file,{name:rec.name,mime:rec.mime,size:rec.size,blob:b64ToBlob(rec.b64,rec.mime)});
+          nf++;if(nf%5===0)toast(`⏳ Restauration… ${nf} fichier(s)`);}});
+      data=meta.data;
+      normalizeData();
+      state.open=new Set(data.settings.open||[]);
+      applyTheme();applyBrand();applyMode();
+      await idb.put('kv','data',JSON.parse(JSON.stringify(data)));
+      logEvt(`♻️ Sauvegarde restaurée (${when}, ${nf} fichier(s))`);
+      navigate('#/home');render();updateStats();
+      toast('✅ Sauvegarde restaurée !');
+    }catch(e){console.error(e);toast('⚠️ Échec de la restauration');}
+    return;}
+  /* ancien format v1 (fichier JSON unique) */
   let payload;
-  try{payload=JSON.parse(await file.text());}catch(e){toast('⚠️ Fichier illisible');return;}
+  try{payload=JSON.parse(await file.text());}
+  catch(e){console.error(e);
+    toast(file.size>150*1024*1024
+      ?'⚠️ Sauvegarde v1 trop volumineuse pour ce navigateur — refaites l\'export depuis l\'appareil d\'origine avec RailDoc v8.6+ (nouveau format), puis réimportez ici'
+      :'⚠️ Fichier illisible');
+    return;}
   if(!payload||payload.app!=='RailDoc'||!payload.data||!Array.isArray(payload.data.nodes)){
     toast('⚠️ Ce fichier n\'est pas une sauvegarde RailDoc');return;}
   const nb=payload.data.nodes.length,nf=Object.keys(payload.files||{}).length;
@@ -2608,7 +2681,6 @@ async function importAll(file){
   try{
     await idb.clear('files');
     for(const u of Object.values(urlCache))URL.revokeObjectURL(u);urlCache={};
-    /* purge des aperçus PDF mis en cache (fichiers remplacés) */
     try{for(const k of await idb.keys('kv'))if(String(k).startsWith('thumb_'))await idb.del('kv',k);}catch(_){}
     for(const k of Object.keys(thumbCache))delete thumbCache[k];
     for(const[k,f]of Object.entries(payload.files||{}))
