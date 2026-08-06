@@ -556,6 +556,11 @@ html[data-theme="dark"] .eq-cell.rb{background:#22301a;color:#9fce7a;border-colo
   background:var(--panel);padding:0 14px;font-size:16px;font-weight:600;outline:none;box-sizing:border-box;
   box-shadow:0 2px 8px color-mix(in srgb,var(--accent) 22%,transparent)}
 #eqSide #eqSearch::placeholder{color:var(--accent);opacity:.65;font-weight:700}
+#eqRame{flex:0 0 84px;width:84px;height:44px;border-radius:12px;border:2px solid var(--accent);
+  background:var(--panel);padding:0 6px;font-size:16px;font-weight:800;text-align:center;outline:none;box-sizing:border-box;
+  font-variant-numeric:tabular-nums;box-shadow:0 2px 8px color-mix(in srgb,var(--accent) 22%,transparent)}
+#eqRame::placeholder{color:var(--accent);opacity:.55;font-weight:700;font-size:12px}
+#eqRame:focus{box-shadow:0 0 0 4px var(--accent-soft)}
 #eqSide #eqSearch:focus{box-shadow:0 0 0 4px var(--accent-soft)}
 .sug-row{display:flex;align-items:center;gap:9px;padding:8px 11px;border-radius:11px;background:var(--panel-2);
   border:1px solid var(--border);cursor:pointer;font-size:12.5px;transition:all .12s;margin-bottom:6px}
@@ -727,7 +732,11 @@ html[data-theme="dark"] .eq-cell.rb{background:#22301a;color:#9fce7a;border-colo
           <button class="side-mini" id="fleetBtn" title="Gérer la flotte TGV : séries, sous-séries, tranches de rames et motrices">⚙</button>
         </div>
       </div>
-      <input id="eqSearch" type="text" placeholder="🔍 Rechercher un appareil…" autocomplete="off" spellcheck="false">
+      <div style="display:flex;gap:6px">
+        <input id="eqRame" type="text" inputmode="numeric" maxlength="4" placeholder="N° rame" autocomplete="off" title="Numéro de rame (3-4 chiffres) : sélectionne automatiquement la série et la sous-série correspondantes">
+        <input id="eqSearch" type="text" placeholder="🔍 Rechercher un appareil…" autocomplete="off" spellcheck="false">
+      </div>
+      <div id="eqRameInfo" style="display:none;font-size:11px;font-weight:700;padding:4px 8px;border-radius:8px;background:var(--accent-soft);color:var(--accent)"></div>
       <select id="eqSerie" class="eq-select" title="Filtrer par série"></select>
       <select id="eqFam" class="eq-select" title="Filtrer par famille d'appareils"></select>
       <div id="eqCount" style="font-size:10.5px;color:var(--muted);font-weight:700;padding:0 2px"></div>
@@ -918,9 +927,10 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='8.10';
+const APP_VERSION='8.11';
 const APP_VERSION_DATE='5 août 2026';
 const CHANGELOG=[
+  ['v8.11',"Filtre par numéro de rame : champ « N° rame » à gauche de la recherche d'appareils — saisissez 3 ou 4 chiffres, RailDoc retrouve la série et la sous-série d'après les tranches de la flotte (⚙), filtre le catalogue et bascule automatiquement les appareils multi-séries sur la bonne série (emplacement, schémas, armoire) · rappel des motrices de la sous-série · effacer le champ ou changer manuellement de série rétablit le filtre normal"],
   ['v8.10',"Appareillages : barre de recherche mise en avant (bord carmin, placée en tête du panneau) · armoire du bloc cabine entièrement contenue dans la largeur de la colonne — cases toutes identiques (20 par rangée), libellés masqués et révélés au survol avec effet zoom ×2, libellé toujours visible sur l'appareil sélectionné · graphisme fidèle à la planche photo : voyants rouges, disrupteurs vert/rouge, boutons-poussoirs à levier, commutateurs rotatifs, voltmètres et manipulateur ISO découpés de la photo réelle"],
   ['v8.9',"Sommaire 🧭 : un clic sur une entrée ouvre directement la fiche visée, même en mode édition (plus de menu intermédiaire) · le menu actualiser / supprimer est rattaché au bouton 🧭 de la barre d'outils (et à l'en-tête « 🧭 Sommaire »)"],
   ['v8.8',"Optimisation iPhone : barre du haut compacte, respect des zones d'écran (encoche), fenêtres plein écran, schémas de rame et de véhicule défilables au doigt, cibles tactiles agrandies (arborescence, listes, armoire), champs de saisie sans zoom automatique iOS · conseil : depuis Safari, Partager → « Sur l'écran d'accueil » pour un affichage plein écran type application"],
@@ -3152,6 +3162,19 @@ async function importPack(file){
    ========================================================== */
 const EQ_GROUPS={CC:'Disrupteurs (CC)',DJ:'Disjoncteurs (DJ)',Z:'Interrupteurs (Z)',RB:'Robinets (RB)',BP:'Boutons-poussoirs (BP)',H:'Sectionneurs (H)',LS:'Lampes (LS)',FU:'Fusibles BT',AU:'Autres appareils'};
 /* Familles effectives : familles de base + ajouts/renommages de l'utilisateur, moins les supprimées */
+/* Numéro de rame -> série / sous-série (d'après les tranches saisies dans ⚙ Flotte) */
+function rameMatch(numStr){
+  const num=parseInt(numStr,10);
+  if(isNaN(num))return null;
+  for(const s of (typeof data!=='undefined'&&data&&data.fleet)||[]){
+    for(const u of s.subs||[]){
+      if(!u.rames)continue;
+      for(const tok of String(u.rames).split(/[,;]|\bet\b/i)){
+        const nums=(tok.match(/\d+/g)||[]).map(Number);
+        if(!nums.length)continue;
+        if(nums.length>=2){if(num>=Math.min(nums[0],nums[1])&&num<=Math.max(nums[0],nums[1]))return{serie:s,sub:u};}
+        else if(nums[0]===num)return{serie:s,sub:u};}}}
+  return null;}
 function eqGroups(){
   const g=Object.assign({},EQ_GROUPS,(typeof data!=='undefined'&&data&&data.equipGroups)||{});
   for(const k of (typeof data!=='undefined'&&data&&data.equipGroupsDel)||[])delete g[k];
@@ -4381,7 +4404,24 @@ async function init(){
   $('#fleetBtn').onclick=fleetModal;
   $('#eqAddBtn').onclick=()=>eqEditModal(null);
   $('#famBtn').onclick=famPlaceModal;
-  $('#eqSerie').onchange=e=>{state.eqSerie=e.target.value;renderEquip();};
+  $('#eqSerie').onchange=e=>{state.eqSerie=e.target.value;state.eqRameSet=false;
+    $('#eqRame').value='';$('#eqRameInfo').style.display='none';renderEquip();};
+  $('#eqRame').addEventListener('input',e=>{
+    const v=e.target.value.replace(/\D/g,'');
+    if(v!==e.target.value)e.target.value=v;
+    const info=$('#eqRameInfo');
+    if(!v){if(state.eqRameSet){state.eqSerie='ALL';state.eqRameSet=false;renderEquip();}
+      info.style.display='none';return;}
+    if(v.length<3){info.style.display='none';return;}
+    const m=rameMatch(v);
+    if(m){state.eqSerie=m.serie.id;state.eqRameSet=true;state.eqVarSerie=null;
+      info.style.display='block';
+      info.style.background='var(--accent-soft)';info.style.color='var(--accent)';
+      info.innerHTML=`🚄 Rame <b>${esc(v)}</b> → <b>${esc(m.serie.name)}</b>${m.sub&&m.sub.name?' · '+esc(m.sub.name):''}${m.sub&&m.sub.motrices?' <span style="font-weight:600;opacity:.75">(motrices '+esc(m.sub.motrices)+')</span>':''}`;
+      renderEquip();}
+    else{info.style.display='block';
+      info.style.background='var(--bg-soft)';info.style.color='var(--muted)';
+      info.innerHTML=`Rame <b>${esc(v)}</b> : aucune série correspondante — complétez les tranches dans ⚙`;}});
   $('#eqFam').onchange=e=>{state.eqCat=e.target.value;renderEquip();};
   $('#brandBox').onclick=()=>navigate('#/home');
   $('#brandBox').oncontextmenu=e=>{e.preventDefault();if(isEdit())brandModal();};
