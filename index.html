@@ -542,7 +542,9 @@ html[data-theme="dark"] .eq-cell.rb{background:#22301a;color:#9fce7a;border-colo
 .bigbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;height:76px;padding:6px;border-radius:14px;
   border:1px solid var(--border-strong);background:var(--panel);font-size:12px;font-weight:700;
   white-space:nowrap;overflow:hidden;box-shadow:0 1px 2px #0000000d;transition:all .15s}
-.bigbtn span{font-size:24px;line-height:1.1}
+.bigbtn .bigic{display:block;line-height:0}
+.bigbtn .bigic svg{width:34px;height:34px;filter:drop-shadow(0 1.5px 1.5px #0003)}
+.bigbtn:hover .bigic svg{transform:translateY(-1px) scale(1.06);transition:transform .15s}
 .bigbtn:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
 .bigbtn.active{background:var(--accent);border-color:var(--accent);color:#fff}
 #docSide{display:flex;flex-direction:column;flex:1;min-height:0}
@@ -561,6 +563,19 @@ html[data-theme="dark"] .eq-cell.rb{background:#22301a;color:#9fce7a;border-colo
   font-variant-numeric:tabular-nums;box-shadow:0 2px 8px color-mix(in srgb,var(--accent) 22%,transparent)}
 #eqRame::placeholder{color:var(--accent);opacity:.55;font-weight:700;font-size:12px}
 #eqRame:focus{box-shadow:0 0 0 4px var(--accent-soft)}
+.fld-wrap{position:relative;display:flex;flex:1;min-width:0}
+.fld-wrap>input{width:100%}
+.fld-clr{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;
+  background:var(--bg-soft);color:var(--muted);font-size:11px;font-weight:800;display:none;align-items:center;
+  justify-content:center;cursor:pointer;border:none;z-index:3;padding:0;line-height:1}
+.fld-clr:hover{background:var(--accent);color:#fff}
+.fld-wrap>input:not(:placeholder-shown)~.fld-clr{display:flex}
+#searchWrap input:not(:placeholder-shown)~.fld-clr{display:flex}
+#searchWrap input:not(:placeholder-shown)~#searchKbd{display:none}
+#searchWrap .fld-clr{right:10px}
+#eqSide #eqSearch{padding-right:32px}
+#searchInput{padding-right:34px}
+.fld-wrap #eqRame{padding-right:24px}
 #eqSide #eqSearch:focus{box-shadow:0 0 0 4px var(--accent-soft)}
 .sug-row{display:flex;align-items:center;gap:9px;padding:8px 11px;border-radius:11px;background:var(--panel-2);
   border:1px solid var(--border);cursor:pointer;font-size:12.5px;transition:all .12s;margin-bottom:6px}
@@ -692,6 +707,7 @@ html[data-theme="dark"] .eq-cell.rb{background:#22301a;color:#9fce7a;border-colo
       <span class="mag"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span>
       <input id="searchInput" type="text" placeholder="Rechercher une fiche, un mot-clé, un fichier, un lien…" autocomplete="off" spellcheck="false">
       <span id="searchKbd">Ctrl K</span>
+      <button type="button" class="fld-clr" title="Effacer">✕</button>
       <div id="searchResults"></div>
     </div>
     <div id="clockBox">
@@ -711,8 +727,41 @@ html[data-theme="dark"] .eq-cell.rb{background:#22301a;color:#9fce7a;border-colo
   <!-- ======= Panneau latéral : arborescence ======= -->
   <nav id="sidebar">
     <div class="side-big">
-      <button id="homeLink" class="bigbtn" title="Accueil — documentation et mur d'accès rapide"><span>📚</span>Accueil</button>
-      <button id="equipLink" class="bigbtn" title="Ouvrir les appareillages dans un nouvel onglet"><span>🔍</span>Appareillages</button>
+      <button id="homeLink" class="bigbtn" title="Documentation — fiches, notes et mur d'accès rapide"><span class="bigic">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <defs>
+            <linearGradient id="bkCov" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8496f"/><stop offset="1" stop-color="#96082c"/></linearGradient>
+            <linearGradient id="bkPL" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff"/><stop offset=".85" stop-color="#e3e0d8"/><stop offset="1" stop-color="#c9c5ba"/></linearGradient>
+            <linearGradient id="bkPR" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#c9c5ba"/><stop offset=".15" stop-color="#e3e0d8"/><stop offset="1" stop-color="#ffffff"/></linearGradient>
+          </defs>
+          <ellipse cx="32" cy="55" rx="25" ry="4.5" fill="#000" opacity=".18"/>
+          <path d="M4 15 Q18 5 32 12 Q46 5 60 15 L60 49 Q46 41 32 48 Q18 41 4 49 Z" fill="url(#bkCov)"/>
+          <path d="M32 12 L32 48" stroke="#6d0620" stroke-width="2.4"/>
+          <path d="M8 17 Q19 9.5 30 14.5 L30 44.5 Q19 39.5 8 44.5 Z" fill="url(#bkPL)"/>
+          <path d="M56 17 Q45 9.5 34 14.5 L34 44.5 Q45 39.5 56 44.5 Z" fill="url(#bkPR)"/>
+          <g stroke="#b9b4a6" stroke-width="1.1" fill="none">
+            <path d="M11.5 20.5 Q19.5 15.5 26.5 18.6"/><path d="M11.5 25.5 Q19.5 20.5 26.5 23.6"/><path d="M11.5 30.5 Q19.5 25.5 26.5 28.6"/><path d="M11.5 35.5 Q19.5 30.5 26.5 33.6"/>
+            <path d="M52.5 20.5 Q44.5 15.5 37.5 18.6"/><path d="M52.5 25.5 Q44.5 20.5 37.5 23.6"/><path d="M52.5 30.5 Q44.5 25.5 37.5 28.6"/><path d="M52.5 35.5 Q44.5 30.5 37.5 33.6"/>
+          </g>
+          <path d="M30 14.5 Q31 16 32 16.6 Q33 16 34 14.5 L34 44.5 Q33 46.5 32 47 Q31 46.5 30 44.5 Z" fill="#00000026"/>
+          <path d="M6 16.5 Q18 8 30 13 L30 15 Q19 10.5 8 17.2 Z" fill="#ffffff55"/>
+        </svg></span>Documentation</button>
+      <button id="equipLink" class="bigbtn" title="Ouvrir les appareillages dans un nouvel onglet"><span class="bigic">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <defs>
+            <linearGradient id="lpRing" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6f8fa"/><stop offset=".45" stop-color="#aeb8c2"/><stop offset=".7" stop-color="#78828c"/><stop offset="1" stop-color="#d9dee3"/></linearGradient>
+            <radialGradient id="lpGlass" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#ffffff" stop-opacity=".95"/><stop offset=".35" stop-color="#dceefc" stop-opacity=".75"/><stop offset="1" stop-color="#8fb6d3" stop-opacity=".55"/></radialGradient>
+            <linearGradient id="lpHdl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e8496f"/><stop offset="1" stop-color="#8d0728"/></linearGradient>
+          </defs>
+          <ellipse cx="34" cy="56" rx="22" ry="4" fill="#000" opacity=".18"/>
+          <rect x="38.2" y="36.2" width="11" height="22" rx="5.2" transform="rotate(-45 43.7 47.2)" fill="url(#lpHdl)"/>
+          <rect x="40.4" y="37.2" width="3.2" height="19" rx="1.6" transform="rotate(-45 42 46.7)" fill="#ffffff44"/>
+          <circle cx="27" cy="27" r="19" fill="url(#lpRing)"/>
+          <circle cx="27" cy="27" r="14.2" fill="url(#lpGlass)"/>
+          <circle cx="27" cy="27" r="14.2" fill="none" stroke="#5d6870" stroke-width="1"/>
+          <ellipse cx="21.5" cy="20.5" rx="6.5" ry="4.2" transform="rotate(-32 21.5 20.5)" fill="#fff" opacity=".8"/>
+          <path d="M13.5 33.5 A14.6 14.6 0 0 0 36 36.5" stroke="#ffffff66" stroke-width="2" fill="none"/>
+        </svg></span>Appareillages</button>
     </div>
     <div id="docSide">
       <div class="side-head"><span>Documentation</span>
@@ -733,8 +782,14 @@ html[data-theme="dark"] .eq-cell.rb{background:#22301a;color:#9fce7a;border-colo
         </div>
       </div>
       <div style="display:flex;gap:6px">
-        <input id="eqRame" type="text" inputmode="numeric" maxlength="4" placeholder="N° rame" autocomplete="off" title="Numéro de rame (3-4 chiffres) : sélectionne automatiquement la série et la sous-série correspondantes">
-        <input id="eqSearch" type="text" placeholder="🔍 Rechercher un appareil…" autocomplete="off" spellcheck="false">
+        <span class="fld-wrap" style="flex:0 0 84px">
+          <input id="eqRame" type="text" inputmode="numeric" maxlength="4" placeholder="N° rame" autocomplete="off" title="Numéro de rame (3-4 chiffres) : sélectionne automatiquement la série et la sous-série correspondantes">
+          <button type="button" class="fld-clr" title="Effacer">✕</button>
+        </span>
+        <span class="fld-wrap">
+          <input id="eqSearch" type="text" placeholder="🔍 Rechercher un appareil…" autocomplete="off" spellcheck="false">
+          <button type="button" class="fld-clr" title="Effacer">✕</button>
+        </span>
       </div>
       <div id="eqRameInfo" style="display:none;font-size:11px;font-weight:700;padding:4px 8px;border-radius:8px;background:var(--accent-soft);color:var(--accent)"></div>
       <select id="eqSerie" class="eq-select" title="Filtrer par série"></select>
@@ -927,9 +982,10 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='8.11';
+const APP_VERSION='8.12';
 const APP_VERSION_DATE='5 août 2026';
 const CHANGELOG=[
+  ['v8.12',"Croix ✕ d'effacement dans les champs de recherche (recherche globale, recherche d'appareils, n° de rame) · l'application s'ouvre désormais toujours en mode 🔒 lecture seule (protection contre les modifications accidentelles — passez en ✏️ pour éditer) · bouton « Documentation » (au lieu d'Accueil) avec icônes 3D dessinées : livre ouvert pour la documentation, loupe pour les appareillages"],
   ['v8.11',"Filtre par numéro de rame : champ « N° rame » à gauche de la recherche d'appareils — saisissez 3 ou 4 chiffres, RailDoc retrouve la série et la sous-série d'après les tranches de la flotte (⚙), filtre le catalogue et bascule automatiquement les appareils multi-séries sur la bonne série (emplacement, schémas, armoire) · rappel des motrices de la sous-série · effacer le champ ou changer manuellement de série rétablit le filtre normal"],
   ['v8.10',"Appareillages : barre de recherche mise en avant (bord carmin, placée en tête du panneau) · armoire du bloc cabine entièrement contenue dans la largeur de la colonne — cases toutes identiques (20 par rangée), libellés masqués et révélés au survol avec effet zoom ×2, libellé toujours visible sur l'appareil sélectionné · graphisme fidèle à la planche photo : voyants rouges, disrupteurs vert/rouge, boutons-poussoirs à levier, commutateurs rotatifs, voltmètres et manipulateur ISO découpés de la photo réelle"],
   ['v8.9',"Sommaire 🧭 : un clic sur une entrée ouvre directement la fiche visée, même en mode édition (plus de menu intermédiaire) · le menu actualiser / supprimer est rattaché au bouton 🧭 de la barre d'outils (et à l'en-tête « 🧭 Sommaire »)"],
@@ -1205,7 +1261,7 @@ function newNode(parent,title,icon){return{id:'n_'+uid(),parent:parent||null,tit
   tags:[],html:'',links:[],files:[],tiles:[],ord:Date.now(),updated:Date.now()};}
 function normalizeData(){
   if(!data.settings.open)data.settings.open=[];
-  if(!data.settings.mode)data.settings.mode='edit';
+  if(!data.settings.mode)data.settings.mode='read';
   if(!Array.isArray(data.log))data.log=[];
   for(const n of data.nodes){if(!n.tiles)n.tiles=[];if(!n.contacts)n.contacts=[];if(!n.equip)n.equip=[];}
   if(!data.equipMeta)data.equipMeta={};
@@ -4389,6 +4445,7 @@ async function init(){
   data=await idb.get('kv','data');
   if(!data){data=seed();await idb.put('kv','data',JSON.parse(JSON.stringify(data)));}
   normalizeData();
+  data.settings.mode='read'; /* chaque ouverture démarre en lecture seule (protection anti-fausse manip) */
   state.open=new Set(data.settings.open);
   if(data.settings.sidebarW)document.documentElement.style.setProperty('--sidebar-w',data.settings.sidebarW+'px');
   applyTheme();applyBrand();applyMode();tickClock();setInterval(tickClock,1000);
@@ -4406,6 +4463,12 @@ async function init(){
   $('#famBtn').onclick=famPlaceModal;
   $('#eqSerie').onchange=e=>{state.eqSerie=e.target.value;state.eqRameSet=false;
     $('#eqRame').value='';$('#eqRameInfo').style.display='none';renderEquip();};
+  $$('.fld-clr').forEach(b=>b.onclick=e=>{e.stopPropagation();
+    const inp=b.parentElement.querySelector('input');
+    if(!inp)return;
+    inp.value='';
+    inp.dispatchEvent(new Event('input',{bubbles:true}));
+    inp.focus();});
   $('#eqRame').addEventListener('input',e=>{
     const v=e.target.value.replace(/\D/g,'');
     if(v!==e.target.value)e.target.value=v;
