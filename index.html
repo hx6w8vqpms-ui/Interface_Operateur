@@ -985,9 +985,10 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='8.13';
+const APP_VERSION='8.14';
 const APP_VERSION_DATE='5 août 2026';
 const CHANGELOG=[
+  ['v8.14',"Lancement rapide : les tuiles qui ouvrent une fiche sont désormais sélectionnables (en plus des liens et fichiers) — chaque fiche s'ouvre dans son propre onglet · sélection vérifiée comme incluse dans la sauvegarde globale (export/import)"],
   ['v8.13',"Fini le flash blanc à l'ouverture d'un nouvel onglet en mode sombre (Appareillages, fiches, tuiles…) : le thème est mémorisé et appliqué avant le tout premier rendu de la page"],
   ['v8.12',"Croix ✕ d'effacement dans les champs de recherche (recherche globale, recherche d'appareils, n° de rame) · l'application s'ouvre désormais toujours en mode 🔒 lecture seule (protection contre les modifications accidentelles — passez en ✏️ pour éditer) · bouton « Documentation » (au lieu d'Accueil) avec icônes 3D dessinées : livre ouvert pour la documentation, loupe pour les appareillages"],
   ['v8.11',"Filtre par numéro de rame : champ « N° rame » à gauche de la recherche d'appareils — saisissez 3 ou 4 chiffres, RailDoc retrouve la série et la sous-série d'après les tranches de la flotte (⚙), filtre le catalogue et bascule automatiquement les appareils multi-séries sur la bonne série (emplacement, schémas, armoire) · rappel des motrices de la sous-série · effacer le champ ou changer manuellement de série rétablit le filtre normal"],
@@ -1477,7 +1478,7 @@ function nodeCtxMenu(id,x,y){if(!isEdit())return;openCtx(x,y,[
 function shade(hex,p){const n=parseInt(hex.slice(1),16);
   const f=c=>{const v=p<0?c*(1+p/100):c+(255-c)*p/100;return Math.max(0,Math.min(255,Math.round(v)));};
   return '#'+[f(n>>16),f((n>>8)&255),f(n&255)].map(x=>x.toString(16).padStart(2,'0')).join('');}
-const isSelectable=t=>!!(t.kind!=='section'&&t.action&&(t.action.type==='url'||t.action.type==='file'));
+const isSelectable=t=>!!(t.kind!=='section'&&t.action&&(t.action.type==='url'||t.action.type==='file'||t.action.type==='node'));
 const isEdit=()=>(data.settings.mode||'edit')==='edit';
 function wallCtx(owner){if(owner==='home')return{owner,list:data.tiles,node:null,el:$('#wall')};
   const n=nodeById(owner);return n?{owner,list:(n.tiles=n.tiles||[]),node:n,el:$('#nodeWall')}:null;}
@@ -1704,7 +1705,7 @@ function toggleQuickMode(on){
     state.quickSel=new Set((data.settings.quickSel||[]).filter(id=>{
       const t=data.tiles.find(x=>x.id===id);return t&&isSelectable(t);}));
     if(!data.tiles.some(isSelectable))
-      toast('Ajoutez d\'abord des tuiles « lien » ou « fichier » au mur');}
+      toast('Ajoutez d\'abord des tuiles « lien », « fichier » ou « fiche » au mur');}
   renderHome();}
 function runQuickLaunch(){
   const sel=[...state.quickSel].map(id=>data.tiles.find(x=>x.id===id)).filter(t=>t&&isSelectable(t));
