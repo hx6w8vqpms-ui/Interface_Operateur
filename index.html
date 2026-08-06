@@ -101,6 +101,8 @@ input,select,textarea{font-family:inherit;color:inherit}
 #brandEditBtn{width:28px;height:28px;min-width:28px;font-size:12px;opacity:0;transition:opacity .15s}
 .brand:hover #brandEditBtn{opacity:1}
 html[data-mode="read"] #brandEditBtn{display:none !important}
+html[data-mode="read"] #settingsBtn{display:none !important}
+html[data-mode="read"] #fleetBtn{display:none !important}
 /* Icônes de fiche : emoji ou image */
 .nicon{display:inline-flex;align-items:center;justify-content:center}
 .nicon img{width:1.35em;height:1.35em;border-radius:5px;object-fit:cover}
@@ -333,8 +335,11 @@ html[data-mode="read"] #brandEditBtn{display:none !important}
 .eb-sep{width:1px;height:20px;background:var(--border-strong);margin:0 5px}
 #editor{min-height:180px;padding:20px 24px;outline:none;font-size:14.5px;line-height:1.7;word-wrap:break-word}
 #editor:empty:before{content:"Rédigez ici votre note, mode opératoire, explication… (mise en forme via la barre d'outils, collage d'images accepté)";color:var(--muted)}
-#editor h2{font-size:19px;margin:18px 0 8px;letter-spacing:-.01em}
-#editor h3{font-size:15.5px;margin:14px 0 6px}
+#editor h2{font-size:19px;margin:18px 0 8px;letter-spacing:-.01em;color:color-mix(in srgb,var(--accent) 45%,var(--text))}
+#editor h3{font-size:15.5px;margin:14px 0 6px;color:color-mix(in srgb,var(--accent) 32%,var(--text))}
+#editor hr{border:none;height:2px;background:linear-gradient(90deg,var(--accent-soft),var(--border-strong),var(--accent-soft));border-radius:2px;margin:16px 0}
+.eb-fc{font-weight:800;background:linear-gradient(90deg,#d63333,#e07b00,#128a3e,#1e6fd9,#7b2fbf);-webkit-background-clip:text;background-clip:text;color:transparent}
+.eb-hc{filter:hue-rotate(140deg)}
 #editor p{margin:6px 0}
 #editor ul,#editor ol{margin:6px 0;padding-left:26px}
 #editor li{margin:3px 0}
@@ -579,6 +584,55 @@ html[data-theme="dark"] .eq-cell.rb{background:#22301a;color:#9fce7a;border-colo
 #eqSide #eqSearch{padding-right:32px}
 #searchInput{padding-right:34px}
 .fld-wrap #eqRame{padding-right:24px}
+#eqSerChips{display:flex;flex-wrap:wrap;gap:5px}
+.eq-fchip{border:2px solid var(--fc);color:var(--fc);background:transparent;border-radius:14px;
+  font-weight:800;font-size:10.5px;padding:4px 9px;cursor:pointer;font-family:inherit;line-height:1.1;transition:all .12s}
+.eq-fchip:hover{transform:translateY(-1px)}
+.eq-fchip.on{background:var(--fc);color:#fff}
+#eqNav{border:1px solid var(--border);border-radius:14px;padding:12px 14px;margin-bottom:14px;background:var(--panel-2)}
+#eqNav .eq-serchips{margin:0 0 10px}
+.eq-navlbl{font-size:11px;font-weight:700;color:var(--muted);margin:2px 0 6px}
+.eq-carbtn:hover rect,.eq-carbtn:hover path{stroke:var(--accent);stroke-width:2}
+.eq-zonebtn:hover rect{stroke:var(--accent);stroke-width:2}
+.eq-spzones{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 8px}
+.eq-spz{border:1.5px dashed var(--border-strong);background:var(--panel);border-radius:12px;padding:6px 12px;
+  font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--muted)}
+.eq-spz:hover{border-color:var(--accent);color:var(--accent)}
+.eq-spz.on{background:var(--accent);border-color:var(--accent);border-style:solid;color:#fff}
+.ic3d svg{width:21px;height:21px;filter:drop-shadow(0 1.2px 1.2px #0004)}
+.side-mini.ic3d svg{width:17px;height:17px}
+.ic3d:hover svg{transform:translateY(-1px) scale(1.08);transition:transform .13s}
+#themeBtn .ic-sun,#themeBtn .ic-moon,#modeBtn .ic-pen,#modeBtn .ic-lock{display:none;line-height:0}
+html[data-theme="light"] #themeBtn .ic-moon{display:block}
+html[data-theme="dark"] #themeBtn .ic-sun{display:block}
+html[data-mode="edit"] #modeBtn .ic-lock{display:block}
+html[data-mode="read"] #modeBtn .ic-pen{display:block}
+html[data-mode="read"] #verLine{pointer-events:none}
+#eqIll{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;margin:4px 0 8px}
+.eq-illit{margin:0;min-width:120px;max-width:100%}
+.eq-illbox{border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:zoom-in;background:var(--panel-2);
+  box-shadow:var(--shadow);transition:transform .15s}
+.eq-illbox:hover{transform:translateY(-2px)}
+.eq-illbox img{width:100%;display:block}
+.eq-illpdfchip{padding:8px 10px;font-size:12px;font-weight:700;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.eq-illpdfchip.over{border-top:1px solid var(--border)}
+.eq-illtools{display:flex;align-items:center;gap:8px;margin-top:5px}
+.eq-illtools input[type=range]{flex:1;accent-color:var(--accent);height:20px}
+.eq-illcap{font-size:12px;color:var(--text);margin-top:5px;padding:0 2px;line-height:1.35;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.eq-illser{font-size:10px;font-weight:800;color:var(--accent);background:var(--accent-soft);padding:2px 8px;border-radius:10px;white-space:nowrap}
+.eq-illcapin,.eq-illserin{width:100%;box-sizing:border-box;border:1px dashed var(--border-strong);background:transparent;
+  border-radius:8px;padding:5px 8px;font-size:12px;margin-top:4px;outline:none;font-family:inherit;color:var(--text)}
+.eq-illcapin:focus{border-color:var(--accent)}
+.eq-illit.dim{opacity:.5}
+.eq-illit.dim:hover{opacity:1}
+#colorPop{position:fixed;z-index:140;background:var(--panel);border:1px solid var(--border-strong);border-radius:14px;
+  box-shadow:var(--shadow-lg);padding:12px;width:236px}
+#colorPop .cp-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}
+#colorPop .cp-sw{height:24px;border-radius:6px;border:1px solid #00000033;cursor:pointer;padding:0}
+#colorPop .cp-sw:hover{transform:scale(1.12)}
+#colorPop .cp-sw.cur{outline:2px solid var(--accent);outline-offset:1px}
+#colorPop .cp-foot{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:12px;font-weight:700}
+#colorPop .cp-foot input{width:44px;height:30px;border:none;background:none;cursor:pointer;padding:0}
 #eqSide #eqSearch:focus{box-shadow:0 0 0 4px var(--accent-soft)}
 .sug-row{display:flex;align-items:center;gap:9px;padding:8px 11px;border-radius:11px;background:var(--panel-2);
   border:1px solid var(--border);cursor:pointer;font-size:12.5px;transition:all .12s;margin-bottom:6px}
@@ -706,6 +760,20 @@ html[data-theme="dark"] .eq-cell.rb{background:#22301a;color:#9fce7a;border-colo
       <div class="t"><b id="appTitleTxt">RailDoc</b><span id="appSubTxt">Dépannage TGV &amp; Thalys</span></div>
       <button class="icon-btn" id="brandEditBtn" title="Personnaliser : image, titre et descriptif">✏️</button>
     </div>
+    <button class="icon-btn ic3d" id="themeBtn" title="Basculer clair / sombre">
+      <span class="ic-sun"><svg viewBox="0 0 24 24" aria-hidden="true">
+        <defs><radialGradient id="i3sun" cx=".35" cy=".3"><stop offset="0" stop-color="#ffe9a3"/><stop offset=".55" stop-color="#ffc73a"/><stop offset="1" stop-color="#e08a00"/></radialGradient></defs>
+        <g stroke="#f0a500" stroke-width="1.8" stroke-linecap="round"><path d="M12 2v2.6M12 19.4V22M2 12h2.6M19.4 12H22M4.9 4.9l1.9 1.9M17.2 17.2l1.9 1.9M19.1 4.9l-1.9 1.9M6.8 17.2l-1.9 1.9"/></g>
+        <circle cx="12" cy="12" r="5.4" fill="url(#i3sun)" stroke="#c77b00" stroke-width=".8"/>
+        <ellipse cx="10.2" cy="10" rx="2.1" ry="1.3" transform="rotate(-30 10.2 10)" fill="#fff" opacity=".65"/>
+      </svg></span>
+      <span class="ic-moon"><svg viewBox="0 0 24 24" aria-hidden="true">
+        <defs><radialGradient id="i3moon" cx=".38" cy=".32"><stop offset="0" stop-color="#f4f7fb"/><stop offset=".6" stop-color="#c9d4e2"/><stop offset="1" stop-color="#8fa1b8"/></radialGradient></defs>
+        <path d="M14.5 2.4a9.6 9.6 0 1 0 7.1 12.9A8 8 0 0 1 14.5 2.4Z" fill="url(#i3moon)" stroke="#6d7f96" stroke-width=".8"/>
+        <circle cx="10" cy="8.6" r="1.3" fill="#aebccd"/><circle cx="8" cy="13.4" r=".9" fill="#aebccd"/><circle cx="12.2" cy="16" r="1" fill="#aebccd"/>
+        <ellipse cx="9.4" cy="6.4" rx="2" ry="1.1" transform="rotate(-25 9.4 6.4)" fill="#fff" opacity=".7"/>
+      </svg></span>
+    </button>
     <div id="searchWrap">
       <span class="mag"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span>
       <input id="searchInput" type="text" placeholder="Rechercher une fiche, un mot-clé, un fichier, un lien…" autocomplete="off" spellcheck="false">
@@ -713,17 +781,72 @@ html[data-theme="dark"] .eq-cell.rb{background:#22301a;color:#9fce7a;border-colo
       <button type="button" class="fld-clr" title="Effacer">✕</button>
       <div id="searchResults"></div>
     </div>
+    <button class="icon-btn ic3d" id="dirBtn" title="Répertoire : tous les contacts de toutes les fiches">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <defs>
+          <linearGradient id="i3dirC" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4b93ff"/><stop offset="1" stop-color="#1b4fd8"/></linearGradient>
+          <linearGradient id="i3dirP" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#cfd8e4"/></linearGradient>
+          <radialGradient id="i3dirA" cx=".38" cy=".3"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d9e4f5"/></radialGradient>
+          <linearGradient id="i3dirG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#52de6c"/><stop offset="1" stop-color="#0f8a2f"/></linearGradient>
+        </defs>
+        <ellipse cx="12" cy="21.6" rx="8.6" ry="1.3" fill="#000" opacity=".18"/>
+        <rect x="5" y="2.6" width="16" height="18.4" rx="2.6" fill="#12308f"/>
+        <rect x="18.2" y="3.2" width="2.2" height="17.2" rx="1" fill="url(#i3dirP)"/>
+        <rect x="4.4" y="2.2" width="14.6" height="18.8" rx="2.4" fill="url(#i3dirC)" stroke="#12308f" stroke-width=".7"/>
+        <path d="M5.6 2.9h12.2c.7 0 1.2.5 1.2 1.2v1.1H4.4V4.1c0-.7.5-1.2 1.2-1.2Z" fill="#fff" opacity=".3"/>
+        <g fill="none" stroke="#eaf0f8" stroke-width="1.1" opacity=".9">
+          <circle cx="4.4" cy="6.2" r="1"/><circle cx="4.4" cy="10.1" r="1"/><circle cx="4.4" cy="14" r="1"/><circle cx="4.4" cy="17.9" r="1"/>
+        </g>
+        <circle cx="11.9" cy="8.9" r="2.5" fill="url(#i3dirA)"/>
+        <path d="M7.4 16.6a4.5 4 0 0 1 9 0v.7H7.4Z" fill="url(#i3dirA)"/>
+        <circle cx="17.9" cy="17.4" r="4.3" fill="url(#i3dirG)" stroke="#0a6e24" stroke-width=".8"/>
+        <path d="M14.2 15.6a4.3 4.3 0 0 1 7.4 0 6.6 6.6 0 0 0-7.4 0Z" fill="#fff" opacity=".25"/>
+        <g transform="translate(14.05,13.55) scale(.32)">
+          <path d="M8.4 6.4c.6-.2 1.2.1 1.5.7l.9 1.8c.2.5.1 1.1-.3 1.5l-.9.9c.5 1.2 2 2.7 3.2 3.2l.9-.9c.4-.4 1-.5 1.5-.3l1.8.9c.6.3.9.9.7 1.5-.3 1.1-1.3 1.9-2.4 1.8-4-.5-8.2-4.7-8.7-8.7-.1-1.1.7-2.1 1.8-2.4Z" fill="#fff"/>
+        </g>
+      </svg></button>
     <div id="clockBox">
       <div id="clockTime">--:--:--</div>
       <div id="clockDate"></div>
     </div>
     <div class="topbar-actions">
-      <button class="icon-btn" id="dirBtn" title="Répertoire : tous les contacts de toutes les fiches" style="font-size:15px">📞</button>
-      <button class="icon-btn" id="modeBtn" title="Basculer édition / lecture seule">✏️</button>
-      <button class="icon-btn" id="themeBtn" title="Basculer clair / sombre">
-        <svg viewBox="0 0 24 24" id="themeIconLight"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5 5l1.6 1.6M17.4 17.4 19 19M19 5l-1.6 1.6M6.6 17.4 5 19"/></svg>
-      </button>
-      <button class="icon-btn" id="settingsBtn" title="Réglages : journal, sauvegarde et restauration" style="font-size:15px">⚙️</button>
+      <button class="icon-btn ic3d" id="modeBtn" title="Basculer édition / lecture seule">
+      <span class="ic-pen"><svg viewBox="0 0 24 24" aria-hidden="true">
+        <defs><linearGradient id="i3pen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd34d"/><stop offset="1" stop-color="#e08a00"/></linearGradient></defs>
+        <path d="M4 17.5 15.2 6.3l2.5 2.5L6.5 20 3.4 20.6Z" fill="url(#i3pen)" stroke="#b06e00" stroke-width=".7"/>
+        <path d="M15.2 6.3l1.8-1.8c.7-.7 1.8-.7 2.5 0 .7.7.7 1.8 0 2.5l-1.8 1.8Z" fill="#e8496f" stroke="#8d0728" stroke-width=".7"/>
+        <path d="M4 17.5 6.5 20l-3.1.6Z" fill="#5b3a12"/>
+        <path d="M5 16.5 15.4 6.1l.9.9L5.9 17.4Z" fill="#fff" opacity=".4"/>
+      </svg></span>
+      <span class="ic-lock"><svg viewBox="0 0 24 24" aria-hidden="true">
+        <defs><linearGradient id="i3lock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd34d"/><stop offset="1" stop-color="#dd8f00"/></linearGradient>
+        <linearGradient id="i3sh" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e8ecf0"/><stop offset=".5" stop-color="#9aa6b2"/><stop offset="1" stop-color="#dfe4e9"/></linearGradient></defs>
+        <path d="M7.2 10V7.8a4.8 4.8 0 0 1 9.6 0V10h-2.4V7.8a2.4 2.4 0 0 0-4.8 0V10Z" fill="url(#i3sh)" stroke="#6d7986" stroke-width=".7"/>
+        <rect x="4.6" y="9.6" width="14.8" height="11" rx="2.6" fill="url(#i3lock)" stroke="#a86c00" stroke-width=".8"/>
+        <path d="M5.2 10.2h13.6c.2 0 .4 0 .5.1a2.6 2.6 0 0 0-2.1-1.1H6.8c-.9 0-1.7.4-2.1 1.1.1-.1.3-.1.5-.1Z" fill="#fff" opacity=".35"/>
+        <circle cx="12" cy="14.6" r="1.7" fill="#6b4400"/><rect x="11.2" y="15.4" width="1.6" height="2.8" rx=".8" fill="#6b4400"/>
+      </svg></span>
+    </button>
+      <button class="icon-btn ic3d" id="settingsBtn" title="Réglages : journal, sauvegarde et restauration">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <defs>
+          <linearGradient id="i3gear" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f7fa"/><stop offset=".45" stop-color="#b7c1cc"/><stop offset="1" stop-color="#75808c"/></linearGradient>
+          <radialGradient id="i3gearc" cx=".38" cy=".32"><stop offset="0" stop-color="#ff6d8e"/><stop offset=".55" stop-color="#d61f47"/><stop offset="1" stop-color="#8d0728"/></radialGradient>
+        </defs>
+        <ellipse cx="12" cy="22" rx="7.6" ry="1.2" fill="#000" opacity=".18"/>
+        <g fill="#4d5661" transform="translate(0,.9)"><rect x="10.55" y="1.9" width="2.9" height="4.6" rx="1.25" transform="rotate(0 12 12)"/><rect x="10.55" y="1.9" width="2.9" height="4.6" rx="1.25" transform="rotate(45 12 12)"/><rect x="10.55" y="1.9" width="2.9" height="4.6" rx="1.25" transform="rotate(90 12 12)"/><rect x="10.55" y="1.9" width="2.9" height="4.6" rx="1.25" transform="rotate(135 12 12)"/><rect x="10.55" y="1.9" width="2.9" height="4.6" rx="1.25" transform="rotate(180 12 12)"/><rect x="10.55" y="1.9" width="2.9" height="4.6" rx="1.25" transform="rotate(225 12 12)"/><rect x="10.55" y="1.9" width="2.9" height="4.6" rx="1.25" transform="rotate(270 12 12)"/><rect x="10.55" y="1.9" width="2.9" height="4.6" rx="1.25" transform="rotate(315 12 12)"/><circle cx="12" cy="12" r="8"/></g>
+        <g fill="url(#i3gear)" stroke="#5e6a76" stroke-width=".6"><rect x="10.55" y="1.9" width="2.9" height="4.6" rx="1.25" transform="rotate(0 12 12)"/><rect x="10.55" y="1.9" width="2.9" height="4.6" rx="1.25" transform="rotate(45 12 12)"/><rect x="10.55" y="1.9" width="2.9" height="4.6" rx="1.25" transform="rotate(90 12 12)"/><rect x="10.55" y="1.9" width="2.9" height="4.6" rx="1.25" transform="rotate(135 12 12)"/><rect x="10.55" y="1.9" width="2.9" height="4.6" rx="1.25" transform="rotate(180 12 12)"/><rect x="10.55" y="1.9" width="2.9" height="4.6" rx="1.25" transform="rotate(225 12 12)"/><rect x="10.55" y="1.9" width="2.9" height="4.6" rx="1.25" transform="rotate(270 12 12)"/><rect x="10.55" y="1.9" width="2.9" height="4.6" rx="1.25" transform="rotate(315 12 12)"/></g>
+        <circle cx="12" cy="12" r="8" fill="url(#i3gear)" stroke="#5e6a76" stroke-width=".6"/>
+        <circle cx="12" cy="12" r="7.62" fill="url(#i3gear)"/>
+        <circle cx="12" cy="12" r="5.9" fill="none" stroke="#77828e" stroke-width=".7" opacity=".8"/>
+        <path d="M5.9 8.6A7.1 7.1 0 0 1 12 5.1c1.9 0 3.6.7 4.9 1.9A10.6 10.6 0 0 0 5.9 8.6Z" fill="#fff" opacity=".5"/>
+        <g fill="#5e6a76" opacity=".9"><circle cx="12" cy="7.2" r=".5"/><circle cx="16.8" cy="12" r=".5"/><circle cx="12" cy="16.8" r=".5"/><circle cx="7.2" cy="12" r=".5"/></g>
+        <circle cx="12" cy="12.45" r="3.85" fill="#6d0620"/>
+        <circle cx="12" cy="12" r="3.85" fill="url(#i3gearc)" stroke="#6d0620" stroke-width=".6"/>
+        <circle cx="12" cy="12" r="1.15" fill="#5a0418"/>
+        <circle cx="11.7" cy="11.7" r=".35" fill="#ff9db2"/>
+        <ellipse cx="10.6" cy="10.3" rx="1.8" ry="1" transform="rotate(-30 10.6 10.3)" fill="#fff" opacity=".6"/>
+      </svg></button>
     </div>
   </header>
 
@@ -779,9 +902,23 @@ html[data-theme="dark"] .eq-cell.rb{background:#22301a;color:#9fce7a;border-colo
     <div id="eqSide">
       <div class="side-head" style="padding:8px 4px 2px"><span>Appareillages</span>
         <div style="display:flex;gap:2px;align-items:center">
-          <button class="side-mini" id="eqAddBtn" title="Ajouter un appareil au catalogue">＋</button>
-          <button class="side-mini" id="famBtn" title="Gérer les familles d'appareils et les emplacements">🗂</button>
-          <button class="side-mini" id="fleetBtn" title="Gérer la flotte TGV : séries, sous-séries, tranches de rames et motrices">⚙</button>
+          <button class="side-mini ic3d" id="eqAddBtn" title="Ajouter un appareil au catalogue">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><defs><radialGradient id="i3add" cx=".35" cy=".3"><stop offset="0" stop-color="#7ee68a"/><stop offset="1" stop-color="#128a3e"/></radialGradient></defs>
+            <circle cx="12" cy="12" r="10" fill="url(#i3add)" stroke="#0b6b2d" stroke-width=".8"/>
+            <path d="M12 7v10M7 12h10" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>
+            <ellipse cx="9.4" cy="8.4" rx="3" ry="1.7" transform="rotate(-30 9.4 8.4)" fill="#fff" opacity=".4"/></svg></button>
+          <button class="side-mini ic3d" id="famBtn" title="Gérer les familles d'appareils et les emplacements">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="i3fold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc95e"/><stop offset="1" stop-color="#e08a00"/></linearGradient></defs>
+            <path d="M2.6 6.2c0-1 .8-1.8 1.8-1.8h5l2 2.2h8.2c1 0 1.8.8 1.8 1.8V18c0 1-.8 1.8-1.8 1.8H4.4c-1 0-1.8-.8-1.8-1.8Z" fill="#c77b00"/>
+            <path d="M2.6 9.4c0-1 .8-1.8 1.8-1.8h15.2c1 0 1.8.8 1.8 1.8V18c0 1-.8 1.8-1.8 1.8H4.4c-1 0-1.8-.8-1.8-1.8Z" fill="url(#i3fold)" stroke="#a86c00" stroke-width=".6"/>
+            <path d="M3.2 8.4h17.6c.5 0 .9.2 1.2.5-.3-.7-1-1.3-1.9-1.3H4c-.9 0-1.6.5-1.9 1.3.3-.3.7-.5 1.1-.5Z" fill="#fff" opacity=".4"/></svg></button>
+          <button class="side-mini ic3d" id="fleetBtn" title="Gérer la flotte TGV : séries, sous-séries, tranches de rames et motrices">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="i3tgv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8496f"/><stop offset="1" stop-color="#96082c"/></linearGradient></defs>
+            <path d="M2.4 16.2 5 9.8c.6-1.5 2-2.4 3.6-2.4h9.6c1.9 0 3.4 1.5 3.4 3.4v5.4c0 .9-.7 1.6-1.6 1.6H4c-1.1 0-1.9-.9-1.6-1.6Z" fill="url(#i3tgv)" stroke="#6d0620" stroke-width=".7"/>
+            <path d="M5.6 9.9c.4-1 1.4-1.7 2.5-1.7h3.4v3.4H4.9Z" fill="#bfe3ff" stroke="#6d0620" stroke-width=".5"/>
+            <path d="M2.9 15.4h18.7v1c0 .5-.4.8-.8.8H4c-.8 0-1.3-.6-1.1-1.2Z" fill="#3a3f45"/>
+            <circle cx="7.5" cy="17.9" r="1.5" fill="#2c3036" stroke="#14161a" stroke-width=".5"/><circle cx="16.5" cy="17.9" r="1.5" fill="#2c3036" stroke="#14161a" stroke-width=".5"/>
+            <path d="M3.4 13.9 5.6 8.6c.2-.4.5-.8.9-1-1 .2-1.8.9-2.2 1.9l-2 5Z" fill="#fff" opacity=".35"/></svg></button>
         </div>
       </div>
       <div style="display:flex;gap:6px">
@@ -795,7 +932,6 @@ html[data-theme="dark"] .eq-cell.rb{background:#22301a;color:#9fce7a;border-colo
         </span>
       </div>
       <div id="eqRameInfo" style="display:none;font-size:11px;font-weight:700;padding:4px 8px;border-radius:8px;background:var(--accent-soft);color:var(--accent)"></div>
-      <select id="eqSerie" class="eq-select" title="Filtrer par série"></select>
       <select id="eqFam" class="eq-select" title="Filtrer par famille d'appareils"></select>
       <div id="eqCount" style="font-size:10.5px;color:var(--muted);font-weight:700;padding:0 2px"></div>
       <div class="eq-list" id="eqList"></div>
@@ -882,18 +1018,21 @@ html[data-theme="dark"] .eq-cell.rb{background:#22301a;color:#9fce7a;border-colo
             <button class="eb" data-cmd="insertOrderedList" title="Liste numérotée">1≡</button>
             <button class="eb" data-act="todo" title="Case à cocher">☑</button>
             <span class="eb-sep"></span>
-            <button class="eb" data-act="mark" title="Surligner">🖍</button>
+            <button class="eb" data-act="mark" title="Surligner (jaune)">🖍</button>
+            <button class="eb" data-act="hcolor" title="Couleur de surlignage… (échantillons)"><span class="eb-hc">🖍</span></button>
             <button class="eb" data-act="red" title="Texte rouge (important)" style="color:#d33">A</button>
+            <button class="eb" data-act="fcolor" title="Couleur du texte… (échantillons)"><span class="eb-fc">A</span></button>
             <button class="eb" data-act="quote" title="Bloc important / encadré">❝</button>
-            <button class="eb" data-cmd="insertHorizontalRule" title="Séparateur">—</button>
+            <button class="eb" data-cmd="insertHorizontalRule" title="Séparation entre deux zones de texte (ligne horizontale)">―</button>
             <button class="eb" data-act="table" title="Tableau : insérer, ou modifier si le curseur est dans un tableau">⊞</button>
-            <button class="eb" data-act="toc" title="Sommaire interactif des sous-fiches : insérer — puis actualiser ou supprimer via ce même bouton">🧭</button>
-            <button class="eb" data-act="clean" title="Style par défaut : retire polices, tailles et couleurs importées (sélection, ou toute la note si rien n'est sélectionné)">🧹</button>
-            <button class="eb" data-act="erase" title="Effacer entièrement la note (pièces jointes, liens, mots-clés et sous-fiches conservés)">🗑</button>
             <span class="eb-sep"></span>
             <button class="eb" data-act="link" title="Insérer un lien">🔗</button>
             <button class="eb" data-act="imgnote" title="Insérer une image dans la note">🖼</button>
             <button class="eb" data-cmd="removeFormat" title="Effacer la mise en forme">⌫</button>
+            <span class="eb-sep"></span>
+            <button class="eb" data-act="toc" title="Sommaire interactif des sous-fiches : insérer — puis actualiser ou supprimer via ce même bouton">🧭</button>
+            <button class="eb" data-act="clean" title="Style par défaut : retire polices, tailles et couleurs importées (sélection, ou toute la note si rien n'est sélectionné)">🧹</button>
+            <button class="eb" data-act="erase" title="Effacer entièrement la note (pièces jointes, liens, mots-clés et sous-fiches conservés)">🗑</button>
           </div>
           <div id="editor" contenteditable="true" spellcheck="false"></div>
         </div>
@@ -969,6 +1108,7 @@ html[data-theme="dark"] .eq-cell.rb{background:#22301a;color:#9fce7a;border-colo
 <input type="file" id="fiPack" accept=".json,application/json" hidden>
 <input type="file" id="fiKw" accept=".pdf,application/pdf,.doc,.docx,.docm,.xls,.xlsx,.xlsm,.ppt,.pptx,.pptm" hidden>
 <input type="file" id="fiEqImg" accept="image/*" hidden>
+<input type="file" id="fiEqIll" accept="image/*,.pdf,application/pdf" multiple hidden>
 
 <script>
 'use strict';
@@ -985,9 +1125,22 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='8.14';
-const APP_VERSION_DATE='5 août 2026';
+const APP_VERSION='8.27';
+const APP_VERSION_DATE='6 août 2026';
 const CHANGELOG=[
+  ['v8.27',"TGV POS renommé « TGV P-DUPLEX » (série, catalogue et sous-série) · nouvelles icônes 3D pour l'annuaire (carnet de contacts) et les réglages (engrenage) · correction importante de la flotte : vos modifications sont désormais réellement conservées — une série supprimée ne réapparaît plus au rechargement, et une sous-série contenant « DASYE » dans son nom n'est plus déplacée ni perdue"],
+  ['v8.26',"Séries 🚄 Euroduplex (2N2) et 🚄 TGV POS (GDA TT00380 éd. 28-01-2019) : dernier GDA intégré ! 2N2 sur les planches DASYE (motrices, R1/R8, R2-R7, R4, bloc pneumatique) avec ses spécificités ETCS/ZUB/LZB/INTEGRA/ASFA/CFF ; POS avec ses remorques à 1 niveau (schémas 5 et 8) et son bloc pneumatique. Fusion multi-séries des appareils communs avec le Duplex."],
+  ['v8.25',"Séries 🚄 TGV Réseau Tri Belgique (GDA TT00234 — identique au Réseau de base) et 🚄 TGV Réseau Tri Italie (GDA TT00526) : catalogue Réseau partagé entre les trois séries, plus les spécificités Italie (anti-incendie CC1/2(I), pantographe 25KV/3KV, répétition des signaux FS, radio FS 900 MHz, armoire BT couloir gauche DEI) et retrait de l'ATB pour l'Italie · reste à intégrer : 2N2 / POS"],
+  ['v8.24',"Deux nouveaux catalogues d'appareillages : 🚄 TGV Réseau (GDA TT00233 — bloc cabine, blocs moteur/commun/AUX, robinets par remorque R1-R8, ATB/TBL…) et 🚄 TGV Atlantique TVM 430 (rectificatif du TVM 300 : chaînes A/B CAB SIGNAL, enregistreur…) — appareils communs fusionnés avec les autres séries, schémas et armoires réutilisés · le nom du fichier de sauvegarde inclut désormais l'heure (ex : RailDoc-sauvegarde-2026-08-06-14h32.json) · à venir : Réseau Tri Belge, Tri Italie et 2N2/POS"],
+  ['v8.23',"Appareillages : les bulles « Armoire bloc cabine » et « Bloc pneumatique » disparaissent — cliquer la zone ARMOIRE (ou COMPR.) du schéma affiche directement l'armoire ou le bloc pneumatique · illustrations : légende sous chaque image et rattachement possible à une série de la flotte — le visuel affiché suit la série sélectionnée (rame ou puce), et sans sélection de série tous les visuels apparaissent"],
+  ['v8.22',"Icônes 3D dessinées dans toute la barre : soleil/lune pour le thème, combiné vert pour le répertoire (bien visible en mode sombre), stylo et cadenas dorés pour le mode, roue crantée métal à cœur carmin pour les réglages, et dans Appareillages : ＋ vert, dossier familles, motrice TGV pour la flotte · en lecture seule, l'historique de version n'est plus consultable · le passage en mode édition est protégé par mot de passe"],
+  ['v8.21',"Illustrations par appareil : ajoutez photos et PDF directement sur un appareil (zone 📷 sous le schéma) pour montrer précisément son emplacement — aperçu de la 1re page pour les PDF, curseur de taille par image pour un rendu soigné, clic pour ouvrir en grand · incluses dans la sauvegarde globale et retirées proprement à la suppression de l'appareil"],
+  ['v8.20',"Appareillages : plus de doublon de schémas — le navigateur du haut (rame, véhicule, armoire, bloc pneumatique) évolue avec l'appareil choisi dans la liste ET avec vos clics ; les repères de l'appareil sélectionné ressortent nettement (gros, pulsés, cerclés de blanc) par rapport aux repères « allumés » de la zone, et chaque repère est cliquable · sections Fiches suggérées et liste déroulante des séries supprimées (doublons)"],
+  ['v8.19',"Mur d'accès rapide : bouton ▢ compact en fin de chaque ligne pour y ajouter directement un emplacement vide (à côté du ＋) · la position de défilement est conservée lors des manipulations (ajout, déplacement, modification de tuiles…) au lieu de remonter en haut de page"],
+  ['v8.18',"Navigation par les schémas dans Appareillages : les puces de séries sont au-dessus du schéma de rame — cliquez une motrice ou une remorque, puis une zone (cabine, armoire, blocs moteur/commun/AUX, transfo… ou côté motrice / zone centrale pour les remorques), ou les boutons Armoire bloc cabine / Bloc pneumatique : le visuel correspondant s'affiche dessous et la liste de gauche ne montre plus que les appareils de la zone sélectionnée · la ligne d'identification de rame n'affiche plus le numéro en double"],
+  ['v8.17',"Barre du haut réorganisée : bouton clair/sombre à gauche de la recherche, répertoire 📞 à droite de la recherche · en mode 🔒 lecture seule, plus aucun bouton de réglage ou d'édition n'apparaît (⚙ réglages, ⚙ flotte, ＋, 🗂, ✏️ des fiches…) — seul le bouton ✏️/🔒 permet de repasser en édition · rappel : vos données (flotte, motrices, fiches…) vivent dans le navigateur de chaque appareil et dans vos sauvegardes — une nouvelle version de RailDoc n'écrase jamais votre flotte, elle ne fait qu'y ajouter les nouvelles séries"],
+  ['v8.16',"Éditeur de notes : couleur du texte et couleur de surlignage au choix via le sélecteur d'échantillons (en plus du rouge et du jaune rapides) · bouton ― de séparation entre deux zones de texte avec un rendu visible · barre réorganisée : sommaire 🧭, style par défaut 🧹 et effacer 🗑 regroupés en fin de barre après un séparateur · titres T1/T2 légèrement teintés de carmin pour mieux structurer la lecture"],
+  ['v8.15',"Nouveau catalogue 🚄 TGV Duplex ERTMS (DASYE) : appareils du GDA TT00381 (annexes 2A/2B) avec schémas motrice / R1-R8 / R2-R7 / R4 / bloc pneumatique (repère 19) et armoire BLOC CABINE DUPLEX E fidèle aux planches (partie haute avec voyants et ISO, zone centrale CC, commutateurs ETCS, bloc couloir gauche) · appareils communs fusionnés avec les autres séries (onglets) · puces de filtre colorées par série au-dessus des filtres (couleur éditable dans ⚙ Flotte) · sélecteur de couleurs avec échantillons utilisé partout (séries, tuiles, étiquettes)"],
   ['v8.14',"Lancement rapide : les tuiles qui ouvrent une fiche sont désormais sélectionnables (en plus des liens et fichiers) — chaque fiche s'ouvre dans son propre onglet · sélection vérifiée comme incluse dans la sauvegarde globale (export/import)"],
   ['v8.13',"Fini le flash blanc à l'ouverture d'un nouvel onglet en mode sombre (Appareillages, fiches, tuiles…) : le thème est mémorisé et appliqué avant le tout premier rendu de la page"],
   ['v8.12',"Croix ✕ d'effacement dans les champs de recherche (recherche globale, recherche d'appareils, n° de rame) · l'application s'ouvre désormais toujours en mode 🔒 lecture seule (protection contre les modifications accidentelles — passez en ✏️ pour éditer) · bouton « Documentation » (au lieu d'Accueil) avec icônes 3D dessinées : livre ouvert pour la documentation, loupe pour les appareillages"],
@@ -1068,6 +1221,7 @@ function fileRefCount(id){let n=0;
     for(const l of nd.links||[])if(l.type==='file'&&l.target===id)n++;}
   for(const it of data.equipCustom||[])if(it.img===id)n++;
   for(const k in data.equipOver||{})if(data.equipOver[k].img===id)n++;
+  for(const k in data.equipMeta||{})for(const f of (data.equipMeta[k].files||[]))if(f.fileId===id)n++;
   const walls=[data.tiles,...data.nodes.map(nd=>nd.tiles||[])];
   for(const list of walls)for(const t of list){if(t.img&&t.img.type==='file'&&t.img.value===id)n++;
     if(t.action&&t.action.type==='file'&&t.action.value===id)n++;}
@@ -1287,25 +1441,65 @@ function normalizeData(){
   if(!Array.isArray(data.fleet)||!data.fleet.length)data.fleet=[
     {id:'serie_duplex',name:'TGV Duplex',catalog:'duplex',subs:[
       {name:'Duplex (DUP)',rames:'201 à 294',motrices:'29201 à 29388'},
-      {name:'Réseau Duplex (RD)',rames:'601 à 619',motrices:''},
+      {name:'Réseau Duplex (RD)',rames:'601 à 619',motrices:''}]},
+    {id:'serie_dupe',name:'TGV Duplex ERTMS',catalog:'dupe',subs:[
       {name:'DASYE',rames:'701 à 756',motrices:''}]},
     {id:'serie_atl',name:'TGV Atlantique (TVM 300)',catalog:'atl',subs:[
       {name:'Atlantique (ATL)',rames:'301 à 405',motrices:'24001 à 24210'}]},
-    {id:'serie_2n2',name:'Euroduplex (2N2)',catalog:null,subs:[
+    {id:'serie_atl430',name:'TGV Atlantique (TVM 430)',catalog:'atl430',subs:[
+      {name:'Atlantique TVM 430',rames:'',motrices:''}]},
+    {id:'serie_2n2',name:'Euroduplex (2N2)',catalog:'2n2',subs:[
       {name:'3UA',rames:'801 à 825',motrices:''},
       {name:'3UF / Océane',rames:'', motrices:''}]},
-    {id:'serie_reseau',name:'TGV Réseau',catalog:null,subs:[
+    {id:'serie_reseau',name:'TGV Réseau',catalog:'res',subs:[
       {name:'Bicourant',rames:'501 à 554',motrices:''},
       {name:'Tricourant',rames:'4501 à 4530',motrices:''}]},
-    {id:'serie_pos',name:'TGV POS',catalog:null,subs:[
-      {name:'POS',rames:'4401 à 4419',motrices:''}]},
+    {id:'serie_resbe',name:'TGV Réseau Tri Belgique',catalog:'res',subs:[
+      {name:'Tricourant Belgique',rames:'',motrices:''}]},
+    {id:'serie_resit',name:'TGV Réseau Tri Italie',catalog:'res',subs:[
+      {name:'Tricourant Italie',rames:'',motrices:''}]},
+    {id:'serie_pos',name:'TGV P-DUPLEX',catalog:'pos',subs:[
+      {name:'P-DUPLEX',rames:'4401 à 4419',motrices:''}]},
     {id:'serie_pbka',name:'Thalys PBKA',catalog:null,subs:[
       {name:'PBKA',rames:'4301 à 4346',motrices:''}]},
     {id:'serie_pba',name:'Thalys PBA',catalog:null,subs:[
       {name:'PBA',rames:'4532 à 4540',motrices:''}]}];
-  if(Array.isArray(data.fleet)&&data.fleet.length&&!data.fleet.some(s=>s.id==='serie_atl'))
+  /* Séries « catalogue » : ajout automatique UNE SEULE FOIS (semis).
+     Une série supprimée ensuite par l'utilisateur ne réapparaît plus. */
+  if(!Array.isArray(data.fleetSeeded))data.fleetSeeded=[];
+  for(const s of data.fleet)if(!data.fleetSeeded.includes(s.id))data.fleetSeeded.push(s.id);
+  const seedOK=id=>!data.fleetSeeded.includes(id)&&!data.fleet.some(s=>s.id===id);
+  const seedMark=id=>{if(!data.fleetSeeded.includes(id))data.fleetSeeded.push(id);};
+  if(data.fleet.length&&seedOK('serie_dupe')){
+    data.fleet.splice(1,0,{id:'serie_dupe',name:'TGV Duplex ERTMS',catalog:'dupe',subs:[
+      {name:'DASYE',rames:'701 à 756',motrices:''}]});seedMark('serie_dupe');}
+  if(data.fleet.length&&seedOK('serie_atl430')){
+    const iA=data.fleet.findIndex(s=>s.id==='serie_atl');
+    data.fleet.splice(iA>=0?iA+1:data.fleet.length,0,{id:'serie_atl430',name:'TGV Atlantique (TVM 430)',catalog:'atl430',subs:[
+      {name:'Atlantique TVM 430',rames:'',motrices:''}]});seedMark('serie_atl430');}
+  {const r=(data.fleet||[]).find(s=>s.id==='serie_reseau');if(r&&!r.catalog)r.catalog='res';}
+  {const r=(data.fleet||[]).find(s=>s.id==='serie_2n2');if(r&&!r.catalog)r.catalog='2n2';}
+  {const r=(data.fleet||[]).find(s=>s.id==='serie_pos');if(r&&!r.catalog)r.catalog='pos';
+   if(r){if(/^TGV\s*POS$/i.test((r.name||'').trim()))r.name='TGV P-DUPLEX';
+     for(const u of r.subs||[])if(/^POS$/i.test((u.name||'').trim()))u.name='P-DUPLEX';}}
+  if(data.fleet.length){
+    const iR=data.fleet.findIndex(s=>s.id==='serie_reseau');
+    if(seedOK('serie_resbe')){
+      data.fleet.splice(iR>=0?iR+1:data.fleet.length,0,{id:'serie_resbe',name:'TGV Réseau Tri Belgique',catalog:'res',subs:[{name:'Tricourant Belgique',rames:'',motrices:''}]});seedMark('serie_resbe');}
+    if(seedOK('serie_resit')){
+      const iB=data.fleet.findIndex(s=>s.id==='serie_resbe');
+      data.fleet.splice(iB>=0?iB+1:data.fleet.length,0,{id:'serie_resit',name:'TGV Réseau Tri Italie',catalog:'res',subs:[{name:'Tricourant Italie',rames:'',motrices:''}]});seedMark('serie_resit');}}
+  {const de=(data.fleet||[]).find(s=>s.id==='serie_dupe');
+   if(de&&!data.migDasyeSub){data.migDasyeSub=1;
+     for(const s of data.fleet){
+       if(s.id==='serie_dupe')continue;
+       const i=(s.subs||[]).findIndex(u=>/dasye|ertms/i.test(u.name||''));
+       if(i>=0&&!de.subs.some(u=>/dasye|ertms/i.test(u.name||'')))de.subs.unshift(s.subs.splice(i,1)[0]);}}}
+  {const PAL=['#c2143f','#1e6fd9','#128a3e','#e07b00','#7b2fbf','#0d8f8f','#d3387a','#5a6b7b','#8a5a2b','#274bdb'];
+   (data.fleet||[]).forEach((s,i)=>{if(!s.color)s.color=PAL[i%PAL.length];});}
+  if(data.fleet.length&&seedOK('serie_atl')){
     data.fleet.splice(1,0,{id:'serie_atl',name:'TGV Atlantique (TVM 300)',catalog:'atl',subs:[
-      {name:'Atlantique (ATL)',rames:'301 à 405',motrices:'24001 à 24210'}]});
+      {name:'Atlantique (ATL)',rames:'301 à 405',motrices:'24001 à 24210'}]});seedMark('serie_atl');}
   const walls=[data.tiles,...data.nodes.map(n=>n.tiles)];
   for(const list of walls)for(const t of list){if(!t.kind)t.kind='tile';if(t.kind==='tile'&&!t.size)t.size='s';}}
 const nodeById=id=>data.nodes.find(n=>n.id===id)||null;
@@ -1380,6 +1574,9 @@ function route(){const h=location.hash;
   document.getElementById('app').classList.remove('side-open-mobile');
   render();}
 function render(){
+  const navKey=state.view+':'+(state.nodeId||'');
+  const navChanged=render._k!==navKey;
+  render._k=navKey;
   $('#homeView').classList.toggle('on',state.view==='home');
   $('#nodeView').classList.toggle('on',state.view==='node');
   $('#equipView').classList.toggle('on',state.view==='equip');
@@ -1391,7 +1588,7 @@ function render(){
   if(state.view==='home')renderHome();
   else if(state.view==='equip'){renderEquip();updateQuickBar();}
   else{renderNode();updateQuickBar();}
-  $('#main').scrollTop=0;}
+  if(navChanged)$('#main').scrollTop=0;}
 
 /* ---------- Arborescence ---------- */
 function renderTree(){const tree=$('#tree');tree.innerHTML='';
@@ -1482,7 +1679,11 @@ const isSelectable=t=>!!(t.kind!=='section'&&t.action&&(t.action.type==='url'||t
 const isEdit=()=>(data.settings.mode||'edit')==='edit';
 function wallCtx(owner){if(owner==='home')return{owner,list:data.tiles,node:null,el:$('#wall')};
   const n=nodeById(owner);return n?{owner,list:(n.tiles=n.tiles||[]),node:n,el:$('#nodeWall')}:null;}
-function refreshWall(owner){if(owner==='home'){renderWall('home');updateQuickBar();}
+function refreshWall(owner){
+  const m=$('#main');const y=m?m.scrollTop:0;
+  if(owner==='home'){renderWall('home');updateQuickBar();m&&(m.scrollTop=y);return;}
+  refreshWall2(owner);m&&(m.scrollTop=y);}
+function refreshWall2(owner){if(owner==='home'){renderWall('home');updateQuickBar();}
   else{const n=nodeById(owner);if(n&&state.nodeId===owner)renderNodeWall(n);}}
 function renderWall(owner){
   const ctx=wallCtx(owner);if(!ctx||!ctx.el)return;
@@ -1512,7 +1713,20 @@ function renderWall(owner){
       if(src&&src!==t.id)moveTile(owner,src,t.id);});};
   /* bouton ＋ compact en fin de ligne (avant chaque titre de ligne) */
   let segLastId=null;
+  const spacerAfter=anchor=>{
+    let ord=Date.now();
+    const sorted=[...ctx.list].sort((a,b)=>a.ord-b.ord);
+    if(!anchor||anchor==='__start')ord=(sorted.length?sorted[0].ord:0)-1;
+    else{const ai=sorted.findIndex(x=>x.id===anchor);
+      if(ai>=0){const anc=sorted[ai],nx=sorted[ai+1];ord=nx?(anc.ord+nx.ord)/2:anc.ord+1000;}}
+    ctx.list.push({id:'t_'+uid(),kind:'spacer',size:'s',ord});
+    ctx.node?touch(ctx.node):save();refreshWall(owner);};
   const miniAdd=(anchor,beforeSectionId)=>{
+    const miniSp=document.createElement('div');
+    miniSp.className='tile add-tile mini size-s';
+    miniSp.innerHTML='<span class="plus">▢</span>';
+    miniSp.title='Ajouter un emplacement vide en fin de cette ligne';
+    miniSp.onclick=()=>spacerAfter(anchor||'__start');
     const mini=document.createElement('div');
     mini.className='tile add-tile mini size-s';
     mini.innerHTML='<span class="plus">＋</span>';
@@ -1523,7 +1737,8 @@ function renderWall(owner){
     mini.addEventListener('drop',e=>{e.preventDefault();mini.classList.remove('drag-over');
       const src=e.dataTransfer.getData('text/rd-tile');
       if(src)moveTile(owner,src,beforeSectionId);});
-    wall.appendChild(mini);};
+    wall.appendChild(mini);
+    wall.appendChild(miniSp);};
   for(const t of items){
     /* --- Titre de ligne / saut de ligne --- */
     if(t.kind==='section'){
@@ -2023,6 +2238,18 @@ function initEditor(){
     else if(b.dataset.block)document.execCommand('formatBlock',false,b.dataset.block);
     else if(b.dataset.act==='mark')document.execCommand('hiliteColor',false,'#ffe27a');
     else if(b.dataset.act==='red')document.execCommand('foreColor',false,'#d63333');
+    else if(b.dataset.act==='fcolor'||b.dataset.act==='hcolor'){
+      e.stopPropagation();
+      const isFore=b.dataset.act==='fcolor';
+      const selObj=window.getSelection();
+      const range=selObj&&selObj.rangeCount?selObj.getRangeAt(0).cloneRange():null;
+      pickColor(b,isFore?(state.lastFore||'#d63333'):(state.lastHilite||'#ffe27a'),c=>{
+        if(isFore)state.lastFore=c;else state.lastHilite=c;
+        ed.focus();
+        if(range){const s2=window.getSelection();s2.removeAllRanges();s2.addRange(range);}
+        document.execCommand(isFore?'foreColor':'hiliteColor',false,c);
+        saveEditor();});
+      return;}
     else if(b.dataset.act==='quote')document.execCommand('formatBlock',false,'blockquote');
     else if(b.dataset.act==='todo')document.execCommand('insertHTML',false,
       '<div class="todo"><input type="checkbox"><span> À vérifier…</span></div>');
@@ -2430,7 +2657,8 @@ function tileModal(owner,tileId,afterId){
     <div class="field"><label>Étiquette (facultatif — ex : VPN pour un lien interne)</label>
       <div style="display:flex;gap:9px;align-items:center">
         <input type="text" id="mTiBadge" maxlength="10" value="${esc(t?t.badge||'':'')}" placeholder="ex : VPN, INTERNE, DSI…" style="flex:1">
-        <label class="sw-custom" title="Couleur de l'étiquette" style="flex:none">🎨<input type="color" id="mTiBadgePick" value="${esc((t&&t.badgeColor)||'#b7791f')}"></label>
+        <button type="button" class="btn small" id="mTiBadgeSw" title="Choisir la couleur de l'étiquette (échantillons)">🎨 Couleur…</button>
+        <label class="sw-custom" title="Couleur libre" style="flex:none">🖌<input type="color" id="mTiBadgePick" value="${esc((t&&t.badgeColor)||'#b7791f')}"></label>
         <span id="mTiBadgePrev" class="tbadge" style="position:static;box-shadow:none;display:none"></span>
       </div>
     </div>
@@ -2444,7 +2672,8 @@ function tileModal(owner,tileId,afterId){
       <div class="swatches" id="mTiSw">
         <div class="sw def" data-c="" title="Couleur par défaut (carmin)"></div>
         <div class="sw none" data-c="none" title="Sans couleur : fond et bordure transparents">∅</div>
-        <label class="sw-custom" id="mTiSwCustom" title="Choisir librement une couleur">🎨<input type="color" id="mTiSwPick" value="${esc((t&&t.color&&t.color!=='none')?t.color:'#c2143f')}"></label>
+        <button type="button" class="btn small" id="mTiColSw" title="Choisir la couleur de la tuile (échantillons)">🎨 Couleur…</button>
+        <label class="sw-custom" id="mTiSwCustom" title="Couleur libre">🖌<input type="color" id="mTiSwPick" value="${esc((t&&t.color&&t.color!=='none')?t.color:'#c2143f')}"></label>
       </div>
     </div>
     <div class="field"><label>Image de la tuile</label>
@@ -2531,9 +2760,11 @@ function tileModal(owner,tileId,afterId){
     if(isCustom)$('#mTiSwPick').value=st.color;};
   $$('#mTiSw .sw').forEach(el=>el.onclick=()=>{st.color=el.dataset.c===''?null:el.dataset.c;refreshSw();});
   $('#mTiSwPick').oninput=e=>{st.color=e.target.value;refreshSw();};
+  $('#mTiColSw').onclick=e=>pickColor(e.currentTarget,st.color||'#c2143f',c=>{st.color=c;refreshSw();});
   refreshSw();
   /* étiquette : texte + couleur, avec aperçu en direct */
   const bTxt=$('#mTiBadge'),bPick=$('#mTiBadgePick'),bPrev=$('#mTiBadgePrev');
+  $('#mTiBadgeSw').onclick=e=>pickColor(e.currentTarget,bPick.value,c=>{bPick.value=c;bPick.dispatchEvent(new Event('input',{bubbles:true}));});
   const refreshBadge=()=>{const v=bTxt.value.trim();
     bPrev.style.display=v?'inline-block':'none';
     bPrev.textContent=v;bPrev.style.background=bPick.value;};
@@ -2727,7 +2958,7 @@ async function exportAll(){
     const url=URL.createObjectURL(blob);
     const a=document.createElement('a');a.href=url;
     const d=new Date();
-    a.download=`RailDoc-sauvegarde-${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}.json`;
+    a.download=`RailDoc-sauvegarde-${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}-${String(d.getHours()).padStart(2,'0')}h${String(d.getMinutes()).padStart(2,'0')}.json`;
     document.body.appendChild(a);a.click();
     setTimeout(()=>{URL.revokeObjectURL(url);a.remove();},8000);
     logEvt(`💾 Sauvegarde exportée (${fmtSize(blob.size)}, ${n} fichier(s))`);
@@ -2837,8 +3068,7 @@ function applyMode(){const m=data.settings.mode||'edit';
   const e=m==='edit';
   $('#editor').contentEditable=e?'true':'false';
   $('#nodeTitle').contentEditable=e?'true':'false';
-  $('#modeBtn').textContent=e?'✏️':'🔒';
-  $('#modeBtn').title=e?'Mode édition actif — cliquer pour verrouiller en lecture seule':'Mode lecture seule actif — cliquer pour repasser en édition';}
+  $('#modeBtn').title=e?'Mode édition actif — cliquer pour verrouiller en lecture seule':'Mode lecture seule actif — cliquer pour passer en édition (mot de passe)';}
 function applyBrand(){$('#appTitleTxt').textContent=data.settings.title||'RailDoc';
   $('#appSubTxt').textContent=data.settings.subtitle||'';
   document.title=(data.settings.title||'RailDoc')+(data.settings.subtitle?' — '+data.settings.subtitle:'');
@@ -3510,7 +3740,7 @@ const eqMatches=(it,q)=>{const qn=eqNorm(q);
   return words.every(w=>hay.includes(w));};
 /* Repères → position approx. (x: 0=avant/côté motrice, 1=arrière ; side t=haut b=bas) */
 const EQ_POS={
-1:{1:[.06,'t'],2:[.09,'t'],3:[.13,'t'],4:[.17,'t'],5:[.20,'t'],6:[.24,'t'],7:[.28,'t'],8:[.335,'t'],9:[.38,'t'],10:[.44,'t'],11:[.52,'t'],12:[.55,'t'],13:[.60,'t'],14:[.63,'t'],15:[.66,'t'],16:[.71,'t'],17:[.76,'t'],18:[.79,'t'],19:[.815,'t'],20:[.84,'t'],21:[.88,'t'],22:[.93,'t'],
+1:{1:[.06,'t'],2:[.09,'t'],3:[.13,'t'],4:[.155,'t'],5:[.18,'t'],6:[.205,'t'],7:[.28,'t'],8:[.24,'t'],9:[.38,'t'],10:[.44,'t'],11:[.52,'t'],12:[.55,'t'],13:[.60,'t'],14:[.63,'t'],15:[.66,'t'],16:[.71,'t'],17:[.76,'t'],18:[.79,'t'],19:[.815,'t'],20:[.84,'t'],21:[.88,'t'],22:[.93,'t'],
    23:[.95,'b'],24:[.93,'b'],25:[.90,'b'],26:[.87,'b'],27:[.83,'b'],28:[.80,'b'],29:[.775,'b'],30:[.72,'b'],31:[.69,'b'],32:[.66,'b'],33:[.625,'b'],34:[.55,'b'],35:[.48,'b'],36:[.42,'b'],37:[.38,'b'],38:[.35,'b'],39:[.32,'b'],40:[.27,'b'],41:[.24,'b'],42:[.21,'b'],44:[.50,'b']},
 2:{45:[.10,'t'],46:[.125,'t'],47:[.15,'t'],48:[.75,'t'],49:[.86,'t'],50:[.86,'b'],51:[.33,'b'],52:[.20,'b'],53:[.06,'t'],54:[.05,'b'],55:[.08,'b'],56:[.16,'b'],57:[.185,'b'],58:[.22,'b'],59:[.245,'b'],60:[.275,'b'],61:[.78,'b'],62:[.84,'b'],63:[.885,'b']},
 3:{65:[.80,'t'],66:[.86,'t'],67:[.82,'t'],68:[.06,'b'],69:[.78,'b'],70:[.85,'b'],71:[.90,'b']},
@@ -3793,7 +4023,1147 @@ const EQ_PANEL_A=[
 /* Bloc auxiliaire pneumatique (schéma 4 — motrice, repère 22) */
 const EQ_PNEU_A=['RB(IS)SR-AUX','RB(PU)FI-SR(AUX)','RB(SE)ALI-PT','RB(IS)VE(PU)SR','RB(IS)ALI-PT','RB(IS)MA-F','RB(IS)VE-VN(P)RGN-SECHEUR(AUX)','RB(IS)MANOSTAT-CP','RB(IS)REGULATEUR COMPR.','CPR(AUX)','RB(IS)VN(P)RGN-SR(AUX)'];
 const EQ_ALIASES_A={'CCCPRA':'CCPRA','ZISCODOUBLES':'ZISCO','RBSEALIPT':'RBSEAUX'};
+/* ============ TGV DUPLEX ERTMS — GDA TT00381 (éd. 30-06-2021), annexes 2A/2B ============ */
+/* Schémas GDA 3/6/9/10/13 -> internes 1/2/3/4/5 */
+const EQ_RAW_E=[
+[['—'],'Attelages de secours (R1 et R8)',2,[56],'AU','Remorques 1 et 8'],
+[['—'],'Afficheurs défauts remorques (R1 et R8)',2,[49,50],'AU','Remorques 1 et 8'],
+[['—'],'Afficheurs défauts remorques (R2 à R7 sauf R4)',3,[65,66],'AU','Remorques 2 à 7'],
+[['—'],'Afficheurs défauts remorques (R4)',4,[73],'AU','Remorque 4'],
+[['BVR'],'Boîte de verrouillage',1,[31],'AU','Motrice'],
+[['BP(A)ECL'],'Arrêt éclairage motrice',1,[26],'BP','Motrice'],
+[['BP(A)DF'],'Acquittement défauts remorques (R1 et R8)',2,[49,50],'BP','Remorques 1 et 8'],
+[['BP(A)DF'],'Acquittement défauts remorques (R2 à R7 sauf R4)',3,[65,66],'BP','Remorques 2 à 7'],
+[['BP(A)DF'],'Acquittement défauts remorques (R4)',4,[73],'BP','Remorque 4'],
+[['BP(A-IS)BC'],'Annulation isolement du bloc commun électrique',1,[22],'BP','Motrice — bloc commun'],
+[['BP(A-IS-AU)FP'],'Annulation isolement automatique du frein pneumatique',1,[24],'BP','Motrice — bloc moteur'],
+[['BP(A-IS)M'],'Annulation isolement bloc moteur',1,[24],'BP','Motrice — bloc moteur'],
+[['BP(A-IS)H-AUX'],'Annulation isolement du hâcheur auxiliaire',1,[22],'BP','Motrice — bloc commun'],
+[['BP(A-MT)S'],'Annulation d\'urgence du maintien de service',1,[3],'BP','Motrice — avant'],
+[['BP(A)Q-BA'],'Arrêt relais batterie',1,[7],'BP','Motrice — armoire bloc cabine'],
+[['BP(A)QML'],'Arrêt relais machine à laver',1,[7],'BP','Motrice — armoire bloc cabine'],
+[['BP-ECL'],'Éclairage motrices',1,[26],'BP','Motrice'],
+[['BP(ES)SA'],'Essai sablage',1,[18,28],'BP','Motrice'],
+[['BP(OV)HT'],'Ouverture forcée en monophasé',1,[7],'BP','Motrice — armoire bloc cabine'],
+[['BP-Q-BA'],'Relais batteries',1,[7],'BP','Motrice — armoire bloc cabine'],
+[['BP-Q-ML'],'Relais machine à laver',1,[7],'BP','Motrice — armoire bloc cabine'],
+[['BP(TEST)AE-INT'],'Test des anti-enrayeurs',1,[7],'BP','Motrice — armoire bloc cabine'],
+[['—'],'Commande manuelle du H(HT)',2,[47],'AU','Remorques 1 et 8'],
+[['H(O)C'],'Sectionneur continu',1,[12],'H','Motrice'],
+[['—'],'Clé de commande manuelle du H(HT)',1,[25],'AU','Motrice'],
+[['DJ(DF)MAJA'],'Défaut majeur A',1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(DF)MINA'],'Défaut mineur A',1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(DF)MAJB'],'Défaut majeur B',1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(DF)MINB'],'Défaut mineur B',1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)DV'],'Discordance vitesse',1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI-DF)ARM'],'Défaut armement',1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)ENR'],'Défaut enregistrement',1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)SV'],'Défaut contrôle du dispositif de l\'indicateur de vitesse',1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)U-ENT'],'Défaut unité évaluation',1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)VA'],'Veille automatique (signalisation)',1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)V-ENR'],'Défaut enregistrement vitesse',1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)VIT'],'Défaut de la centrale ATESS',1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['CC-EP-CBL1'],'EP CBL1',1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-EP-CBL2'],'EP CBL2',1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-GRB'],'Graissage boudin',1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC1-LP'],'Éclairage pupitre (1)',1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC2-LP'],'Éclairage pupitre (2)',1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC3-LP'],'Éclairage pupitre (3)',1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-STORE'],'Store',1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-R(AB)'],'Résistance antibuée',1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-Q(IS)H(HT)'],'Isolement sectionneur HT',1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-VN-FEN'],'Vanne refroidisseur d\'air',1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC1(VT-DO)AC'],'Ventilation droite AC (1)',1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC2(VT-DO)AC'],'Ventilation droite AC (2)',1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC3(VT-DO)AC'],'Ventilation droite AC (3)',1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC1(VT-GA)AC'],'Ventilation gauche AC (1)',1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC2(VT-GA)AC'],'Ventilation gauche AC (2)',1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC3(VT-GA)AC'],'Ventilation gauche AC (3)',1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC(CH)CM(UM-AU)'],'Réchauffage attelage automatique',1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-VE(LGV)'],'Électrovalve LGV',1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-PL'],'Horloge',1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-LTECC1'],'Essai fusible HT',1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-LTECC2'],'Essai fusible BT',1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-VE-AN'],'Électrovanne gaine d\'air',1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC(ES)FEP'],'Essai de frein à commande électropneumatique',1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-VT-CLM'],'Ventilateur de climatiseur',1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-(RG)BA'],'Régulation charge batterie',1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-C-BL1'],'Boîte à leviers 1',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-C-BL2'],'Boîte à leviers 2',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-CD-SR'],'Sécheur d\'air',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(CO)PT(C)'],'Commande pantographes Continu',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(CO)PT(M)'],'Commande pantographes Monophasé',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-GPS'],'GPS',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-GSMR'],'GSM-R',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-BC'],'BLOC COMMUN',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC1-CO-RB-TR'],'Commande robinet trappes (1)',1,[4],'CC','Motrice — avant'],
+[['CC2-CO-RB-TR'],'Commande robinet trappes (2)',1,[4],'CC','Motrice — avant'],
+[['CC1','CC2','CC3'],'Unité multiple',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC1(SI-AL)','CC2(SI-AL)','CC3(SI-AL)'],'Signal d\'alarme',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(ALI)SI(AL)'],'Alimentation signalisation alarme',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(AUX)BT'],'Alimentation des auxiliaires BT',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-BM1'],'Alimentation bloc moteur 1',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-BM2'],'Alimentation bloc moteur 2',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-BTM A'],'BTM A',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-BTM B'],'BTM B',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-CBA1','CC-CBA2'],'Contacteur batterie',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-V-BA1','CC-V-BA2'],'Voltmètre batterie (disrupteurs)',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(C)'],'Alimentation en continu',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-COD1','CC-COD2'],'Commande de codeurs',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-DMI1'],'Écran DMI 1',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-DMI2'],'Écran DMI 2',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-ETCS A'],'Tiroir ETCS A',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-ETCS B'],'Tiroir ETCS B',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-ETCS C'],'Tiroir ETCS C',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(ETCS)AUX'],'ETCS auxiliaire',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC1(FU)ETCS','CC2(FU)ETCS'],'FU par tiroir ETCS',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(CO)ECL'],'Commande éclairage',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-CPRA'],'Compresseur auxiliaire',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-DJ'],'Disjoncteur',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(ECL)'],'Éclairage',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(ENR)EL'],'Entrées logiques enregistreur',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-FEP'],'Frein à commande électropneumatique',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(FP)'],'Fermeture des portes',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-F(SE)'],'Commande frein de secours',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-INS-BG'],'Détection instabilité bogie',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-KARM'],'Contrôle d\'armement de la signalisation de cabine de type TVM',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-KVB'],'Contrôle de vitesse par balises KVB',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-LS'],'Lampe de signalisation',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(M)'],'Alimentation en monophasé',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(MEM)ENR'],'Mémoire enregistreur',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-MINIMA'],'Minima d\'alimentation TSF',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(PAM)SON'],'Préamplication de sonorisation',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-PT'],'Pantographes',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-RADAR 1'],'Radar 1',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-RADAR 2'],'Radar 2',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-KARM-PERM'],'Alimentation permanente du module KARM',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-RS'],'Répétition des signaux',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-SA'],'Sablage',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(SE)LF1'],'Secours lampe fanal gauche',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(SE)LF2'],'Secours lampe fanal droit',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC1-SECT','CC2-SECT'],'Sectionnement',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC1 UTP','CC2 UTP'],'Ordinateur principal de cabine',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC1 UTA','CC2 UTA'],'Ordinateur auxiliaire de cabine',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-TEST'],'Test tachymétrique',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-VA'],'Veille automatique (disrupteur)',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC1-VE-VA','CC2-VE-VA'],'Relais d\'urgence',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-VI'],'Vitesse imposée',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-VISU'],'Écran et clavier',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-VIT 1'],'Tachymétrie 1',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-VIT 2'],'Tachymétrie 2',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-VIT 3'],'Tachymétrie 3',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-VE-AVER'],'Électrovalves avertisseur',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-VY(URG)'],'Contrôle des voyants d\'urgence',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-VY'],'Voyants des équipements de sécurité',1,[7],'CC','Motrice — armoire bloc cabine'],
+[['—'],'Documents de bord',1,[6],'AU','Motrice — cabine'],
+[['—'],'Échelle d\'accès de secours à la cabine',1,[6],'AU','Motrice — cabine'],
+[['—'],'Échelle d\'accès à la toiture',1,[15],'AU','Motrice'],
+[['—'],'Enregistreur de vitesse « ATESS »',1,[8],'AU','Motrice'],
+[['—'],'Escabeaux de secours (R1 et R8)',2,[57],'AU','Remorques 1 et 8'],
+[['Z-BA1'],'Batterie 1',1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-BA2'],'Batterie 2',1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-BG(IS)'],'Indicateur de performance de freinage',1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(CO)DJ-KL'],'Contrôle disjoncteur par KVB/LZB',1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(DI)CPR'],'Alimentation directe du compresseur',1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(ENT)'],'Test entretien',1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-ETCS'],'ETCS',1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(ES)ETCS'],'Essai ETCS',1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(FU)ETCS'],'Urgence par ETCS',1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(EXPL)'],'Exploitation',1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)CLIM'],'Isolement climatisation',1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)CPR'],'Isolement compresseur',1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)FEP'],'Isolement du frein à commande électropneumatique',1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(N-SE)'],'Neutre frein de secours',1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-KARM'],'Isolement de la fonction contrôle d\'armement de la TVM',1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-KVB'],'Contrôle de vitesse KVB',1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-RS'],'Répétition des signaux (commutateur)',1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-SE-RAD'],'Commande de secours radio',1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-SEC'],'Boîte de sécurité',1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-UTP'],'Ordinateur principal de cabine (commutateur)',1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-VA'],'Veille automatique (commutateur)',1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-VIT'],'Indicateur de vitesse',1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-URG'],'Relais d\'urgence (commutateur)',1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)ECL-CLM'],'Éclairage-climatisation remorques',1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)SG-SI-AL'],'Isolement SAFI',1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-ENR'],'Enregistreur',1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(CO)DJE'],'Isolement des fonctions techniques train (Coupez-courant et Baissez-panto) commandées par le bistandard',1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(SEL)DMI'],'Sélection de la console (DMI) active',1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-LPRF1'],'Secours feu rouge et fanal (gauche)',1,[27],'Z','Motrice — bloc couloir gauche'],
+[['Z-LPRF2'],'Secours feu rouge et fanal (droit)',1,[27],'Z','Motrice — bloc couloir gauche'],
+[['Z-CH(UM-AU)'],'Isolement du chauffage de l\'autocoupleur central intégral',1,[27],'Z','Motrice — bloc couloir gauche'],
+[['Z(ECL)EXT'],'Source d\'alimentation de l\'éclairage de la motrice',1,[27],'Z','Motrice — bloc couloir gauche'],
+[['DJ-CPR-CLM'],'Compresseur climatisation',1,[27],'DJ','Motrice — bloc couloir gauche'],
+[['DJ-VT-CLM'],'Ventilation climatisation',1,[27],'DJ','Motrice — bloc couloir gauche'],
+[['Z(IS)M'],'Isolement bloc moteur',1,[24],'Z','Motrice — bloc moteur'],
+[['ZL-BM'],'Éclairage bloc moteur',1,[24],'Z','Motrice — bloc moteur'],
+[['Z(IS)AUX'],'Isolement contacteur AUX',1,[22],'Z','Motrice — bloc commun'],
+[['Z(IS)DJ(C)'],'Isolement disjoncteur continu',1,[22],'Z','Motrice — bloc commun'],
+[['ZL-BC'],'Éclairage bloc commun',1,[22],'Z','Motrice — bloc commun'],
+[['Z(IS)H-AUX'],'Isolement du hâcheur auxiliaire 500V',1,[30],'Z','Motrice — bloc AUX'],
+[['Z-L-B AUX'],'Éclairage bloc Aux',1,[30],'Z','Motrice — bloc AUX'],
+[['BP(A-IS)H AUX'],'Éclairage bloc Aux (BP)',1,[30],'BP','Motrice — bloc AUX'],
+[['Z(IS)H(HT)'],'Isolement du H(HT) (sur remorque 1)',2,[45],'Z','Remorque 1'],
+[['—'],'Pupitre',1,[4],'AU','Motrice — cabine'],
+[['RB(A)CG'],'Arrêt CG — motrice',1,[17],'RB','Motrice'],
+[['RB(A)CG'],'Arrêt CG — R1 et R8 côté remorques',2,[55],'RB','Remorques 1 et 8'],
+[['RB(A)CG'],'Arrêt CG — R4',4,[78],'RB','Remorque 4'],
+[['RB(A)CG-AC'],'Arrêt CG attelage automatique',1,[2],'RB','Motrice — avant'],
+[['RB(A)CP'],'Arrêt CP — motrice',1,[16],'RB','Motrice'],
+[['RB(A)CP'],'Arrêt CP — R1 et R8 côté remorques',2,[54],'RB','Remorques 1 et 8'],
+[['RB(A)CP-AC'],'Arrêt CP attelage automatique',1,[2],'RB','Motrice — avant'],
+[['RB(CO)VRN'],'Commande de vérin des trappes',1,[1],'RB','Motrice — avant'],
+[['RB(DA)AT(AU)'],'Désaccouplement de l\'attelage automatique',1,[4],'RB','Motrice — avant'],
+[['RB-FI(F)'],'Filtre de frein',1,[2],'RB','Motrice — avant'],
+[['RB-F(SE)'],'Frein de secours',1,[29],'RB','Motrice'],
+[['RB(SE)ALI-PT'],'Secours circuit auxiliaire',5,[85],'RB','Motrice — bloc pneumatique (repère 19)'],
+[['RB(URG)'],'Robinet d\'urgence (R1 et R8)',2,[58],'RB','Remorques 1 et 8'],
+[['RB(URG)'],'Robinet d\'urgence (R4)',4,[72],'RB','Remorque 4'],
+[['RB(IS)ALI-PT'],'Isolement circuits auxiliaires',5,[86],'RB','Motrice — bloc pneumatique (repère 19)'],
+[['RB(IS)AVER'],'Isolement avertisseur',1,[29],'RB','Motrice'],
+[['RB(IS)CP-CG'],'Isolement frein automatique (jumelé CP-CG)',1,[10,11],'RB','Motrice'],
+[['RB(IS)EV-LV'],'Isolement essuie-vitre, lave-vitre',1,[29],'RB','Motrice'],
+[['RB(IS)FI(F)'],'Isolement filtre de frein',1,[2],'RB','Motrice — avant'],
+[['RB(IS)MA-CP'],'Isolement manostat CP',5,[87],'RB','Motrice — bloc pneumatique (repère 19)'],
+[['RB(IS)MA-CPR'],'Isolement manostat du compresseur',5,[91],'RB','Motrice — bloc pneumatique (repère 19)'],
+[['RB(IS)PR-AT(AU)'],'Isolement vérin des trappes',1,[2],'RB','Motrice — avant'],
+[['RB(IS)PTC'],'Isolement pantographe continu',1,[14],'RB','Motrice'],
+[['RB(IS)PTM'],'Isolement pantographe monophasé',1,[20],'RB','Motrice'],
+[['RB(IS)RG.CPR'],'Isolement régulateur de pression',5,[88],'RB','Motrice — bloc pneumatique (repère 19)'],
+[['RB(IS)SA'],'Isolement sablage',1,[3],'RB','Motrice — avant'],
+[['RB(IS)VE-RGN SR(AUX)'],'Électrovalve du régénérateur du sécheur auxiliaire',5,[90],'RB','Motrice — bloc pneumatique (repère 19)'],
+[['RB(IS)RGN-SR (AUX)'],'Régénérateur du sécheur auxiliaire',5,[89],'RB','Motrice — bloc pneumatique (repère 19)'],
+[['RB(IS)VV-VA'],'Isolement relais d\'urgence',1,[5],'RB','Motrice — avant'],
+[['RB(IS)SC'],'Isolement siège conducteur',1,[29],'RB','Motrice'],
+[['RB(IS)MA-C101'],'Isolement contacteur C101 et manostat',4,[81],'RB','Remorque 4'],
+[['RB(IS)-C107'],'Isolement contacteur C107',4,[81],'RB','Remorque 4'],
+[['RB(IS)GRB'],'Isolement graisseurs de boudins',2,[52],'RB','Remorques 1 et 8'],
+[['RB(A)CG'],'Frein automatique — R1 et R8',2,[59],'RB','Remorques 1 et 8'],
+[['RB(A)CG'],'Frein automatique — R2 à R7',3,[70],'RB','Remorques 2 à 7'],
+[['RB(IS)H(HT)'],'Isolement sectionneur de toiture',2,[46],'RB','Remorques 1 et 8'],
+[['RB(IS)MA(SUS)'],'Isolement manostat de suspension — R1 et R8',2,[64,60],'RB','Remorques 1 et 8'],
+[['RB(IS)MA(SUS)'],'Isolement manostat de suspension — R2 à R7 sauf R4',3,[71],'RB','Remorques 2 à 7 (sauf R4)'],
+[['RB(IS)MA(SUS)'],'Isolement manostat de suspension — R4',4,[82],'RB','Remorque 4'],
+[['RB(IS)P(AC)'],'Isolement portes d\'accès — R1 et R8',2,[48],'RB','Remorques 1 et 8'],
+[['RB(IS)P(AC)'],'Isolement portes d\'accès — R2 à R7 sauf R4',3,[67],'RB','Remorques 2 à 7 (sauf R4)'],
+[['RB(IS)P(AC)'],'Isolement portes d\'accès — R4',4,[74],'RB','Remorque 4'],
+[['RB(IS)P(AC)CB'],'Isolement portes compartiment bagages',2,[53],'RB','Remorques 1 et 8'],
+[['RB(IS)JP(AC)'],'Isolement joints portes d\'accès — R1 et R8',2,[62],'RB','Remorques 1 et 8'],
+[['RB(IS)JP(AC)'],'Isolement joints portes d\'accès — R2 à R7 sauf R4',3,[69],'RB','Remorques 2 à 7 (sauf R4)'],
+[['RB(IS)JP(AC)'],'Isolement joints portes d\'accès — R4',4,[74],'RB','Remorque 4'],
+[['RB(IS)JP(AC)CB'],'Isolement joints portes compartiment bagages',2,[53],'RB','Remorques 1 et 8'],
+[['RB(IS)SUS(PN)'],'Isolement suspension pneumatique — R1 et R8',2,[61],'RB','Remorques 1 et 8'],
+[['RB(IS)SUS(PN)'],'Isolement suspension pneumatique — R2 à R7 sauf R4',3,[68],'RB','Remorques 2 à 7 (sauf R4)'],
+[['RB(IS)SUS(PN)'],'Isolement suspension pneumatique — R4',4,[76,79],'RB','Remorque 4'],
+[['RB(PU)FI-F'],'Purge filtre de frein',1,[2],'RB','Motrice — avant'],
+[['RB(PU)FI-SR(AUX)'],'Purge sécheur des auxiliaires',5,[92],'RB','Motrice — bloc pneumatique (repère 19)'],
+[['RB(PU)DI1'],'Purge du distributeur 1',1,[19],'RB','Motrice'],
+[['RB(PU)DI2'],'Purge du distributeur 2',1,[19],'RB','Motrice'],
+[['H-BA1'],'Sectionneur batterie 1',1,[9],'H','Motrice'],
+[['H-BA2'],'Sectionneur batterie 2',1,[9],'H','Motrice'],
+[['H(HT)'],'Sectionneur ligne de toiture',2,[47],'H','Remorques 1 et 8'],
+[['H(O)M'],'Mise à la terre de la ligne de toiture',1,[23],'H','Motrice'],
+[['—'],'Trappes d\'accès à la toiture',1,[15],'AU','Motrice'],
+[['—'],'Valve de purge des équipements de frein — bogies moteurs',1,[10,11],'AU','Motrice'],
+[['—'],'Valve de purge des équipements de frein — bogies porteurs R1 et R8',2,[59,63],'AU','Remorques 1 et 8'],
+[['—'],'Valve de purge des équipements de frein — bogies porteurs R2 à R7 sauf R4',3,[70],'AU','Remorques 2 à 7 (sauf R4)'],
+[['—'],'Voltmètre batteries 1',1,[7],'AU','Motrice — armoire bloc cabine'],
+[['—'],'Voltmètre batteries 2',1,[7],'AU','Motrice — armoire bloc cabine']];
+const EQ_ITEMS_E=EQ_RAW_E.map((e,i)=>({id:'eeq'+i,a:e[0],d:e[1],s:e[2],r:e[3],g:e[4],z:e[5],cat:'dupe'}));
+const EQ_POS_E={
+1:{1:[.03,'t'],2:[.05,'t'],3:[.08,'t'],4:[.11,'t'],5:[.13,'t'],6:[.15,'t'],7:[.19,'t'],8:[.22,'t'],9:[.33,'t'],10:[.40,'t'],11:[.47,'t'],12:[.56,'t'],13:[.62,'t'],14:[.67,'t'],15:[.74,'t'],16:[.80,'t'],31:[.59,'t'],
+   29:[.06,'b'],28:[.09,'b'],27:[.15,'b'],26:[.18,'b'],25:[.21,'b'],24:[.30,'b'],30:[.47,'b'],23:[.56,'b'],22:[.62,'b'],21:[.66,'b'],20:[.69,'b'],19:[.73,'b'],18:[.76,'b'],17:[.83,'b']},
+2:{54:[.05,'t'],55:[.03,'t'],45:[.08,'t'],46:[.11,'t'],47:[.13,'t'],53:[.28,'t'],48:[.72,'t'],49:[.85,'t'],50:[.92,'t'],
+   56:[.05,'b'],57:[.20,'b'],58:[.24,'b'],59:[.30,'b'],60:[.34,'b'],61:[.38,'b'],62:[.80,'b'],63:[.87,'b'],64:[.93,'b']},
+3:{68:[.05,'t'],65:[.82,'t'],66:[.88,'t'],67:[.85,'t'],
+   69:[.80,'b'],70:[.88,'b'],71:[.93,'b']},
+4:{79:[.03,'t'],72:[.06,'t'],73:[.10,'t'],78:[.45,'t'],74:[.55,'t'],75:[.58,'t'],76:[.95,'t'],
+   80:[.80,'b'],81:[.84,'b'],77:[.75,'b'],82:[.93,'b']}};
+const EQ_M_ZONES_E=[[.02,.13,'CABINE'],[.15,.24,'ARMOIRE CABINE'],[.27,.38,'BM 1'],[.38,.47,'BM 2'],[.47,.53,'BLOC AUX'],[.55,.66,'TRANSFO'],[.67,.76,'BLOC COMMUN'],[.78,.90,'COMPR.']];
+/* Armoire BLOC CABINE DUPLEX E (d'après la planche photo, partie centrale) */
+const EQ_PANEL_E=[
+{k:'meter',t:'Partie haute — voyants, voltmètre, ISO',c:['VY(CO)URG','VY(CO)Z','Z-V-BA','V-BA','ISO']},
+{k:'led',t:'Disjoncteurs de signalisation',c:['DJ(DF)MIN A','DJ(DF)MIN B','DJ(SI)VA','DJ(SI-DF)ARM','DJ(SI)ENR','DJ(SI)Q(DF-OV)DJ(M)M','DJ(SI)VIT','DJ(DF)MAJ A','DJ(DF)MAJ B','DJ(SI)DV','DJ(SI)SV']},
+{k:'cc',t:'Partie haute — rangée disrupteurs',c:['DJ(SI)U-ENT','DJ(SI)V-ENR','CC1(SE)RAD','CC2(SE)RAD','CC1(FU)ETCS','CC2(FU)ETCS','CC1-C(T)20BL(UM)','CC2-C(T)20L(UM)','CC1-C(T)L(UM)','CC2-C(T)L(UM)','CC-KARM','CC1-SECT','CC2-SECT','CC-AS(BC)','DJ(SEC)RECE']},
+{k:'bp',t:'Boutons-poussoirs',c:['BP-Q-BA','BP(A)Q-BA','Z(DI)CPR','BP(R)MPX1','BP(R)MPX2','BP(OV)HT','BP-Q-ML','BP(A)Q-ML']},
+{k:'cc',t:'Zone centrale CC — rangée 1',c:['CC-Q(IS)DJ(M)','CC-Q(OV)HT','CC-ENR','CC(ENR)EL','CC-V-BA1','CC-V-BA2','CC-Q-VEVA','CC-Q(DF)DJ(C)','CC-CD-SR','CC-N-SA','CC(RG)BA','CC-LV','CC-QQ(SA)','CC-SA','CC-KARM-PERM','CC-GPS','CC-LORIENT','CC-GSMR']},
+{k:'cc',t:'Zone centrale CC — rangée 2',c:['CC-C-BA1','CC-C-BA2','CC-CBL1','CC-CBL2','CC-BM1','CC-BM2','CC-COD1','CC-COD2','CC-VI','CC-VY','CC-VY(URG)','CC-VA','CC-RS','CC-ETCS A','CC-ETCS B','CC-ETCS C','CC(ETCS)AUX','CC-KVB']},
+{k:'cc',t:'Zone centrale CC — rangée 3',c:['CC-MINIMA','CC(MEN)','CC-VISU','CC-FP','CC-CPRA','CC-Q500','CC1-VE-VA','CC2-VE-VA','CC(CO)PT(M)','CC-FPB','CC-FEP','CC-F(SE)','CC(CO)PT(C)','CC-TEST','CC-VIT1','CC-VIT2','CC-VIT3']},
+{k:'cc',t:'Zone centrale CC — rangée 4',c:['CC1-UTP','CC1-UTA','CC2-UTP','CC2-UTA','CC1','CC2','CC3','CC(C)','CC(M)','CC(AUX)BT','CC-DJ','CC-PT','CC-ZPT(C)','CC-ZPT(M)','CC(ALI)SI(AL)','CC3(SI-AL)','CC2(SI-AL)','CC1(SI-AL)']},
+{k:'cc',t:'Zone centrale CC — rangée 5',c:['CC-C-RECE','CC-BTM A','CC-BTM B','CC-DMI1','CC-DMI2','CC(CO)CLM','CC(PAM)SON','CC-LS','CC-FRD','CC(ECL)','CC(CO)ECL','CC-LP-RF1','CC-LP-RF2','CC-LFR1','CC-LFR2','CC(SE)LF1','CC(SE)LF2','CC(AL)']},
+{k:'z',t:'Zone commutateurs — grands rotatifs',c:['Z(FU)ETCS','Z-ETCS','Z-BG(IS)','Z-BA1','Z-URG','Z(CO)DJE','Z-BA2','Z-(SE)RAD']},
+{k:'z',t:'Zone commutateurs — rangée 1',c:['Z-RS','Z-VA','Z-KVB','Z(CO)DJ-KL','Z(ES)ETCS','Z-(IS-CO)']},
+{k:'z',t:'Zone commutateurs — rangée 2',c:['Z-VIT','Z(EXPL)','Z(IS)CPR','Z(IS)CLM','Z(IS)FEP','Z(SE)DMI']},
+{k:'z',t:'Zone commutateurs — rangée 3',c:['Z-ENR','Z-UTP','Z-LPRF1','Z-LPRF2','Z(N-SE)','Z-BI-STANDARD']},
+{k:'z',t:'Zone commutateurs — rangée 4',c:['Z-ENT','Z(IS)ECL-CLM','Z(IS)SG-SI-AL','Z-KARM']},
+{k:'cc',t:'Bloc couloir gauche — rangée 1',c:['CC1-LP','CC2-LP','CC3-LP','CC-STORE','CC-R(AB)','CC(CH)CM(UM-AU)','CC-VT-CLM','CC-VN-FEN','CC-PL','CC-LT-ECC1','CC-LT-ECC2']},
+{k:'cc',t:'Bloc couloir gauche — rangée 2',c:['CC1(VT-GA)AC','CC2(VT-GA)AC','CC3(VT-GA)AC','CC1(VT-DO)AC','CC2(VT-DO)AC','CC3(VT-DO)AC','CC-GRB','CC1-CO-RB-TR','CC2-CO-RB-TR','CC-EP-CBL1','CC-EP-CBL2']},
+{k:'cc',t:'Bloc couloir gauche — rangée 3',c:['CC(RG)BA','CC-VE(LGV)','CC-Q(IS)H(HT)','CC-VE-AN','CC(ES)FEP']},
+{k:'z',t:'Bloc couloir gauche — commutateurs et PC',c:['Z-CH(UM-AU)','Z(ECL)EXT','BP(TEST)CPRA','LT-ECC2','CC(PC)CAB']}];
+const EQ_PNEU_E=['RB(SE)ALI-PT','RB(IS)ALI-PT','RB(IS)MA-CP','RB(IS)RG.CPR','RB(IS)RGN-SR (AUX)','RB(IS)VE-RGN SR(AUX)','RB(IS)MA-CPR','RB(PU)FI-SR(AUX)'];
+const EQ_ALIASES_E={'CCMEN':'CCMEMENR','CCLTECC1':'CCLTECC1','CCFP':'CCFP','ZISCLM':'ZISCLIM','ZSERAD':'ZSERAD','CCVBA1':'CCVBA1'};
+/* ============ TGV RÉSEAU — GDA TT00233 (éd. 07-06-2007) ============ */
+const EQ_RAW_R=[
+[['—'],'Attelage de secours (R1)',2,[30],'AU','Remorque 1'],
+[['—'],'Attelage de secours (R8)',2,[38],'AU','Remorque 8'],
+[['—'],'Afficheurs défauts remorques (R2 à R7)',3,[34,49],'AU','Remorques 2 à 7'],
+[['—'],'Afficheurs défauts remorques (R1 et R8)',2,[61],'AU','Remorques 1 et 8'],
+[['BVR'],'Boîte de verrouillage',1,[17],'AU','Motrice'],
+[['BP(A)CL'],'Arrêt éclairage motrices',1,[79],'BP','Motrice'],
+[['BP(A)DF'],'Acquittement défauts remorques (R2 à R7)',3,[34,49],'BP','Remorques 2 à 7'],
+[['BP(A)DF'],'Acquittement défauts remorques (R1 et R8)',2,[61],'BP','Remorques 1 et 8'],
+[['BP(A-IS)AFP'],'Annulation isolement de l\'amélioration du facteur de puissance (lumineux)',1,[76],'BP','Motrice — bloc moteur'],
+[['BP(A-IS)BC'],'Annulation isolement du bloc commun électrique',1,[70],'BP','Motrice — bloc commun'],
+[['BP(A-IS AU)FP'],'Annulation isolement de l\'isolement automatique du frein pneumatique',1,[76],'BP','Motrice — bloc moteur'],
+[['BP(A-IS)LMT'],'Annulation isolement de l\'écrêteur actif',1,[70],'BP','Motrice — bloc commun'],
+[['BP(A-IS)M'],'Annulation isolement bloc moteur',1,[76],'BP','Motrice — bloc moteur'],
+[['BP(A-IS)H-HAUX'],'Annulation isolement du hâcheur auxiliaire',1,[73],'BP','Motrice — bloc AUX'],
+[['BP(A-MT)S'],'Annulation d\'urgence du maintien de service',1,[4],'BP','Motrice — cabine'],
+[['BP(A)Q-BA'],'Arrêt relais batteries',1,[8],'BP','Motrice — armoire bloc cabine'],
+[['BP(A)QML'],'Arrêt relais machine à laver',1,[8],'BP','Motrice — armoire bloc cabine'],
+[['BP-ECL'],'Éclairage motrices',1,[79],'BP','Motrice'],
+[['BP(ESMT)DJ(C)'],'Essai maintien DJ continu',1,[70],'BP','Motrice — bloc commun'],
+[['BP(ES)SA'],'Essai sablage',1,[66,81],'BP','Motrice'],
+[['BP(OV)HT'],'Ouverture forcée en monophasé',1,[8],'BP','Motrice — armoire bloc cabine'],
+[['BP-Q-BA'],'Relais batteries',1,[8],'BP','Motrice — armoire bloc cabine'],
+[['BP-Q-ML'],'Relais machine à laver',1,[8],'BP','Motrice — armoire bloc cabine'],
+[['—'],'Commande de déverrouillage des trappes',1,[1],'AU','Motrice — avant'],
+[['—'],'Carnet d\'inventaire d\'outillage de bord',1,[5],'AU','Motrice — cabine'],
+[['—'],'Commande manuelle du DJ(M)',1,[15],'AU','Motrice'],
+[['—'],'Commande manuelle du H(HT)',2,[27],'AU','Remorques 1 et 8'],
+[['—'],'Commande manuelle du H(MC)',1,[14],'AU','Motrice'],
+[['—'],'Coffre à outillage (R1)',2,[30],'AU','Remorque 1'],
+[['—'],'Coffre à outillage (R8)',2,[58],'AU','Remorque 8'],
+[['H(MC)'],'Commutateur mono-continu',1,[14],'H','Motrice'],
+[['DJ(DF)CAB-A'],'Défaut chaîne A CAB SIGNAL',1,[8],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(DF)CAB-B'],'Défaut chaîne B CAB SIGNAL',1,[8],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI-)ALIM'],'Défaut d\'alimentation bloc moteur',1,[76],'DJ','Motrice — bloc moteur'],
+[['DJ(SI)DV'],'Discordance vitesse',1,[8],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI-DF)ARM'],'Défaut armement',1,[8],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)AS-BC'],'Défaut d\'alimentation stabilisée du bloc commun électrique',1,[70],'DJ','Motrice — bloc commun'],
+[['DJ(SI)ENR'],'Défaut enregistrement',1,[8],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)IV'],'Défaut contrôle du dispositif de l\'indicateur de vitesse',1,[8],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)MAFE'],'Discordance des manostats de frein des blocs moteurs',1,[76],'DJ','Motrice — bloc moteur'],
+[['DJ(SI)SV1'],'Discordance vitesse (SV1)',1,[8],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)SV2'],'Discordance vitesse (SV2)',1,[8],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)U-ENT'],'Défaut unité évaluation',1,[8],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)VA'],'Veille automatique (signalisation)',1,[8],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)V-ENR'],'Défaut enregistrement vitesse',1,[8],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)VER-A'],'Verrouillage chaîne A CAB SIGNAL',1,[8],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)VER-B'],'Verrouillage chaîne B CAB SIGNAL',1,[8],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)VIT'],'Défaut de la centrale ATESS',1,[8],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI-DF)QEV'],'Défaut relais vitesse',1,[8],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI-DF-SEL)UL'],'Sélection pantographes',1,[8],'DJ','Motrice — armoire bloc cabine'],
+[['—'],'Clé de commande manuelle du DJ(M), H(HT) et H(MC)',1,[77],'AU','Motrice'],
+[['CC1','CC2','CC3'],'Unité multiple',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-R1(AB)','CC-R2(AB)'],'Résistances antibuée',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC1(SI-AL)','CC2(SI-AL)','CC3(SI-AL)'],'Signal d\'alarme',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(AL)'],'Signal d\'alerte lumineux',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(ALI-SI)AL'],'Alimentation signalisation alarme',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(AUX)BT'],'Alimentation des auxiliaires BT',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-BM1'],'Alimentation bloc moteur 1',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-BM2'],'Alimentation bloc moteur 2',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-CAB A'],'Informations continu chaîne A CAB SIGNAL',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-CAB B'],'Informations continu chaîne B CAB SIGNAL',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-CAB-AUX'],'Signalisation de cabine',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-CBA1','CC-CBA2'],'Contacteur batterie',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(C)'],'Alimentation en continu',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-CBL1','CC-CBL2'],'Contacteur de boîte à leviers',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(CH)CM(UM-AU)'],'Chauffe attelage',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(CO)CLM'],'Commande climatisation',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-COD1','CC-COD2'],'Commande des codeurs',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(CO)ECL'],'Commande éclairage',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(CO)VIT'],'Contrôle indicateur de vitesse',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-CD-SR'],'Commande sécheur d\'air',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-CPRA'],'Compresseur auxiliaire',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-DJ'],'Disjoncteur',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(ECL)'],'Éclairage',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-ENR'],'Enregistreur',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(ES)FEP'],'Essai frein à commande électropneumatique',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-FEP'],'Frein à commande électropneumatique',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(FP)'],'Fermeture des portes',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-FPB'],'Frein presse bouton',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-F(SE)'],'Commande frein de secours',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-GRB'],'Graisseurs de boudins',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-IV'],'Indicateur de vitesse (IV)',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-KVB'],'Contrôle de vitesse par balises KVB',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-LFR1'],'Lampe feu rouge gauche',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-LFR2'],'Lampe feu rouge droit',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-LP'],'Lampe pupitre de conduite',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-LPRF1'],'Lampe projecteurs fanal gauche',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-LPRF2'],'Lampe projecteurs fanal droit',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-LS'],'Lampe de signalisation',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-LT-ECC1'],'Essai fusibles HT (disrupteur)',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-LT-ECC2'],'Essai fusibles BT (disrupteur)',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(M)'],'Alimentation en monophasé',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(MM)ATESS'],'Mémorisation ATESS',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(MEN)VIT'],'Centrale ATESS',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-MINIMA'],'Minima d\'alimentation TSF',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(PAM)SON'],'Préamplification de sonorisation',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-PL'],'Pendule',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-PT'],'Pantographes',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-Q(IS)DJ(M)'],'Relais d\'isolement DJ(M)',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-Q(IS)H(HT)'],'Relais d\'isolement du sectionneur H(HT)',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-Q(OV)HT'],'Relais d\'ouverture forcée',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-Q(DF)DJ(C)'],'Relais défaut DJ(C)',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-QEV'],'Relais de vitesse',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-Q-VE-VA'],'Relais de VA',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-Q 500'],'Relais Q 500',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-RG-BA'],'Régulation charge BA',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-RS'],'Répétition des signaux',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-ATB'],'Contrôle de vitesse par balises ATB',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-SA'],'Sablage',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-N-SA'],'Neutralisation sablage',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-QQ-SA'],'Relais de sablage',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(SE)LF1'],'Secours lampe fanal gauche',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(SE)LF2'],'Secours lampe fanal droit',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC1TBL'],'Transmission balise-locomotive',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC1UTP','CC2UTP'],'Ordinateur principal de cabine',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC1UTA','CC2UTA'],'Ordinateur auxiliaire de cabine',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-TEST'],'Test tachymétrie',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-VA'],'Veille automatique (disrupteur)',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-VE-VA'],'Électrovalve VA',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-VE-LGV','CC1-VE-LGV'],'Électrovalve LGV',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-VI'],'Vitesse imposée',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-VISU'],'Écran et clavier',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-VIT'],'Indicateur de vitesse (disrupteur)',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(VN)FEN'],'Électrovanne fréon',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-VT-CLM'],'Ventilateur de climatiseur',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC1(VT-GA)AC','CC2(VT-GA)AC','CC1(VT-DO)AC','CC2(VT-DO)AC'],'Ventilation armoire cabine',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-VY(URG)'],'Contrôle des voyants d\'urgence',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-VY'],'Voyants des équipements de sécurité',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-Z-PT(C)'],'ZPT en continu',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-Z-PT(M)'],'ZPT en monophasé',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(AL)GTOAUX'],'Platine allumeur GTO-AUX',1,[70],'CC','Motrice — bloc commun'],
+[['CC-Q-44'],'Relais Q 44',1,[70],'CC','Motrice — bloc commun'],
+[['CC 1AS'],'1 Alim (bloc moteur)',1,[76],'CC','Motrice — bloc moteur'],
+[['CC(AL)Q'],'Relais de commande (bloc moteur)',1,[76],'CC','Motrice — bloc moteur'],
+[['CC Q-DJ(M)'],'Relais Q-DJ(M)',1,[76],'CC','Motrice — bloc moteur'],
+[['CC-TF-VLM'],'Transformateur tension ligne MONO',1,[76],'CC','Motrice — bloc moteur'],
+[['—'],'Échelle d\'accès à la toiture',1,[23],'AU','Motrice — arrière'],
+[['—'],'Enregistreur de vitesse',1,[9],'AU','Motrice — bloc cabine'],
+[['—'],'Escabeau de secours (R4)',3,[42],'AU','Remorque 4'],
+[['—'],'Escabeau de secours (R3)',3,[47],'AU','Remorque 3'],
+[['—'],'Essai fusibles BT',1,[9],'AU','Motrice — bloc cabine'],
+[['—'],'Essai fusibles HT',1,[69],'AU','Motrice'],
+[['—'],'Frein d\'immobilisation à ressort',1,[20,78],'AU','Motrice'],
+[['CC1-CPR-CLM','CC2-CPR-CLM','CC3-CPR-CLM'],'Fusibles BT — compresseur du climatiseur',1,[9],'FU','Motrice — bloc cabine'],
+[['CC1-VT-CDR','CC2-VT-CDR','CC3-VT-CDR'],'Fusibles BT — ventilateur de condenseur',1,[9],'FU','Motrice — bloc cabine'],
+[['CC-AS(BC)'],'Fusible — alimentation stabilisée du bloc commun',1,[9],'FU','Motrice — bloc cabine'],
+[['CC-G'],'Fusible — alimentation générale',1,[9],'FU','Motrice — bloc cabine'],
+[['CC-RECA'],'Fusible — chauffage cabine',1,[9],'FU','Motrice — bloc cabine'],
+[['CC-ASM'],'Fusible — alimentation stabilisée blocs moteurs',1,[76],'FU','Motrice — bloc moteur'],
+[['Z-BA1'],'Batterie 1',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z-BA2'],'Batterie 2',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z-CAB'],'CAB SIGNAL',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z-CH(UM-AU)'],'Chauffage SCHARFENBERG',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z(CO)DJ'],'Contrôle disjoncteur',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z(CO)VIT'],'Contrôle de vitesse',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z(DI)CPR'],'Alimentation directe du compresseur',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z(ECL)EXT'],'Alimentation extérieure de l\'éclairage',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z(ENT)'],'Test entretien',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z(ES)CAB'],'Essai CAB SIGNAL',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)CLIM'],'Isolement climatisation',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)CO'],'Isolement de la commande',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)CPR'],'Isolement compresseur',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)FEP'],'Isolement du frein à commande électropneumatique',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)SG-SI-AL'],'Isolement signalisation signal d\'alarme',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z-LPRF1'],'Lampe projecteur fanal gauche (interrupteur)',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z-LPRF2'],'Lampe projecteur fanal droit (interrupteur)',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z(N-SE)'],'Neutre frein de secours',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z-KVB'],'Contrôle de vitesse KVB',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z-TBL'],'Transmission balises-locomotive (interrupteur)',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z-ATB'],'Contrôle de vitesse ATB',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z-RS'],'Répétition des signaux (interrupteur)',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z-SE'],'Commande de secours',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z-SEC'],'Boîte de sécurité',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z-UTP'],'Ordinateur principal de cabine (interrupteur)',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z(SIG)VA'],'Shuntage QQ(SIG)VA',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z-VA'],'Veille automatique (interrupteur)',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z-VIT'],'Indicateur de vitesse (interrupteur)',1,[8],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)AFP'],'Isolement de l\'amélioration du facteur de puissance',1,[76],'Z','Motrice — bloc moteur'],
+[['Z(IS)M'],'Isolement bloc moteur',1,[76],'Z','Motrice — bloc moteur'],
+[['ZL-BM'],'Éclairage bloc moteur',1,[76],'Z','Motrice — bloc moteur'],
+[['Z(IS)H-AUX'],'Isolement du hâcheur auxiliaire 500V',1,[73],'Z','Motrice — bloc AUX'],
+[['Z-LB-AUX'],'Éclairage bloc AUX',1,[73],'Z','Motrice — bloc AUX'],
+[['Z-BB'],'Essai à blanc',1,[70],'Z','Motrice — bloc commun'],
+[['Z(IS)AUX'],'Isolement contacteur AUX',1,[70],'Z','Motrice — bloc commun'],
+[['Z(IS)DJ(C)'],'Isolement disjoncteur continu',1,[70],'Z','Motrice — bloc commun'],
+[['ZL-BC'],'Éclairage bloc commun',1,[70],'Z','Motrice — bloc commun'],
+[['Z(IS)H(HT)'],'Isolement H(HT) (sur remorque 1)',2,[60],'Z','Remorque 1'],
+[['—'],'Lampes témoins : capacité filtre AFP / filtre principal et auxiliaires',1,[18],'AU','Motrice'],
+[['—'],'Pupitre',1,[7],'AU','Motrice — cabine'],
+[['RB(A)CG'],'Arrêt CG — R1 et R8 côté motrices',2,[65],'RB','Remorques 1 et 8'],
+[['RB(A)CG'],'Arrêt CG — R1 et R8 côté remorques',2,[31],'RB','Remorques 1 et 8'],
+[['RB(A)CG'],'Arrêt CG — R2 à R7 sauf R4',3,[31,40],'RB','Remorques 2 à 7 (sauf R4)'],
+[['RB(A)CG'],'Arrêt CG — R4',3,[31,38],'RB','Remorque 4'],
+[['RB(A)CG-AC'],'Arrêt CG attelage automatique',1,[3],'RB','Motrice — avant'],
+[['RB(A)CP'],'Arrêt CP — R1 et R8 côté motrices',2,[24],'RB','Remorques 1 et 8'],
+[['RB(A)CP'],'Arrêt CP — R1 et R8 côté remorques',2,[51],'RB','Remorques 1 et 8'],
+[['RB(A)CP'],'Arrêt CP — R2 à R7 sauf R4',3,[51,41],'RB','Remorques 2 à 7 (sauf R4)'],
+[['RB(A)CP'],'Arrêt CP — R4',3,[51,37],'RB','Remorque 4'],
+[['RB(A)CP-AC'],'Arrêt CP attelage automatique',1,[3],'RB','Motrice — avant'],
+[['RB(CO)VRN'],'Commande du vérin des trappes',1,[2],'RB','Motrice — avant'],
+[['RB(DA)AT(AU)'],'Désaccouplement de l\'attelage automatique',1,[7],'RB','Motrice — cabine'],
+[['RB-FI-F'],'Filtre de frein (robinet)',1,[3],'RB','Motrice — avant'],
+[['RB-F(SE)'],'Frein de secours',1,[80],'RB','Motrice'],
+[['RB(SE)AUX'],'Secours circuit auxiliaire',1,[22],'RB','Motrice — bloc auxiliaire pneumatique'],
+[['RB(URG)'],'Robinet d\'urgence (R1)',2,[64],'RB','Remorque 1'],
+[['RB(URG)'],'Robinet d\'urgence (R4)',3,[34],'RB','Remorque 4'],
+[['RB(IS)ALI-PT'],'Isolement circuits auxiliaires',1,[22],'RB','Motrice — bloc auxiliaire pneumatique'],
+[['RB(IS)AVER'],'Isolement avertisseur',1,[6],'RB','Motrice — cabine'],
+[['RB(IS)BC(E)'],'Isolement bloc commun',1,[19],'RB','Motrice'],
+[['RB(IS)BM1'],'Isolement bloc moteur 1',1,[75],'RB','Motrice — bloc moteur'],
+[['RB(IS)BM2'],'Isolement bloc moteur 2',1,[74],'RB','Motrice — bloc moteur'],
+[['RB(IS)CP-CG'],'Isolement frein automatique motrice (jumelé CP-CG)',1,[10,12],'RB','Motrice'],
+[['RB(IS)EV-LV'],'Isolement essuie-vitre, lave-vitre',1,[6],'RB','Motrice — cabine'],
+[['RB(IS)FI-F'],'Isolement filtre de frein',1,[3],'RB','Motrice — avant'],
+[['RB(IS)MANOSTAT-CP'],'Isolement manostat CP',1,[22],'RB','Motrice — bloc auxiliaire pneumatique'],
+[['RB(IS)MA-F'],'Isolement manostat frein',1,[22],'RB','Motrice — bloc auxiliaire pneumatique'],
+[['RB(IS)PR-AT(AU)'],'Isolement vérin des trappes',1,[3],'RB','Motrice — avant'],
+[['RB(IS)PT(C)'],'Isolement pantographe continu',1,[21],'RB','Motrice'],
+[['RB(IS)PT(M)'],'Isolement pantographe monophasé',1,[68],'RB','Motrice'],
+[['RB(IS)REGULATEUR COMPR.'],'Isolement régulateur de pression',1,[22],'RB','Motrice — bloc auxiliaire pneumatique'],
+[['RB(IS)SA'],'Isolement sablage',1,[3],'RB','Motrice — avant'],
+[['RB(IS)SR-AUX'],'Isolement sécheur auxiliaire',1,[22],'RB','Motrice — bloc auxiliaire pneumatique'],
+[['RB(IS)VE-LGV'],'Isolement électrovalve ligne à grande vitesse',1,[67],'RB','Motrice'],
+[['RB(IS)VE-1500NS'],'Isolement électrovalve ligne 1500 NS',1,[21],'RB','Motrice'],
+[['RB(IS)VE(PU)SR'],'Isolement électrovalve de purge de la valve de purge 3',1,[22],'RB','Motrice — bloc auxiliaire pneumatique'],
+[['RB(IS)VE-VA'],'Isolement électrovalve de veille automatique',1,[6],'RB','Motrice — cabine'],
+[['RB(IS)VE-VN(P)RGN SECHEUR(AUX)'],'Isolement électrovalve de valve de purge du régénérateur auxiliaire',1,[22],'RB','Motrice — bloc auxiliaire pneumatique'],
+[['RB(IS)VN(P)RGN-SR(AUX)'],'Valve de purge du régénérateur du sécheur auxiliaire',1,[22],'RB','Motrice — bloc auxiliaire pneumatique'],
+[['RB(IS)VV-VA'],'Isolement valve de veille automatique',1,[6],'RB','Motrice — cabine'],
+[['RB(IS)ALIM'],'Isolement alimentation extérieure — R1 et R8',2,[53,56],'RB','Remorques 1 et 8'],
+[['RB(IS)ALIM'],'Isolement alimentation extérieure — R2 à R7 sauf R4',3,[44],'RB','Remorques 2 à 7 (sauf R4)'],
+[['RB(IS)C-CH-C101'],'Isolement contacteur C101 et manostat',3,[46],'RB','Remorques 2 à 7'],
+[['RB(IS)CP-CG'],'Isolement frein automatique (jumelé CP-CG) — R1 et R8',2,[54,57],'RB','Remorques 1 et 8'],
+[['RB(IS)CP-CG'],'Isolement frein automatique — R2 à R7 sauf R4',3,[45],'RB','Remorques 2 à 7 (sauf R4)'],
+[['RB(IS)GRB'],'Isolement graisseurs de boudins',2,[25],'RB','Remorques 1 et 8'],
+[['RB(IS)H(HT)'],'Isolement sectionneur de toiture',2,[26],'RB','Remorques 1 et 8'],
+[['RB(IS)MA(SUS)'],'Isolement manostat de suspension — R1 et R8',2,[63],'RB','Remorques 1 et 8'],
+[['RB(IS)MA(SUS)'],'Isolement manostat de suspension — R2 à R7 sauf R4',3,[32],'RB','Remorques 2 à 7 (sauf R4)'],
+[['RB(IS)MA(SUS)'],'Isolement manostat de suspension — R4',3,[32,39],'RB','Remorque 4'],
+[['RB(IS)P(AC)'],'Isolement portes d\'accès — R1 et R8',2,[59],'RB','Remorques 1 et 8'],
+[['RB(IS)P(AC)'],'Isolement portes d\'accès — R2 à R7 sauf R4',3,[33],'RB','Remorques 2 à 7 (sauf R4)'],
+[['RB(IS)P(AC)'],'Isolement portes d\'accès — R4',3,[48],'RB','Remorque 4'],
+[['RB(IS)P(AC)CB'],'Isolement porte compartiment à bagages',2,[62],'RB','Remorque 1'],
+[['RB(IS)SUS(PN)'],'Isolement suspension pneumatique — R1 et R8',2,[28],'RB','Remorques 1 et 8'],
+[['RB(IS)SUS(PN)'],'Isolement suspension pneumatique — R2 à R7 sauf R4',3,[50],'RB','Remorques 2 à 7 (sauf R4)'],
+[['RB(IS)SUS(PN)'],'Isolement suspension pneumatique — R4',3,[36,50],'RB','Remorque 4'],
+[['RB(PU)DJ(M)'],'Purge disjoncteur monophasé',1,[71],'RB','Motrice'],
+[['RB(PU)FI-F'],'Purge filtre de frein',1,[3],'RB','Motrice — avant'],
+[['RB(PU)FI-SR(AUX)'],'Purge sécheur des auxiliaires',1,[22],'RB','Motrice — bloc auxiliaire pneumatique'],
+[['H-BA1'],'Sectionneur batterie 1',1,[72],'H','Motrice'],
+[['H-BA2'],'Sectionneur batterie 2',1,[72],'H','Motrice'],
+[['H(HT)'],'Sectionneur ligne de toiture',2,[27],'H','Remorques 1 et 8'],
+[['H(O)M'],'Mise à la terre de la ligne de toiture',1,[16],'H','Motrice'],
+[['—'],'Trappe d\'accès à la toiture',1,[23],'AU','Motrice — arrière'],
+[['—'],'Valve de purge des équipements de frein — bogies moteurs',1,[11,13],'AU','Motrice'],
+[['—'],'Valve de purge des équipements de frein — bogies porteurs R1 et R8',2,[52,55],'AU','Remorques 1 et 8'],
+[['—'],'Valve de purge des équipements de frein — bogies porteurs R2 à R7 sauf R4',3,[42],'AU','Remorques 2 à 7 (sauf R4)'],
+[['V-BA1'],'Voltmètre batterie 1',1,[8],'AU','Motrice — armoire bloc cabine'],
+[['V-BA2'],'Voltmètre batterie 2',1,[8],'AU','Motrice — armoire bloc cabine']];
+const EQ_ITEMS_R=EQ_RAW_R.map((e,i)=>({id:'req'+i,a:e[0],d:e[1],s:e[2],r:e[3],g:e[4],z:e[5],cat:'res'}));
+/* Spécificités TGV R Tricourant Italie (TT00526) — s'ajoutent au catalogue Réseau */
+const EQ_RAW_RIT=[
+[['CC1(I)','CC2(I)'],'Anti-incendie',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(CO)PT(M)'],'Pantographe 25KV/3KV',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-RS-FS'],'Répétition des signaux FS (Italie)',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-RAD-FS'],'Radio FS 900 MHz',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC(ALI-DEI)'],'Alimentation DEI',1,[9],'CC','Motrice — armoire BT couloir gauche'],
+[['CC(DIS-DEI)'],'Alimentation de l\'enregistrement DIS/DEI',1,[9],'CC','Motrice — armoire BT couloir gauche']];
+const EQ_ITEMS_RIT=EQ_RAW_RIT.map((e,i)=>({id:'rieq'+i,a:e[0],d:e[1],s:e[2],r:e[3],g:e[4],z:e[5],cat:'res',series:['serie_resit']}));
+/* ATB : absent des rames Tricourant Italie */
+for(const it of EQ_ITEMS_R)if(it.a.some(a=>eqNorm(a)==='CCATB'||eqNorm(a)==='ZATB'))it.series=['serie_reseau','serie_resbe'];
+/* ---- TGV Atlantique TVM 430 : rectificatif du TVM 300 ---- */
+const EQ_A430_DROP=new Set(['HACP','DJSIDFACP','CCACP']);
+const EQ_RAW_A430_ADD=[
+[['DJ(DF)CAB A'],'Défaut chaîne A CAB SIGNAL',1,[8],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(DF)CAB B'],'Défaut chaîne B CAB SIGNAL',1,[8],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)DF-TRA'],'Défaut avarie mécanique bogie moteur',1,[76],'DJ','Motrice — bloc moteur'],
+[['DJ(SI)VER A'],'Verrouillage chaîne A CAB SIGNAL',1,[8],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)VER B'],'Verrouillage chaîne B CAB SIGNAL',1,[8],'DJ','Motrice — armoire bloc cabine'],
+[['CC-ENR'],'Enregistreur',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-CAB A'],'Informations continu chaîne A CAB SIGNAL',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-CAB B'],'Informations continu chaîne B CAB SIGNAL',1,[8],'CC','Motrice — armoire bloc cabine'],
+[['CC-CAB-AUX'],'Signalisation de cabine',1,[8],'CC','Motrice — armoire bloc cabine']];
+const EQ_ITEMS_A430=EQ_RAW_A.filter(e=>!e[0].some(a=>EQ_A430_DROP.has(eqNorm(a))))
+  .concat(EQ_RAW_A430_ADD)
+  .map((e,i)=>({id:'a4eq'+i,a:e[0],d:e[1],s:e[2],r:e[3],g:e[4],z:e[5],cat:'atl430'}));
 /* ---------- Catalogues (une entrée par série documentée) ---------- */
+/* ============ EURODUPLEX 2N2 — GDA TT00380 (éd. 28-01-2019), annexe 2A p.5103-5114 ============ */
+/* Schémas GDA 3/6/9/10/13 -> internes 1/2/3/4/5 (mêmes planches que DASYE) */
+const EQ_RAW_N2=[
+[['—'],"Attelages de secours (R1 et R8)",2,[56],'AU','Remorques 1 et 8'],
+[['—'],"Afficheurs défauts remorques (R1 et R8)",2,[49,50],'AU','Remorques 1 et 8'],
+[['—'],"Afficheurs défauts remorques (R2 à R7 sauf R4)",3,[65,66],'AU','Remorques 2 à 7 (sauf R4)'],
+[['—'],"Afficheurs défauts remorques (R4)",4,[73],'AU','Remorque 4'],
+[['BVR'],"Boîte de verrouillage",1,[26],'AU','Motrice'],
+[['BP(ACT)ZUB'],"Activation du ZUB",1,[7],'BP','Motrice — armoire bloc cabine'],
+[['BP(A)ECL'],"Arrêt éclairage motrice",1,[26],'BP','Motrice'],
+[['BP(A)DF'],"Acquittement défauts remorques (R1 et R8)",2,[49,50],'BP','Remorques 1 et 8'],
+[['BP(A)DF'],"Acquittement défauts remorques (R2 à R7 sauf R4)",3,[65,66],'BP','Remorques 2 à 7 (sauf R4)'],
+[['BP(A)DF'],"Acquittement défauts remorques (R4)",4,[73],'BP','Remorque 4'],
+[['BP(A-IS)BC'],"Annulation isolement du bloc commun électrique",1,[22],'BP','Motrice — bloc commun'],
+[['BP(A-IS-AU)FP'],"Annulation isolement automatique du frein pneumatique",1,[24],'BP','Motrice — bloc moteur'],
+[['BP(A-IS)M'],"Annulation isolement bloc moteur",1,[24],'BP','Motrice — bloc moteur'],
+[['BP(A-IS)H-AUX'],"Annulation isolement du hacheur auxiliaire",1,[22],'BP','Motrice — bloc commun'],
+[['BP(A-MT)S'],"Annulation d'urgence du maintien de service",1,[3],'BP','Motrice — cabine'],
+[['BP(A)Q-BA'],"Arrêt relais batterie",1,[7],'BP','Motrice — armoire bloc cabine'],
+[['BP(A)QML'],"Arrêt relais machine à laver",1,[7],'BP','Motrice — armoire bloc cabine'],
+[['BP-ECL'],"Eclairage motrices",1,[26],'BP','Motrice'],
+[['BP(ES)SA'],"Essai sablage",1,[18,28],'BP','Motrice'],
+[['BP(OV)HT'],"Ouverture forcée en monophasé",1,[7],'BP','Motrice — armoire bloc cabine'],
+[['BP-Q-BA'],"Relais batteries",1,[7],'BP','Motrice — armoire bloc cabine'],
+[['BP-Q-ML'],"Relais machine à laver",1,[7],'BP','Motrice — armoire bloc cabine'],
+[['BP(TEST)AE-INT'],"Test des anti-enrayeurs",1,[7],'BP','Motrice — armoire bloc cabine'],
+[['BP TEST EL'],"Test FEM élément local",1,[7],'BP','Motrice — armoire bloc cabine'],
+[['BP TEST ED'],"Test FEM élément distant",1,[7],'BP','Motrice — armoire bloc cabine'],
+[['—'],"Commande manuelle du H(HT)",2,[47],'AU','Remorques 1 et 8'],
+[['—'],"Commande manuelle du H(OC)",1,[12],'AU','Motrice'],
+[['H(O)C'],"Sectionneur continu",1,[12],'H','Motrice'],
+[['—'],"Clé de commande manuelle du H(HT) et du H(OC)",1,[25],'AU','Motrice'],
+[['DJ(DF)MAJA'],"Défaut majeur A",1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(DF)MINA'],"Défaut mineur A",1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(DF)MAJB'],"Défaut majeur B",1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(DF)MINB'],"Défaut mineur B",1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)DV'],"Discordance vitesse",1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI-DF)ARM'],"Défaut armement",1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)ENR'],"Défaut enregistrement",1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)SV'],"Défaut contrôle du dispositif de l'indicateur de vitesse",1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)U ENT'],"Défaut unité évaluation",1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)VA'],"Veille automatique (signalisation)",1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)V ENR'],"Défaut enregistrement vitesse",1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)VIT'],"Défaut de la centrale ATESS",1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(DF)LZB'],"Défaut LZB",1,[8],'DJ','Motrice'],
+[['CC(ALI)CH-BA1'],"Alimentation chargeur batterie BM1",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC(ALI)CH-BA2'],"Alimentation chargeur batterie BM2",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC(CH)CM(UM-AU)'],"Réchauffage attelage automatique",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-C-BL1'],"Boîte à leviers 1",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-C-BL2'],"Boîte à leviers 2",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-CD-SR'],"Sécheur d'air",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC(CO)PT1'],"Commande pantographes 1",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC(CO)PT2'],"Commande pantographes 2",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-E-3UH'],"Entrées inutilisées 3UH",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-ECC2'],"Essai coupe-circuit 2",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-EN-TH'],"Enceinte thermique",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-EP-CBL1'],"EP CBL1",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-EP-CBL2'],"EP CBL2",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-EP-CBL3'],"EP CBL3",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-GRB'],"Graissage boudin",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC1-LP','CC2-LP','CC3-LP'],"Eclairage pupitre",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-N-SA'],"Détection sablière",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC(ALI)OND-CPR'],"Alimentation onduleur du compresseur",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-PC-CAB'],"Protection prise 220V en cabine",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-Q(IS)H(HT)'],"Isolement sectionneur HT",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-Q500'],"Relais Q 500",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-PL'],"Horloge",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-R-AB'],"Résistance antibuée",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC(RG)BA'],"Régulation batterie",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-VE-AN'],"Électrovalve air neuf",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-VE-LGV'],"Électrovalve LGV",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-VN-BYPASS'],"Vanne by-pass climatisation",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-VN-FEN'],"Vanne refroidisseur d'air",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC1(VT-DO)AC','CC2(VT-DO)AC','CC3(VT-DO)AC'],"Ventilation droite AC",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC1(VT-GA)AC','CC2(VT-GA)AC','CC3(VT-GA)AC'],"Ventilation gauche AC",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-LF'],"Fanaux",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-LFR-CFF'],"Feu rouge CFF",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-LFR1'],"Lampe feu rouge gauche",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-LFR2'],"Lampe feu rouge droit",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC(CO)LPRF'],"Commande projecteurs",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-AL1-LPRF'],"Alimentation 1 éclairage extérieur",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-AL2-LPRF'],"Alimentation 2 éclairage extérieur",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-LPRF1'],"Lampe projecteurs fanal gauche",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-LPRF2'],"Lampe projecteurs fanal droit",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-GPS'],"GPS",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-GSMR'],"GSM-R",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-BC'],"BLOC COMMUN",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(CO)LT'],"Commande ligne train",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC1-CO RB-TR','CC2-CO RB-TR'],"Commande robinet trappes",1,[4],'CC','Motrice — cabine'],
+[['CC1','CC2','CC3'],"Unité multiple",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-C3-BA'],"3 batterie",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC1(SI-AL)','CC2(SI-AL)','CC3(SI-AL)'],"Signal d'alarme",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(ALI)SI(AL)'],"Alimentation signalisation alarme",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(AUX)BT'],"Alimentation des auxiliaires BT",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-BM1'],"Alimentation bloc moteur 1",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-BM2'],"Alimentation bloc moteur 2",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(ALI-PE)BM1'],"Alimentation permanente BM1",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(ALI-PE)BM2'],"Alimentation permanente BM2",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-BTM A'],"BTM A",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-BTM B'],"BTM B",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-CBA1','CC-CBA2'],"Contacteur batterie",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-V-BA1','CC-V-BA2'],"Voltmètre batterie",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(C)'],"Alimentation en continu",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-CE'],"Compteur d'énergie",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-COD1','CC-COD2'],"Commande de codeurs",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-DBC'],"Détecteur de boîte chaude",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-DMI1'],"Écran DMI 1",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-DMI2'],"Écran DMI 2",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-EBULA'],"Ebula",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-ETCS A'],"Tiroir ETCS A",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-ETCS B'],"Tiroir ETCS B",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-ETCS C'],"Tiroir ETCS C",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(ETCS)AUX'],"ETCS auxiliaire",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC1(FU)ETCS','CC2(FU)ETCS'],"FU par tiroir ETCS",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC1-LORIENT','CC2-LORIENT'],"Lorient",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-LS-I-R'],"Détection fumée",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-ASFA'],"ASFA",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(CO)ECL'],"Commande éclairage",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-CPRA'],"Compresseur auxiliaire",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-DJ'],"Disjoncteur",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(ECL)'],"Eclairage",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(ENR)EL1'],"Entrées logiques enregistreur",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-FEP'],"Frein à commande électropneumatique",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(FP)'],"Fermeture des portes",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-F'],"Frein presse bouton",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-F(SE)'],"Commande frein de secours",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-G-SON A'],"Générateur de son A",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-G-SON B'],"Générateur de son B",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['—'],"Détection instabilité bogie",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC1-INTEGRA','CC2-INTEGRA'],"Équipement INTEGRA",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-KARM'],"Contrôle d'armement de la signalisation de cabine de type TVM",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-KVB'],"Contrôle de vitesse par balises KVB",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-LS'],"Lampe de signalisation",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-LZB'],"LZB",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(M)'],"Alimentation en monophasé",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(MEM)ENR'],"Mémoire enregistreur",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-MINIMA'],"Minima d'alimentation TSF",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(PAM)SON'],"Préamplication de sonorisation",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-PT'],"Pantographes",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-RADAR 1'],"Radar 1",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-RADAR 2'],"Radar 2",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-KARM-PERM'],"Alimentation permanente du module KARM",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-RS'],"Répétition des signaux",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-SA'],"Sablage",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(SE)LF1'],"Secours lampe fanal gauche",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(SE)LF2'],"Secours lampe fanal droit",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC1-SECT'],"Sectionnement 1",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC2-SECT'],"Sectionnement 2",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-LT-ECC1'],"Voyant test coupe circuit 1",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-LT-ECC2'],"Voyant test coupe circuit 2",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-MESB1'],"MESB1 de l'UTSB (instabilité bogie)",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-MESB2'],"MESB2 de l'UTSB (instabilité bogie)",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(SE-I)'],"Secours incendie",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(TEST)FEM'],"Test du FEM",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-QMAI'],"Relais manostat incendie",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC1 UTP','CC2 UTP'],"Ordinateur principal de cabine",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC1 UTA','CC2 UTA'],"Ordinateur auxiliaire de cabine",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-TEST'],"Test tachymétrique",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-VA'],"Veille automatique",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-Q1-URG'],"Relais d'urgence 1",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-Q2-URG'],"Relais d'urgence 2",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-VI'],"Vitesse imposée",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-VISU'],"Ecran et clavier",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-VIT 1'],"Tachymétrie 1",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-VIT 2'],"Tachymétrie 2",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-VIT 3'],"Tachymétrie 3",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-VE-AVER'],"Électrovalves avertisseur",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-VY(URG)'],"Contrôle des voyants d'urgence",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-VY'],"Voyants des équipements de sécurité",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC1-ZUB'],"ZUB 1",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC2-ZUB'],"ZUB 2",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC3-ZUB'],"ZUB 3",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['—'],"Documents de bord",1,[6],'AU','Motrice — cabine'],
+[['—'],"Échelle d'accès de secours à la cabine",1,[6],'AU','Motrice — cabine'],
+[['—'],"Échelle d'accès à la toiture",1,[15],'AU','Motrice'],
+[['—'],"Enregistreur de vitesse « ATESS »",1,[8],'AU','Motrice'],
+[['—'],"Escabeaux de secours (R1 et R8)",2,[57],'AU','Remorques 1 et 8'],
+[['Z-BA1'],"Batterie 1",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-BA2'],"Batterie 2",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-BG(IS)'],"Indicateur de performance de freinage",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-CFF'],"Transition CFF",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-CAB'],"CAB SIGNAL",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(CO)DJ-KL'],"Contrôle disjoncteur par KVB/LZB",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(CO)VIT'],"Contrôle de vitesse",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(DI)CPR'],"Alimentation directe du compresseur",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(ENT)'],"Test entretien",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-ETCS'],"ETCS",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(ES)ETCS'],"Z(ES)ETCS",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(FU)ETCS'],"Urgence par ETCS",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(EXPL)'],"Exploitation",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-INTEGRA'],"INTEGRA",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)CLIM'],"Isolement climatisation",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)CO'],"Isolement de la commande",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)CPR'],"Isolement compresseur",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)FEM'],"Isolement FEM",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)FEP'],"Isolement du frein à commande électropneumatique",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(N-SE)'],"Neutre frein de secours",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-KARM'],"Isolement de la fonction contrôle d'armement de la TVM",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-KVB'],"Contrôle de vitesse KVB",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-LZB'],"LZB (commutateur)",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-TBL'],"Transmission balises-locomotive",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-RS'],"Répétition des signaux (commutateur)",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-SE'],"Commande de secours",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-SE-RAD'],"Commande de secours radio",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-SEC'],"Boîte de sécurité",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-UTP'],"Ordinateur principal de cabine (commutateur)",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-VA'],"Veille automatique (commutateur)",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-VIT'],"Indicateur de vitesse",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-URG'],"Relais d'urgence",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)ECL-CLM'],"Éclairage-climatisation remorques",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)SG-SI-AL'],"Isolement SAFI",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-ENR'],"Enregistreur (commutateur)",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)G-SON'],"Isolement générateur de sons",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)SG-SI-AL-DBC'],"Isolement ligne de serrage signal d'alarme et détecteur de boîte chaude",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-ZUB'],"ZUB",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(CO)DJE'],"Isolement des fonctions techniques train (Coupez-courant et Baissez-panto) commandés par le bistandard",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS-DE)PT1'],"Isolement de la descente du pantographe",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(SEL)DMI'],"Sélection de la console (DMI) active",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-ASFA'],"Isolement de l'ASFA (TGV 2N2 3UH)",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS-SI)LS-I-R'],"Isolement du signalement en motrice d'une détection fumée en remorque (TGV 2N2 3UH)",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(SE)SV'],"Secours seuils de vitesse (TGV 2N2 3UH)",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-LPRF1','Z-LPRF2'],"Secours feu rouge et fanal",1,[27],'Z','Motrice — bloc couloir gauche'],
+[['Z(DF)PZB'],"Isolement du PZB",1,[27],'Z','Motrice — bloc couloir gauche'],
+[['Z(DF)LZB'],"Isolement du LZB",1,[27],'Z','Motrice — bloc couloir gauche'],
+[['Z-CH(UM-AU)'],"Isolement du chauffage de l'autocoupleur central intégral",1,[27],'Z','Motrice — bloc couloir gauche'],
+[['Z(ECL)EXT'],"Source d'alimentation de l'éclairage de la motrice",1,[27],'Z','Motrice — bloc couloir gauche'],
+[['DJ-CPR-CLM'],"Compresseur climatisation",1,[27],'DJ','Motrice — bloc couloir gauche'],
+[['DJ-VT-CLM'],"Ventilation climatisation",1,[27],'DJ','Motrice — bloc couloir gauche'],
+[['Z(IS)M'],"Isolement bloc moteur",1,[24],'Z','Motrice — bloc moteur'],
+[['ZL-BM'],"Eclairage bloc moteur",1,[24],'Z','Motrice — bloc moteur'],
+[['Z(IS)AUX'],"Isolement contacteur AUX",1,[22],'Z','Motrice — bloc commun'],
+[['Z(IS)DJ(C)'],"Isolement disjoncteur continu",1,[22],'Z','Motrice — bloc commun'],
+[['ZL-BC'],"Eclairage bloc commun",1,[22],'Z','Motrice — bloc commun'],
+[['Z(IS)DT-100'],"Isolement 100 Hz",1,[22],'Z','Motrice — bloc commun'],
+[['Z-TEST-MA-DI'],"Test surveillance détection incendie",1,[22],'Z','Motrice — bloc commun'],
+[['Z(IS)H-AUX'],"Isolement du hâcheur auxiliaire 500V",1,[22],'Z','Motrice — bloc commun'],
+[['Z(IS)H(HT)'],"Isolement du H(HT)",2,[45],'Z','Remorque 1'],
+[['—'],"Pupitre",1,[4],'AU','Motrice — cabine'],
+[['RB(A)CG'],"D'arrêt CG (motrice)",1,[17],'RB','Motrice'],
+[['RB(A)CG'],"D'arrêt CG (R1 et R8 côté remorques)",2,[55],'RB','Remorques 1 et 8'],
+[['RB(A)CG'],"D'arrêt CG (R4)",4,[78],'RB','Remorque 4'],
+[['RB(A)CG-AC'],"D'arrêt CG attelage automatique",1,[2],'RB','Motrice — avant'],
+[['RB(A)CP'],"D'arrêt CP (motrice)",1,[16],'RB','Motrice'],
+[['RB(A)CP'],"D'arrêt CP (R1 et R8 côté remorques)",2,[54],'RB','Remorques 1 et 8'],
+[['RB(A)CP-AC'],"D'arrêt CP attelage automatique",1,[2],'RB','Motrice — avant'],
+[['RB(CO)VRN'],"Commande de vérin des trappes",1,[1],'RB','Motrice — avant'],
+[['RB(DA)AT(AU)'],"Désaccouplement de l'attelage automatique",1,[4],'RB','Motrice — cabine'],
+[['RB-FI(F)'],"Filtre de frein",1,[2],'RB','Motrice — avant'],
+[['RB-F(SE)'],"Frein de secours",1,[29],'RB','Motrice — cabine'],
+[['RB(SE)ALI-PT'],"Secours circuit auxiliaire",5,[85],'RB','Motrice — bloc pneumatique (repère 19)'],
+[['RB(URG)'],"D'urgence (R1 et R8)",2,[58],'RB','Remorques 1 et 8'],
+[['RB(URG)'],"D'urgence (R4)",4,[72],'RB','Remorque 4'],
+[['RB(IS)ALI-PT'],"Circuits auxiliaires",5,[86],'RB','Motrice — bloc pneumatique (repère 19)'],
+[['RB(IS)AVER'],"Avertisseur",1,[29],'RB','Motrice — cabine'],
+[['RB(IS)CP-CG'],"Frein automatique (jumelé CP-CG) — motrice",1,[10,11],'RB','Motrice'],
+[['RB(IS)EV-LV'],"Essuie-vitre, lave-vitre",1,[29],'RB','Motrice — cabine'],
+[['RB(IS)FI(F)'],"Filtre de frein (isolement)",1,[2],'RB','Motrice — avant'],
+[['RB(IS)MA-CP'],"Manostat CP",5,[87],'RB','Motrice — bloc pneumatique (repère 19)'],
+[['RB(IS)MA-CPR'],"Manostat du compresseur",5,[91],'RB','Motrice — bloc pneumatique (repère 19)'],
+[['RB(IS)PR-AT(AU)'],"Vérin des trappes",1,[2],'RB','Motrice — avant'],
+[['RB(IS)PT(1)'],"Pantographe continu",1,[14],'RB','Motrice'],
+[['RB(IS)PT(2)'],"Pantographe monophasé",1,[20],'RB','Motrice'],
+[['RB(IS)RG.CPR'],"Régulateur de pression",5,[88],'RB','Motrice — bloc pneumatique (repère 19)'],
+[['RB(IS)SA'],"Sablage (robinet)",1,[3],'RB','Motrice'],
+[['RB(IS)VE-RGN SR(AUX)'],"Électrovalence du régénérateur du sécheur auxiliaire",5,[90],'RB','Motrice — bloc pneumatique (repère 19)'],
+[['RB(IS)RGN-SR (AUX)'],"Régénérateur du sécheur auxiliaire",5,[89],'RB','Motrice — bloc pneumatique (repère 19)'],
+[['RB1(IS)Q(ECH)URG'],"Relais d'urgence 1 (robinet)",1,[5],'RB','Motrice — cabine'],
+[['RB2(IS)Q(ECH)URG'],"Relais d'urgence 2 (robinet)",1,[5],'RB','Motrice — cabine'],
+[['RB(IS)FEM'],"FEM",1,[13],'RB','Motrice'],
+[['RB(IS)SC'],"Siège conducteur",1,[29],'RB','Motrice — cabine'],
+[['RB(IS)MA-C101'],"Contacteur C101 et manostat",4,[81],'RB','Remorque 4'],
+[['RB(IS)-C107'],"Contacteur C107",4,[81],'RB','Remorque 4'],
+[['RB(IS)GRB'],"Graisseurs de boudins",2,[52],'RB','Remorques 1 et 8'],
+[['RB(A)CG'],"Frein automatique (R1 et R8)",2,[59],'RB','Remorques 1 et 8'],
+[['RB(A)CG'],"Frein automatique (R2 à R7 sauf R4)",3,[70],'RB','Remorques 2 à 7 (sauf R4)'],
+[['RB(IS)H(HT)'],"Sectionneur de toiture",2,[46],'RB','Remorques 1 et 8'],
+[['RB(IS)MA(SUS)'],"Manostat de suspension (R1 et R8)",2,[64,60],'RB','Remorques 1 et 8'],
+[['RB(IS)MA(SUS)'],"Manostat de suspension (R2 à R7 sauf R4)",3,[71],'RB','Remorques 2 à 7 (sauf R4)'],
+[['RB(IS)MA(SUS)'],"Manostat de suspension (R4)",4,[82],'RB','Remorque 4'],
+[['RB(IS)P(AC)'],"Portes d'accès (R1 et R8)",2,[48],'RB','Remorques 1 et 8'],
+[['RB(IS)P(AC)'],"Portes d'accès (R2 à R7 sauf R4)",3,[67],'RB','Remorques 2 à 7 (sauf R4)'],
+[['RB(IS)P(AC)'],"Portes d'accès (R4)",4,[74],'RB','Remorque 4'],
+[['RB(IS)P(AC)CB'],"Portes compartiment bagages",2,[53],'RB','Remorques 1 et 8'],
+[['RB(IS)JP(AC)'],"Joints portes d'accès (R1 et R8)",2,[62],'RB','Remorques 1 et 8'],
+[['RB(IS)JP(AC)'],"Joints portes d'accès (R2 à R7 sauf R4)",3,[69],'RB','Remorques 2 à 7 (sauf R4)'],
+[['RB(IS)JP(AC)'],"Joints portes d'accès (R4)",4,[74],'RB','Remorque 4'],
+[['RB(IS)JP(AC)CB'],"Joints portes compartiment bagages",2,[53],'RB','Remorques 1 et 8'],
+[['RB(IS)SUS(PN)'],"Suspension pneumatique (R1 et R8)",2,[61],'RB','Remorques 1 et 8'],
+[['RB(IS)SUS(PN)'],"Suspension pneumatique (R2 à R7 sauf R4)",3,[68],'RB','Remorques 2 à 7 (sauf R4)'],
+[['RB(IS)SUS(PN)'],"Suspension pneumatique (R4)",4,[76,79],'RB','Remorque 4'],
+[['RB(PU)FI-F'],"Filtre de frein (purge)",1,[2],'RB','Motrice — avant'],
+[['RB(PU)FI-SR(AUX)'],"Sécheur des auxiliaires",5,[92],'RB','Motrice — bloc pneumatique (repère 19)'],
+[['RB(PU)DI1'],"Purge du distributeur 1",1,[19],'RB','Motrice'],
+[['RB(PU)DI2'],"Purge du distributeur 2",1,[19],'RB','Motrice'],
+[['H-BA1'],"Batterie 1 (sectionneur)",1,[9],'H','Motrice'],
+[['H-BA2'],"Batterie 2 (sectionneur)",1,[9],'H','Motrice'],
+[['H(HT)'],"Ligne de toiture",2,[47],'H','Remorques 1 et 8'],
+[['H(O)M'],"Mise à la terre de la ligne de toiture",1,[23],'H','Motrice'],
+[['—'],"Trappes d'accès à la toiture",1,[15],'AU','Motrice'],
+[['—'],"Valve de purge des équipements de frein (bogies moteurs)",1,[10,11],'AU','Motrice'],
+[['—'],"Valve de purge des équipements de frein (bogies porteurs R1 et R8)",2,[59,63],'AU','Remorques 1 et 8'],
+[['—'],"Valve de purge des équipements de frein (bogies porteurs R2 à R7 sauf R4)",3,[70],'AU','Remorques 2 à 7 (sauf R4)'],
+[['—'],"Voltmètre batteries 1",1,[7],'AU','Motrice — armoire bloc cabine'],
+[['—'],"Voltmètre batteries 2",1,[7],'AU','Motrice — armoire bloc cabine']];
+const EQ_ITEMS_N2=EQ_RAW_N2.map((e,i)=>({id:'neq'+i,a:e[0],d:e[1],s:e[2],r:e[3],g:e[4],z:e[5],cat:'2n2'}));
+/* ============ TGV POS — GDA TT00380 (éd. 28-01-2019), annexe 2A p.5127-5137 ============ */
+/* Schémas GDA 3/5/8/13 -> internes 1/2/3/4 (pas de schéma R4 séparé sur POS) */
+const EQ_POS_P={
+1:EQ_POS_E[1],
+2:{55:[.03,'t'],45:[.07,'t'],46:[.10,'t'],47:[.13,'t'],52:[.28,'t'],48:[.72,'t'],49:[.85,'t'],50:[.92,'t'],
+   54:[.05,'b'],44:[.09,'b'],51:[.20,'b'],53:[.30,'b'],58:[.80,'b']},
+3:{68:[.05,'t'],60:[.10,'t'],61:[.45,'t'],65:[.82,'t'],67:[.86,'t'],63:[.90,'t'],
+   59:[.06,'b'],62:[.10,'b'],64:[.30,'b'],66:[.50,'b'],71:[.60,'b'],72:[.80,'b'],73:[.90,'b']}};
+const EQ_RAW_P=[
+[['—'],"Attelage de secours (R1)",2,[52],'AU','Remorque 1'],
+[['—'],"Attelage de secours (R8)",2,[49],'AU','Remorque 8'],
+[['—'],"Afficheurs défauts remorques (R1 et R8)",2,[54],'AU','Remorques 1 et 8'],
+[['—'],"Afficheurs défauts remorques (R2 à R7)",3,[61,71],'AU','Remorques 2 à 7'],
+[['BVR'],"Boîte de verrouillage",1,[21],'AU','Motrice'],
+[['BP(ACT)ZUB'],"Activation du ZUB",1,[7],'BP','Motrice — armoire bloc cabine'],
+[['BP(A)ECL'],"Arrêt éclairage motrice",1,[26],'BP','Motrice'],
+[['BP(A)DF'],"Acquittement défauts remorques (R1 et R8)",2,[54],'BP','Remorques 1 et 8'],
+[['BP(A)DF'],"Acquittement défauts remorques (R2 à R7)",3,[61,71],'BP','Remorques 2 à 7'],
+[['BP(A-IS)BC'],"Annulation isolement du bloc commun électrique",1,[22],'BP','Motrice — bloc commun'],
+[['BP(A-IS-AU)FP'],"Annulation isolement automatique du frein pneumatique",1,[24],'BP','Motrice — bloc moteur'],
+[['BP(A-IS)M'],"Annulation isolement bloc moteur",1,[24],'BP','Motrice — bloc moteur'],
+[['BP(A-IS)H-AUX'],"Annulation isolement du hacheur auxiliaire",1,[22],'BP','Motrice — bloc commun'],
+[['BP(A-MT)S'],"Annulation d'urgence du maintien de service",1,[3],'BP','Motrice — cabine'],
+[['BP(A)Q-BA'],"Arrêt relais batterie",1,[7],'BP','Motrice — armoire bloc cabine'],
+[['BP(A)Q-ML'],"Arrêt relais machine à laver",1,[7],'BP','Motrice — armoire bloc cabine'],
+[['BP-ECL'],"Eclairage motrices",1,[26],'BP','Motrice'],
+[['BP(ES)SA'],"Essai sablage",1,[18,28],'BP','Motrice'],
+[['BP(OV)HT'],"Ouverture forcée en monophasé",1,[7],'BP','Motrice — armoire bloc cabine'],
+[['BP-Q-BA'],"Relais batteries",1,[7],'BP','Motrice — armoire bloc cabine'],
+[['BP-Q-ML'],"Relais machine à laver",1,[7],'BP','Motrice — armoire bloc cabine'],
+[['—'],"Commande manuelle du H(HT)",2,[55],'AU','Remorques 1 et 8'],
+[['—'],"Commande manuelle du H(OC)",1,[12],'AU','Motrice'],
+[['—'],"Coffre à outillage (R1)",2,[49],'AU','Remorque 1'],
+[['—'],"Coffre à outillage (R8)",2,[52],'AU','Remorque 8'],
+[['H(O)C'],"Sectionneur continu",1,[12],'H','Motrice'],
+[['—'],"Clé de commande manuelle du H(HT) et du H(OC)",1,[25],'AU','Motrice'],
+[['DJ(DF)MAJA'],"Défaut majeur A",1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(DF)MINA'],"Défaut mineur A",1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(DF)MAJB'],"Défaut majeur B",1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(DF)MINB'],"Défaut mineur B",1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)DV'],"Discordance vitesse",1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI-DF)ARM'],"Défaut armement",1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)ENR'],"Défaut enregistrement",1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)SV'],"Défaut contrôle du dispositif de l'indicateur de vitesse",1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)U ENT'],"Défaut unité évaluation",1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)VA'],"Veille automatique (signalisation)",1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)V ENR'],"Défaut enregistrement vitesse",1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['DJ(SI)VIT'],"Défaut de la centrale ATESS",1,[7],'DJ','Motrice — armoire bloc cabine'],
+[['CC(ALI)CH-BA1'],"Alimentation chargeur batterie BM1",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC(ALI)CH-BA2'],"Alimentation chargeur batterie BM2",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC(CH)CM(UM-AU'],"Réchauffage attelage automatique",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-C-BL1'],"Boîte à leviers 1",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-C-BL2'],"Boîte à leviers 2",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-CD-SR'],"Sécheur d'air",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC(CO)PT1'],"Commande pantographes 1",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC(CO)PT2'],"Commande pantographes 2",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-ECC2'],"Essai coupe-circuit 2",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC EGL'],"Essui-vitre",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-EN-TH'],"Enceinte thermique",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC(ES)FEP'],"Essai frein pneumatique",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-ENR-ODO 4'],"Enregistrement odométrie",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-FEP'],"Frein pneumatique",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-GRB'],"Graissage boudin",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC1-LP','CC2-LP','CC3-LP'],"Eclairage pupitre",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-LT-ECC1'],"Voyant test coupe-circuit 1",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-N-SA'],"Détection sablière",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC(ALI)OND-CPR'],"Alimentation onduleur du compresseur",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-Q(OV)HT'],"Ouverture forcée en monophasé (disrupteur)",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-Q(IS)H(HT)'],"Isolement sectionneur HT",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-Q500'],"Relais Q 500",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-PL'],"Horloge",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-R-AB'],"Résistance antibuée",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC(RG)BA'],"Régulation batterie",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC(SE)RAD'],"Secours radio",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-VE-AN'],"Électrovalve air neuf",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-VE-LGV'],"Électrovalve LGV",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-VN-FEN'],"Vanne refroidisseur d'air",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC1(VT-DO)AC','CC2(VT-DO)AC','CC3(VT-DO)AC'],"Ventilation droite AC",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC1(VT-GA)AC','CC2(VT-GA)AC','CC3(VT-GA)AC'],"Ventilation gauche AC",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-VT-CLM'],"Ventilateur de climatisation",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-LF'],"Fanaux",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-LFR-CFF'],"Feu rouge CFF",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-LFR1'],"Lampe feu rouge gauche",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-LFR2'],"Lampe feu rouge droit",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC(CO)LPRF'],"Commande projecteurs",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-AL1-LPRF'],"Alimentation 1 éclairage extérieur",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-AL2-LPRF'],"Alimentation 2 éclairage extérieur",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-LPRF1'],"Lampe projecteurs fanal gauche",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-LPRF2'],"Lampe projecteurs fanal droit",1,[27],'CC','Motrice — bloc couloir gauche'],
+[['CC-GPS'],"GPS",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-GSMR'],"GSM-R",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-BC'],"BLOC COMMUN",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC1','CC2','CC3'],"Unité multiple",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-C3-BA'],"3 batterie",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC1(SI-AL)','CC2(SI-AL)','CC3(SI-AL)'],"Signal d'alarme",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(ALI)SI(AL)'],"Alimentation signalisation alarme",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(AUX)BT'],"Alimentation des auxiliaires BT",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-BM1'],"Alimentation bloc moteur 1",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-BM2'],"Alimentation bloc moteur 2",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(ALI-PE)BM1'],"Alimentation permanente BM1",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(ALI-PE)BM2'],"Alimentation permanente BM2",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-BTM A'],"BTM A",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-BTM B'],"BTM B",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-CBA1','CC-CBA2'],"Contacteur batterie",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-V-BA1','CC-V-BA2'],"Voltmètre batterie",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(C)'],"Alimentation en continu",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-COD1','CC-COD2'],"Commande de codeurs",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-DMI1'],"Écran DMI 1",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-DMI2'],"Écran DMI 2",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-ETCS A'],"Tiroir ETCS A",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-ETCS B'],"Tiroir ETCS B",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-ETCS C'],"Tiroir ETCS C",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(ETCS)AUX'],"ETCS auxiliaire",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC1(FU)ETCS','CC2(FU)ETCS'],"FU par tiroir ETCS",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC1-LORIENT','CC2-LORIENT'],"Lorient",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(CO)ECL'],"Commande éclairage",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-CPRA'],"Compresseur auxiliaire",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-DJ'],"Disjoncteur",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(ECL)'],"Eclairage",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(ENR)EL'],"Entrées logiques enregistreur",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-FEP'],"Frein à commande électropneumatique",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(FP)'],"Fermeture des portes",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-F'],"Frein presse bouton",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-F(SE)'],"Commande frein de secours",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-G-SON A'],"Générateur de son A",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-G-SON B'],"Générateur de son B",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC1-INTEGRA','CC2-INTEGRA'],"Équipement INTEGRA",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-KARM'],"Contrôle d'armement de la signalisation de cabine de type TVM",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-KVB'],"Contrôle de vitesse par balises KVB",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-LS'],"Lampe de signalisation",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(MEM)ENR'],"Mémoire enregistreur",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-MINIMA'],"Minima d'alimentation TSF",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(PAM)SON'],"Préamplication de sonorisation",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-PT'],"Pantographes",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-RADAR 1'],"Radar 1",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-RADAR 2'],"Radar 2",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-RS'],"Répétition des signaux",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-SA'],"Sablage",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(SE)LF1'],"Secours lampe fanal gauche",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC(SE)LF2'],"Secours lampe fanal droit",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC1-SECT'],"Sectionnement 1",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC2-SECT'],"Sectionnement 2",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC1 UTP','CC2 UTP'],"Ordinateur principal de cabine",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC1 UTA','CC2 UTA'],"Ordinateur auxiliaire de cabine",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-TEST'],"Test tachymétrique",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-VA'],"Veille automatique",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-Q1-URG'],"Relais d'urgence 1",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-Q2-URG'],"Relais d'urgence 2",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-VI'],"Vitesse imposée",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-VISU'],"Ecran et clavier",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-VIT 1'],"Tachymétrie 1",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-VIT 2'],"Tachymétrie 2",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-VIT 3'],"Tachymétrie 3",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-VE-AVER'],"Électrovalves avertisseur",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-VY(URG)'],"Contrôle des voyants d'urgence",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC-VY'],"Voyants des équipements de sécurité",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC1-ZUB'],"ZUB 1",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC2-ZUB'],"ZUB 2",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['CC3-ZUB'],"ZUB 3",1,[7],'CC','Motrice — armoire bloc cabine'],
+[['—'],"Documents de bord",1,[6],'AU','Motrice — cabine'],
+[['—'],"Échelle d'accès de secours à la cabine",1,[6],'AU','Motrice — cabine'],
+[['—'],"Échelle d'accès à la toiture",1,[15],'AU','Motrice'],
+[['—'],"Enregistreur de vitesse « ATESS »",1,[8],'AU','Motrice'],
+[['—'],"Escabeau de secours (R3)",3,[68],'AU','Remorques 2 à 7'],
+[['—'],"Escabeau de secours (R4)",3,[60],'AU','Remorques 2 à 7'],
+[['Z-BA1'],"Batterie 1",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-BA2'],"Batterie 2",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-BG(IS)'],"Indicateur de performance de freinage",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-CFF'],"Transition CFF",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-CAB'],"CAB SIGNAL",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(CO)DJ-KL'],"Contrôle disjoncteur par KVB/LZB",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(CO)VIT'],"Contrôle de vitesse",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(DI)CPR'],"Alimentation directe du compresseur",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(ENT)'],"Test entretien",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-ETCS'],"ETCS",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(ES)ETCS'],"Z(ES)ETCS",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(FU)ETCS'],"Urgence par ETCS",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(EXPL)'],"Exploitation",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-INTEGRA'],"INTEGRA",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)CLIM'],"Isolement climatisation",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)CO'],"Isolement de la commande",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)CPR'],"Isolement compresseur",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)FEP'],"Isolement du frein à commande électropneumatique",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(N-SE)'],"Neutre frein de secours",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-KARM'],"Isolement de la fonction contrôle d'armement de la TVM",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-KVB'],"Contrôle de vitesse KVB",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-TBL'],"Transmission balises-locomotive",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-RS'],"Répétition des signaux (commutateur)",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-SE'],"Commande de secours",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-SE-RAD'],"Commande de secours radio",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-SEC'],"Boîte de sécurité",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-UTP'],"Ordinateur principal de cabine (commutateur)",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-VA'],"Veille automatique (commutateur)",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-VIT'],"Indicateur de vitesse",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-URG'],"Relais d'urgence",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)ECL-CLM'],"Éclairage-climatisation remorques",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)SG-SI-AL'],"Isolement SAFI",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-ENR'],"Enregistreur (commutateur)",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(IS)G-SON'],"Isolement générateur de sons",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-ZUB'],"ZUB",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(CO)DJE'],"Isolement des fonctions techniques train (Coupez-courant et Baissez-panto) commandés par le bistandard",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z(SEL)DMI'],"Sélection de la console (DMI) active",1,[7],'Z','Motrice — armoire bloc cabine'],
+[['Z-LPRF1','Z-LPRF2'],"Secours feu rouge et fanal",1,[27],'Z','Motrice — bloc couloir gauche'],
+[['Z-CH(UM-AU)'],"Isolement du chauffage de l'autocoupleur central intégral",1,[27],'Z','Motrice — bloc couloir gauche'],
+[['Z(ECL)EXT'],"Source d'alimentation de l'éclairage de la motrice",1,[27],'Z','Motrice — bloc couloir gauche'],
+[['DJ-CPR-CLM'],"Compresseur climatisation",1,[27],'DJ','Motrice — bloc couloir gauche'],
+[['DJ-VT-CLM'],"Ventilation climatisation",1,[27],'DJ','Motrice — bloc couloir gauche'],
+[['Z(IS)M'],"Isolement bloc moteur",1,[24],'Z','Motrice — bloc moteur'],
+[['ZL-BM'],"Eclairage bloc moteur",1,[24],'Z','Motrice — bloc moteur'],
+[['Z(IS)AUX'],"Isolement contacteur AUX",1,[22],'Z','Motrice — bloc commun'],
+[['Z(IS)DJ(C)'],"Isolement disjoncteur continu",1,[22],'Z','Motrice — bloc commun'],
+[['ZL-BC'],"Eclairage bloc commun",1,[22],'Z','Motrice — bloc commun'],
+[['Z(IS)H(HT)'],"Isolement du H(HT)",2,[54],'Z','Remorque 1'],
+[['—'],"Pupitre",1,[4],'AU','Motrice — cabine'],
+[['RB(A)CG'],"D'arrêt CG (motrice)",1,[17],'RB','Motrice'],
+[['RB(A)CG'],"D'arrêt CG (R1 et R8 côté remorques)",2,[50,58],'RB','Remorques 1 et 8'],
+[['RB(A)CG'],"D'arrêt CG (R2 à R7 sauf R4)",3,[73],'RB','Remorques 2 à 7'],
+[['RB(A)CG'],"D'arrêt CG (R4)",3,[63,73],'RB','Remorques 2 à 7'],
+[['RB(A)CG-AC'],"D'arrêt CG attelage automatique",1,[2],'RB','Motrice — avant'],
+[['RB(A)CP'],"D'arrêt CP (motrice)",1,[16],'RB','Motrice'],
+[['RB(A)CP'],"D'arrêt CP (R1 et R8 côté remorques)",2,[50,44],'RB','Remorques 1 et 8'],
+[['RB(A)CP'],"D'arrêt CP (R2 à R7 sauf R4)",3,[73],'RB','Remorques 2 à 7'],
+[['RB(A)CP'],"D'arrêt CP (R4)",3,[63,73],'RB','Remorques 2 à 7'],
+[['RB(A)CP-AC'],"D'arrêt CP attelage automatique",1,[2],'RB','Motrice — avant'],
+[['RB(CO)VRN'],"Commande de vérin des trappes",1,[1],'RB','Motrice — avant'],
+[['RB(DA)AT(AU)'],"Désaccouplement de l'attelage automatique",1,[4],'RB','Motrice — cabine'],
+[['RB-FI-F'],"Filtre de frein",1,[2],'RB','Motrice — avant'],
+[['RB-F(SE)'],"Frein de secours",1,[29],'RB','Motrice — cabine'],
+[['RB(SE)ALI-PT'],"Secours circuit auxiliaire",4,[85],'RB','Motrice — bloc pneumatique'],
+[['RB(URG)'],"D'urgence (R4)",3,[65],'RB','Remorques 2 à 7'],
+[['RB(IS)ALI-PT'],"Circuits auxiliaires",4,[86],'RB','Motrice — bloc pneumatique'],
+[['RB(IS)AVER-Q'],"Avertisseur pédale",1,[29],'RB','Motrice — cabine'],
+[['RB(IS)CP-CG'],"Frein automatique (jumelé CP-CG) — motrice",1,[10,11],'RB','Motrice'],
+[['RB(IS)EV-LV'],"Essuie-vitre, lave-vitre",1,[29],'RB','Motrice — cabine'],
+[['RB(IS)FI-F'],"Filtre de frein (isolement)",1,[2],'RB','Motrice — avant'],
+[['RB(IS)MA-CP'],"Manostat CP",4,[87],'RB','Motrice — bloc pneumatique'],
+[['RB(IS)MA-CPR'],"Manostat du compresseur",4,[91],'RB','Motrice — bloc pneumatique'],
+[['RB(IS)PR-AT(AU)'],"Vérin des trappes",1,[2],'RB','Motrice — avant'],
+[['RB(IS)PT(1)'],"Pantographe continu",1,[14],'RB','Motrice'],
+[['RB(IS)PT(2)'],"Pantographe monophasé",1,[20],'RB','Motrice'],
+[['RB(IS)RG-CPR'],"Régulateur de pression",4,[88],'RB','Motrice — bloc pneumatique'],
+[['RB(IS)SA'],"Sablage (robinet)",1,[2],'RB','Motrice — avant'],
+[['RB(IS)VE-RGN SR(AUX)'],"Électrovalence du régénérateur du sécheur auxiliaire",4,[90],'RB','Motrice — bloc pneumatique'],
+[['RB(IS)RGN-SR (AUX)'],"Régénérateur du sécheur auxiliaire",4,[89],'RB','Motrice — bloc pneumatique'],
+[['RB1(IS)Q(ECH)URG'],"Relais d'urgence 1 (robinet)",1,[5],'RB','Motrice — cabine'],
+[['RB2(IS)Q(ECH)URG'],"Relais d'urgence 2 (robinet)",1,[5],'RB','Motrice — cabine'],
+[['RB(IS)AVER-VV'],"Avertisseur",1,[29],'RB','Motrice — cabine'],
+[['RB(IS)SC'],"Siège conducteur",1,[29],'RB','Motrice — cabine'],
+[['RB(IS)MA-C101'],"Contacteur C101 et manostat (R4)",3,[67],'RB','Remorques 2 à 7'],
+[['RB(IS)GRB'],"Graisseurs de boudins (R1 et R8)",2,[45],'RB','Remorques 1 et 8'],
+[['RB(IS)CP-CG'],"Frein automatique (jumelé CP-CG) — R1 et R8",2,[48],'RB','Remorques 1 et 8'],
+[['RB(IS)CP-CG'],"Frein automatique (jumelé CP-CG) — R2 à R7 sauf R4",3,[59],'RB','Remorques 2 à 7'],
+[['RB(IS)H(HT)'],"Sectionneur de toiture",2,[46],'RB','Remorques 1 et 8'],
+[['RB(IS)P(AC)'],"Portes d'accès (R1 et R8)",2,[53],'RB','Remorques 1 et 8'],
+[['RB(IS)P(AC)'],"Portes d'accès (R2 à R7)",3,[64],'RB','Remorques 2 à 7'],
+[['RB(IS)SUS(PN)'],"Suspension pneumatique (R1 et R8)",2,[47],'RB','Remorques 1 et 8'],
+[['RB(IS)SUS(PN)'],"Suspension pneumatique (R2 à R7 sauf R4)",3,[72],'RB','Remorques 2 à 7'],
+[['RB(IS)SUS(PN)'],"Suspension pneumatique (R4)",3,[62],'RB','Remorques 2 à 7'],
+[['RB(PU)FI-F'],"Filtre de frein (purge)",1,[2],'RB','Motrice — avant'],
+[['RB(PU)FI-SR(AUX)'],"Sécheur des auxiliaires",4,[92],'RB','Motrice — bloc pneumatique'],
+[['H(HT)'],"Ligne de toiture",2,[55],'H','Remorques 1 et 8'],
+[['H(O)M'],"Mise à la terre de la ligne de toiture",1,[23],'H','Motrice'],
+[['—'],"Trappes d'accès à la toiture",1,[15],'AU','Motrice'],
+[['—'],"Valve de purge des équipements de frein (bogies moteurs)",1,[10,11],'AU','Motrice'],
+[['—'],"Valve de purge des équipements de frein (bogies porteurs R1 et R8)",2,[51],'AU','Remorques 1 et 8'],
+[['—'],"Valve de purge des équipements de frein (bogies porteurs R2 à R7 sauf R4)",3,[66],'AU','Remorques 2 à 7'],
+[['—'],"Voltmètre batteries 1",1,[7],'AU','Motrice — armoire bloc cabine'],
+[['—'],"Voltmètre batteries 2",1,[7],'AU','Motrice — armoire bloc cabine']];
+const EQ_ITEMS_P=EQ_RAW_P.map((e,i)=>({id:'peq'+i,a:e[0],d:e[1],s:e[2],r:e[3],g:e[4],z:e[5],cat:'pos'}));
 const EQ_CATALOGS={
 duplex:{key:'duplex',label:'TGV Duplex',serie:'serie_duplex',deck:2,
   cars:[['M1',1],['R1',2],['R2',3],['R3',3],['R4',4],['R5',3],['R6',3],['R7',3],['R8',2],['M2',1]],
@@ -3804,6 +5174,51 @@ duplex:{key:'duplex',label:'TGV Duplex',serie:'serie_duplex',deck:2,
   pneu:EQ_PNEU,pneuRep:26,pneuTitle:'BLOC PNEUMATIQUE',pneuSub:'(schéma 5 — motrice, repère 26)',
   aliases:EQ_ALIASES,
   src:'Source : GDA TGV Duplex — TT00235 (éd. 12-12-2014), annexes 2A/2B. Schéma stylisé : positions indicatives.'},
+dupe:{key:'dupe',label:'TGV Duplex ERTMS',serie:'serie_dupe',deck:2,
+  cars:[['M1',1],['R1',2],['R2',3],['R3',3],['R4',4],['R5',3],['R6',3],['R7',3],['R8',2],['M2',1]],
+  schemas:{1:'Motrices 1 et 2',2:'Remorques 1 et 8',3:'Remorques 2 à 7 (sauf R4)',4:'Remorque 4',5:'Bloc pneumatique (repère 19)'},
+  maxVeh:4,pneuSchema:5,
+  pos:EQ_POS_E,mzones:EQ_M_ZONES_E,
+  panel:EQ_PANEL_E,panelRep:7,panelTitle:'ARMOIRE BLOC CABINE — TGV DUPLEX ERTMS',panelSub:'(repère 7)',
+  pneu:EQ_PNEU_E,pneuRep:19,pneuTitle:'BLOC PNEUMATIQUE',pneuSub:'(schéma 5 — repère 19 de la motrice)',
+  aliases:EQ_ALIASES_E,
+  src:''},
+'2n2':{key:'2n2',label:'Euroduplex (2N2)',serie:'serie_2n2',deck:2,
+  cars:[['M1',1],['R1',2],['R2',3],['R3',3],['R4',4],['R5',3],['R6',3],['R7',3],['R8',2],['M2',1]],
+  schemas:{1:'Motrices 1 et 2',2:'Remorques 1 et 8',3:'Remorques 2 à 7 (sauf R4)',4:'Remorque 4',5:'Bloc pneumatique (repère 19)'},
+  maxVeh:4,pneuSchema:5,
+  pos:EQ_POS_E,mzones:EQ_M_ZONES_E,
+  panel:EQ_PANEL_E,panelRep:7,panelTitle:'ARMOIRE BLOC CABINE — EURODUPLEX 2N2',panelSub:'(repère 7 — agencement indicatif, planche DASYE)',
+  pneu:EQ_PNEU_E,pneuRep:19,pneuTitle:'BLOC PNEUMATIQUE',pneuSub:'(schéma 5 — repère 19 de la motrice)',
+  aliases:EQ_ALIASES_E,
+  src:'Source : GDA TGV 2N2, POS et DASYE — TT00380 (éd. 28-01-2019), annexes 2A/2B. Schéma stylisé : positions indicatives.'},
+pos:{key:'pos',label:'TGV P-DUPLEX',serie:'serie_pos',deck:1,
+  cars:[['M1',1],['R1',2],['R2',3],['R3',3],['R4',3],['R5',3],['R6',3],['R7',3],['R8',2],['M2',1]],
+  schemas:{1:'Motrices 1 et 2',2:'Remorques 1 et 8',3:'Remorques 2 à 7',4:'Bloc pneumatique'},
+  maxVeh:3,pneuSchema:4,
+  pos:EQ_POS_P,mzones:EQ_M_ZONES_E,
+  panel:EQ_PANEL_E,panelRep:7,panelTitle:'ARMOIRE BLOC CABINE — TGV P-DUPLEX',panelSub:'(repère 7 — agencement indicatif, planche DASYE)',
+  pneu:EQ_PNEU_E,pneuRep:19,pneuTitle:'BLOC PNEUMATIQUE',pneuSub:'(schéma 4 — motrice)',
+  aliases:EQ_ALIASES_E,
+  src:'Source : GDA TGV 2N2, POS et DASYE — TT00380 (éd. 28-01-2019), annexes 2A/2B. Schéma stylisé : positions indicatives.'},
+atl430:{key:'atl430',label:'TGV Atlantique (TVM 430)',serie:'serie_atl430',deck:1,
+  cars:[['M1',1],['R1',2],['R2',3],['R3',3],['R4',3],['R5',3],['R6',3],['R7',3],['R8',3],['R9',3],['R10',2],['M2',1]],
+  schemas:{1:'Motrices 1 et 2',2:'Remorques 1 et 10',3:'Remorques 2 à 9'},
+  maxVeh:3,pneuSchema:0,
+  pos:EQ_POS_A,mzones:EQ_M_ZONES_A,
+  panel:EQ_PANEL_A,panelRep:8,panelTitle:'ARMOIRE CABINE — TGV ATLANTIQUE (TVM 430)',panelSub:'(repère 8 — agencement indicatif, planche TVM 300)',
+  pneu:EQ_PNEU_A,pneuRep:22,pneuTitle:'BLOC AUXILIAIRE PNEUMATIQUE',pneuSub:'(repère 22 de la motrice)',
+  aliases:EQ_ALIASES_A,
+  src:''},
+res:{key:'res',label:'TGV Réseau',serie:'serie_reseau',seriesAlt:['serie_resbe','serie_resit'],deck:1,
+  cars:[['M1',1],['R1',2],['R2',3],['R3',3],['R4',3],['R5',3],['R6',3],['R7',3],['R8',2],['M2',1]],
+  schemas:{1:'Motrices 1 et 2',2:'Remorques 1 et 8',3:'Remorques 2 à 7'},
+  maxVeh:3,pneuSchema:0,
+  pos:EQ_POS_A,mzones:EQ_M_ZONES_A,
+  panel:EQ_PANEL_A,panelRep:8,panelTitle:'ARMOIRE CABINE — TGV RÉSEAU',panelSub:'(repère 8 — agencement indicatif)',
+  pneu:EQ_PNEU_A,pneuRep:22,pneuTitle:'BLOC AUXILIAIRE PNEUMATIQUE',pneuSub:'(repère 22 de la motrice)',
+  aliases:EQ_ALIASES_A,
+  src:''},
 atl:{key:'atl',label:'TGV Atlantique (TVM 300)',serie:'serie_atl',deck:1,
   cars:[['M1',1],['R1',2],['R2',3],['R3',3],['R4',3],['R5',3],['R6',3],['R7',3],['R8',3],['R9',3],['R10',2],['M2',1]],
   schemas:{1:'Motrices 1 et 2',2:'Remorques 1 et 10',3:'Remorques 2 à 9',4:'Bloc auxiliaire pneumatique'},
@@ -3814,38 +5229,154 @@ atl:{key:'atl',label:'TGV Atlantique (TVM 300)',serie:'serie_atl',deck:1,
   aliases:EQ_ALIASES_A,
   src:'Source : GDA TGV A (TVM 300), annexes 2A/2B (éd. 13-12-2012) et planche BLOC CABINE ATL 300. Schéma stylisé : positions indicatives.'}};
 const eqCatOf=it=>EQ_CATALOGS[(it&&it.cat)||'duplex']||EQ_CATALOGS.duplex;
+const eqCatForSerie=ser=>Object.values(EQ_CATALOGS).find(c=>c.serie===ser||(c.seriesAlt||[]).includes(ser))||null;
 /* Fusion : un appareil portant le même nom et les mêmes abréviations dans plusieurs
    catalogues devient UN SEUL appareil multi-séries — la localisation propre à chaque
    série est portée par ses variantes (onglets de série dans la fiche). */
 const EQ_MERGE_MAP={};
-const EQ_ITEMS_A_LIVE=(function(){
-  const key=it=>eqNorm(it.d)+'|'+it.a.map(eqNorm).sort().join(',');
+const EQ_MERGE_KEY=it=>eqNorm(it.d)+'|'+it.a.map(eqNorm).sort().join(',');
+function eqMergeInto(base,items,serieId){
+  const c=eqCatForSerie(serieId);
+  const ids=[serieId,...((c&&c.serie===serieId)?(c.seriesAlt||[]):[])];
   const idx={};
-  for(const it of EQ_ITEMS)idx[key(it)]=it;
+  for(const it of base)idx[EQ_MERGE_KEY(it)]=it;
   const rest=[];
-  for(const at of EQ_ITEMS_A){
-    const m=idx[key(at)];
+  for(const at of items){
+    const m=idx[EQ_MERGE_KEY(at)];
     if(m){EQ_MERGE_MAP[at.id]=m.id;
-      m.series=['serie_duplex','serie_atl'];
-      m.variants=Object.assign({},m.variants,{serie_atl:{s:at.s,r:at.r,z:at.z,panel:null}});}
+      m.series=[...new Set([...(m.series||['serie_duplex']),...ids])];
+      m.variants=Object.assign({},m.variants);
+      m.variants[serieId]={s:at.s,r:at.r,z:at.z,panel:null};}
     else rest.push(at);}
-  return rest;})();
+  return rest;}
+const EQ_ITEMS_A_LIVE=eqMergeInto(EQ_ITEMS,EQ_ITEMS_A,'serie_atl');
+const EQ_ITEMS_E_LIVE=eqMergeInto(EQ_ITEMS,EQ_ITEMS_E,'serie_dupe');
+const EQ_ITEMS_A430_LIVE=eqMergeInto(EQ_ITEMS,EQ_ITEMS_A430,'serie_atl430');
+const EQ_ITEMS_R_LIVE=eqMergeInto(EQ_ITEMS,EQ_ITEMS_R,'serie_reseau');
+const EQ_ITEMS_RIT_LIVE=EQ_ITEMS_RIT;
+const EQ_ITEMS_N2_LIVE=eqMergeInto(EQ_ITEMS,EQ_ITEMS_N2,'serie_2n2');
+const EQ_ITEMS_P_LIVE=eqMergeInto(EQ_ITEMS,EQ_ITEMS_P,'serie_pos');
 
 /* ---------- Rendu du module ---------- */
 function eqMatchCodes(item){return item.a.map(eqNorm).filter(x=>x&&x!=='—');}
-function eqSvgTrain(schema,cat){
-  cat=cat||EQ_CATALOGS.duplex;
+function eqSvgTrain(schema,cat,opts){
+  cat=cat||EQ_CATALOGS.duplex;opts=opts||{};
   let x=4;const w=96,g=4;const last=cat.cars.length-1;
   const parts=cat.cars.map(([lbl,s],i)=>{
-    const hot=s===schema||(schema===cat.pneuSchema&&s===1);
+    const hot=opts.nav?(opts.selCar===lbl):(s===schema||(schema===cat.pneuSchema&&s===1));
     const nose=i===0?'M12 34 L4 20 Q2 10 14 8 L96 8 L96 34 Z':(i===last?'M4 8 L86 8 Q98 10 96 20 L88 34 L4 34 Z':null);
     const bx=x;x+=w+g;
     const fill=hot?'var(--accent)':'var(--bg-soft)';
     const txt=hot?'#fff':'var(--muted)';
     const shape=nose?`<path transform="translate(${bx},0)" d="${nose}" fill="${fill}" stroke="var(--border-strong)"/>`
       :`<rect x="${bx}" y="8" width="${w}" height="26" rx="4" fill="${fill}" stroke="var(--border-strong)"/>`;
-    return shape+`<text x="${bx+w/2}" y="25" text-anchor="middle" font-size="13" font-weight="700" fill="${txt}">${lbl}</text>`;});
+    const inner=shape+`<text x="${bx+w/2}" y="25" text-anchor="middle" font-size="13" font-weight="700" fill="${txt}">${lbl}</text>`;
+    return opts.nav?`<g class="eq-carbtn" data-car="${lbl}" data-cs="${s}" style="cursor:pointer">${inner}</g>`:inner;});
   return `<div class="eq-scroll"><svg viewBox="0 0 ${x+2} 42" class="eq-train">${parts.join('')}</svg></div>`;}
+/* Localisation effective d'un appareil pour une série donnée */
+function eqEffLoc(it,serId){
+  let v=it.variants&&it.variants[serId];
+  if(!v&&it.variants){const c=eqCatForSerie(serId);
+    if(c&&c.serie!==serId)v=it.variants[c.serie];}
+  return {s:v&&v.s?v.s:it.s,r:v&&v.r&&v.r.length?v.r:it.r};}
+/* Vue « navigation » d'un véhicule : zones cliquables */
+function eqSvgVehicleNav(schema,cat,zone,selReps,selRep){
+  const W=1000,H=200,bx=20,bw=W-40,by=42,bh=110;
+  let body='';
+  const zones=[];
+  if(schema===1){
+    body=`<path d="M${bx+55} ${by} H${bx+bw} V${by+bh} H${bx+55} L${bx} ${by+bh/2} Z" fill="var(--panel)" stroke="var(--border-strong)" stroke-width="2"/>`;
+    for(const z of cat.mzones)zones.push({x0:z[0],x1:z[1],label:z[2]});
+  }else{
+    body=`<rect x="${bx}" y="${by}" width="${bw}" height="${bh}" rx="10" fill="var(--panel)" stroke="var(--border-strong)" stroke-width="2"/>`;
+    if(cat.deck===2)body+=`<line x1="${bx}" y1="${by+bh/2}" x2="${bx+bw}" y2="${by+bh/2}" stroke="var(--border)" stroke-dasharray="5 5"/>`;
+    zones.push({x0:0,x1:.33,label:'CÔTÉ MOTRICE'},{x0:.33,x1:.66,label:'ZONE CENTRALE'},{x0:.66,x1:1,label:'AUTRE EXTRÉMITÉ'});}
+  const zr=zones.map(z=>{
+    const X=schema===1?bx+58+z.x0*(bw-70):bx+8+z.x0*(bw-16);
+    const Wd=schema===1?(z.x1-z.x0)*(bw-70):(z.x1-z.x0)*(bw-16);
+    const on=(zone&&!zone.special&&zone.label===z.label)||(zone&&zone.special==='panel'&&/ARMOIRE/i.test(z.label))||(zone&&zone.special==='pneu'&&/COMPR|PNEU/i.test(z.label));
+    return `<g class="eq-zonebtn" data-z0="${z.x0}" data-z1="${z.x1}" data-zl="${esc(z.label)}" style="cursor:pointer">
+      <rect x="${X+2}" y="${by+8}" width="${Math.max(Wd-4,10)}" height="${bh-16}" rx="8" fill="${on?'var(--accent)':'var(--bg-soft)'}" opacity="${on?'.9':'.8'}" stroke="${on?'var(--accent)':'var(--border-strong)'}"/>
+      <text x="${X+Wd/2}" y="${by+bh/2+4}" text-anchor="middle" font-size="11" font-weight="800" fill="${on?'#fff':'var(--muted)'}">${z.label}</text></g>`;}).join('');
+  const pos=cat.pos[schema]||{};
+  selReps=selReps||[];
+  const dots=Object.entries(pos).map(([rep,[fx,side]])=>{
+    const cx=schema===1?bx+58+fx*(bw-70):bx+30+fx*(bw-60);
+    const cy=side==='t'?by-9:by+bh+9;
+    const inZ=zone&&!zone.special&&fx>=zone.x0-0.02&&fx<=zone.x1+0.02;
+    const isSel=selReps.includes(+rep);
+    const isCur=selRep===+rep;
+    if(isSel)return `<g class="nvrep" data-rep="${rep}" style="cursor:pointer">
+      <line x1="${cx}" y1="${cy}" x2="${cx}" y2="${side==='t'?by+4:by+bh-4}" stroke="var(--accent)" stroke-width="2"/>
+      <circle cx="${cx}" cy="${cy}" r="12" fill="var(--accent)" stroke="#fff" stroke-width="2.5"/>
+      <text x="${cx}" y="${cy+3.5}" text-anchor="middle" font-size="10.5" font-weight="800" fill="#fff">${rep}</text>
+      <circle cx="${cx}" cy="${cy}" r="16" fill="none" stroke="var(--accent)" opacity=".5"${isCur?' stroke-width="2.5"':''}><animate attributeName="r" values="13;20;13" dur="1.5s" repeatCount="indefinite"/><animate attributeName="opacity" values=".55;0;.55" dur="1.5s" repeatCount="indefinite"/></circle>
+    </g>`;
+    return `<g class="nvrep" data-rep="${rep}" style="cursor:pointer"><circle cx="${cx}" cy="${cy}" r="${inZ?9:7}" fill="${inZ?'color-mix(in srgb,var(--accent) 55%,var(--panel))':'var(--panel)'}" stroke="${inZ?'var(--accent)':'var(--border-strong)'}"/>
+      <text x="${cx}" y="${cy+3}" text-anchor="middle" font-size="8" font-weight="700" fill="${inZ?'#fff':'var(--muted)'}">${rep}</text></g>`;}).join('');
+  return `<div class="eq-scroll"><svg viewBox="0 0 ${W} ${H}" class="eq-veh">${body}${zr}${dots}</svg></div>`;}
+/* Bloc de navigation (puces séries + schémas cliquables) */
+function eqNavHtml(ser,sel,eff,catObj,codes,showSch){
+  let navCat=eqCatForSerie(ser);
+  if(!navCat&&sel&&showSch)navCat=catObj;
+  eqNavHtml._cat=navCat;
+  let h='<div id="eqNav"><div class="eq-serchips" id="eqNavChips">'+
+    `<button class="eq-fchip${ser==='ALL'?' on':''}" data-s="ALL" style="--fc:#7b8794">Tout</button>`+
+    (data.fleet||[]).map(s=>{
+      const nm=s.name.replace(/^TGV\s*/i,'').replace(/[()]/g,'').trim();
+      const tip=(s.subs||[]).map(u=>u.name+(u.rames?' · rames '+u.rames:'')).join(' — ')||s.name;
+      return `<button class="eq-fchip${ser===s.id?' on':''}" data-s="${s.id}" style="--fc:${esc(s.color||'#888')}" title="${esc(tip)}">${esc(nm)}</button>`;}).join('')+'</div>';
+  if(navCat){
+    const selOnCat=sel&&eff&&showSch&&catObj&&catObj.key===navCat.key;
+    h+=`<div class="eq-navlbl">🧭 Cliquez une voiture, une zone ou un repère — la liste de gauche suit votre sélection</div>`;
+    h+=eqSvgTrain(state.eqCar?null:(selOnCat?eff.s:null),navCat,{nav:true,selCar:state.eqCar&&state.eqCar.label});
+    const vehSchema=state.eqCar?state.eqCar.schema:(selOnCat&&eff.s<=navCat.maxVeh?eff.s:null);
+    if(vehSchema){
+      const selReps=selOnCat&&eff.s===vehSchema?eff.r:[];
+      h+=eqSvgVehicleNav(vehSchema,navCat,state.eqZone,selReps,state.eqRep);
+      const zsp=state.eqZone&&state.eqZone.special;
+      const selPanel=selOnCat&&((eff.panel)||(eff.r.includes(navCat.panelRep)&&eff.s===1));
+      if(zsp==='panel'||(!state.eqZone&&selPanel))
+        h+=eqPanelHtml(selOnCat?codes:[],selOnCat&&eff.panel?eff.panel:null,navCat);
+      const selPneu=selOnCat&&((eff.r.includes(navCat.pneuRep)&&eff.s===1)||eff.s===navCat.pneuSchema);
+      if(zsp==='pneu'||(!state.eqZone&&selPneu&&vehSchema===1))
+        h+=eqPneuHtml(selOnCat?codes:[],navCat);}
+    else if(selOnCat&&eff.s===navCat.pneuSchema)h+=eqPneuHtml(codes,navCat);
+  }else if(ser==='ALL'){
+    h+='<div class="eq-navlbl" style="opacity:.75">Choisissez une série ci-dessus (ou un appareil à gauche) pour afficher ses schémas.</div>';}
+  h+='</div>';
+  return h;}
+function wireEqNav(det){
+  const navCat=eqNavHtml._cat||null;
+  det.querySelectorAll('#eqNavChips .eq-fchip').forEach(b=>b.onclick=()=>{
+    state.eqSerie=b.dataset.s;state.eqRameSet=false;state.eqVarSerie=null;
+    state.eqCar=null;state.eqZone=null;
+    $('#eqRame').value='';$('#eqRameInfo').style.display='none';renderEquip();});
+  det.querySelectorAll('.eq-carbtn').forEach(g=>g.onclick=()=>{
+    const lbl=g.dataset.car,cs=+g.dataset.cs;
+    if((state.eqSerie||'ALL')==='ALL'&&eqNavHtml._cat)state.eqSerie=eqNavHtml._cat.serie;
+    state.eqCar=state.eqCar&&state.eqCar.label===lbl?null:{label:lbl,schema:cs};
+    state.eqZone=null;renderEquip();});
+  det.querySelectorAll('#eqNav .nvrep').forEach(g=>g.onclick=()=>{
+    state.eqRep=state.eqRep===+g.dataset.rep?null:+g.dataset.rep;renderEquip();});
+  det.querySelectorAll('.eq-zonebtn').forEach(g=>g.onclick=()=>{
+    if(/ARMOIRE/i.test(g.dataset.zl)){
+      state.eqZone=state.eqZone&&state.eqZone.special==='panel'?null:{special:'panel'};
+      renderEquip();return;}
+    if(/COMPR|PNEU/i.test(g.dataset.zl)){
+      state.eqZone=state.eqZone&&state.eqZone.special==='pneu'?null:{special:'pneu'};
+      renderEquip();return;}
+    const z={x0:+g.dataset.z0,x1:+g.dataset.z1,label:g.dataset.zl};
+    state.eqZone=state.eqZone&&!state.eqZone.special&&state.eqZone.label===z.label?null:z;
+    renderEquip();});
+  if(navCat)det.querySelectorAll('#eqNav .eq-panel.gp .gp-cell').forEach(el=>el.onclick=()=>{
+    const code=el.dataset.code;
+    const al=navCat.aliases||{};
+    const all=eqAllItems();
+    const hitIt=all.find(i=>(i.cat||'duplex')===navCat.key&&i.a.some(a=>{const n1=eqNorm(a);return n1===code||(al[n1]||n1)===(al[code]||code);}));
+    if(hitIt){state.eqSel=hitIt.id;state.eqRep=null;state.eqVarSerie=null;
+      state.eqQuery='';const si=$('#eqSearch');if(si)si.value='';renderEquip();}
+    else toast('Aucune fiche appareil pour « '+el.title.split(' — ')[0]+' »');});}
 function eqSvgVehicle(schema,reps,selRep,cat){
   cat=cat||EQ_CATALOGS.duplex;
   const W=1000,H=230,bx=20,bw=W-40,by=55,bh=110;
@@ -3913,11 +5444,11 @@ function eqKey(it){return eqNorm(it.a[0])+'|'+it.s+'|'+(it.r[0]||'')+'|'+eqNorm(
 /* Catalogue effectif : catalogue de base (GDA Duplex) + modifications + appareils personnalisés */
 function eqAllItems(){
   const over=data.equipOver||{};
-  return EQ_ITEMS.concat(EQ_ITEMS_A_LIVE).map(it=>{const o=over[it.id];return o?Object.assign({},it,o,{id:it.id,cat:it.cat}):it;})
+  return EQ_ITEMS.concat(EQ_ITEMS_A_LIVE).concat(EQ_ITEMS_E_LIVE).concat(EQ_ITEMS_A430_LIVE).concat(EQ_ITEMS_R_LIVE).concat(EQ_ITEMS_RIT_LIVE).concat(EQ_ITEMS_N2_LIVE).concat(EQ_ITEMS_P_LIVE).map(it=>{const o=over[it.id];return o?Object.assign({},it,o,{id:it.id,cat:it.cat}):it;})
     .filter(it=>!it.deleted)
     .concat(data.equipCustom||[]);}
 function eqById(id){id=EQ_MERGE_MAP[id]||id;return eqAllItems().find(i=>i.id===id)||null;}
-function eqSeriesOf(it){return(it.series&&it.series.length)?it.series:[eqCatOf(it).serie];}
+function eqSeriesOf(it){if(it.series&&it.series.length)return it.series;const c=eqCatOf(it);return [c.serie,...(c.seriesAlt||[])];}
 function eqSerieNames(it){return eqSeriesOf(it).map(id=>{const s=(data.fleet||[]).find(f=>f.id===id);return s?s.name:null;}).filter(Boolean).join(', ');}
 function eqMeta(it,create){data.equipMeta=data.equipMeta||{};
   const lk=eqKey(it);
@@ -3985,6 +5516,7 @@ function fleetModal(){
     $('#mFleetList').innerHTML=work.map((s,si)=>`
       <div style="border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:10px;background:var(--panel-2)">
         <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+          <button type="button" class="fleet-color" data-fc="${si}" title="Couleur de la série (puce de filtre)" style="width:30px;height:30px;border-radius:9px;border:2px solid var(--border-strong);background:${esc(s.color||'#888')};cursor:pointer;flex:none"></button>
           <input type="text" data-f="name" data-si="${si}" value="${esc(s.name)}" placeholder="Nom de la série (ex : TGV Duplex)" style="flex:1;border:1px solid var(--border-strong);background:var(--panel);border-radius:9px;padding:7px 10px;font-size:13px;font-weight:700">
           ${s.catalog?'<span style="font-size:10px;font-weight:700;color:var(--accent);white-space:nowrap">catalogue ✓</span>':''}
           <button class="side-mini" data-a="delserie" data-si="${si}" title="Supprimer la série">🗑</button>
@@ -4002,6 +5534,9 @@ function fleetModal(){
       const si=+inp.dataset.si,ui=inp.dataset.ui;
       if(inp.dataset.f==='name')work[si].name=inp.value;
       else work[si].subs[+ui][inp.dataset.f==='sname'?'name':inp.dataset.f]=inp.value;});
+    $('#mFleetList').querySelectorAll('.fleet-color').forEach(b=>b.onclick=()=>{
+      const si=+b.dataset.fc;
+      pickColor(b,work[si].color||'#888',c=>{work[si].color=c;b.style.background=c;});});
     $('#mFleetList').querySelectorAll('button[data-a]').forEach(b=>b.onclick=async()=>{
       const si=+b.dataset.si;
       if(b.dataset.a==='addsub')work[si].subs.push({name:'',rames:'',motrices:''});
@@ -4016,12 +5551,30 @@ function fleetModal(){
     <button class="btn small" id="mFleetAdd">＋ Ajouter une série</button>`,
     [{label:'Annuler'},{label:'Enregistrer',primary:true,fn:()=>{
       data.fleet=work.filter(s=>s.name.trim()).map(s=>({
-        id:s.id||('serie_'+uid()),name:s.name.trim(),catalog:s.catalog||null,
+        id:s.id||('serie_'+uid()),name:s.name.trim(),catalog:s.catalog||null,color:s.color||null,
         subs:s.subs.filter(u=>u.name.trim()||u.rames||u.motrices)}));
       save();logEvt('⚙ Flotte TGV mise à jour');renderEquip();toast('Flotte enregistrée');}}]);
   $('#mFleetAdd').onclick=()=>{work.push({name:'',catalog:null,subs:[{name:'',rames:'',motrices:''}]});draw();};
   draw();}
 /* ---------- Édition d'un appareil ---------- */
+/* ---------- Sélecteur de couleur global (échantillons + libre) ---------- */
+const COLOR_SWATCHES=['#c2143f','#e0263f','#e07b00','#e5b800','#128a3e','#27ae60','#0d8f8f','#1e6fd9','#274bdb','#7b2fbf','#d3387a','#8a5a2b','#5a6b7b','#222831','#9aa4ad','#ffffff'];
+function pickColor(anchor,cur,cb){
+  let pop=document.getElementById('colorPop');
+  if(pop)pop.remove();
+  pop=document.createElement('div');pop.id='colorPop';
+  pop.innerHTML=`<div class="cp-grid">${COLOR_SWATCHES.map(c=>
+      `<button class="cp-sw${c===cur?' cur':''}" data-c="${c}" style="background:${c}" title="${c}"></button>`).join('')}</div>
+    <div class="cp-foot"><label>Libre :</label><input type="color" value="${/^#[0-9a-fA-F]{6}$/.test(cur||'')?cur:'#c2143f'}"><button class="btn small" type="button">OK</button></div>`;
+  document.body.appendChild(pop);
+  const r=anchor.getBoundingClientRect();
+  pop.style.left=Math.min(r.left,innerWidth-260)+'px';
+  pop.style.top=Math.min(r.bottom+6,innerHeight-170)+'px';
+  const close=()=>{pop.remove();document.removeEventListener('pointerdown',out,true);};
+  const out=e=>{if(!pop.contains(e.target))close();};
+  setTimeout(()=>document.addEventListener('pointerdown',out,true),10);
+  pop.querySelectorAll('.cp-sw').forEach(b=>b.onclick=()=>{close();cb(b.dataset.c);});
+  pop.querySelector('.cp-foot .btn').onclick=()=>{const v=pop.querySelector('input[type=color]').value;close();cb(v);};}
 /* ---------- Familles & emplacements (création, édition, suppression) ---------- */
 function famPlaceModal(){
   if(!isEdit()){toast('🔒 Mode lecture seule');return;}
@@ -4073,7 +5626,7 @@ function famPlaceModal(){
 function eqEditModal(it){
   if(!isEdit()){toast('🔒 Mode lecture seule');return;}
   const isNew=!it;
-  const mcat=it?eqCatOf(it):(Object.values(EQ_CATALOGS).find(c=>c.serie===state.eqSerie)||EQ_CATALOGS.duplex);
+  const mcat=it?eqCatOf(it):(eqCatForSerie(state.eqSerie)||EQ_CATALOGS.duplex);
   const w={d:it?it.d:'',a:it?it.a.filter(x=>x!=='—').join(', '):'',g:it?it.g:'CC',
     s:it?it.s:1,r:it?it.r.join(', '):'',z:it?it.z:'',pl:it?(it.pl||''):'',
     series:it?[...eqSeriesOf(it)]:[state.eqSerie&&state.eqSerie!=='ALL'?state.eqSerie:mcat.serie],
@@ -4128,7 +5681,7 @@ function eqEditModal(it){
         const v=obj.variants[sid];
         if(v)delete v.on;
         if(!obj.series.includes(sid)||!v||(!v.z&&!v.pl&&!(v.r&&v.r.length)&&!v.panel))delete obj.variants[sid];}
-      const catBySer=Object.values(EQ_CATALOGS).find(c=>obj.series.includes(c.serie));
+      const catBySer=Object.values(EQ_CATALOGS).find(c=>obj.series.includes(c.serie)||obj.series.some(s2=>(c.seriesAlt||[]).includes(s2)));
       obj.cat=catBySer?catBySer.key:(it?(it.cat||'duplex'):mcat.key);
       if(isNew){obj.id='ceq_'+uid();obj.custom=true;
         data.equipCustom.push(obj);state.eqSel=obj.id;
@@ -4145,7 +5698,7 @@ function eqEditModal(it){
     const sers=[...$('#eSer').querySelectorAll('input:checked')].map(i=>i.value).filter(sid=>sid!==mcat.serie);
     $('#eVarBox').innerHTML=sers.length?`<label style="${lb}">Emplacement spécifique par série <span style="font-weight:400">(si différent de l'emplacement principal)</span></label>`+
       sers.map(sid=>{const s=(data.fleet||[]).find(f=>f.id===sid);const v=w.variants[sid];
-        const vc=Object.values(EQ_CATALOGS).find(c=>c.serie===sid);
+        const vc=eqCatForSerie(sid);
         const on=v&&(v.on!==undefined?v.on:(v.z||v.pl||(v.r&&v.r.length)));
         return `<div style="border:1px dashed var(--border-strong);border-radius:10px;padding:8px 10px;margin-bottom:6px">
           <label style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;cursor:pointer">
@@ -4179,7 +5732,7 @@ function eqEditModal(it){
   const getPan=sid=>sid===mcat.serie?w.panel:(w.variants[sid]&&w.variants[sid].panel)||null;
   const drawOneGrid=sid=>{const gd=$('#eCabBox').querySelector(`[data-grid="${sid}"]`);
     if(!gd)return;
-    const c=Object.values(EQ_CATALOGS).find(x=>x.serie===sid);
+    const c=eqCatForSerie(sid);
     gd.innerHTML=eqPanelHtml([],getPan(sid),c);
     gd.querySelectorAll('.gp-cell').forEach(el=>el.onclick=()=>{
       setPan(sid,{row:+el.dataset.r,col:+el.dataset.c});
@@ -4189,7 +5742,7 @@ function eqEditModal(it){
       drawOneGrid(sid);});};
   const drawCab=()=>{
     const checked=[...$('#eSer').querySelectorAll('input:checked')].map(i=>i.value);
-    const cats=checked.map(sid=>({sid,c:Object.values(EQ_CATALOGS).find(x=>x.serie===sid)})).filter(x=>x.c);
+    const cats=checked.map(sid=>({sid,c:eqCatForSerie(sid)})).filter(x=>x.c);
     $('#eCabBox').innerHTML=cats.length?`<label style="${lb}">Bloc cabine <span style="font-weight:400">(cochez pour situer l'appareil dans l'armoire — tous les appareils n'y sont pas)</span></label>`+
       cats.map(({sid,c})=>{
         const pan=getPan(sid);
@@ -4229,8 +5782,10 @@ async function eqDelete(it){
   const img=it.img;
   if(it.custom)data.equipCustom=(data.equipCustom||[]).filter(x=>x.id!==it.id);
   else data.equipOver[it.id]=Object.assign({},data.equipOver[it.id]||{},{deleted:true});
+  const metaFiles=(data.equipMeta&&data.equipMeta[it.id]&&data.equipMeta[it.id].files)||[];
   if(data.equipMeta)delete data.equipMeta[it.id];
   for(const nd of data.nodes)if(nd.equip&&nd.equip.length)nd.equip=nd.equip.filter(x=>x!==it.id);
+  for(const f of metaFiles)await maybeDeleteBlob(f.fileId);
   state.eqSel=null;
   save();logEvt('🗑 Appareil supprimé du catalogue : « '+it.d+' »');
   if(img)await maybeDeleteBlob(img);
@@ -4286,12 +5841,6 @@ function renderEquip(){
   const all=eqAllItems();
   let ser=state.eqSerie||'ALL';
   if(ser!=='ALL'&&!(data.fleet||[]).some(s=>s.id===ser))ser=state.eqSerie='ALL';
-  const serSel=$('#eqSerie');
-  serSel.innerHTML=`<option value="ALL">🚄 Toutes les séries</option>`+
-    (data.fleet||[]).map(s=>{
-      const n=all.filter(it=>eqSeriesOf(it).includes(s.id)).length;
-      return `<option value="${s.id}">${esc(s.name)} (${n})</option>`;}).join('');
-  serSel.value=ser;
   const inSerie=ser==='ALL'?all:all.filter(it=>eqSeriesOf(it).includes(ser));
   const famSel=$('#eqFam');
   famSel.innerHTML=`<option value="ALL">Toutes les familles</option>`+
@@ -4299,9 +5848,22 @@ function renderEquip(){
   famSel.value=state.eqCat||'ALL';
   if(famSel.value!==(state.eqCat||'ALL')){state.eqCat='ALL';famSel.value='ALL';}
   const cat=state.eqCat||'ALL';
-  const items=inSerie.filter(it=>{
+  let items=inSerie.filter(it=>{
     if(cat!=='ALL'&&it.g!==cat)return false;
     return !q||eqMatches(it,q);});
+  /* navigation par schéma : filtre voiture / zone */
+  const navCatF=eqCatForSerie(ser);
+  if(!navCatF){state.eqCar=null;state.eqZone=null;}
+  if(navCatF&&state.eqCar){
+    const zone=state.eqZone;
+    items=items.filter(it=>{const L=eqEffLoc(it,ser);
+      if(zone){
+        if(zone.special==='panel')return L.s===1&&L.r.includes(navCatF.panelRep);
+        if(zone.special==='pneu')return (L.s===1&&L.r.includes(navCatF.pneuRep))||L.s===navCatF.pneuSchema;
+        if(L.s!==state.eqCar.schema)return false;
+        const pos=navCatF.pos[L.s]||{};
+        return L.r.some(rp=>{const p=pos[rp];return p&&p[0]>=zone.x0-0.02&&p[0]<=zone.x1+0.02;});}
+      return L.s===state.eqCar.schema||(state.eqCar.schema===1&&L.s===navCatF.pneuSchema);});}
   const list=$('#eqList');
   let sel=all.find(i=>i.id===state.eqSel);
   if(!sel||(items.length&&!items.includes(sel)))sel=items[0]||sel||null;
@@ -4314,36 +5876,42 @@ function renderEquip(){
     </div>`).join('')||`<div class="empty-hint" style="padding:12px">${ser!=='ALL'&&!inSerie.length?'Aucun appareil rattaché à cette série — ajoutez-en avec ＋, modifiez l\'appartenance d\'appareils existants (✏️), ou importez un catalogue (⤒).':'Aucun appareil pour cette recherche.'}</div>`;
   list.querySelectorAll('.eq-row').forEach(el=>el.onclick=()=>{state.eqSel=el.dataset.id;state.eqRep=null;state.eqVarSerie=null;renderEquip();});
   const serName=ser!=='ALL'?((data.fleet||[]).find(s=>s.id===ser)||{}).name:'';
-  $('#eqCount').textContent=`${items.length} / ${all.length} appareils${serName?' — '+serName:''}`;
+  const crumb=state.eqCar?' · '+state.eqCar.label+(state.eqZone?' · '+(state.eqZone.special==='panel'?'armoire':state.eqZone.special==='pneu'?'bloc pneu':state.eqZone.label.toLowerCase()):''):'';
+  $('#eqCount').textContent=`${items.length} / ${all.length} appareils${serName?' — '+serName:''}${crumb}`;
   /* détail */
   const det=$('#eqDetail');
-  if(!sel){det.innerHTML='<div class="empty-hint" style="padding:20px">Sélectionnez un appareil dans la liste de gauche.</div>';return;}
-  const codes=eqMatchCodes(sel);
-  const baseCat=eqCatOf(sel);
-  /* série active pour l'emplacement (onglets si l'appareil appartient à plusieurs séries) */
-  const selSeries=eqSeriesOf(sel);
-  let vSer=state.eqVarSerie&&selSeries.includes(state.eqVarSerie)?state.eqVarSerie
-    :(ser!=='ALL'&&selSeries.includes(ser)?ser:(selSeries.includes(baseCat.serie)?baseCat.serie:selSeries[0]));
-  const vv=(sel.variants||{})[vSer]||null;
-  const vCat=Object.values(EQ_CATALOGS).find(c=>c.serie===vSer)||null;
-  const isBaseSer=vSer===baseCat.serie;
-  const eff={
-    s:vv&&vv.s?vv.s:sel.s,
-    r:vv&&vv.r&&vv.r.length?vv.r:sel.r,
-    z:vv&&vv.z?vv.z.trim():sel.z,
-    pl:vv&&vv.pl?vv.pl:(isBaseSer?(sel.pl||''):''),
-    panel:vv&&vv.panel?vv.panel:(isBaseSer?sel.panel:null)};
-  const showSch=!!vCat;
-  const catObj=vCat||baseCat;
+  let codes=[],baseCat=null,selSeries=[],vSer=null,vv=null,vCat=null,isBaseSer=false,eff=null,showSch=false,catObj=null;
+  if(sel){
+    codes=eqMatchCodes(sel);
+    baseCat=eqCatOf(sel);
+    selSeries=eqSeriesOf(sel);
+    vSer=state.eqVarSerie&&selSeries.includes(state.eqVarSerie)?state.eqVarSerie
+      :(ser!=='ALL'&&selSeries.includes(ser)?ser:(selSeries.includes(baseCat.serie)?baseCat.serie:selSeries[0]));
+    vv=(sel.variants||{})[vSer]||null;
+    if(!vv&&sel.variants){const cAlt=eqCatForSerie(vSer);
+      if(cAlt&&cAlt.serie!==vSer)vv=(sel.variants||{})[cAlt.serie]||null;}
+    vCat=eqCatForSerie(vSer)||null;
+    isBaseSer=vSer===baseCat.serie;
+    eff={
+      s:vv&&vv.s?vv.s:sel.s,
+      r:vv&&vv.r&&vv.r.length?vv.r:sel.r,
+      z:vv&&vv.z?vv.z.trim():sel.z,
+      pl:vv&&vv.pl?vv.pl:(isBaseSer?(sel.pl||''):''),
+      panel:vv&&vv.panel?vv.panel:(isBaseSer?sel.panel:null)};
+    showSch=!!vCat;
+    catObj=vCat||baseCat;}
+  const navHTML=eqNavHtml(ser,sel,eff,catObj,codes,showSch);
+  if(!sel){det.innerHTML=navHTML+'<div id="eqDetailBody"><div class="empty-hint" style="padding:20px">Sélectionnez un appareil dans la liste de gauche'+(state.eqCar?' (filtrée sur votre sélection ci-dessus)':', ou naviguez dans les schémas ci-dessus')+'.</div></div>';
+    wireEqNav(det);return;}
   const repTxt=eff.r.join(', ');
   const atRep=state.eqRep?all.filter(i=>(i.cat||'duplex')===catObj.key&&i.s===eff.s&&i.r.includes(state.eqRep)):[];
   const manual=eqManualTags(sel);
   const auto=eqAutoTags(sel).filter(t=>!manual.includes(t));
-  const sugs=eqSuggestNodes(sel);
   const linked=eqLinkedNode(sel);
   const serNames=eqSerieNames(sel);
   const E=isEdit();
-  det.innerHTML=`
+  det.innerHTML=navHTML+`
+    <div id="eqDetailBody">
     <div class="eq-head">
       <div style="flex:1;min-width:0">
         <div class="eq-abbrs">${sel.a.map(a=>a==='—'?'':`<span class="eq-abbr">${esc(a)}</span>`).join('')}</div>
@@ -4355,14 +5923,35 @@ function renderEquip(){
         <button class="btn small danger" id="eqDelBtn" title="Supprimer cet appareil du catalogue">🗑</button>
       </div>`:''}
     </div>
-    ${selSeries.length>1?`<div class="eq-serchips">${selSeries.map(sid=>{const s=(data.fleet||[]).find(f=>f.id===sid);
-      return `<button class="eq-serchip${sid===vSer?' on':''}" data-ser="${sid}" title="Afficher l'emplacement pour cette série">${esc(s?s.name:sid)}${(sel.variants||{})[sid]?' 📍':''}</button>`;}).join('')}</div>`:''}
     ${sel.img?`<img class="eq-img" alt="" title="Cliquer pour ouvrir dans un nouvel onglet">`:''}
     ${sel.comment?`<div class="eq-comment">💬 ${esc(sel.comment)}</div>`:''}
-    ${showSch?eqSvgTrain(eff.s,catObj):''}
-    ${showSch&&eff.s<=catObj.maxVeh?eqSvgVehicle(eff.s,eff.r,state.eqRep,catObj):''}
-    ${showSch&&(eff.panel||(eff.r.includes(catObj.panelRep)&&eff.s===1))?eqPanelHtml(codes,eff.panel,catObj):''}
-    ${showSch&&eff.r.includes(catObj.pneuRep)&&eff.s===1?eqPneuHtml(codes,catObj):''}
+    ${(function(){const m=eqMeta(sel);const fl=(m&&m.files)||[];
+      if(!fl.length&&!E)return '';
+      const serCtx=(state.eqSerie&&state.eqSerie!=='ALL')?vSer:null;
+      const match=f=>!f.serie||!serCtx||f.serie===serCtx;
+      const shown=E?fl.map((f,i)=>({f,i})):fl.map((f,i)=>({f,i})).filter(x=>match(x.f));
+      const serName=id=>{const s=(data.fleet||[]).find(x=>x.id===id);return s?s.name:id;};
+      return `<div class="eq-zonehead"><h3>📷 Illustrations <span style="font-size:10px;color:var(--muted)">(photos d'emplacement, extraits de schémas, PDF${serCtx?' — série affichée : '+esc(serName(serCtx)):''})</span></h3>
+        ${E?`<button class="btn small" id="eqAddIll">＋ Ajouter</button>`:''}
+      </div>
+      <div id="eqIll">${shown.map(({f,i})=>`
+        <figure class="eq-illit${E&&!match(f)?' dim':''}" style="width:${Math.max(20,Math.min(100,f.w||50))}%">
+          <div class="eq-illbox" data-open="${f.fileId}" title="${esc(f.name)} — cliquer pour ouvrir">
+            ${/^image\//.test(f.mime||'')?`<img data-illimg="${f.fileId}" alt="">`
+              :`<img data-illpdf="${f.fileId}" alt="" style="display:none"><div class="eq-illpdfchip">📕 ${esc(f.name)}</div>`}
+          </div>
+          ${(f.cap||(!E&&f.serie))?`<figcaption class="eq-illcap" data-illcap="${i}">${esc(f.cap||'')}${!E&&f.serie?`<span class="eq-illser">${esc(serName(f.serie).replace(/^TGV\s*/i,''))}</span>`:''}</figcaption>`:(E?`<figcaption class="eq-illcap" data-illcap="${i}" style="display:none"></figcaption>`:'')}
+          ${E?`<div class="eq-illtools">
+            <input type="range" min="20" max="100" value="${Math.max(20,Math.min(100,f.w||50))}" data-illw="${i}" title="Taille d'affichage">
+            <button class="side-mini" data-illdel="${i}" title="Retirer cette illustration">✕</button>
+          </div>
+          <input type="text" class="eq-illcapin" data-illcapin="${i}" value="${esc(f.cap||'')}" placeholder="Légende…">
+          <select class="eq-illserin" data-illserin="${i}" title="Cette illustration vaut pour…">
+            <option value="">Toutes les séries</option>
+            ${(data.fleet||[]).map(s=>`<option value="${s.id}"${f.serie===s.id?' selected':''}>${esc(s.name)}</option>`).join('')}
+          </select>`:''}
+        </figure>`).join('')||`<div class="empty-hint" style="flex:1">${E?'Ajoutez des photos ou des PDF pour illustrer précisément l\'emplacement.':'Aucune illustration pour cette série.'}</div>`}
+      </div>`;})()}
     ${!showSch?`<div class="eq-comment" style="border-left-color:var(--border-strong);background:var(--bg-soft)">📍 Emplacement pour cette série : <b>${esc([eff.pl,eff.z].filter(Boolean).join(' — ')||'non renseigné')}</b>${eff.r.length?` — repère ${eff.r.join(', ')}`:''}<br><span style="font-size:11px;color:var(--muted)">Schémas de cette série à venir — fournissez son GDA à Claude pour les intégrer.</span></div>`:''}
     ${atRep.length?`<div class="eq-atrep"><b>Au repère ${state.eqRep} :</b> ${atRep.map(i=>`<button class="eq-replink" data-id="${i.id}">${esc(i.a[0]==='—'?i.d:i.a[0])}</button>`).join('')}</div>`:''}
     <div class="eq-zonehead"><h3>🏷 Mots-clés</h3>
@@ -4372,14 +5961,6 @@ function renderEquip(){
       ${manual.map(t=>`<span class="tag">#${esc(t)}${E?` <span class="x" data-t="${esc(t)}" title="Retirer">✕</span>`:''}</span>`).join('')}
       ${auto.map(t=>`<span class="tag" style="background:transparent;border:1px dashed var(--border-strong);color:var(--muted)" data-auto="${esc(t)}" title="Mot-clé automatique — cliquer pour l'adopter">#${esc(t)}${E?' ＋':''}</span>`).join('')}
       ${E?`<input type="text" id="eqTagInput" placeholder="＋ mot-clé" style="border:1px dashed var(--border-strong);background:transparent;border-radius:20px;padding:4px 11px;font-size:11.5px;outline:none;width:110px;color:var(--muted)">`:''}
-    </div>
-    <div class="eq-zonehead"><h3>💡 Fiches suggérées <span style="font-size:10px;color:var(--muted)">(mots-clés communs)</span></h3></div>
-    <div id="eqSugs">
-      ${sugs.map(s=>`<div class="sug-row" data-node="${s.n.id}">
-        <span class="nicon" data-nicon="${s.n.id}"></span>
-        <span class="tt">${esc(s.n.title||'Sans titre')}</span>
-        <span class="why">${s.common.length?s.common.slice(0,3).map(c=>'#'+esc(c)).join(' '):'titre'}</span>
-      </div>`).join('')||'<div class="empty-hint">Aucune fiche en corrélation pour l\'instant — ajoutez des mots-clés ici et sur vos fiches, les suggestions apparaîtront des deux côtés.</div>'}
     </div>
     <div class="eq-zonehead"><h3>📄 Fiche de l'appareil <span style="font-size:10px;color:var(--muted)">(notes, liens, contacts, fichiers, sous-fiches, accès rapide)</span></h3></div>
     <div id="eqNodeBox">
@@ -4396,28 +5977,15 @@ function renderEquip(){
         <p style="font-size:11px;color:var(--muted);margin-top:6px">La fiche héritera des mots-clés et de l'emplacement, et offrira notes, liens, contacts, fichiers, sous-fiches et mur d'accès rapide — reliés à cet appareil.</p>`
       :'<div class="empty-hint">Aucune fiche liée à cet appareil.</div>')}
     </div>
-    `;
+    </div>`;
   hydrateIcons(det);
+  wireEqNav(det);
   if(sel.img)fileURL(sel.img).then(u=>{const im=det.querySelector('.eq-img');
     if(im&&u){im.src=u;im.onclick=()=>openFileNewTab(sel.img);}});
-  det.querySelectorAll('.eq-serchip').forEach(b=>b.onclick=()=>{
-    state.eqVarSerie=b.dataset.ser;state.eqRep=null;renderEquip();});
   const ebtn=det.querySelector('#eqEditBtn');if(ebtn)ebtn.onclick=()=>eqEditModal(sel);
   const dbtn=det.querySelector('#eqDelBtn');if(dbtn)dbtn.onclick=()=>eqDelete(sel);
-  det.querySelectorAll('.eq-rep').forEach(g=>g.addEventListener('click',()=>{
-    state.eqRep=state.eqRep===+g.dataset.rep?null:+g.dataset.rep;renderEquip();}));
   det.querySelectorAll('.eq-replink').forEach(b=>b.onclick=()=>{state.eqSel=b.dataset.id;state.eqVarSerie=null;
     state.eqQuery='';const si=$('#eqSearch');if(si)si.value='';renderEquip();});
-  /* armoire graphique : cliquer une commande sélectionne l'appareil correspondant */
-  det.querySelectorAll('.eq-panel.gp .gp-cell').forEach(el=>el.onclick=()=>{
-    const code=el.dataset.code;
-    const al=catObj.aliases||{};
-    const eq=(al[code]||code);
-    const hitIt=all.find(i=>(i.cat||'duplex')===catObj.key&&i.a.some(a=>{const n1=eqNorm(a);return n1===code||(al[n1]||n1)===eq;}));
-    if(hitIt&&hitIt.id!==sel.id){state.eqSel=hitIt.id;state.eqRep=null;state.eqVarSerie=null;
-      state.eqQuery='';const si=$('#eqSearch');if(si)si.value='';renderEquip();}
-    else if(!hitIt)toast('Aucune fiche appareil pour « '+el.title.split(' — ')[0]+' »');});
-  det.querySelectorAll('.sug-row').forEach(el=>el.onclick=()=>navigate('#/node/'+el.dataset.node));
   const saveTags=arr=>{const m=eqMeta(sel,true);m.tags=[...new Set(arr)];
     const ln=eqLinkedNode(sel);
     if(ln){ln.tags=[...new Set([...ln.tags,...m.tags])];touch(ln);}else save();
@@ -4436,6 +6004,38 @@ function renderEquip(){
       kwPickFromFiles(ln2.files,sel2=>saveTags([...manual,...sel2]));};
     const cb=det.querySelector('#eqNodeCreate');
     if(cb)cb.onclick=()=>{createEquipNode(sel);renderEquip();renderTree();};}
+  /* illustrations */
+  {const m=eqMeta(sel);const fl=(m&&m.files)||[];
+   det.querySelectorAll('[data-illimg]').forEach(im=>fileURL(im.dataset.illimg).then(u=>{if(u)im.src=u;}));
+   det.querySelectorAll('[data-illpdf]').forEach(im=>pdfThumb(im.dataset.illpdf).then(u=>{
+     if(u){im.src=u;im.style.display='';const ch=im.parentElement.querySelector('.eq-illpdfchip');if(ch)ch.classList.add('over');}}).catch(()=>{}));
+   det.querySelectorAll('.eq-illbox').forEach(bx=>bx.onclick=()=>openFileNewTab(bx.dataset.open));
+   const addB=det.querySelector('#eqAddIll');
+   if(addB)addB.onclick=()=>{const fi=$('#fiEqIll');
+     fi.onchange=async e=>{const fs=[...e.target.files];fi.value='';
+       if(!fs.length)return;
+       const mm=eqMeta(sel,true);mm.files=mm.files||[];
+       for(const f of fs){const id=await storeFile(f);
+         mm.files.push({fileId:id,name:f.name,mime:f.type||'application/octet-stream',size:f.size,w:50,added:Date.now()});}
+       save();logEvt('📷 Illustration(s) ajoutée(s) à « '+sel.d+' »');renderEquip();};
+     fi.click();};
+   det.querySelectorAll('input[data-illcapin]').forEach(inp=>{
+     const i=+inp.dataset.illcapin;
+     const capEl=det.querySelector('figcaption[data-illcap="'+i+'"]');
+     inp.oninput=()=>{if(capEl){capEl.textContent=inp.value;capEl.style.display=inp.value?'':'none';}};
+     inp.onchange=()=>{const f=fl[i];if(f){f.cap=inp.value.trim();save();}};});
+   det.querySelectorAll('select[data-illserin]').forEach(se=>{
+     se.onchange=()=>{const f=fl[+se.dataset.illserin];if(f){f.serie=se.value||null;save();renderEquip();}};});
+   det.querySelectorAll('input[data-illw]').forEach(sl=>{
+     const fig=sl.closest('.eq-illit');
+     sl.oninput=()=>{fig.style.width=sl.value+'%';};
+     sl.onchange=()=>{const f=fl[+sl.dataset.illw];if(f){f.w=+sl.value;save();}};});
+   det.querySelectorAll('button[data-illdel]').forEach(b=>b.onclick=async()=>{
+     const i=+b.dataset.illdel;const f=fl[i];if(!f)return;
+     if(!await confirmDlg('Retirer l\'illustration','Retirer « '+f.name+' » de cet appareil ?'))return;
+     fl.splice(i,1);save();
+     await maybeDeleteBlob(f.fileId);
+     renderEquip();});}
   const ob=det.querySelector('#eqNodeOpen');
   if(ob)ob.onclick=()=>navigate('#/node/'+linked.id);
   const tb=det.querySelector('#eqNodeTab');
@@ -4467,8 +6067,6 @@ async function init(){
   $('#fleetBtn').onclick=fleetModal;
   $('#eqAddBtn').onclick=()=>eqEditModal(null);
   $('#famBtn').onclick=famPlaceModal;
-  $('#eqSerie').onchange=e=>{state.eqSerie=e.target.value;state.eqRameSet=false;
-    $('#eqRame').value='';$('#eqRameInfo').style.display='none';renderEquip();};
   $$('.fld-clr').forEach(b=>b.onclick=e=>{e.stopPropagation();
     const inp=b.parentElement.querySelector('input');
     if(!inp)return;
@@ -4484,9 +6082,10 @@ async function init(){
     if(v.length<3){info.style.display='none';return;}
     const m=rameMatch(v);
     if(m){state.eqSerie=m.serie.id;state.eqRameSet=true;state.eqVarSerie=null;
+      state.eqCar=null;state.eqZone=null;
       info.style.display='block';
       info.style.background='var(--accent-soft)';info.style.color='var(--accent)';
-      info.innerHTML=`🚄 Rame <b>${esc(v)}</b> → <b>${esc(m.serie.name)}</b>${m.sub&&m.sub.name?' · '+esc(m.sub.name):''}${m.sub&&m.sub.motrices?' <span style="font-weight:600;opacity:.75">(motrices '+esc(m.sub.motrices)+')</span>':''}`;
+      info.innerHTML=`<b>${esc(m.serie.name)}</b>${m.sub&&m.sub.name?' · '+esc(m.sub.name):''}${m.sub&&m.sub.motrices?' <span style="font-weight:600;opacity:.75">(motrices '+esc(m.sub.motrices)+')</span>':''}`;
       renderEquip();}
     else{info.style.display='block';
       info.style.background='var(--bg-soft)';info.style.color='var(--muted)';
@@ -4506,7 +6105,7 @@ async function init(){
     save();renderTree();};
   $('#collapseAllBtn').onclick=()=>{state.open.clear();save();renderTree();};
   checkAppVersion();
-  $('#verLine').onclick=versionModal;
+  $('#verLine').onclick=()=>{if(isEdit())versionModal();};
   $('#settingsBtn').onclick=e=>{e.stopPropagation();
     const r=e.currentTarget.getBoundingClientRect();
     openCtx(r.right-210,r.bottom+6,[
@@ -4539,11 +6138,25 @@ async function init(){
   $('#qCancelBtn').onclick=()=>toggleQuickMode(false);
 
   /* mode édition / lecture seule */
-  $('#modeBtn').onclick=()=>{const wasEdit=isEdit();
+  const doModeSwitch=()=>{const wasEdit=isEdit();
     data.settings.mode=wasEdit?'read':'edit';
     state.editWallOwner=null;state.quickMode=false;
     save();applyMode();render();
     toast(wasEdit?'🔒 Mode lecture seule : l\'application est protégée contre les modifications':'✏️ Mode édition activé');};
+  $('#modeBtn').onclick=()=>{
+    if(isEdit()){doModeSwitch();return;}
+    /* passage en édition : protégé par mot de passe */
+    openModal('🔒 Mode édition protégé',`
+      <p style="font-size:12.5px;color:var(--muted);margin-bottom:10px">Entrez le mot de passe pour activer le mode édition.</p>
+      <input id="mPwd" type="password" inputmode="numeric" autocomplete="off" placeholder="••••"
+        style="width:100%;box-sizing:border-box;border:2px solid var(--accent);border-radius:12px;padding:11px 12px;font-size:20px;text-align:center;letter-spacing:8px;outline:none">`,
+      [{label:'Annuler'},{label:'Déverrouiller',primary:true,fn:()=>{
+        if($('#mPwd').value===atob('NTE1Mw==')){doModeSwitch();}
+        else{toast('⚠️ Mot de passe incorrect');return false;}}}]);
+    setTimeout(()=>{const i=$('#mPwd');if(i){i.focus();
+      i.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();
+        if(i.value===atob('NTE1Mw==')){closeModal();doModeSwitch();}
+        else toast('⚠️ Mot de passe incorrect');}};}},60);};
 
   /* fiche */
   $('#nodeIcon').onclick=()=>{if(!isEdit()||!currentNode)return;nodeIconPicker(currentNode);};
