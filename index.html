@@ -8,7 +8,10 @@
 <meta name="mobile-web-app-capable" content="yes">
 <title>RailDoc — Dépannage TGV &amp; Thalys</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚄</text></svg>">
+<script>/* anti-flash : applique le thème mémorisé avant le premier rendu (nouvel onglet compris) */
+try{var __t=localStorage.getItem('raildoc_theme');if(__t)document.documentElement.setAttribute('data-theme',__t);}catch(e){}</script>
 <style>
+html{background:var(--bg)}
 /* ============================================================
    RailDoc — Hub de documentation dépannage TGV / Thalys
    Application autonome : un seul fichier, aucune dépendance.
@@ -982,9 +985,10 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='8.12';
+const APP_VERSION='8.13';
 const APP_VERSION_DATE='5 août 2026';
 const CHANGELOG=[
+  ['v8.13',"Fini le flash blanc à l'ouverture d'un nouvel onglet en mode sombre (Appareillages, fiches, tuiles…) : le thème est mémorisé et appliqué avant le tout premier rendu de la page"],
   ['v8.12',"Croix ✕ d'effacement dans les champs de recherche (recherche globale, recherche d'appareils, n° de rame) · l'application s'ouvre désormais toujours en mode 🔒 lecture seule (protection contre les modifications accidentelles — passez en ✏️ pour éditer) · bouton « Documentation » (au lieu d'Accueil) avec icônes 3D dessinées : livre ouvert pour la documentation, loupe pour les appareillages"],
   ['v8.11',"Filtre par numéro de rame : champ « N° rame » à gauche de la recherche d'appareils — saisissez 3 ou 4 chiffres, RailDoc retrouve la série et la sous-série d'après les tranches de la flotte (⚙), filtre le catalogue et bascule automatiquement les appareils multi-séries sur la bonne série (emplacement, schémas, armoire) · rappel des motrices de la sous-série · effacer le champ ou changer manuellement de série rétablit le filtre normal"],
   ['v8.10',"Appareillages : barre de recherche mise en avant (bord carmin, placée en tête du panneau) · armoire du bloc cabine entièrement contenue dans la largeur de la colonne — cases toutes identiques (20 par rangée), libellés masqués et révélés au survol avec effet zoom ×2, libellé toujours visible sur l'appareil sélectionné · graphisme fidèle à la planche photo : voyants rouges, disrupteurs vert/rouge, boutons-poussoirs à levier, commutateurs rotatifs, voltmètres et manipulateur ISO découpés de la photo réelle"],
@@ -2825,7 +2829,8 @@ async function importAll(file){
 function tickClock(){const d=new Date();
   $('#clockTime').textContent=d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   $('#clockDate').textContent=d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});}
-function applyTheme(){document.documentElement.dataset.theme=data.settings.theme;}
+function applyTheme(){document.documentElement.dataset.theme=data.settings.theme;
+  try{localStorage.setItem('raildoc_theme',data.settings.theme);}catch(e){}}
 function applyMode(){const m=data.settings.mode||'edit';
   document.documentElement.dataset.mode=m;
   const e=m==='edit';
