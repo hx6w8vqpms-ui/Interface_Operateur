@@ -98,10 +98,7 @@ input,select,textarea{font-family:inherit;color:inherit}
 .brand .logo{width:34px;height:34px;border-radius:10px;background:var(--tile-grad);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:var(--shadow);flex:none;overflow:hidden}
 .brand .logo.custom{background:none;box-shadow:none}
 .brand .logo img{width:100%;height:100%;object-fit:contain}
-#brandEditBtn{width:28px;height:28px;min-width:28px;font-size:12px;opacity:0;transition:opacity .15s}
-.brand:hover #brandEditBtn{opacity:1}
-html[data-mode="read"] #brandEditBtn{display:none !important}
-html[data-mode="read"] #settingsBtn{display:none !important}
+html[data-mode="read"] #settingsBtn{visibility:hidden !important;pointer-events:none !important}
 html[data-mode="read"] #fleetBtn{display:none !important}
 /* Icônes de fiche : emoji ou image */
 .nicon{display:inline-flex;align-items:center;justify-content:center}
@@ -130,10 +127,22 @@ html[data-mode="read"] #fleetBtn{display:none !important}
 .sr-item .snip{font-size:12px;color:var(--muted);margin-top:2px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .sr-item mark{background:transparent;color:var(--accent);font-weight:700}
 .sr-empty{padding:18px;text-align:center;color:var(--muted);font-size:13px}
-#clockBox{text-align:right;line-height:1.1;user-select:none;white-space:nowrap;margin-left:auto}
+#dirBtn{margin-left:auto}
+#clockBox{text-align:right;line-height:1.1;user-select:none;white-space:nowrap}
 #clockTime{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.01em}
 #clockDate{font-size:10.5px;color:var(--muted);text-transform:capitalize;margin-top:1px}
 .topbar-actions{display:flex;gap:2px;align-items:center}
+#editWallBtn,#nodeWallEditBtn{color:#c2143f;border-color:#d98a9b;background:#c2143f0d}
+#editWallBtn:hover,#nodeWallEditBtn:hover{background:#c2143f1c}
+#editWallBtn.primary,#nodeWallEditBtn.primary{color:#fff;background:var(--accent);border-color:var(--accent)}
+.inf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:9px}
+.inf-card{border:1px solid var(--border);background:var(--panel-2);border-radius:12px;padding:10px 12px}
+.inf-card .iv{font-size:16.5px;font-weight:800}
+.inf-card .il{font-size:11px;color:var(--muted);margin-top:2px}
+.pac-guy .pjT{transform-origin:20px 20px;animation:pacjT .24s linear infinite alternate}
+.pac-guy .pjB{transform-origin:20px 20px;animation:pacjB .24s linear infinite alternate}
+@keyframes pacjT{from{transform:rotate(2deg)}to{transform:rotate(-32deg)}}
+@keyframes pacjB{from{transform:rotate(-2deg)}to{transform:rotate(32deg)}}
 
 /* ---------- Sidebar ---------- */
 .side-head{display:flex;align-items:center;justify-content:space-between;padding:14px 14px 6px}
@@ -159,8 +168,7 @@ html[data-mode="read"] #fleetBtn{display:none !important}
 .tree-more:hover{background:var(--border);color:var(--text)}
 .tree-children{margin-left:14px;border-left:1px solid var(--border);padding-left:4px}
 .side-foot{padding:10px 16px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
-#verLine{cursor:pointer;border-radius:6px;padding:1px 6px;margin:-1px -6px;transition:all .13s;white-space:nowrap}
-#verLine:hover{color:var(--accent);background:var(--accent-soft)}
+#verLine{border-radius:6px;padding:1px 6px;margin:-1px -6px;white-space:nowrap}
 #verLine.outdated{color:#fff;background:#d0342c;font-weight:700;animation:pulseWarn 2.2s ease-in-out infinite}
 @keyframes pulseWarn{0%,100%{opacity:1}50%{opacity:.65}}
 .ver-log{border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:4px}
@@ -333,13 +341,22 @@ html[data-mode="read"] #fleetBtn{display:none !important}
 .eb:hover{background:var(--bg-soft);color:var(--text)}
 .eb.b{font-weight:800}.eb.i{font-style:italic}.eb.u{text-decoration:underline}.eb.s{text-decoration:line-through}
 .eb-sep{width:1px;height:20px;background:var(--border-strong);margin:0 5px}
-#editor{min-height:180px;padding:20px 24px;outline:none;font-size:14.5px;line-height:1.7;word-wrap:break-word}
+#editor{min-height:180px;padding:20px 24px 44px;outline:none;font-size:14.5px;line-height:1.7;word-wrap:break-word}
 #editor:empty:before{content:"Rédigez ici votre note, mode opératoire, explication… (mise en forme via la barre d'outils, collage d'images accepté)";color:var(--muted)}
 #editor h2{font-size:19px;margin:18px 0 8px;letter-spacing:-.01em;color:color-mix(in srgb,var(--accent) 45%,var(--text))}
 #editor h3{font-size:15.5px;margin:14px 0 6px;color:color-mix(in srgb,var(--accent) 32%,var(--text))}
 #editor hr{border:none;height:2px;background:linear-gradient(90deg,var(--accent-soft),var(--border-strong),var(--accent-soft));border-radius:2px;margin:16px 0}
-.eb-fc{font-weight:800;background:linear-gradient(90deg,#d63333,#e07b00,#128a3e,#1e6fd9,#7b2fbf);-webkit-background-clip:text;background-clip:text;color:transparent}
-.eb-hc{filter:hue-rotate(140deg)}
+.eb-split{display:inline-flex;align-items:stretch}
+.eb-split .eb-main{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5px;border-radius:8px 0 0 8px}
+.eb-split .eb-caret{min-width:15px;padding:0 4px;font-size:9px;border-radius:0 8px 8px 0;border-left:1px solid var(--border)}
+.eb-bar{display:block;width:17px;height:3.5px;border-radius:2px;border:.5px solid #00000022}
+.eb-ic{line-height:1;font-size:13px}
+.fsearch{position:relative;margin-top:8px}
+.fsearch input{width:100%;box-sizing:border-box;border:1px solid var(--border-strong);background:var(--panel);border-radius:9px;padding:8px 11px;font-size:13px}
+.fsearch-list{display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;max-height:230px;overflow-y:auto;background:var(--panel);border:1px solid var(--border-strong);border-radius:10px;box-shadow:var(--shadow);z-index:60;padding:4px}
+.fsearch-list button{display:block;width:100%;text-align:left;padding:7px 10px;border-radius:7px;font-size:12.5px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fsearch-list button:hover{background:var(--accent-soft);color:var(--accent)}
+.fsearch-empty{padding:10px;font-size:12px;color:var(--muted)}
 #editor p{margin:6px 0}
 #editor ul,#editor ol{margin:6px 0;padding-left:26px}
 #editor li{margin:3px 0}
@@ -377,7 +394,7 @@ html[data-mode="read"] #scanBtn,html[data-mode="read"] #packBtn,
 html[data-mode="read"] #nodeMenuBtn{display:none !important}
 html[data-mode="read"] #editor:empty:before,html[data-mode="read"] #nodeTitle:empty:before{content:none}
 #modeBtn{font-size:15px}
-html[data-mode="read"] #modeBtn{color:var(--accent);background:var(--accent-soft)}
+html[data-mode="edit"] #modeBtn{color:var(--accent);background:var(--accent-soft);box-shadow:0 0 0 2px var(--accent-soft)}
 
 /* ---------- Liens / fichiers / sous-fiches ---------- */
 .zone{margin-bottom:24px}
@@ -429,6 +446,8 @@ html[data-mode="read"] #modeBtn{color:var(--accent);background:var(--accent-soft
 .contact-tel{display:flex;align-items:center;gap:8px}
 .contact-tel a{font-size:15px;font-weight:750;color:var(--accent);text-decoration:none;font-variant-numeric:tabular-nums}
 .contact-tel a:hover{text-decoration:underline}
+.contact-tel a[href^="mailto:"],.dir-det .ddrow a[href^="mailto:"]{font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.contact-tel .ccopy,.dir-det .ccopy,.dir-row .ccopy{flex:none}
 .ccopy{width:24px;height:24px;border-radius:7px;color:var(--muted);font-size:12px;display:inline-flex;align-items:center;justify-content:center}
 .ccopy:hover{background:var(--accent-soft);color:var(--accent)}
 .contact-note{font-size:11.5px;color:var(--muted);margin-top:6px;line-height:1.45}
@@ -444,6 +463,22 @@ html[data-mode="read"] .contact-tools,html[data-mode="read"] #addContactBtn{disp
 .dir-row .df{color:var(--muted);font-size:11px;cursor:pointer;white-space:nowrap}
 .dir-row .df:hover{color:var(--accent)}
 .dir-row a{font-weight:750;color:var(--accent);text-decoration:none;white-space:nowrap;font-variant-numeric:tabular-nums}
+.dir-row{cursor:pointer}
+.dir-row:hover{background:var(--accent-soft)}
+.dir-sect{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin:12px 4px 5px;display:flex;align-items:center;gap:6px}
+.dstar{font-size:17px;color:var(--border-strong);flex:none;width:28px;height:28px;border-radius:8px;line-height:1;display:inline-flex;align-items:center;justify-content:center}
+.dstar.on{color:#e5a800}
+.dstar:hover{background:var(--bg-soft);color:#e5a800}
+.dir-det{border:1px solid var(--border-strong);background:var(--panel-2);border-radius:14px;padding:13px 16px;margin:4px 2px 10px}
+.dir-det .ddname{font-size:16px;font-weight:800;display:flex;align-items:center;gap:8px;margin-bottom:2px}
+.dir-det .ddrole{font-size:12px;color:var(--muted);margin-bottom:8px}
+.dir-det .ddrow{display:flex;align-items:center;gap:9px;padding:5px 0;font-size:13.5px;flex-wrap:wrap}
+.dir-det .ddrow .ddl{font-size:10.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;min-width:78px}
+.dir-det .ddrow a{font-weight:750;color:var(--accent);text-decoration:none;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis}
+.dir-det .ddnote{font-size:12.5px;color:var(--muted);background:var(--panel);border:1px dashed var(--border-strong);border-radius:9px;padding:7px 10px;margin-top:7px}
+.favtog{font-size:22px;width:42px;height:42px;border-radius:11px;border:1px solid var(--border-strong);background:var(--panel);color:var(--border-strong);flex:none;line-height:1}
+.favtog.on{color:#e5a800;border-color:#e5a800;background:#e5a80018}
+.favtog:hover{color:#e5a800}
 .children-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:12px}
 .child-card{display:flex;align-items:center;gap:11px;padding:13px 15px;border-radius:14px;background:var(--panel);
   border:1px solid var(--border);cursor:pointer;transition:all .14s;box-shadow:0 1px 2px #0000000a}
@@ -602,12 +637,10 @@ html[data-theme="dark"] .eq-cell.rb{background:#22301a;color:#9fce7a;border-colo
 .ic3d svg{width:21px;height:21px;filter:drop-shadow(0 1.2px 1.2px #0004)}
 .side-mini.ic3d svg{width:17px;height:17px}
 .ic3d:hover svg{transform:translateY(-1px) scale(1.08);transition:transform .13s}
-#themeBtn .ic-sun,#themeBtn .ic-moon,#modeBtn .ic-pen,#modeBtn .ic-lock{display:none;line-height:0}
-html[data-theme="light"] #themeBtn .ic-moon{display:block}
-html[data-theme="dark"] #themeBtn .ic-sun{display:block}
-html[data-mode="edit"] #modeBtn .ic-lock{display:block}
-html[data-mode="read"] #modeBtn .ic-pen{display:block}
-html[data-mode="read"] #verLine{pointer-events:none}
+#modeBtn .ic-lock,#modeBtn .ic-unlock{display:none;line-height:0}
+#themeBtn .ic-sm{line-height:0}
+html[data-mode="edit"] #modeBtn .ic-unlock{display:block}
+html[data-mode="read"] #modeBtn .ic-lock{display:block}
 #eqIll{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;margin:4px 0 8px}
 .eq-illit{margin:0;min-width:120px;max-width:100%}
 .eq-illbox{border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:zoom-in;background:var(--panel-2);
@@ -628,7 +661,8 @@ html[data-mode="read"] #verLine{pointer-events:none}
 #colorPop{position:fixed;z-index:140;background:var(--panel);border:1px solid var(--border-strong);border-radius:14px;
   box-shadow:var(--shadow-lg);padding:12px;width:236px}
 #colorPop .cp-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}
-#colorPop .cp-sw{height:24px;border-radius:6px;border:1px solid #00000033;cursor:pointer;padding:0}
+#colorPop .cp-sw.cp-none{background:linear-gradient(135deg,#fff 44%,#d0342c 44%,#d0342c 56%,#fff 56%);border:1.5px solid var(--border-strong) !important}
+.cp-sw{height:24px;border-radius:6px;border:1px solid #00000033;cursor:pointer;padding:0}
 #colorPop .cp-sw:hover{transform:scale(1.12)}
 #colorPop .cp-sw.cur{outline:2px solid var(--accent);outline-offset:1px}
 #colorPop .cp-foot{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:12px;font-weight:700}
@@ -650,6 +684,7 @@ html[data-mode="read"] #verLine{pointer-events:none}
 /* ---------- Modales / menus / toast ---------- */
 #overlay{position:fixed;inset:0;background:#0007;backdrop-filter:blur(3px);z-index:90;display:none;opacity:0;transition:opacity .18s}
 #overlay.on{display:block;opacity:1}
+#modal.wide{width:min(880px,calc(100vw - 32px))}
 #modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-47%);z-index:100;width:min(560px,calc(100vw - 32px));
   background:var(--panel);border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow-lg);
   display:none;opacity:0;transition:all .18s;max-height:86vh;overflow-y:auto}
@@ -660,7 +695,7 @@ html[data-mode="read"] #verLine{pointer-events:none}
 .modal-foot{display:flex;justify-content:flex-end;gap:9px;padding:0 22px 20px}
 .field{margin-bottom:14px}
 .field label{display:block;font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
-.field input[type=text],.field input[type=url],.field select,.field textarea{
+.field input[type=text],.field input[type=url],.field input[type=email],.field input[type=tel],.field input[type=number],.field select,.field textarea{
   width:100%;border:1px solid var(--border-strong);background:var(--bg-soft);border-radius:11px;
   padding:10px 13px;font-size:14px;outline:none;transition:all .13s}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);background:var(--panel);box-shadow:0 0 0 3px var(--accent-soft)}
@@ -712,7 +747,6 @@ html[data-mode="read"] #verLine{pointer-events:none}
   #topbar .icon-btn{width:34px;height:34px}
   #clockTime{font-size:15px}
   .brand .t{font-size:13px;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  #brandEditBtn{display:none}
   .container{padding:12px 10px calc(70px + env(safe-area-inset-bottom))}
   #sidebar{padding-bottom:env(safe-area-inset-bottom)}
   #modal{width:calc(100vw - 12px);max-height:92dvh;border-radius:16px}
@@ -727,7 +761,7 @@ html[data-mode="read"] #verLine{pointer-events:none}
   .bigbtn{height:62px}
   h1,#nodeTitle{font-size:22px}
   /* iOS : évite le zoom automatique au focus des champs (police < 16px) */
-  #searchInput,#eqSearch,#tagInput,.tag-editin,#modal input[type=text],#modal input[type=number],#modal select,#modal textarea{font-size:16px}
+  #searchInput,#eqSearch,#tagInput,.tag-editin,#modal input[type=text],#modal input[type=number],#modal input[type=email],#modal input[type=url],#modal input[type=tel],#modal select,#modal textarea{font-size:16px}
 }
 @media (pointer:coarse){
   .tree-row{min-height:42px}
@@ -758,20 +792,19 @@ html[data-mode="read"] #verLine{pointer-events:none}
     <div class="brand" id="brandBox" title="Accueil">
       <div class="logo">🚄</div>
       <div class="t"><b id="appTitleTxt">RailDoc</b><span id="appSubTxt">Dépannage TGV &amp; Thalys</span></div>
-      <button class="icon-btn" id="brandEditBtn" title="Personnaliser : image, titre et descriptif">✏️</button>
     </div>
     <button class="icon-btn ic3d" id="themeBtn" title="Basculer clair / sombre">
-      <span class="ic-sun"><svg viewBox="0 0 24 24" aria-hidden="true">
-        <defs><radialGradient id="i3sun" cx=".35" cy=".3"><stop offset="0" stop-color="#ffe9a3"/><stop offset=".55" stop-color="#ffc73a"/><stop offset="1" stop-color="#e08a00"/></radialGradient></defs>
-        <g stroke="#f0a500" stroke-width="1.8" stroke-linecap="round"><path d="M12 2v2.6M12 19.4V22M2 12h2.6M19.4 12H22M4.9 4.9l1.9 1.9M17.2 17.2l1.9 1.9M19.1 4.9l-1.9 1.9M6.8 17.2l-1.9 1.9"/></g>
-        <circle cx="12" cy="12" r="5.4" fill="url(#i3sun)" stroke="#c77b00" stroke-width=".8"/>
-        <ellipse cx="10.2" cy="10" rx="2.1" ry="1.3" transform="rotate(-30 10.2 10)" fill="#fff" opacity=".65"/>
-      </svg></span>
-      <span class="ic-moon"><svg viewBox="0 0 24 24" aria-hidden="true">
-        <defs><radialGradient id="i3moon" cx=".38" cy=".32"><stop offset="0" stop-color="#f4f7fb"/><stop offset=".6" stop-color="#c9d4e2"/><stop offset="1" stop-color="#8fa1b8"/></radialGradient></defs>
-        <path d="M14.5 2.4a9.6 9.6 0 1 0 7.1 12.9A8 8 0 0 1 14.5 2.4Z" fill="url(#i3moon)" stroke="#6d7f96" stroke-width=".8"/>
-        <circle cx="10" cy="8.6" r="1.3" fill="#aebccd"/><circle cx="8" cy="13.4" r=".9" fill="#aebccd"/><circle cx="12.2" cy="16" r="1" fill="#aebccd"/>
-        <ellipse cx="9.4" cy="6.4" rx="2" ry="1.1" transform="rotate(-25 9.4 6.4)" fill="#fff" opacity=".7"/>
+      <span class="ic-sm"><svg viewBox="0 0 24 24" aria-hidden="true">
+        <defs>
+          <radialGradient id="i3sun" cx=".35" cy=".3"><stop offset="0" stop-color="#ffe9a3"/><stop offset=".55" stop-color="#ffc73a"/><stop offset="1" stop-color="#e08a00"/></radialGradient>
+          <radialGradient id="i3moon" cx=".38" cy=".32"><stop offset="0" stop-color="#f4f7fb"/><stop offset=".6" stop-color="#c9d4e2"/><stop offset="1" stop-color="#8fa1b8"/></radialGradient>
+        </defs>
+        <g stroke="#f0a500" stroke-width="1.5" stroke-linecap="round"><path d="M8.6 1.6v2M8.6 13.2v2M1.6 8.6h2M13.2 8.6h2M3.6 3.6l1.4 1.4M12.2 12.2l.9.9M13.6 3.6l-1.4 1.4M5 12.2l-1.4 1.4"/></g>
+        <circle cx="8.6" cy="8.6" r="4.1" fill="url(#i3sun)" stroke="#c77b00" stroke-width=".8"/>
+        <ellipse cx="7.3" cy="7.2" rx="1.6" ry="1" transform="rotate(-30 7.3 7.2)" fill="#fff" opacity=".65"/>
+        <path d="M17.8 10.4a7.1 7.1 0 1 0 5.2 9.5 5.9 5.9 0 0 1-5.2-9.5Z" fill="url(#i3moon)" stroke="#6d7f96" stroke-width=".8"/>
+        <circle cx="15.2" cy="15.2" r=".95" fill="#aebccd"/><circle cx="14" cy="18.6" r=".65" fill="#aebccd"/><circle cx="17" cy="20.2" r=".75" fill="#aebccd"/>
+        <ellipse cx="14.9" cy="13.4" rx="1.4" ry=".8" transform="rotate(-25 14.9 13.4)" fill="#fff" opacity=".7"/>
       </svg></span>
     </button>
     <div id="searchWrap">
@@ -811,12 +844,13 @@ html[data-mode="read"] #verLine{pointer-events:none}
     </div>
     <div class="topbar-actions">
       <button class="icon-btn ic3d" id="modeBtn" title="Basculer édition / lecture seule">
-      <span class="ic-pen"><svg viewBox="0 0 24 24" aria-hidden="true">
-        <defs><linearGradient id="i3pen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd34d"/><stop offset="1" stop-color="#e08a00"/></linearGradient></defs>
-        <path d="M4 17.5 15.2 6.3l2.5 2.5L6.5 20 3.4 20.6Z" fill="url(#i3pen)" stroke="#b06e00" stroke-width=".7"/>
-        <path d="M15.2 6.3l1.8-1.8c.7-.7 1.8-.7 2.5 0 .7.7.7 1.8 0 2.5l-1.8 1.8Z" fill="#e8496f" stroke="#8d0728" stroke-width=".7"/>
-        <path d="M4 17.5 6.5 20l-3.1.6Z" fill="#5b3a12"/>
-        <path d="M5 16.5 15.4 6.1l.9.9L5.9 17.4Z" fill="#fff" opacity=".4"/>
+      <span class="ic-unlock"><svg viewBox="0 0 24 24" aria-hidden="true">
+        <defs><linearGradient id="i3lockU" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd34d"/><stop offset="1" stop-color="#dd8f00"/></linearGradient>
+        <linearGradient id="i3shU" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e8ecf0"/><stop offset=".5" stop-color="#9aa6b2"/><stop offset="1" stop-color="#dfe4e9"/></linearGradient></defs>
+        <path d="M7.2 10V7.6a4.8 4.8 0 0 1 9.3-1.7l-2.3.9a2.4 2.4 0 0 0-4.6.8V10Z" fill="url(#i3shU)" stroke="#6d7986" stroke-width=".7"/>
+        <rect x="4.6" y="9.6" width="14.8" height="11" rx="2.6" fill="url(#i3lockU)" stroke="#a86c00" stroke-width=".8"/>
+        <path d="M5.2 10.2h13.6c.2 0 .4 0 .5.1a2.6 2.6 0 0 0-2.1-1.1H6.8c-.9 0-1.7.4-2.1 1.1.1-.1.3-.1.5-.1Z" fill="#fff" opacity=".35"/>
+        <circle cx="12" cy="14.6" r="1.7" fill="#6b4400"/><rect x="11.2" y="15.4" width="1.6" height="2.8" rx=".8" fill="#6b4400"/>
       </svg></span>
       <span class="ic-lock"><svg viewBox="0 0 24 24" aria-hidden="true">
         <defs><linearGradient id="i3lock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd34d"/><stop offset="1" stop-color="#dd8f00"/></linearGradient>
@@ -1018,10 +1052,14 @@ html[data-mode="read"] #verLine{pointer-events:none}
             <button class="eb" data-cmd="insertOrderedList" title="Liste numérotée">1≡</button>
             <button class="eb" data-act="todo" title="Case à cocher">☑</button>
             <span class="eb-sep"></span>
-            <button class="eb" data-act="mark" title="Surligner (jaune)">🖍</button>
-            <button class="eb" data-act="hcolor" title="Couleur de surlignage… (échantillons)"><span class="eb-hc">🖍</span></button>
-            <button class="eb" data-act="red" title="Texte rouge (important)" style="color:#d33">A</button>
-            <button class="eb" data-act="fcolor" title="Couleur du texte… (échantillons)"><span class="eb-fc">A</span></button>
+            <span class="eb-split" title="Surligneur">
+              <button class="eb eb-main" data-act="mark" title="Surligner la sélection avec la couleur affichée"><span class="eb-ic">🖍</span><span class="eb-bar" id="ebBarH" style="background:#ffe27a"></span></button>
+              <button class="eb eb-caret" data-act="hcolor" title="Choisir la couleur du surligneur — pastille barrée = effacer le surlignage">▾</button>
+            </span>
+            <span class="eb-split" title="Couleur du texte">
+              <button class="eb eb-main" data-act="fapply" title="Colorer le texte sélectionné avec la couleur affichée"><span class="eb-ic" style="font-weight:800">A</span><span class="eb-bar" id="ebBarF" style="background:#d63333"></span></button>
+              <button class="eb eb-caret" data-act="fcolor" title="Choisir la couleur du texte">▾</button>
+            </span>
             <button class="eb" data-act="quote" title="Bloc important / encadré">❝</button>
             <button class="eb" data-cmd="insertHorizontalRule" title="Séparation entre deux zones de texte (ligne horizontale)">―</button>
             <button class="eb" data-act="table" title="Tableau : insérer, ou modifier si le curseur est dans un tableau">⊞</button>
@@ -1125,9 +1163,16 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='8.27';
-const APP_VERSION_DATE='6 août 2026';
+const APP_VERSION='8.34';
+const APP_VERSION_DATE='7 août 2026';
 const CHANGELOG=[
+  ['v8.34',"Notes : la palette du surligneur (flèche ▾) commence par une pastille barrée « sans surligneur » — sélectionnez un texte surligné et choisissez-la pour effacer son surlignage"],
+  ['v8.33',"L'historique des versions s'ouvre désormais uniquement depuis ⚙ Réglages → « 🕘 Historique des versions » — la ligne de version en bas du panneau reste affichée à titre d'information mais n'est plus cliquable"],
+  ['v8.32',"Répertoire 📞 : la fenêtre garde une taille fixe pendant la recherche — c'est la liste qui défile à l'intérieur — avec un compteur « X affichés sur Y » au-dessus des résultats"],
+  ['v8.31',"Répertoire 📞 allégé : le nom de la fiche n'apparaît plus sur chaque ligne — il devient le lien « Fiche » dans le détail déplié (l'ancien bouton en doublon est supprimé) · le bouton copier du mail est identique à celui des numéros, dans la carte contact comme dans le répertoire · formulaire contact : champ mail pleine largeur et enfin lisible (les champs e-mail héritaient d'un style par défaut illisible en mode sombre) · tuiles : aide intégrée « lancer une application » avec les schémas d'URL prêts à copier (Excel, Word, Teams, Raccourcis Apple, VNC, SSH…)"],
+  ['v8.30',"Barre du haut stabilisée : plus aucun décalage entre lecture et édition (le crayon du titre est déplacé dans ⚙ Réglages → « Titre, image & descriptif »), annuaire 📞 ancré juste à gauche de la pendule · réglages : nouvelle entrée ℹ️ Informations & statistiques (fiches, fichiers, tuiles, contacts, appareils, mémoire utilisée…) · ouverture rapide : baguette magique 3D avec le nombre de fenêtres en lecture, « ✏️ Modifier l'ouverture rapide » en édition, bouton « Modifier le mur » teinté de rouge — la sélection d'ouverture rapide est bien incluse dans la sauvegarde (audit complet de l'export/import effectué) · 👾 surprise : de temps en temps, le logo se transforme en Pac-Man et croque la barre du haut — bougez la souris ou tapez une touche pour tout faire réapparaître"],
+  ['v8.29',"Répertoire 📞 : fenêtre agrandie, favoris ⭐ toujours épinglés en haut (l'étoile se coche dans le répertoire ou dans le formulaire du contact), un clic sur un contact déplie sa fiche complète (tous les numéros, mail, note, accès à la fiche documentaire) · contacts : nouveaux champs téléphone interne et adresse mail, avec copie dans le presse-papier 📋"],
+  ['v8.28',"Mode édition mémorisé : l'application rouvre dans le dernier mode choisi, jusqu'au verrouillage (cadenas fermé = lecture seule, cadenas ouvert + halo rouge = édition, l'icône ne bouge plus et la pendule non plus) · icône clair/sombre combinée soleil-lune · notes : surligneur et couleur du texte façon Word (couleur affichée + flèche pour en changer, mémorisée), clic sur une image = taille/alignement/suppression, tableaux complets (lignes et colonnes dans les deux sens, suppression du tableau), sortie d'un encadré par Entrée sur une ligne vide, ligne libre garantie après un tableau ou une image en fin de note · tuiles : moteur de recherche pour retrouver un fichier déjà importé"],
   ['v8.27',"TGV POS renommé « TGV P-DUPLEX » (série, catalogue et sous-série) · nouvelles icônes 3D pour l'annuaire (carnet de contacts) et les réglages (engrenage) · correction importante de la flotte : vos modifications sont désormais réellement conservées — une série supprimée ne réapparaît plus au rechargement, et une sous-série contenant « DASYE » dans son nom n'est plus déplacée ni perdue"],
   ['v8.26',"Séries 🚄 Euroduplex (2N2) et 🚄 TGV POS (GDA TT00380 éd. 28-01-2019) : dernier GDA intégré ! 2N2 sur les planches DASYE (motrices, R1/R8, R2-R7, R4, bloc pneumatique) avec ses spécificités ETCS/ZUB/LZB/INTEGRA/ASFA/CFF ; POS avec ses remorques à 1 niveau (schémas 5 et 8) et son bloc pneumatique. Fusion multi-séries des appareils communs avec le Duplex."],
   ['v8.25',"Séries 🚄 TGV Réseau Tri Belgique (GDA TT00234 — identique au Réseau de base) et 🚄 TGV Réseau Tri Italie (GDA TT00526) : catalogue Réseau partagé entre les trois séries, plus les spécificités Italie (anti-incendie CC1/2(I), pantographe 25KV/3KV, répétition des signaux FS, radio FS 900 MHz, armoire BT couloir gauche DEI) et retrait de l'ATB pour l'Italie · reste à intégrer : 2N2 / POS"],
@@ -1423,6 +1468,7 @@ function normalizeData(){
   if(!data.settings.mode)data.settings.mode='read';
   if(!Array.isArray(data.log))data.log=[];
   for(const n of data.nodes){if(!n.tiles)n.tiles=[];if(!n.contacts)n.contacts=[];if(!n.equip)n.equip=[];}
+  for(const n of data.nodes)for(const c of(n.contacts||[]))if(!c.id)c.id='c_'+Math.random().toString(36).slice(2,9);
   if(!data.equipMeta)data.equipMeta={};
   if(!Array.isArray(data.equipPlaces)||!data.equipPlaces.length)
     data.equipPlaces=['Motrice','Remorques','Bloc Cabine','Bloc Moteur','Bloc H-AUX','Bloc Commun','Armoire Pneumatique'];
@@ -1840,6 +1886,7 @@ function renderWall(owner){
     addSec.onclick=()=>sectionModal(owner,null);wall.appendChild(addSec);}
   else if(!items.length&&isEdit())
     wall.innerHTML=`<div class="empty-hint" style="grid-column:1/-1">Cliquez sur « ✏️ Modifier${owner==='home'?' le mur':''} » pour ajouter des tuiles d'accès rapide.</div>`;}
+const WAND_SVG='<svg viewBox="0 0 24 24" style="width:17px;height:17px;vertical-align:-3.5px;filter:drop-shadow(0 1px 1.2px #0004)" aria-hidden="true"><defs><linearGradient id="i3wnd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b06ae0"/><stop offset="1" stop-color="#5b2a8a"/></linearGradient><radialGradient id="i3wst" cx=".4" cy=".35"><stop offset="0" stop-color="#fff3a0"/><stop offset="1" stop-color="#f0a500"/></radialGradient></defs><rect x="1.5" y="16.4" width="15" height="3.4" rx="1.7" transform="rotate(-40 9 18)" fill="url(#i3wnd)" stroke="#3f1a63" stroke-width=".6"/><path d="M16.9 1.9l1.3 2.8 2.8 1.3-2.8 1.3-1.3 2.8-1.3-2.8-2.8-1.3 2.8-1.3Z" fill="url(#i3wst)" stroke="#c77b00" stroke-width=".5"/><path d="M21 11l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6Z" fill="#ffd93b"/><path d="M12.4 9.2l.5 1.1 1.1.5-1.1.5-.5 1.1-.5-1.1-1.1-.5 1.1-.5Z" fill="#ffd93b" opacity=".85"/></svg>';
 function renderHome(){
   const h=new Date().getHours();
   $('#helloTxt').textContent=(h<6?'Bonne nuit':h<12?'Bonjour':h<18?'Bon après-midi':'Bonsoir')+' 👋';
@@ -1847,10 +1894,12 @@ function renderHome(){
   $('#editWallBtn').classList.toggle('primary',state.editWallOwner==='home');
   $('#quickBtn').classList.toggle('primary',state.quickMode);
   const nSel=(data.settings.quickSel||[]).filter(id=>{const t=data.tiles.find(x=>x.id===id);return t&&isSelectable(t);}).length;
-  $('#quickBtn').textContent=isEdit()?'🚀 Lancement rapide':`🚀 Tout ouvrir${nSel?' ('+nSel+')':''}`;
+  $('#quickBtn').innerHTML=isEdit()
+    ?'✏️ Modifier l\'ouverture rapide'
+    :WAND_SVG+` Ouverture rapide (${nSel})`;
   $('#quickBtn').title=isEdit()
-    ?'Choisir les tuiles (liens & fichiers) à ouvrir en un clic'
-    :'Ouvrir en un clic toutes les tuiles sélectionnées, chacune dans son onglet';
+    ?'Choisir les tuiles (liens & fichiers) qui s\'ouvriront en un clic'
+    :`Ouvrir d'un coup ${nSel} fenêtre(s), chacune dans son onglet`;
   updateQuickBar();
   renderWall('home');}
 function runAction(a,newTab){if(!a)return;
@@ -1954,7 +2003,7 @@ function renderNode(){const n=nodeById(state.nodeId);if(!n){navigate('#/home');r
     fileURL(n.iconImg).then(u=>{const im=ni.querySelector('img');if(u&&im)im.src=u;else ni.textContent=n.icon;});}
   else ni.textContent=n.icon;
   const tEl=$('#nodeTitle');if(tEl.textContent!==n.title)tEl.textContent=n.title;
-  const ed=$('#editor');if(ed.innerHTML!==n.html)ed.innerHTML=n.html;
+  const ed=$('#editor');if(ed.innerHTML!==n.html)ed.innerHTML=n.html;ensureTrailingP();
   renderTags(n);renderNodeEquip(n);renderNodeWall(n);renderLinks(n);renderContacts(n);renderFiles(n);renderChildren(n);
   /* en lecture seule, masquer les zones vides et la note vide */
   const emptyNote=!(n.html&&n.html.replace(/<br\s*\/?>/gi,'').replace(/&nbsp;/g,'').trim());
@@ -2092,9 +2141,11 @@ function renderContacts(n){const grid=$('#contactsList');grid.innerHTML='';
     const card=document.createElement('div');card.className='contact-card';
     const tel=(p,lbl)=>p?`<div class="contact-tel"><a href="${esc(telHref(p))}" title="Appeler">${esc(p)}</a>
       <button class="ccopy" data-copy="${esc(p)}" title="Copier le numéro">📋</button>${lbl?`<span style="font-size:10.5px;color:var(--muted)">${esc(lbl)}</span>`:''}</div>`:'';
-    card.innerHTML=`<div class="contact-name">${esc(c.name)}</div>
+    card.innerHTML=`<div class="contact-name">${c.fav?'<span style="color:#e5a800" title="Favori du répertoire">★</span> ':''}${esc(c.name)}</div>
       ${c.role?`<div class="contact-role">${esc(c.role)}</div>`:''}
-      <div class="contact-tels">${tel(c.phone)}${tel(c.phone2,'secours')}</div>
+      <div class="contact-tels">${tel(c.phone)}${tel(c.phone2,'secours')}${tel(c.phoneInt,'interne')}
+        ${c.email?`<div class="contact-tel"><a href="mailto:${esc(c.email)}" title="Écrire un mail">✉️ ${esc(c.email)}</a>
+        <button class="ccopy" data-copy="${esc(c.email)}" title="Copier l'adresse mail">📋</button></div>`:''}</div>
       ${c.note?`<div class="contact-note">${esc(c.note)}</div>`:''}
       <div class="contact-tools">
         <button data-a="edit" title="Modifier">✏️</button>
@@ -2108,9 +2159,13 @@ function renderContacts(n){const grid=$('#contactsList');grid.innerHTML='';
     grid.appendChild(card);}
   if(!n.contacts.length)grid.innerHTML='<div class="empty-hint">Ajoutez les numéros utiles : astreintes, PAC, superviseurs… Un clic sur le numéro lance l\'appel ; 📋 le copie. Le bouton 📞 en haut regroupe tous les contacts.</div>';}
 function contactModal(n,existing){
+  let fav=!!(existing&&existing.fav);
   openModal(existing?'Modifier le contact':'Ajouter un contact',`
-    <div class="field"><label>Nom / service</label>
-      <input type="text" id="mCoName" value="${esc(existing?existing.name:'')}" placeholder="ex : Astreinte caténaire, PAC TGV…"></div>
+    <div style="display:flex;gap:10px;align-items:flex-end">
+      <div class="field" style="flex:1;margin-bottom:0"><label>Nom / service</label>
+        <input type="text" id="mCoName" value="${esc(existing?existing.name:'')}" placeholder="ex : Astreinte caténaire, PAC TGV…"></div>
+      <button type="button" id="mCoFav" class="favtog${fav?' on':''}" title="Favori : toujours affiché en haut du répertoire 📞">${fav?'★':'☆'}</button>
+    </div>
     <div class="field"><label>Fonction / rôle (facultatif)</label>
       <input type="text" id="mCoRole" value="${esc(existing?existing.role||'':'')}" placeholder="ex : 7j/7 24h/24, heures ouvrées…"></div>
     <div style="display:flex;gap:10px">
@@ -2119,6 +2174,10 @@ function contactModal(n,existing){
       <div class="field" style="flex:1"><label>N° secondaire (facultatif)</label>
         <input type="text" id="mCoTel2" value="${esc(existing?existing.phone2||'':'')}" inputmode="tel"></div>
     </div>
+    <div class="field"><label>Téléphone interne (facultatif)</label>
+      <input type="text" id="mCoTelInt" value="${esc(existing?existing.phoneInt||'':'')}" placeholder="ex : 30 44 12" inputmode="tel"></div>
+    <div class="field"><label>Adresse mail (facultatif)</label>
+      <input type="email" id="mCoMail" value="${esc(existing?existing.email||'':'')}" placeholder="ex : prenom.nom@sncf.fr" autocomplete="off" spellcheck="false"></div>
     <div class="field"><label>Note (facultatif)</label>
       <input type="text" id="mCoNote" value="${esc(existing?existing.note||'':'')}" placeholder="ex : demander le poste 4412, joignable via GSM-R…"></div>`,
     [{label:'Annuler'},{label:existing?'Enregistrer':'Ajouter',primary:true,fn:()=>{
@@ -2127,39 +2186,78 @@ function contactModal(n,existing){
       if(!name){toast('Indiquez un nom');return false;}
       if(!phone){toast('Indiquez un numéro');return false;}
       const patch={name,role:$('#mCoRole').value.trim(),phone,
-        phone2:$('#mCoTel2').value.trim(),note:$('#mCoNote').value.trim()};
+        phone2:$('#mCoTel2').value.trim(),phoneInt:$('#mCoTelInt').value.trim(),
+        email:$('#mCoMail').value.trim(),note:$('#mCoNote').value.trim(),fav};
       if(existing)Object.assign(existing,patch);
       else{n.contacts.push({id:uid(),...patch});
         logEvt(`📞 Contact ajouté : ${name} (fiche « ${n.title||'Sans titre'} »)`);}
       touch(n);renderContacts(n);}}]);
+  $('#mCoFav').onclick=()=>{fav=!fav;const b=$('#mCoFav');
+    b.classList.toggle('on',fav);b.textContent=fav?'★':'☆';};
   setTimeout(()=>$('#mCoName').focus(),60);}
 /* ---------- Répertoire global ---------- */
 function directoryModal(){
   const all=data.nodes.flatMap(n=>(n.contacts||[]).map(c=>({c,n})))
     .sort((a,b)=>a.c.name.localeCompare(b.c.name,'fr'));
   openModal('📞 Répertoire — tous les contacts',`
-    <div class="field"><input type="text" id="mDirQ" placeholder="Filtrer : nom, rôle, numéro, fiche…" style="width:100%;border:1px solid var(--border-strong);background:var(--bg-soft);border-radius:11px;padding:10px 13px;font-size:14px;outline:none"></div>
-    <div id="mDirList" style="max-height:330px;overflow-y:auto"></div>
-    <p style="font-size:11.5px;color:var(--muted);margin-top:10px">💡 Les contacts s'ajoutent dans les fiches (zone 📞 Contacts) : ils apparaissent ici automatiquement. Cliquer sur le nom de la fiche l'ouvre.</p>`,
+    <div class="field" style="margin-bottom:6px"><input type="text" id="mDirQ" placeholder="Filtrer : nom, rôle, numéro, mail, fiche…" style="width:100%;border:1px solid var(--border-strong);background:var(--bg-soft);border-radius:11px;padding:10px 13px;font-size:14px;outline:none"></div>
+    <div id="mDirCount" style="font-size:11px;font-weight:700;color:var(--muted);text-align:right;margin:0 4px 6px"></div>
+    <div id="mDirList" style="height:56vh;overflow-y:auto"></div>
+    <p style="font-size:11.5px;color:var(--muted);margin-top:10px">💡 Un clic sur un contact déplie sa fiche complète. L'étoile ⭐ épingle un favori en haut du répertoire. Les contacts s'ajoutent dans les fiches (zone 📞 Contacts).</p>`,
     [{label:'Fermer',primary:true}]);
+  $('#modal').classList.add('wide');
   const list=$('#mDirList');
-  const draw=q=>{
-    q=(q||'').toLowerCase();
-    const rows=all.filter(({c,n})=>!q||(c.name+' '+(c.role||'')+' '+c.phone+' '+(c.phone2||'')+' '+(n.title||'')).toLowerCase().includes(q));
-    list.innerHTML=rows.map(({c,n})=>`
-      <div class="dir-row">
+  let openId=null;
+  const rowHtml=({c,n})=>`
+      <div class="dir-row${openId===c.id?'" style="background:var(--accent-soft)':''}" data-open="${c.id}">
+        <button class="dstar${c.fav?' on':''}" data-star="${c.id}" title="${c.fav?'Retirer des favoris':'Favori : toujours affiché en haut'}">${c.fav?'★':'☆'}</button>
         <div style="flex:1;min-width:0">
           <div class="dn">${esc(c.name)}</div>
           ${c.role?`<div class="dr">${esc(c.role)}</div>`:''}
         </div>
-        <span class="df" data-go="${n.id}" title="Ouvrir la fiche">${esc(n.title||'Sans titre')}</span>
         <a href="${esc(telHref(c.phone))}" title="Appeler">${esc(c.phone)}</a>
-        <button class="ccopy" data-copy="${esc(c.phone)}" title="Copier">📋</button>
-      </div>`).join('')||'<div class="empty-hint" style="padding:14px">Aucun contact'+(q?' pour ce filtre':' — ajoutez-en dans vos fiches (zone 📞 Contacts)')+'.</div>';
-    list.querySelectorAll('.ccopy').forEach(b=>b.onclick=()=>copyText(b.dataset.copy));
-    list.querySelectorAll('.df').forEach(el=>el.onclick=()=>{closeModal();navigate('#/node/'+el.dataset.go);});};
+        <button class="ccopy" data-copy="${esc(c.phone)}" title="Copier le numéro">📋</button>
+      </div>${openId===c.id?detHtml({c,n}):''}`;
+  const detHtml=({c,n})=>{
+    const num=(lbl,v)=>v?`<div class="ddrow"><span class="ddl">${lbl}</span>
+      <a href="${esc(telHref(v))}" title="Appeler">${esc(v)}</a>
+      <button class="ccopy" data-copy="${esc(v)}" title="Copier le numéro">📋</button></div>`:'';
+    return `<div class="dir-det">
+      <div class="ddname">${c.fav?'<span style="color:#e5a800">★</span>':''}${esc(c.name)}</div>
+      ${c.role?`<div class="ddrole">${esc(c.role)}</div>`:''}
+      ${num('Téléphone',c.phone)}
+      ${num('Secondaire',c.phone2)}
+      ${num('Interne',c.phoneInt)}
+      ${c.email?`<div class="ddrow"><span class="ddl">Mail</span>
+        <a href="mailto:${esc(c.email)}" title="Écrire un mail">✉️ ${esc(c.email)}</a>
+        <button class="ccopy" data-copy="${esc(c.email)}" title="Copier l'adresse mail">📋</button></div>`:''}
+      ${c.note?`<div class="ddnote">📝 ${esc(c.note)}</div>`:''}
+      <div class="ddrow" style="margin-top:6px"><span class="ddl">Fiche</span>
+        <span class="df" data-go2="${n.id}" style="font-size:12.5px" title="Ouvrir la fiche documentaire">📄 ${esc(n.title||'Sans titre')}</span></div>
+    </div>`;};
+  const draw=q=>{
+    q=(q||'').toLowerCase();
+    const match=({c,n})=>!q||(c.name+' '+(c.role||'')+' '+(c.phone||'')+' '+(c.phone2||'')+' '+(c.phoneInt||'')+' '+(c.email||'')+' '+(n.title||'')).toLowerCase().includes(q);
+    const favs=all.filter(x=>x.c.fav).filter(match);
+    const others=all.filter(x=>!x.c.fav).filter(match);
+    let html='';
+    if(favs.length)html+='<div class="dir-sect">⭐ Favoris</div>'+favs.map(rowHtml).join('');
+    if(others.length)html+=(favs.length?'<div class="dir-sect">Tous les contacts</div>':'')+others.map(rowHtml).join('');
+    list.innerHTML=html||'<div class="empty-hint" style="padding:14px">Aucun contact'+(q?' pour ce filtre':' — ajoutez-en dans vos fiches (zone 📞 Contacts)')+'.</div>';
+    {const shown=favs.length+others.length,tot=all.length;
+     $('#mDirCount').textContent=tot===0?'':(shown===tot?tot+' contact'+(tot>1?'s':''):shown+' affiché'+(shown>1?'s':'')+' sur '+tot);}
+    list.querySelectorAll('.ccopy').forEach(b=>b.onclick=e=>{e.stopPropagation();copyText(b.dataset.copy);});
+    list.querySelectorAll('a[href^="tel:"],a[href^="mailto:"]').forEach(a=>a.onclick=e=>e.stopPropagation());
+    list.querySelectorAll('[data-go2]').forEach(b=>b.onclick=e=>{e.stopPropagation();closeModal();navigate('#/node/'+b.dataset.go2);});
+    list.querySelectorAll('.dstar').forEach(b=>b.onclick=e=>{e.stopPropagation();
+      const hit=all.find(x=>x.c.id===b.dataset.star);
+      if(hit){hit.c.fav=!hit.c.fav;save();draw($('#mDirQ').value);}});
+    list.querySelectorAll('.dir-row').forEach(r=>r.onclick=e=>{
+      if(e.target.closest('.dstar,.ccopy,.df,a'))return;
+      openId=openId===r.dataset.open?null:r.dataset.open;
+      draw($('#mDirQ').value);});};
   draw('');
-  $('#mDirQ').addEventListener('input',e=>draw(e.target.value));
+  $('#mDirQ').addEventListener('input',e=>{draw(e.target.value);});
   setTimeout(()=>$('#mDirQ').focus(),60);}
 function renderFiles(n){const grid=$('#filesList');grid.innerHTML='';
   $('#filesCount').textContent=n.files.length||'';
@@ -2228,27 +2326,53 @@ function renderChildren(n){const grid=$('#childrenList');grid.innerHTML='';
 /* ==========================================================
    Éditeur riche
    ========================================================== */
+function updateColorBars(){
+  const h=$('#ebBarH'),f=$('#ebBarF');
+  if(h)h.style.background=state.lastHilite||'#ffe27a';
+  if(f)f.style.background=state.lastFore||'#d63333';}
+function ensureTrailingP(){
+  const ed=$('#editor');if(!ed)return;
+  const last=ed.lastElementChild;
+  if(last&&(/^(TABLE|IMG|HR|FIGURE|BLOCKQUOTE)$/.test(last.tagName)||(last.classList&&last.classList.contains('rd-toc')))){
+    const pe=document.createElement('p');pe.innerHTML='<br>';ed.appendChild(pe);}}
 function initEditor(){
   const ed=$('#editor');
   document.execCommand('defaultParagraphSeparator',false,'p');
+  try{state.lastHilite=(data.settings&&data.settings.noteHilite)||localStorage.getItem('rd_hilite')||state.lastHilite;
+      state.lastFore=(data.settings&&data.settings.noteFore)||localStorage.getItem('rd_fore')||state.lastFore;}catch(_){}
+  updateColorBars();
+  /* Entrée sur une ligne vide d'un encadré (❝) : on sort de l'encadré au lieu d'y rester bloqué */
+  ed.addEventListener('keydown',e=>{
+    if(e.key!=='Enter'||e.shiftKey)return;
+    const sel=window.getSelection();if(!sel||!sel.rangeCount)return;
+    let el=sel.anchorNode;if(el&&el.nodeType===3)el=el.parentElement;
+    const bq=el&&el.closest?el.closest('blockquote'):null;
+    if(bq&&ed.contains(bq)&&!(el.textContent||'').trim()){
+      e.preventDefault();document.execCommand('outdent');saveEditor();}});
   $('#editorBar').addEventListener('mousedown',e=>{if(e.target.closest('.eb'))e.preventDefault();});
   $('#editorBar').addEventListener('click',e=>{const b=e.target.closest('.eb');if(!b)return;
     ed.focus();
     if(b.dataset.cmd)document.execCommand(b.dataset.cmd,false,null);
     else if(b.dataset.block)document.execCommand('formatBlock',false,b.dataset.block);
-    else if(b.dataset.act==='mark')document.execCommand('hiliteColor',false,'#ffe27a');
-    else if(b.dataset.act==='red')document.execCommand('foreColor',false,'#d63333');
+    else if(b.dataset.act==='mark')document.execCommand('hiliteColor',false,state.lastHilite||'#ffe27a');
+    else if(b.dataset.act==='fapply')document.execCommand('foreColor',false,state.lastFore||'#d63333');
     else if(b.dataset.act==='fcolor'||b.dataset.act==='hcolor'){
       e.stopPropagation();
       const isFore=b.dataset.act==='fcolor';
       const selObj=window.getSelection();
       const range=selObj&&selObj.rangeCount?selObj.getRangeAt(0).cloneRange():null;
       pickColor(b,isFore?(state.lastFore||'#d63333'):(state.lastHilite||'#ffe27a'),c=>{
-        if(isFore)state.lastFore=c;else state.lastHilite=c;
         ed.focus();
         if(range){const s2=window.getSelection();s2.removeAllRanges();s2.addRange(range);}
+        if(c==='none'){/* effacer le surligneur de la sélection */
+          document.execCommand('hiliteColor',false,'transparent');
+          saveEditor();return;}
+        if(isFore){state.lastFore=c;data.settings.noteFore=c;try{localStorage.setItem('rd_fore',c);}catch(_){}}
+        else{state.lastHilite=c;data.settings.noteHilite=c;try{localStorage.setItem('rd_hilite',c);}catch(_){}}
+        save();
+        updateColorBars();
         document.execCommand(isFore?'foreColor':'hiliteColor',false,c);
-        saveEditor();});
+        saveEditor();},isFore?null:{none:true,noneTitle:'Sans surligneur — efface le surlignage de la sélection'});
       return;}
     else if(b.dataset.act==='quote')document.execCommand('formatBlock',false,'blockquote');
     else if(b.dataset.act==='todo')document.execCommand('insertHTML',false,
@@ -2266,6 +2390,24 @@ function initEditor(){
   /* liens de la note : fiches internes → navigation dans l'app ; le reste → nouvel onglet.
      En mode édition, un clic sur le sommaire 🧭 ouvre un menu (actualiser / supprimer / ouvrir). */
   ed.addEventListener('click',e=>{
+    /* image : taille, alignement, suppression (mode édition) */
+    const im=e.target.closest('img');
+    if(im&&isEdit()){
+      e.preventDefault();e.stopPropagation();
+      const setW=w=>{im.style.width=w;saveEditor();};
+      openCtx(e.clientX,e.clientY,[
+        {ic:'🔎',label:'Petite (25 %)',fn:()=>setW('25%')},
+        {ic:'🖼',label:'Moyenne (50 %)',fn:()=>setW('50%')},
+        {ic:'🖼',label:'Grande (75 %)',fn:()=>setW('75%')},
+        {ic:'⛶',label:'Taille originale',fn:()=>{im.style.width='';saveEditor();}},
+        {sep:true},
+        {ic:'◀',label:'À gauche, texte autour',fn:()=>{im.style.float='left';im.style.margin='6px 14px 6px 0';saveEditor();}},
+        {ic:'▶',label:'À droite, texte autour',fn:()=>{im.style.float='right';im.style.margin='6px 0 6px 14px';saveEditor();}},
+        {ic:'↔️',label:'Centrée (pleine ligne)',fn:()=>{im.style.float='';im.style.display='block';im.style.margin='8px auto';saveEditor();}},
+        {ic:'⏹',label:'Position normale',fn:()=>{im.style.float='';im.style.display='';im.style.margin='';saveEditor();}},
+        {sep:true},
+        {ic:'🗑',label:'Supprimer l\'image',danger:true,fn:()=>{im.remove();saveEditor();}}]);
+      return;}
     /* en-tête du sommaire : menu actualiser / supprimer (mode édition) */
     const th=e.target.closest('.rd-toc-head');
     if(th&&isEdit()){
@@ -2297,7 +2439,7 @@ function initEditor(){
   tt.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();ed.focus();}});
   tt.addEventListener('paste',e=>{e.preventDefault();
     document.execCommand('insertText',false,(e.clipboardData||window.clipboardData).getData('text').replace(/\n/g,' '));});}
-function saveEditor(){if(currentNode){currentNode.html=$('#editor').innerHTML;touch(currentNode);}}
+function saveEditor(){ensureTrailingP();if(currentNode){currentNode.html=$('#editor').innerHTML;touch(currentNode);}}
 
 /* ---------- Nettoyage de style (texte importé → style par défaut) ---------- */
 const CLEAN_KEEP=new Set('P BR H2 H3 UL OL LI B STRONG I EM U S STRIKE A TABLE THEAD TBODY TR TD TH BLOCKQUOTE IMG HR MARK CODE PRE SUB SUP INPUT DIV LABEL'.split(' '));
@@ -2320,7 +2462,7 @@ function cleanHtmlToDefault(html){
       for(const at of[...node.attributes]){
         const nm=at.name.toLowerCase();
         const ok=(tag==='A'&&(nm==='href'||nm==='data-node'))
-              ||(tag==='IMG'&&(nm==='src'||nm==='alt'))
+              ||(tag==='IMG'&&(nm==='src'||nm==='alt'||nm==='style'))
               ||(tag==='INPUT'&&(nm==='type'||nm==='checked'))
               ||((tag==='DIV'||tag==='LABEL')&&nm==='class'&&/^(todo|rd-toc|rd-toc-head)$/.test(at.value))
               ||(tag==='DIV'&&nm==='contenteditable');
@@ -2391,14 +2533,26 @@ function tableCtx(){const sel=window.getSelection();if(!sel||!sel.rangeCount)ret
 function handleTable(e){
   const c=tableCtx();
   if(c)openCtx(e.clientX,e.clientY,[
+    {ic:'⬆️',label:'Ajouter une ligne au-dessus',fn:()=>tableAddRowAbove(c)},
     {ic:'⬇️',label:'Ajouter une ligne dessous',fn:()=>tableAddRow(c)},
+    {ic:'⬅️',label:'Ajouter une colonne à gauche',fn:()=>tableAddColLeft(c)},
     {ic:'➡️',label:'Ajouter une colonne à droite',fn:()=>tableAddCol(c)},
     {sep:true},
     {ic:'✂️',label:'Supprimer cette ligne',danger:true,fn:()=>tableDelRow(c)},
     {ic:'✂️',label:'Supprimer cette colonne',danger:true,fn:()=>tableDelCol(c)},
+    {ic:'🗑',label:'Supprimer tout le tableau',danger:true,fn:()=>{c.table.remove();saveEditor();}},
     {sep:true},
     {ic:'⊞',label:'Insérer un nouveau tableau',fn:insertTableModal}]);
   else insertTableModal();}
+function tableAddRowAbove(c){const cols=c.tr.children.length;
+  const tr=document.createElement('tr');
+  for(let i=0;i<cols;i++){const td=document.createElement('td');td.innerHTML='<br>';tr.appendChild(td);}
+  c.tr.before(tr);saveEditor();}
+function tableAddColLeft(c){const idx=[...c.tr.children].indexOf(c.td);
+  for(const tr of c.table.rows){const ref=tr.children[Math.min(idx,tr.children.length-1)];
+    const cell=document.createElement(ref&&ref.tagName==='TH'?'th':'td');cell.innerHTML='<br>';
+    ref?ref.before(cell):tr.appendChild(cell);}
+  saveEditor();}
 function tableAddRow(c){const cols=c.tr.children.length;
   const tr=document.createElement('tr');
   for(let i=0;i<cols;i++){const td=document.createElement('td');td.innerHTML='<br>';tr.appendChild(td);}
@@ -2461,7 +2615,7 @@ function openModal(title,bodyHtml,buttons){
     foot.appendChild(btn);}
   m.querySelector('#mClose').onclick=closeModal;
   m.classList.add('on');}
-function closeModal(){$('#overlay').classList.remove('on');$('#modal').classList.remove('on');}
+function closeModal(){$('#overlay').classList.remove('on');$('#modal').classList.remove('on','wide');}
 function confirmDlg(title,msg){return new Promise(res=>{
   openModal(title,`<p style="font-size:14px;line-height:1.6;color:var(--muted)">${msg}</p>`,
     [{label:'Annuler',fn:()=>res(false)},{label:'Confirmer',primary:true,fn:()=>res(true)}]);
@@ -2609,6 +2763,33 @@ function nodeOptionsHtml(selId){const out=[];
     walk(n.id,depth+1);}};
   walk(null,0);return out.join('');}
 const fileIsAttachment=fid=>data.nodes.some(nd=>nd.files.some(a=>a.fileId===fid));
+/* Transforme un <select> de fichiers en moteur de recherche (saisie + liste filtrée) */
+function makeFileSearch(sel,ph){
+  if(!sel||sel.dataset.fs)return;sel.dataset.fs='1';
+  const wrap=document.createElement('div');wrap.className='fsearch';wrap.id=sel.id+'Wrap';
+  sel.parentNode.insertBefore(wrap,sel);wrap.appendChild(sel);
+  sel.style.display='none';
+  const inp=document.createElement('input');inp.type='text';inp.autocomplete='off';inp.spellcheck=false;
+  inp.placeholder=ph||'🔎 Rechercher un fichier par son nom…';
+  const list=document.createElement('div');list.className='fsearch-list';
+  wrap.append(inp,list);
+  const opts=[...sel.options].filter(o=>o.value);
+  const sync=()=>{const o=opts.find(x=>x.value===sel.value);inp.value=o?o.textContent:'';};
+  sync();
+  sel.addEventListener('change',sync);
+  const draw=()=>{
+    const words=inp.value.toLowerCase().trim().split(/\s+/).filter(Boolean);
+    const hits=opts.filter(o=>{const t=o.textContent.toLowerCase();return words.every(w=>t.includes(w));}).slice(0,80);
+    list.innerHTML=hits.map(o=>`<button type="button" data-i="${opts.indexOf(o)}">📄 ${esc(o.textContent)}</button>`).join('')
+      ||'<div class="fsearch-empty">Aucun fichier ne correspond</div>';
+    list.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+      const o=opts[+b.dataset.i];sel.value=o.value;inp.value=o.textContent;
+      list.style.display='none';sel.dispatchEvent(new Event('change'));});};
+  const open=()=>{list.style.display='block';draw();};
+  inp.addEventListener('focus',()=>{inp.select();open();});
+  inp.addEventListener('input',open);
+  inp.addEventListener('keydown',e=>{if(e.key==='Escape')list.style.display='none';});
+  document.addEventListener('pointerdown',e=>{if(!wrap.contains(e.target))list.style.display='none';},true);}
 function existingFileOptions(prefNode,selId){const out=[];
   const push=n=>{for(const a of n.files)out.push(`<option value="${a.fileId}"${a.fileId===selId?' selected':''}>${esc(a.name)}${prefNode&&n.id===prefNode.id?'':' — '+esc(n.title||'Sans titre')}</option>`);};
   if(prefNode)push(prefNode);
@@ -2703,6 +2884,19 @@ function tileModal(owner,tileId,afterId){
       <div id="mTiActUrlBox" style="margin-top:8px">
         <input type="url" id="mTiActUrl" value="${esc(t&&t.action&&t.action.type==='url'?t.action.value:'')}" placeholder="https://… (intranet, application, SharePoint…)">
         ${linkOpts?`<select id="mTiActLinkSel" style="margin-top:8px"><option value="">— ou reprendre un lien enregistré dans les fiches —</option>${linkOpts}</select>`:''}
+        <details style="margin-top:8px">
+          <summary style="font-size:11.5px;color:var(--muted);cursor:pointer;user-select:none">💡 Aide — lancer une application (Excel, Teams, Raccourcis…) depuis cette tuile</summary>
+          <div style="font-size:11.5px;color:var(--muted);line-height:1.8;margin-top:6px;border:1px dashed var(--border-strong);border-radius:10px;padding:9px 12px">
+            En plus des adresses web, une tuile peut ouvrir un <b>schéma d'application</b> — l'application doit être installée sur l'appareil (le navigateur demande une confirmation la première fois) :<br>
+            · <code>ms-excel:ofe|u|https://…/classeur.xlsx</code> → ouvrir un classeur dans <b>Excel</b><br>
+            · <code>ms-word:ofe|u|https://…/document.docx</code> → ouvrir un document <b>Word</b><br>
+            · <code>ms-powerpoint:ofe|u|https://…</code> → <b>PowerPoint</b> · <code>msteams:</code> → <b>Teams</b><br>
+            · <code>mailto:prenom.nom@sncf.fr</code> → nouveau mail · <code>tel:0171938832</code> → appeler<br>
+            · <code>facetime:</code> · <code>vnc://serveur</code> · <code>ssh://serveur</code> → Mac<br>
+            · <code>shortcuts://run-shortcut?name=MonRaccourci</code> → lance un <b>Raccourci Apple</b> (iPad&nbsp;/&nbsp;Mac), qui peut lui-même ouvrir n'importe quelle application ou enchaîner des actions<br>
+            Un lien impossible à lancer ne casse rien : il ne se passe simplement rien.
+          </div>
+        </details>
       </div>
       <select id="mTiActNode" style="display:none;margin-top:8px">${nodeOptionsHtml(t&&t.action&&t.action.type==='node'?t.action.value:null)}</select>
       <div id="mTiActFileBox" style="display:none;margin-top:8px">
@@ -2786,7 +2980,9 @@ function tileModal(owner,tileId,afterId){
       else fileURL(fid).then(u=>{if(u)prev.innerHTML=`<img src="${u}">`;});});};
   const refreshImgSeg=()=>{[...segI.children].forEach(b=>b.classList.toggle('on',b.dataset.v===st.imgMode));
     $('#mTiImgUrl').style.display=st.imgMode==='url'?'block':'none';
-    $('#mTiImgAtt').style.display=st.imgMode==='att'?'block':'none';
+    {const aw=$('#mTiImgAttWrap');
+     if(aw)aw.style.display=st.imgMode==='att'?'block':'none';
+     else $('#mTiImgAtt').style.display=st.imgMode==='att'?'block':'none';}
     $('#mTiImgSameBox').style.display=(st.imgMode==='att'&&st.actType==='file'&&st.actFile)?'block':'none';
     const prev=$('#mTiPrev');
     if(st.imgMode==='file'){prev.style.display='flex';
@@ -2826,7 +3022,8 @@ function tileModal(owner,tileId,afterId){
     toast('🅰 Monogramme généré — fonctionne hors ligne et en intranet');};
   const attSel=$('#mTiImgAtt');
   attSel.onchange=()=>{st.imgAttId=attSel.value||null;refreshImgSeg();};
-  $('#mTiImgSameAct').onclick=()=>{if(st.actFile){st.imgAttId=st.actFile;attSel.value=st.actFile;refreshImgSeg();}};
+  makeFileSearch(attSel,'🔎 Rechercher une pièce jointe par son nom…');
+  $('#mTiImgSameAct').onclick=()=>{if(st.actFile){st.imgAttId=st.actFile;attSel.value=st.actFile;attSel.dispatchEvent(new Event('change'));refreshImgSeg();}};
   $('#fiTileImg').onchange=e=>{const f=e.target.files[0];e.target.value='';
     if(f){st.newImgFile=f;st.imgMode='file';refreshImgSeg();}};
   if(st.img&&st.img.type==='url')$('#mTiImgUrl').value=st.img.value;
@@ -2846,6 +3043,7 @@ function tileModal(owner,tileId,afterId){
   if(lsel)lsel.onchange=()=>{if(lsel.value)$('#mTiActUrl').value=lsel.value;};
   const fsel=$('#mTiActFileSel');
   if(fsel)fsel.onchange=()=>{if(fsel.value){st.actFile=fsel.value;st.newActFile=null;refreshActSeg();}};
+  if(fsel)makeFileSearch(fsel);
   $('#mTiActFileBtn').onclick=()=>{const fi=$('#fiAttach');
     fi.onchange=e=>{const f=e.target.files[0];fi.value='';fi.onchange=null;attachInputRewire();
       if(f){st.newActFile=f;if(fsel)fsel.value='';refreshActSeg();}};
@@ -2933,6 +3131,93 @@ let lastSearchEquip=[];
 function closeSearch(clear){$('#searchResults').classList.remove('on');
   if(clear){$('#searchInput').value='';$('#searchInput').blur();}}
 
+/* ---------- Informations & statistiques ---------- */
+async function infoModal(){
+  let filesN=0,filesSz=0;
+  try{const ks=await idb.keys('files');
+    for(const k of ks){const f=await idb.get('files',k);
+      if(f){filesN++;filesSz+=f.size||(f.blob&&f.blob.size)||0;}}}catch(_){}
+  let est=null;
+  try{if(navigator.storage&&navigator.storage.estimate)est=await navigator.storage.estimate();}catch(_){}
+  const nodes=data.nodes||[];
+  const racines=nodes.filter(n=>!n.parent).length;
+  const notes=nodes.filter(n=>n.html&&stripHtml(n.html).trim().length).length;
+  const pj=nodes.reduce((s,n)=>s+(n.files||[]).length,0);
+  const liens=nodes.reduce((s,n)=>s+(n.links||[]).length,0);
+  const contacts=nodes.reduce((s,n)=>s+(n.contacts||[]).length,0);
+  const favs=nodes.reduce((s,n)=>s+(n.contacts||[]).filter(c=>c.fav).length,0);
+  const nbT=list=>(list||[]).filter(t=>t.kind!=='section'&&t.kind!=='spacer').length;
+  const tuilesH=nbT(data.tiles);
+  const tuilesN=nodes.reduce((s,n)=>s+nbT(n.tiles),0);
+  const eqTot=eqAllItems().length;
+  const eqCustom=(data.equipCustom||[]).length;
+  const eqOver=Object.keys(data.equipOver||{}).length;
+  const eqIll=Object.values(data.equipMeta||{}).reduce((s,m)=>s+((m&&m.files||[]).length),0);
+  const series=(data.fleet||[]).length;
+  const subs=(data.fleet||[]).reduce((s,x)=>s+(x.subs||[]).length,0);
+  const dataSz=JSON.stringify(data).length;
+  const quick=(data.settings.quickSel||[]).length;
+  const card=(ic,v,l)=>`<div class="inf-card"><div class="iv">${ic} ${v}</div><div class="il">${l}</div></div>`;
+  openModal('ℹ️ Informations & statistiques',`
+    <div class="inf-grid">
+      ${card('📄',nodes.length,'fiches — dont '+racines+' à la racine')}
+      ${card('📝',notes,'notes rédigées')}
+      ${card('📎',filesN,'fichiers importés — '+fmtSize(filesSz))}
+      ${card('🖇',pj,'pièces jointes rattachées aux fiches')}
+      ${card('🧱',tuilesH+tuilesN,'tuiles — '+tuilesH+' accueil · '+tuilesN+' fiches')}
+      ${card('🔗',liens,'liens enregistrés')}
+      ${card('📞',contacts,'contacts — dont '+favs+' favori(s) ⭐')}
+      ${card('🚄',eqTot,'appareils au catalogue — '+series+' séries, '+subs+' sous-séries')}
+      ${card('🛠',eqCustom+eqOver,'appareils ajoutés ou modifiés par vous')}
+      ${card('📷',eqIll,'illustrations d\'appareils')}
+      ${card('✨',quick,'fenêtre(s) en ouverture rapide')}
+      ${card('🗄',fmtSize(dataSz),'données de l\'application (hors fichiers)')}
+      ${est?card('💽',fmtSize(est.usage||0),'stockage navigateur utilisé'+(est.quota?' sur '+fmtSize(est.quota)+' disponibles':'')):''}
+    </div>
+    <p style="font-size:11.5px;color:var(--muted);margin-top:12px">RailDoc v${APP_VERSION} — ${APP_VERSION_DATE}.<br>La sauvegarde 💾 exporte l'intégralité de tout ceci : fiches, notes, fichiers, tuiles et ouverture rapide, contacts et favoris, flotte, appareillages personnalisés, illustrations et réglages.</p>`,
+    [{label:'Fermer',primary:true}]);}
+/* ---------- Easter egg : Pac-Man dévore la barre du haut ---------- */
+let pacTimer=null,pacRAF=null,pacEl=null,pacActive=false;
+function pacSchedule(){clearTimeout(pacTimer);
+  pacTimer=setTimeout(pacRun,180000+Math.random()*300000);}
+function pacRestore(){
+  if(pacRAF)cancelAnimationFrame(pacRAF);pacRAF=null;
+  if(pacEl){pacEl.remove();pacEl=null;}
+  const lg=document.querySelector('#brandBox .logo');if(lg)lg.style.visibility='';
+  pacActive=false;pacSchedule();}
+function pacRun(){
+  if(pacActive)return;
+  if(document.hidden||document.querySelector('#modal.on')){pacSchedule();return;}
+  const tb=$('#topbar');if(!tb){pacSchedule();return;}
+  const r=tb.getBoundingClientRect();
+  const lg=document.querySelector('#brandBox .logo');
+  const lr=lg?lg.getBoundingClientRect():{left:8};
+  pacActive=true;
+  if(lg)lg.style.visibility='hidden';
+  pacEl=document.createElement('div');
+  pacEl.style.cssText=`position:fixed;left:0;top:${r.top}px;width:100vw;height:${r.height}px;z-index:90;pointer-events:none;overflow:hidden`;
+  pacEl.innerHTML=`
+    <div class="pac-eat" style="position:absolute;left:0;top:0;bottom:0;width:0;background:var(--panel)"></div>
+    <div class="pac-guy" style="position:absolute;top:50%;left:${lr.left}px;width:34px;height:34px;margin-top:-17px">
+      <svg viewBox="0 0 40 40" style="width:100%;height:100%;filter:drop-shadow(0 2px 3px #0005)" aria-hidden="true">
+        <defs><radialGradient id="pacg" cx=".35" cy=".3"><stop offset="0" stop-color="#fff3a0"/><stop offset=".55" stop-color="#ffd93b"/><stop offset="1" stop-color="#e0a800"/></radialGradient></defs>
+        <g class="pjT"><path d="M1 20 A19 19 0 0 1 39 20 Z" fill="url(#pacg)" stroke="#b8860b" stroke-width=".8"/><circle cx="24" cy="9.5" r="2.1" fill="#3a2a00"/></g>
+        <g class="pjB"><path d="M1 20 A19 19 0 0 0 39 20 Z" fill="url(#pacg)" stroke="#b8860b" stroke-width=".8"/></g>
+      </svg></div>`;
+  document.body.appendChild(pacEl);
+  const eat=pacEl.querySelector('.pac-eat'),guy=pacEl.querySelector('.pac-guy');
+  const x0=lr.left,W=innerWidth,DUR=5200,t0=performance.now();
+  const step=t=>{
+    if(!pacActive)return;
+    const prg=Math.min(1,(t-t0)/DUR);
+    const x=x0+(W-x0+60)*prg;
+    guy.style.left=x+'px';
+    eat.style.width=Math.max(0,x+8)+'px';
+    if(prg<1)pacRAF=requestAnimationFrame(step);
+    else pacRAF=null;/* tout est croqué : le moindre geste restaure la barre */};
+  pacRAF=requestAnimationFrame(step);}
+['pointermove','pointerdown','keydown','wheel','touchstart'].forEach(ev=>
+  addEventListener(ev,()=>{if(pacActive)pacRestore();},{passive:true,capture:true}));
 /* ==========================================================
    Sauvegarde / restauration (export & import complets)
    ========================================================== */
@@ -5559,11 +5844,11 @@ function fleetModal(){
 /* ---------- Édition d'un appareil ---------- */
 /* ---------- Sélecteur de couleur global (échantillons + libre) ---------- */
 const COLOR_SWATCHES=['#c2143f','#e0263f','#e07b00','#e5b800','#128a3e','#27ae60','#0d8f8f','#1e6fd9','#274bdb','#7b2fbf','#d3387a','#8a5a2b','#5a6b7b','#222831','#9aa4ad','#ffffff'];
-function pickColor(anchor,cur,cb){
+function pickColor(anchor,cur,cb,opts){
   let pop=document.getElementById('colorPop');
   if(pop)pop.remove();
   pop=document.createElement('div');pop.id='colorPop';
-  pop.innerHTML=`<div class="cp-grid">${COLOR_SWATCHES.map(c=>
+  pop.innerHTML=`<div class="cp-grid">${(opts&&opts.none?`<button class="cp-sw cp-none" data-c="none" title="${esc(opts.noneTitle||'Sans couleur')}"></button>`:'')}${COLOR_SWATCHES.map(c=>
       `<button class="cp-sw${c===cur?' cur':''}" data-c="${c}" style="background:${c}" title="${c}"></button>`).join('')}</div>
     <div class="cp-foot"><label>Libre :</label><input type="color" value="${/^#[0-9a-fA-F]{6}$/.test(cur||'')?cur:'#c2143f'}"><button class="btn small" type="button">OK</button></div>`;
   document.body.appendChild(pop);
@@ -6051,11 +6336,13 @@ async function init(){
   data=await idb.get('kv','data');
   if(!data){data=seed();await idb.put('kv','data',JSON.parse(JSON.stringify(data)));}
   normalizeData();
-  data.settings.mode='read'; /* chaque ouverture démarre en lecture seule (protection anti-fausse manip) */
+  /* le mode est mémorisé : l'app rouvre dans le dernier mode choisi (édition tant que
+     vous ne verrouillez pas). Premier lancement : lecture seule. */
+  if(data.settings.mode!=='edit')data.settings.mode='read';
   state.open=new Set(data.settings.open);
   if(data.settings.sidebarW)document.documentElement.style.setProperty('--sidebar-w',data.settings.sidebarW+'px');
   applyTheme();applyBrand();applyMode();tickClock();setInterval(tickClock,1000);
-  initEditor();attachInputRewire();updateStats();
+  initEditor();attachInputRewire();updateStats();pacSchedule();
 
   /* navigation */
   window.addEventListener('hashchange',route);
@@ -6094,7 +6381,6 @@ async function init(){
   $('#brandBox').onclick=()=>navigate('#/home');
   $('#brandBox').oncontextmenu=e=>{e.preventDefault();if(isEdit())brandModal();};
   $('#brandBox').ondblclick=e=>{e.preventDefault();if(isEdit())brandModal();};
-  $('#brandEditBtn').onclick=e=>{e.stopPropagation();if(isEdit())brandModal();};
   $('#menuBtn').onclick=()=>{const app=$('#app');
     if(matchMedia('(max-width:900px)').matches)app.classList.toggle('side-open-mobile');
     else app.classList.toggle('side-closed');};
@@ -6105,10 +6391,13 @@ async function init(){
     save();renderTree();};
   $('#collapseAllBtn').onclick=()=>{state.open.clear();save();renderTree();};
   checkAppVersion();
-  $('#verLine').onclick=()=>{if(isEdit())versionModal();};
   $('#settingsBtn').onclick=e=>{e.stopPropagation();
     const r=e.currentTarget.getBoundingClientRect();
-    openCtx(r.right-210,r.bottom+6,[
+    openCtx(r.right-230,r.bottom+6,[
+      {ic:'✏️',label:'Titre, image & descriptif de l\'application',fn:brandModal},
+      {ic:'ℹ️',label:'Informations & statistiques',fn:infoModal},
+      {ic:'🕘',label:'Historique des versions',fn:versionModal},
+      {sep:true},
       {ic:'🕑',label:'Journal des actions',fn:logsModal},
       {sep:true},
       {ic:'💾',label:'Exporter la sauvegarde',fn:exportAll},
