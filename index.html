@@ -1205,9 +1205,10 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='8.45';
+const APP_VERSION='8.46';
 const APP_VERSION_DATE='7 août 2026';
 const CHANGELOG=[
+  ['v8.46',"Correction du blocage signalé après l'ajout d'un émoticône à un titre de ligne : le recentrage automatique du bandeau de rubriques utilisait scrollIntoView, qui sur Safari (iPad/iPhone) fait aussi défiler la page — dès que la rangée de pastilles débordait de l'écran (ce que l'emoji a déclenché), la page entrait dans une boucle de défilement sans fin. Le bandeau se recentre désormais horizontalement seul, le saut vers une rubrique est calculé sans scrollIntoView, et le bandeau est isolé pour ne plus jamais pouvoir bloquer l'application · au passage, les pastilles se mettent à jour immédiatement quand on renomme une ligne"],
   ['v8.45',"Mur d'accueil : barre de rubriques collante au-dessus du mur — une pastille par ligne (et ⭐ pour revenir aux favorites), défilement horizontal au doigt, un appui saute directement à la rubrique, la rubrique visible reste surlignée pendant le défilement — idéale sur iPhone/iPad, discrète sur grand écran, et masquée si le mur n'a pas de titres de ligne"],
   ['v8.44',"L'en-tête du mur d'accueil s'allège : le « Bonjour 👋 » et le texte explicatif disparaissent au profit d'une 💬 citation du jour (banque de plus de 110 citations embarquée, hors ligne, qui change chaque jour) — affichable ou masquable depuis ⚙ Réglages"],
   ['v8.43',"Coller une tuile : le petit bouton 📋 apparaît maintenant en fin de chaque ligne (favoris du haut compris), à côté des boutons ＋ et ▢ — plus besoin de coller tout en bas puis de déplacer"],
@@ -1782,7 +1783,7 @@ function refreshWall(owner){
   const m=$('#main');const y=m?m.scrollTop:0;
   if(owner==='home'){renderWall('home');updateQuickBar();m&&(m.scrollTop=y);return;}
   refreshWall2(owner);m&&(m.scrollTop=y);}
-function refreshWall2(owner){if(owner==='home'){renderWall('home');updateQuickBar();}
+function refreshWall2(owner){if(owner==='home'){renderWall('home');updateQuickBar();renderWallNav();}
   else{const n=nodeById(owner);if(n&&state.nodeId===owner)renderNodeWall(n);}}
 function renderWall(owner){
   const ctx=wallCtx(owner);if(!ctx||!ctx.el)return;
@@ -2102,7 +2103,7 @@ function renderQuote(){
   box.style.display='block';
   box.querySelector('.q-txt').textContent='« '+q[0]+' »';
   box.querySelector('.q-auth').textContent='— '+q[1];}
-function renderWallNav(){
+function renderWallNav(){try{
   const box=$('#wallNav');if(!box)return;
   const sorted=[...(data.tiles||[])].sort((a,b)=>a.ord-b.ord);
   const secs=sorted.filter(t=>t.kind==='section'&&(t.title||'').trim());
@@ -2113,11 +2114,15 @@ function renderWallNav(){
   box.innerHTML=(hasFav?'<button class="wn-chip" data-top="1" title="Revenir en haut (tuiles favorites)">⭐</button>':'')+
     secs.map(s=>`<button class="wn-chip" data-sec="${s.id}">${esc(s.title)}</button>`).join('');
   box.querySelectorAll('.wn-chip').forEach(ch=>ch.onclick=()=>{
-    if(ch.dataset.top){$('#main').scrollTo({top:0,behavior:'smooth'});return;}
+    const m=$('#main');/*wnclick*/
+    if(ch.dataset.top){m.scrollTo({top:0,behavior:'smooth'});return;}
     const el=document.querySelector('.wall-sec[data-sec="'+ch.dataset.sec+'"]');
-    if(el)el.scrollIntoView({behavior:'smooth',block:'start'});});
-  wallNavSpy();}
-function wallNavSpy(){
+    if(!el)return;
+    const y=el.getBoundingClientRect().top-m.getBoundingClientRect().top+m.scrollTop
+      -(box.getBoundingClientRect().height+14);
+    m.scrollTo({top:Math.max(0,y),behavior:'smooth'});});
+  wallNavSpy();}catch(e){console.error(e);}}
+function wallNavSpy(){try{
   const box=$('#wallNav');
   if(!box||box.style.display==='none'||state.view!=='home')return;
   const nb=box.getBoundingClientRect().bottom+8;
@@ -2127,8 +2132,11 @@ function wallNavSpy(){
   box.querySelectorAll('.wn-chip').forEach(ch=>{
     const on=act?ch.dataset.sec===act:!!ch.dataset.top||(!act&&ch===box.querySelector('.wn-chip'));
     ch.classList.toggle('on',on);
-    if(on){const r=ch.getBoundingClientRect(),br=box.getBoundingClientRect();
-      if(r.left<br.left||r.right>br.right)ch.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});}});}
+    if(on){/* recentrage horizontal du bandeau seul — surtout pas scrollIntoView
+             (sur Safari il fait aussi défiler la page : boucle infinie) */
+      const target=ch.offsetLeft-(box.clientWidth-ch.offsetWidth)/2;
+      const cl=Math.max(0,Math.min(target,box.scrollWidth-box.clientWidth));
+      if(Math.abs(box.scrollLeft-cl)>40)box.scrollTo({left:cl,behavior:'smooth'});}});}catch(e){console.error(e);}}
 function renderHome(){
   renderQuote();renderWallNav();
   $('#editWallBtn').textContent=state.editWallOwner==='home'?'✔️ Terminer':'✏️ Modifier le mur';
