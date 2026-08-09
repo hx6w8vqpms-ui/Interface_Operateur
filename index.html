@@ -346,6 +346,9 @@ html[data-mode="read"] #fleetBtn{display:none !important}
 #crumb button:hover{background:var(--accent-soft);color:var(--accent)}
 #crumb .sep{opacity:.5;font-size:10px}
 #crumb .here{color:var(--text);font-weight:600;padding:3px 7px}
+#crumb .crumb-back{border:1.5px solid var(--border-strong);background:var(--panel);border-radius:9px;
+  padding:2px 11px;margin-right:5px;font-size:14.5px;font-weight:800;color:var(--text);line-height:1.4}
+#crumb .crumb-back:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
 .node-head{display:flex;align-items:flex-start;gap:13px;margin-bottom:8px}
 #nodeIcon{font-size:34px;line-height:1.2;border-radius:12px;padding:4px 6px;transition:background .13s}
 #nodeIcon:hover{background:var(--bg-soft)}
@@ -1222,9 +1225,10 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='8.48';
+const APP_VERSION='8.49';
 const APP_VERSION_DATE='7 août 2026';
 const CHANGELOG=[
+  ['v8.49',"Navigation : bouton ← en tête du fil d'ariane des fiches pour revenir à la fiche consultée précédemment (l'infobulle indique laquelle) — l'historique interne retient vos 60 derniers passages, fiches, accueil et appareillages compris ; le retour du navigateur fonctionne toujours en parallèle"],
   ['v8.48',"Animation Pac-Man enrichie 👾🐙 : une pieuvre surgit à gauche et déclenche la course — Pac-Man dévore la barre jusqu'au bout de l'écran (vitesse constante, garantie d'aller au bout sur toute résolution, même en cas de rotation en cours de route) puis revient se poser à sa place ; la pieuvre le suit plus lentement, s'arrête parfois pour penser dans une bulle (« 💡 Nouvelle idée ! », « Pas de bug ici 👌 ») puis repart, et tout se restaure quand elle sort à droite — un geste ou une touche interrompt toujours tout immédiatement"],
   ['v8.47',"Largeur du panneau de gauche enfin réglable au doigt : sur iPad la poignée devient large avec un grip visible au milieu du bord, et ⚙ Réglages gagne « ↔️ Largeur du panneau de gauche » avec curseur et préréglages (Étroit / Standard / Large / Très large) à aperçu immédiat — sur téléphone, le tiroir suit ce réglage dans la limite de l'écran"],
   ['v8.46',"Correction du blocage signalé après l'ajout d'un émoticône à un titre de ligne : le recentrage automatique du bandeau de rubriques utilisait scrollIntoView, qui sur Safari (iPad/iPhone) fait aussi défiler la page — dès que la rangée de pastilles débordait de l'écran (ce que l'emoji a déclenché), la page entrait dans une boucle de défilement sans fin. Le bandeau se recentre désormais horizontalement seul, le saut vers une rubrique est calculé sans scrollIntoView, et le bandeau est isolé pour ne plus jamais pouvoir bloquer l'application · au passage, les pastilles se mettent à jour immédiatement quand on renomme une ligne"],
@@ -1682,7 +1686,24 @@ function seed(){
    Navigation & rendu
    ========================================================== */
 function navigate(hash){if(location.hash!==hash)location.hash=hash;else route();}
-function route(){const h=location.hash;
+/* historique interne : revenir à la fiche consultée précédemment */
+const navHist=[];let routePrev=null,navHistSkip=false;
+function navBack(){if(!navHist.length)return;
+  navHistSkip=true;navigate(navHist.pop());}
+function navBackLabel(){
+  if(!navHist.length)return null;
+  const prev=navHist[navHist.length-1];
+  const pm=prev.match(/^#\/node\/(.+)$/);
+  if(pm){const pn=nodeById(pm[1]);return pn?('Revenir à « '+(pn.title||'Sans titre')+' »'):null;}
+  if(prev.startsWith('#/equip'))return 'Revenir aux appareillages';
+  return 'Revenir à l\'accueil';}
+function route(){const h=location.hash||'#/home';
+  if(routePrev!==null&&routePrev!==h){
+    if(navHistSkip)navHistSkip=false;
+    else if(navHist[navHist.length-1]!==routePrev){
+      navHist.push(routePrev);
+      if(navHist.length>60)navHist.shift();}}
+  routePrev=h;
   const m=h.match(/^#\/node\/(.+)$/);
   if(m&&nodeById(m[1])){state.view='node';state.nodeId=m[1];}
   else if(/^#\/equip/.test(h)){state.view='equip';state.nodeId=null;
@@ -2259,6 +2280,10 @@ function renderNode(){const n=nodeById(state.nodeId);if(!n){navigate('#/home');r
   currentNode=n;
   /* fil d'ariane */
   const crumb=$('#crumb');crumb.innerHTML='';
+  const lbl=navBackLabel();
+  if(lbl){const bk=document.createElement('button');bk.className='crumb-back';
+    bk.innerHTML='←';bk.title=lbl+'  (fiche consultée précédemment)';
+    bk.onclick=navBack;crumb.appendChild(bk);}
   const home=document.createElement('button');home.textContent='🏠 Accueil';home.onclick=()=>navigate('#/home');
   crumb.appendChild(home);
   const path=pathOf(n.id);
