@@ -83,8 +83,15 @@ input,select,textarea{font-family:inherit;color:inherit}
   border-bottom:1px solid var(--border);z-index:50;position:relative}
 #sidebar{overflow:hidden auto;background:var(--panel);border-right:1px solid var(--border);
   display:flex;flex-direction:column;transition:opacity .2s;position:relative;z-index:40}
-#sideResize{position:fixed;top:var(--header-h);bottom:0;left:calc(var(--sidebar-w) - 3px);width:7px;
+#sideResize{position:fixed;top:calc(var(--header-h) + env(safe-area-inset-top,0px));bottom:0;left:calc(var(--sidebar-w) - 3px);width:7px;
   cursor:col-resize;z-index:60;touch-action:none}
+@media (pointer:coarse){
+  #sideResize{width:24px;left:calc(var(--sidebar-w) - 12px)}
+  #sideResize::after{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:5px;height:52px;border-radius:4px;background:var(--border-strong);opacity:.85;
+    box-shadow:0 0 0 4px var(--panel)}
+  #sideResize.on::after{background:var(--accent)}
+}
 #sideResize:hover,#sideResize.on{background:linear-gradient(90deg,transparent 40%,var(--accent) 46%,var(--accent) 54%,transparent 60%)}
 #app.side-closed #sideResize{display:none}
 #app.side-closed #sidebar{opacity:0;pointer-events:none}
@@ -749,7 +756,7 @@ html[data-mode="read"] #modeBtn .ic-lock{display:block}
 @media (max-width:900px){
   #app{grid-template-columns:0 1fr}
   #main{grid-column:2/3;grid-row:2}
-  #sidebar{position:fixed;left:0;top:calc(var(--header-h) + env(safe-area-inset-top,0px));bottom:0;width:min(320px,85vw);transform:translateX(-102%);
+  #sidebar{position:fixed;left:0;top:calc(var(--header-h) + env(safe-area-inset-top,0px));bottom:0;width:min(max(260px,var(--sidebar-w)),85vw);transform:translateX(-102%);
     transition:transform .22s ease;box-shadow:var(--shadow-lg);opacity:1 !important;pointer-events:auto !important;z-index:80}
   #app.side-open-mobile #sidebar{transform:none}
   #app.side-open-mobile #sideBackdrop{display:block;position:fixed;inset:calc(var(--header-h) + env(safe-area-inset-top,0px)) 0 0 0;background:#0006;z-index:70}
@@ -1205,9 +1212,10 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='8.46';
+const APP_VERSION='8.47';
 const APP_VERSION_DATE='7 août 2026';
 const CHANGELOG=[
+  ['v8.47',"Largeur du panneau de gauche enfin réglable au doigt : sur iPad la poignée devient large avec un grip visible au milieu du bord, et ⚙ Réglages gagne « ↔️ Largeur du panneau de gauche » avec curseur et préréglages (Étroit / Standard / Large / Très large) à aperçu immédiat — sur téléphone, le tiroir suit ce réglage dans la limite de l'écran"],
   ['v8.46',"Correction du blocage signalé après l'ajout d'un émoticône à un titre de ligne : le recentrage automatique du bandeau de rubriques utilisait scrollIntoView, qui sur Safari (iPad/iPhone) fait aussi défiler la page — dès que la rangée de pastilles débordait de l'écran (ce que l'emoji a déclenché), la page entrait dans une boucle de défilement sans fin. Le bandeau se recentre désormais horizontalement seul, le saut vers une rubrique est calculé sans scrollIntoView, et le bandeau est isolé pour ne plus jamais pouvoir bloquer l'application · au passage, les pastilles se mettent à jour immédiatement quand on renomme une ligne"],
   ['v8.45',"Mur d'accueil : barre de rubriques collante au-dessus du mur — une pastille par ligne (et ⭐ pour revenir aux favorites), défilement horizontal au doigt, un appui saute directement à la rubrique, la rubrique visible reste surlignée pendant le défilement — idéale sur iPhone/iPad, discrète sur grand écran, et masquée si le mur n'a pas de titres de ligne"],
   ['v8.44',"L'en-tête du mur d'accueil s'allège : le « Bonjour 👋 » et le texte explicatif disparaissent au profit d'une 💬 citation du jour (banque de plus de 110 citations embarquée, hors ligne, qui change chaque jour) — affichable ou masquable depuis ⚙ Réglages"],
@@ -3380,6 +3388,31 @@ let lastSearchEquip=[];
 function closeSearch(clear){$('#searchResults').classList.remove('on');
   if(clear){$('#searchInput').value='';$('#searchInput').blur();}}
 
+/* ---------- Largeur du panneau de gauche (réglage tactile) ---------- */
+function sidebarWidthModal(){
+  const cur=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sidebar-w'))||288;
+  const apply=w=>{document.documentElement.style.setProperty('--sidebar-w',w+'px');
+    const lbl=$('#mSwVal');if(lbl)lbl.textContent=w+' px';
+    const rng=$('#mSwRange');if(rng&&+rng.value!==w)rng.value=w;};
+  openModal('↔️ Largeur du panneau de gauche',`
+    <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Ajustez au curseur ou choisissez un préréglage — l'aperçu est immédiat. Sur téléphone, le panneau s'ouvre par-dessus le contenu et s'adapte à l'écran.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+      <button type="button" class="btn small" data-sw="240">Étroit</button>
+      <button type="button" class="btn small" data-sw="288">Standard</button>
+      <button type="button" class="btn small" data-sw="360">Large</button>
+      <button type="button" class="btn small" data-sw="440">Très large</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <input type="range" id="mSwRange" min="210" max="520" step="2" value="${cur}" style="flex:1;accent-color:var(--accent);height:34px">
+      <b id="mSwVal" style="font-variant-numeric:tabular-nums;min-width:56px;text-align:right">${cur} px</b>
+    </div>`,
+    [{label:'Annuler',fn:()=>{apply(data.settings.sidebarW||288);}},
+     {label:'Enregistrer',primary:true,fn:()=>{
+       const w=parseInt($('#mSwRange').value)||288;
+       data.settings.sidebarW=w;save();apply(w);
+       toast('↔️ Largeur du panneau enregistrée : '+w+' px');}}]);
+  $('#mSwRange').addEventListener('input',e=>apply(parseInt(e.target.value)||288));
+  document.querySelectorAll('[data-sw]').forEach(b=>b.onclick=()=>apply(+b.dataset.sw));}
 /* ---------- Ordre des lignes du mur (chaque ligne emporte ses tuiles) ---------- */
 function wallOrderModal(owner){
   if(!isEdit()){toast('🔒 Mode lecture seule');return;}
@@ -6824,6 +6857,7 @@ async function init(){
     openCtx(r.right-250,r.bottom+6,[
       {ic:'✏️',label:'Titre, image & descriptif de l\'application',fn:brandModal},
       {ic:'🔑',label:'Mot de passe du mode édition…',fn:passwordModal},
+      {ic:'↔️',label:'Largeur du panneau de gauche…',fn:sidebarWidthModal},
       {ic:'💬',label:(data.settings.quoteHide?'Afficher':'Masquer')+' la citation du jour',fn:()=>{
         data.settings.quoteHide=!data.settings.quoteHide;save();renderQuote();
         toast(data.settings.quoteHide?'💬 Citation du jour masquée':'💬 Citation du jour affichée — elle change chaque jour');}},
