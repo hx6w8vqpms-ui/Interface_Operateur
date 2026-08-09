@@ -167,6 +167,16 @@ html[data-mode="read"] #fleetBtn{display:none !important}
 .pac-guy .pjB{transform-origin:20px 20px;animation:pacjB .24s linear infinite alternate}
 @keyframes pacjT{from{transform:rotate(2deg)}to{transform:rotate(-32deg)}}
 @keyframes pacjB{from{transform:rotate(-2deg)}to{transform:rotate(32deg)}}
+.pac-guy.home .pjT,.pac-guy.home .pjB{animation:none;transform:none}
+.pac-oct{position:absolute;left:-36px;font-size:26px;line-height:1;transform:translateY(-52%);
+  opacity:0;transition:opacity .5s;filter:drop-shadow(0 2px 2px #0004);animation:octbob 1.15s ease-in-out infinite alternate}
+@keyframes octbob{from{margin-top:-2px;rotate:-6deg}to{margin-top:2px;rotate:7deg}}
+.pac-bub{position:absolute;top:3px;background:#fff;color:#1c2430;border:1px solid #00000026;
+  border-radius:11px;padding:2.5px 9px;font-size:10.5px;font-weight:800;white-space:nowrap;
+  box-shadow:0 2px 8px #0003;z-index:2}
+.pac-bub::after{content:'';position:absolute;left:26px;bottom:-4px;width:7px;height:7px;
+  background:#fff;border-right:1px solid #00000026;border-bottom:1px solid #00000026;
+  transform:rotate(45deg)}
 
 /* ---------- Sidebar ---------- */
 .side-head{display:flex;align-items:center;justify-content:space-between;padding:14px 14px 6px}
@@ -1212,9 +1222,10 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='8.47';
+const APP_VERSION='8.48';
 const APP_VERSION_DATE='7 août 2026';
 const CHANGELOG=[
+  ['v8.48',"Animation Pac-Man enrichie 👾🐙 : une pieuvre surgit à gauche et déclenche la course — Pac-Man dévore la barre jusqu'au bout de l'écran (vitesse constante, garantie d'aller au bout sur toute résolution, même en cas de rotation en cours de route) puis revient se poser à sa place ; la pieuvre le suit plus lentement, s'arrête parfois pour penser dans une bulle (« 💡 Nouvelle idée ! », « Pas de bug ici 👌 ») puis repart, et tout se restaure quand elle sort à droite — un geste ou une touche interrompt toujours tout immédiatement"],
   ['v8.47',"Largeur du panneau de gauche enfin réglable au doigt : sur iPad la poignée devient large avec un grip visible au milieu du bord, et ⚙ Réglages gagne « ↔️ Largeur du panneau de gauche » avec curseur et préréglages (Étroit / Standard / Large / Très large) à aperçu immédiat — sur téléphone, le tiroir suit ce réglage dans la limite de l'écran"],
   ['v8.46',"Correction du blocage signalé après l'ajout d'un émoticône à un titre de ligne : le recentrage automatique du bandeau de rubriques utilisait scrollIntoView, qui sur Safari (iPad/iPhone) fait aussi défiler la page — dès que la rangée de pastilles débordait de l'écran (ce que l'emoji a déclenché), la page entrait dans une boucle de défilement sans fin. Le bandeau se recentre désormais horizontalement seul, le saut vers une rubrique est calculé sans scrollIntoView, et le bandeau est isolé pour ne plus jamais pouvoir bloquer l'application · au passage, les pastilles se mettent à jour immédiatement quand on renomme une ligne"],
   ['v8.45',"Mur d'accueil : barre de rubriques collante au-dessus du mur — une pastille par ligne (et ⭐ pour revenir aux favorites), défilement horizontal au doigt, un appui saute directement à la rubrique, la rubrique visible reste surlignée pendant le défilement — idéale sur iPhone/iPad, discrète sur grand écran, et masquée si le mur n'a pas de titres de ligne"],
@@ -3635,20 +3646,50 @@ function pacRun(){
         <defs><radialGradient id="pacg" cx=".35" cy=".3"><stop offset="0" stop-color="#fff3a0"/><stop offset=".55" stop-color="#ffd93b"/><stop offset="1" stop-color="#e0a800"/></radialGradient></defs>
         <g class="pjT"><path d="M1 20 A19 19 0 0 1 39 20 Z" fill="url(#pacg)" stroke="#b8860b" stroke-width=".8"/><circle cx="24" cy="9.5" r="2.1" fill="#3a2a00"/></g>
         <g class="pjB"><path d="M1 20 A19 19 0 0 0 39 20 Z" fill="url(#pacg)" stroke="#b8860b" stroke-width=".8"/></g>
-      </svg></div>`;
+      </svg></div>
+    <div class="pac-oct">🐙</div>
+    <div class="pac-bub" style="display:none"></div>`;
   document.body.appendChild(pacEl);
-  const eat=pacEl.querySelector('.pac-eat'),guy=pacEl.querySelector('.pac-guy');
-  {const padTop=parseFloat(getComputedStyle(tb).paddingTop)||0;
-   guy.style.top=(padTop+(r.height-padTop)/2)+'px';guy.style.marginTop='-17px';}
-  const x0=lr.left,W=innerWidth,DUR=5200,t0=performance.now();
+  const eat=pacEl.querySelector('.pac-eat'),guy=pacEl.querySelector('.pac-guy'),
+        oct=pacEl.querySelector('.pac-oct'),bub=pacEl.querySelector('.pac-bub');
+  const padTop=parseFloat(getComputedStyle(tb).paddingTop)||0;
+  const midY=padTop+(r.height-padTop)/2;
+  guy.style.top=midY+'px';guy.style.marginTop='-17px';
+  oct.style.top=midY+'px';
+  requestAnimationFrame(()=>{oct.style.opacity='1';});
+  /* vitesses constantes en px/ms : l'animation va TOUJOURS au bout, quelle que soit
+     la largeur d'écran (recalculée à chaque image, même en cas de rotation) */
+  const SPD=window.__pacSpeed||1;
+  const V_PAC=0.30*SPD,V_OCT=0.085*SPD;
+  const x0=lr.left;
+  let xP=x0,xO=-36,pacDone=false,last=performance.now(),pauseUntil=0,curPause=null;
+  const pauses=[{at:.30+Math.random()*.12,dur:2600/SPD,msg:'💡 Nouvelle idée !',done:false},
+                {at:.60+Math.random()*.12,dur:2300/SPD,msg:'Pas de bug ici 👌',done:false}];
+  if(Math.random()<.35)pauses.splice(Math.random()<.5?0:1,1);
   const step=t=>{
     if(!pacActive)return;
-    const prg=Math.min(1,(t-t0)/DUR);
-    const x=x0+(W-x0+60)*prg;
-    guy.style.left=x+'px';
-    eat.style.width=Math.max(0,x+8)+'px';
-    if(prg<1)pacRAF=requestAnimationFrame(step);
-    else pacRAF=null;/* tout est croqué : le moindre geste restaure la barre */};
+    const dt=Math.min(60,t-last);last=t;
+    const W=innerWidth;
+    /* Pac-Man : dévore tout vers la droite, puis revient se poser à sa place */
+    if(!pacDone){
+      xP+=V_PAC*dt;
+      if(xP>=W+70){pacDone=true;
+        eat.style.width='100vw';
+        guy.classList.add('home');
+        guy.style.left=x0+'px';}
+      else{guy.style.left=xP+'px';eat.style.width=Math.max(0,xP+8)+'px';}}
+    /* Pieuvre : avance moins vite, marque des pauses pensives, sort à droite */
+    if(t>=pauseUntil){
+      if(curPause){bub.style.display='none';curPause=null;}
+      xO+=V_OCT*dt;
+      const prog=xO/(W+50);
+      const pz=pauses.find(x=>!x.done&&prog>=x.at);
+      if(pz){pz.done=true;curPause=pz;pauseUntil=t+pz.dur;
+        bub.textContent=pz.msg;bub.style.display='block';}
+      oct.style.left=xO+'px';
+      bub.style.left=Math.max(4,Math.min(xO-26,W-170))+'px';
+      if(xO>W+44){pacRestore();return;}}
+    pacRAF=requestAnimationFrame(step);};
   pacRAF=requestAnimationFrame(step);}
 ['pointermove','pointerdown','keydown','wheel','touchstart'].forEach(ev=>
   addEventListener(ev,()=>{if(pacActive)pacRestore();},{passive:true,capture:true}));
