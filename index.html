@@ -134,6 +134,21 @@ html[data-mode="read"] #fleetBtn{display:none !important}
 #clockTime{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.01em}
 #clockDate{font-size:10.5px;color:var(--muted);text-transform:capitalize;margin-top:1px}
 .topbar-actions{display:flex;gap:2px;align-items:center}
+.wall-nav{position:sticky;top:0;z-index:24;display:flex;gap:7px;align-items:center;
+  overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+  padding:8px 2px;margin:0 -2px 4px;
+  background:color-mix(in srgb,var(--bg) 86%,transparent);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.wall-nav::-webkit-scrollbar{display:none}
+.wn-chip{flex:none;border:1.5px solid var(--border-strong);background:var(--panel);color:var(--muted);
+  border-radius:999px;padding:6px 13px;font-size:12px;font-weight:700;white-space:nowrap;
+  cursor:pointer;transition:all .15s;font-family:inherit}
+.wn-chip:hover{border-color:var(--accent);color:var(--accent)}
+.wn-chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.wall-sec{scroll-margin-top:52px}
+#quoteBox{max-width:640px}
+#quoteBox .q-txt{font-size:14.5px;font-style:italic;line-height:1.5;color:var(--text)}
+#quoteBox .q-auth{font-size:11.5px;font-weight:700;color:var(--muted);margin-top:3px}
 #editWallBtn,#nodeWallEditBtn{color:#c2143f;border-color:#d98a9b;background:#c2143f0d}
 #editWallBtn:hover,#nodeWallEditBtn:hover{background:#c2143f1c}
 #editWallBtn.primary,#nodeWallEditBtn.primary{color:#fff;background:var(--accent);border-color:var(--accent)}
@@ -1005,8 +1020,10 @@ html[data-mode="read"] #modeBtn .ic-lock{display:block}
       <div class="container">
         <div class="home-hero">
           <div>
-            <h1 id="helloTxt">Bonjour 👋</h1>
-            <p>Votre mur d'accès rapide : documents, applications et fiches en un clic.</p>
+            <div id="quoteBox" style="display:none">
+              <div class="q-txt"></div>
+              <div class="q-auth"></div>
+            </div>
           </div>
           <div style="display:flex;gap:9px;flex-wrap:wrap">
             <button class="btn" id="quickBtn">🚀 Lancement rapide</button>
@@ -1014,6 +1031,7 @@ html[data-mode="read"] #modeBtn .ic-lock{display:block}
             <button class="btn" id="wallOrderBtn" title="Réorganiser le mur ligne par ligne : chaque titre de ligne se déplace avec toutes ses tuiles"><svg viewBox="0 0 24 24" style="width:15px;height:15px;margin-right:2px" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg> Ordre des lignes</button>
           </div>
         </div>
+        <div id="wallNav" class="wall-nav" style="display:none"></div>
         <div class="wall-wrap"><div id="wall" class="wall"></div></div>
       </div>
     </section>
@@ -1187,9 +1205,11 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='8.43';
+const APP_VERSION='8.45';
 const APP_VERSION_DATE='7 août 2026';
 const CHANGELOG=[
+  ['v8.45',"Mur d'accueil : barre de rubriques collante au-dessus du mur — une pastille par ligne (et ⭐ pour revenir aux favorites), défilement horizontal au doigt, un appui saute directement à la rubrique, la rubrique visible reste surlignée pendant le défilement — idéale sur iPhone/iPad, discrète sur grand écran, et masquée si le mur n'a pas de titres de ligne"],
+  ['v8.44',"L'en-tête du mur d'accueil s'allège : le « Bonjour 👋 » et le texte explicatif disparaissent au profit d'une 💬 citation du jour (banque de plus de 110 citations embarquée, hors ligne, qui change chaque jour) — affichable ou masquable depuis ⚙ Réglages"],
   ['v8.43',"Coller une tuile : le petit bouton 📋 apparaît maintenant en fin de chaque ligne (favoris du haut compris), à côté des boutons ＋ et ▢ — plus besoin de coller tout en bas puis de déplacer"],
   ['v8.42',"Barre du haut : le bouton jour/nuit se place à gauche du cadenas · sur petit écran (téléphone), la pendule ainsi que le nom et le descriptif du site sont masqués pour laisser toute la largeur à la barre de recherche"],
   ['v8.41',"Identité par défaut de l'application : elle s'appelle désormais « Interface » et arbore le logo Pac-Man 3D — y compris après « 🧹 Tout effacer » ou au premier lancement ; votre personnalisation (⚙ Réglages → Titre, image & descriptif) reste bien sûr prioritaire"],
@@ -1846,6 +1866,7 @@ function renderWall(owner){
       segLastId=t.id;
       const el=document.createElement('div');
       el.className='wall-sec'+(t.title?'':' blank');
+      el.dataset.sec=t.id;
       el.innerHTML=`<span class="bar"></span><span class="txt">${esc(t.title)}</span><span class="line"></span>
         <div class="sec-tools">
           <button class="tile-tool" data-a="addafter" title="Ajouter une tuile sous ce titre">＋</button>
@@ -1950,9 +1971,166 @@ function renderWall(owner){
   else if(!items.length&&isEdit())
     wall.innerHTML=`<div class="empty-hint" style="grid-column:1/-1">Cliquez sur « ✏️ Modifier${owner==='home'?' le mur':''} » pour ajouter des tuiles d'accès rapide.</div>`;}
 const WAND_SVG='<svg viewBox="0 0 24 24" style="width:17px;height:17px;vertical-align:-3.5px;filter:drop-shadow(0 1px 1.2px #0004)" aria-hidden="true"><defs><linearGradient id="i3wnd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b06ae0"/><stop offset="1" stop-color="#5b2a8a"/></linearGradient><radialGradient id="i3wst" cx=".4" cy=".35"><stop offset="0" stop-color="#fff3a0"/><stop offset="1" stop-color="#f0a500"/></radialGradient></defs><rect x="1.5" y="16.4" width="15" height="3.4" rx="1.7" transform="rotate(-40 9 18)" fill="url(#i3wnd)" stroke="#3f1a63" stroke-width=".6"/><path d="M16.9 1.9l1.3 2.8 2.8 1.3-2.8 1.3-1.3 2.8-1.3-2.8-2.8-1.3 2.8-1.3Z" fill="url(#i3wst)" stroke="#c77b00" stroke-width=".5"/><path d="M21 11l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6Z" fill="#ffd93b"/><path d="M12.4 9.2l.5 1.1 1.1.5-1.1.5-.5 1.1-.5-1.1-1.1-.5 1.1-.5Z" fill="#ffd93b" opacity=".85"/></svg>';
+/* ---------- Citation du jour (banque hors ligne, change chaque jour) ---------- */
+const QUOTES=[
+["Le succès, c'est tomber sept fois et se relever huit.","proverbe japonais"],
+["La perfection est atteinte non pas lorsqu'il n'y a plus rien à ajouter, mais lorsqu'il n'y a plus rien à retirer.","Antoine de Saint-Exupéry"],
+["Ils ne savaient pas que c'était impossible, alors ils l'ont fait.","Mark Twain"],
+["Le meilleur moyen de prévoir l'avenir, c'est de le créer.","Peter Drucker"],
+["Un voyage de mille lieues commence toujours par un premier pas.","Lao Tseu"],
+["La simplicité est la sophistication suprême.","Léonard de Vinci"],
+["Fais de ta vie un rêve, et d'un rêve, une réalité.","Antoine de Saint-Exupéry"],
+["Le hasard ne favorise que les esprits préparés.","Louis Pasteur"],
+["Choisissez un travail que vous aimez et vous n'aurez pas à travailler un seul jour de votre vie.","Confucius"],
+["L'imagination est plus importante que le savoir.","Albert Einstein"],
+["La vie, c'est comme une bicyclette : il faut avancer pour ne pas perdre l'équilibre.","Albert Einstein"],
+["Ce qui ne me tue pas me rend plus fort.","Friedrich Nietzsche"],
+["Il n'y a qu'une façon d'échouer, c'est d'abandonner avant d'avoir réussi.","Georges Clemenceau"],
+["Le courage n'est pas l'absence de peur, mais la capacité de la vaincre.","Nelson Mandela"],
+["On ne voit bien qu'avec le cœur. L'essentiel est invisible pour les yeux.","Antoine de Saint-Exupéry"],
+["Rien ne sert de courir ; il faut partir à point.","Jean de La Fontaine"],
+["Patience et longueur de temps font plus que force ni que rage.","Jean de La Fontaine"],
+["La connaissance s'acquiert par l'expérience, tout le reste n'est que de l'information.","Albert Einstein"],
+["Le doute est le commencement de la sagesse.","Aristote"],
+["Nous sommes ce que nous répétons chaque jour. L'excellence n'est donc pas un acte, mais une habitude.","Aristote"],
+["Il faut toujours viser la lune, car même en cas d'échec, on atterrit dans les étoiles.","Oscar Wilde"],
+["Sois toi-même, tous les autres sont déjà pris.","Oscar Wilde"],
+["Le succès c'est d'aller d'échec en échec sans perdre son enthousiasme.","Winston Churchill"],
+["Un pessimiste voit la difficulté dans chaque opportunité, un optimiste voit l'opportunité dans chaque difficulté.","Winston Churchill"],
+["Quand on veut, on peut. Quand on peut, on doit.","Napoléon Bonaparte"],
+["Impossible n'est pas français.","Napoléon Bonaparte"],
+["La victoire appartient au plus persévérant.","Napoléon Bonaparte"],
+["Ce n'est pas parce que les choses sont difficiles que nous n'osons pas, c'est parce que nous n'osons pas qu'elles sont difficiles.","Sénèque"],
+["Il n'est pas de vent favorable pour celui qui ne sait où il va.","Sénèque"],
+["La chance sourit aux audacieux.","Virgile"],
+["Connais-toi toi-même.","Socrate"],
+["Je ne perds jamais : soit je gagne, soit j'apprends.","Nelson Mandela"],
+["Tout obstacle renforce la détermination.","Léonard de Vinci"],
+["Qui ne tente rien n'a rien.","proverbe français"],
+["Petit à petit, l'oiseau fait son nid.","proverbe français"],
+["C'est en forgeant qu'on devient forgeron.","proverbe français"],
+["Aide-toi, le ciel t'aidera.","Jean de La Fontaine"],
+["Là où il y a une volonté, il y a un chemin.","proverbe"],
+["Le génie est fait de 1 % d'inspiration et de 99 % de transpiration.","Thomas Edison"],
+["Je n'ai pas échoué, j'ai trouvé dix mille moyens qui ne fonctionnent pas.","Thomas Edison"],
+["Le meilleur moment pour planter un arbre était il y a vingt ans. Le deuxième meilleur moment, c'est maintenant.","proverbe chinois"],
+["Celui qui déplace une montagne commence par déplacer de petites pierres.","Confucius"],
+["L'homme qui a commis une erreur et qui ne la corrige pas commet une autre erreur.","Confucius"],
+["Notre plus grande gloire n'est pas de ne jamais tomber, mais de nous relever à chaque chute.","Confucius"],
+["La vie est un mystère qu'il faut vivre, et non un problème à résoudre.","Gandhi"],
+["Vis comme si tu devais mourir demain. Apprends comme si tu devais vivre toujours.","Gandhi"],
+["Sois le changement que tu veux voir dans le monde.","Gandhi"],
+["Un problème sans solution est un problème mal posé.","Albert Einstein"],
+["Tout le monde est un génie. Mais si l'on juge un poisson à sa capacité de grimper aux arbres, il passera sa vie à croire qu'il est stupide.","Albert Einstein"],
+["Au milieu de toute difficulté se trouve une opportunité.","Albert Einstein"],
+["Hier est derrière, demain est mystère, et aujourd'hui est un cadeau.","proverbe"],
+["Chaque jour est une nouvelle chance de changer votre vie.","anonyme"],
+["Le bonheur n'est pas au sommet de la montagne, il est dans la façon de la gravir.","Confucius"],
+["Il n'y a point de génie sans un grain de folie.","Aristote"],
+["Le voyage est un retour vers l'essentiel.","proverbe tibétain"],
+["Les grandes choses ne sont jamais faites par une seule personne, mais par une équipe.","Steve Jobs"],
+["Restez affamés, restez fous.","Steve Jobs"],
+["L'innovation, c'est ce qui distingue un leader d'un suiveur.","Steve Jobs"],
+["La qualité n'est jamais un accident ; c'est toujours le résultat d'un effort intelligent.","John Ruskin"],
+["Bien faire et laisser dire.","proverbe français"],
+["Cent fois sur le métier remettez votre ouvrage.","Nicolas Boileau"],
+["Ce que l'on conçoit bien s'énonce clairement, et les mots pour le dire arrivent aisément.","Nicolas Boileau"],
+["Hâtez-vous lentement.","Nicolas Boileau"],
+["Science sans conscience n'est que ruine de l'âme.","François Rabelais"],
+["Rire est le propre de l'homme.","François Rabelais"],
+["Le travail éloigne de nous trois grands maux : l'ennui, le vice et le besoin.","Voltaire"],
+["Il faut cultiver notre jardin.","Voltaire"],
+["Le mieux est l'ennemi du bien.","Voltaire"],
+["J'ai décidé d'être heureux parce que c'est bon pour la santé.","Voltaire"],
+["La liberté des uns s'arrête là où commence celle des autres.","John Stuart Mill"],
+["On ne subit pas l'avenir, on le fait.","Georges Bernanos"],
+["L'avenir appartient à ceux qui se lèvent tôt.","proverbe français"],
+["Mieux vaut prévenir que guérir.","proverbe français"],
+["L'union fait la force.","proverbe"],
+["Seul on va plus vite, ensemble on va plus loin.","proverbe africain"],
+["Celui qui veut réussir trouve un moyen, celui qui ne veut rien faire trouve une excuse.","proverbe arabe"],
+["Ne remets pas à demain ce que tu peux faire aujourd'hui.","proverbe français"],
+["Les paroles s'envolent, les écrits restent.","proverbe latin"],
+["Errare humanum est, perseverare diabolicum — l'erreur est humaine, persévérer dans l'erreur est diabolique.","proverbe latin"],
+["Rome ne s'est pas faite en un jour.","proverbe"],
+["Qui vivra verra.","proverbe français"],
+["Vouloir, c'est pouvoir.","proverbe français"],
+["À cœur vaillant, rien d'impossible.","Jacques Cœur"],
+["Prudence est mère de sûreté.","proverbe français"],
+["Deux avis valent mieux qu'un.","proverbe français"],
+["Il n'y a que le premier pas qui coûte.","Madame du Deffand"],
+["La critique est aisée, mais l'art est difficile.","Philippe Destouches"],
+["Rien n'est permanent, sauf le changement.","Héraclite"],
+["On ne se baigne jamais deux fois dans le même fleuve.","Héraclite"],
+["Le sage ne dit pas ce qu'il sait, le sot ne sait pas ce qu'il dit.","proverbe chinois"],
+["Une image vaut mille mots.","Confucius"],
+["Tombé sept fois, relevé huit fois — c'est ainsi que l'on avance.","proverbe japonais"],
+["Le bambou qui plie est plus fort que le chêne qui résiste.","proverbe japonais"],
+["Quand souffle le vent du changement, certains construisent des murs, d'autres des moulins.","proverbe chinois"],
+["Il vaut mieux allumer une bougie que maudire l'obscurité.","proverbe chinois"],
+["L'expérience est une lanterne accrochée dans le dos, qui n'éclaire que le chemin parcouru.","Confucius"],
+["La théorie, c'est quand on sait tout et que rien ne fonctionne. La pratique, c'est quand tout fonctionne et que personne ne sait pourquoi.","Albert Einstein (attribué)"],
+["Un expert est une personne qui a fait toutes les erreurs qui peuvent être faites dans un domaine très étroit.","Niels Bohr"],
+["La chance, c'est ce qui arrive quand la préparation rencontre l'opportunité.","Sénèque"],
+["Ce n'est pas la destination qui compte, c'est le chemin.","Robert Louis Stevenson"],
+["Même le plus grand des trains a commencé par un premier tour de roue.","anonyme"],
+["Un train peut en cacher un autre — dans le travail aussi, vérifiez toujours deux fois.","sagesse ferroviaire"],
+["Mieux vaut arriver en retard qu'arriver en corbillard.","proverbe"],
+["La ponctualité est la politesse des rois.","Louis XVIII"],
+["Le calme est la plus grande manifestation de la force.","proverbe"],
+["Une machine peut faire le travail de cinquante hommes ordinaires. Aucune machine ne peut faire le travail d'un homme extraordinaire.","Elbert Hubbard"],
+["Ne jugez pas chaque jour à la récolte que vous faites, mais aux graines que vous semez.","Robert Louis Stevenson"],
+["Le plus grand risque est de ne prendre aucun risque.","Mark Zuckerberg"],
+["Fait vaut mieux que parfait.","adage des ingénieurs"],
+["Si vous pensez que l'éducation coûte cher, essayez l'ignorance.","Abraham Lincoln (attribué)"],
+["Donnez-moi six heures pour abattre un arbre, j'en passerai quatre à affûter ma hache.","Abraham Lincoln"],
+["Qui n'avance pas recule.","proverbe"],
+["Après la pluie, le beau temps.","proverbe français"],
+["C'est dans l'effort que l'on trouve la satisfaction et non dans la réussite.","Gandhi"],
+["Le sourire est une clé qui ouvre bien des portes.","proverbe"],
+["Un bon croquis vaut mieux qu'un long discours.","Napoléon Bonaparte"],
+["Ce qui se passe dans la cabine reste dans la cabine — mais notez-le quand même dans la fiche.","sagesse de dépanneur"],
+["Un problème bien documenté est à moitié résolu.","adage des techniciens"],
+["La mémoire est une seconde fois la vie — sauvegardez-la.","adage numérique"]];
+function quoteOfDay(){
+  const day=Math.floor((Date.now()-new Date().getTimezoneOffset()*60000)/86400000);
+  return QUOTES[day%QUOTES.length];}
+function renderQuote(){
+  const box=$('#quoteBox');if(!box)return;
+  if(data.settings.quoteHide){box.style.display='none';return;}
+  const q=quoteOfDay();
+  box.style.display='block';
+  box.querySelector('.q-txt').textContent='« '+q[0]+' »';
+  box.querySelector('.q-auth').textContent='— '+q[1];}
+function renderWallNav(){
+  const box=$('#wallNav');if(!box)return;
+  const sorted=[...(data.tiles||[])].sort((a,b)=>a.ord-b.ord);
+  const secs=sorted.filter(t=>t.kind==='section'&&(t.title||'').trim());
+  const firstSecIdx=sorted.findIndex(t=>t.kind==='section');
+  const hasFav=firstSecIdx>0;
+  if(!secs.length){box.style.display='none';return;}
+  box.style.display='flex';
+  box.innerHTML=(hasFav?'<button class="wn-chip" data-top="1" title="Revenir en haut (tuiles favorites)">⭐</button>':'')+
+    secs.map(s=>`<button class="wn-chip" data-sec="${s.id}">${esc(s.title)}</button>`).join('');
+  box.querySelectorAll('.wn-chip').forEach(ch=>ch.onclick=()=>{
+    if(ch.dataset.top){$('#main').scrollTo({top:0,behavior:'smooth'});return;}
+    const el=document.querySelector('.wall-sec[data-sec="'+ch.dataset.sec+'"]');
+    if(el)el.scrollIntoView({behavior:'smooth',block:'start'});});
+  wallNavSpy();}
+function wallNavSpy(){
+  const box=$('#wallNav');
+  if(!box||box.style.display==='none'||state.view!=='home')return;
+  const nb=box.getBoundingClientRect().bottom+8;
+  let act=null;
+  document.querySelectorAll('#wall .wall-sec[data-sec]').forEach(el=>{
+    if(el.getBoundingClientRect().top<=nb)act=el.dataset.sec;});
+  box.querySelectorAll('.wn-chip').forEach(ch=>{
+    const on=act?ch.dataset.sec===act:!!ch.dataset.top||(!act&&ch===box.querySelector('.wn-chip'));
+    ch.classList.toggle('on',on);
+    if(on){const r=ch.getBoundingClientRect(),br=box.getBoundingClientRect();
+      if(r.left<br.left||r.right>br.right)ch.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});}});}
 function renderHome(){
-  const h=new Date().getHours();
-  $('#helloTxt').textContent=(h<6?'Bonne nuit':h<12?'Bonjour':h<18?'Bon après-midi':'Bonsoir')+' 👋';
+  renderQuote();renderWallNav();
   $('#editWallBtn').textContent=state.editWallOwner==='home'?'✔️ Terminer':'✏️ Modifier le mur';
   $('#editWallBtn').classList.toggle('primary',state.editWallOwner==='home');
   $('#quickBtn').classList.toggle('primary',state.quickMode);
@@ -6581,6 +6759,10 @@ async function init(){
   if(data.settings.sidebarW)document.documentElement.style.setProperty('--sidebar-w',data.settings.sidebarW+'px');
   applyTheme();applyBrand();applyMode();tickClock();setInterval(tickClock,1000);
   initEditor();attachInputRewire();updateStats();pacSchedule();
+  {let raf=null;
+   $('#main').addEventListener('scroll',()=>{
+     if(raf)return;
+     raf=requestAnimationFrame(()=>{raf=null;wallNavSpy();});},{passive:true});}
 
   /* navigation */
   window.addEventListener('hashchange',route);
@@ -6634,6 +6816,9 @@ async function init(){
     openCtx(r.right-250,r.bottom+6,[
       {ic:'✏️',label:'Titre, image & descriptif de l\'application',fn:brandModal},
       {ic:'🔑',label:'Mot de passe du mode édition…',fn:passwordModal},
+      {ic:'💬',label:(data.settings.quoteHide?'Afficher':'Masquer')+' la citation du jour',fn:()=>{
+        data.settings.quoteHide=!data.settings.quoteHide;save();renderQuote();
+        toast(data.settings.quoteHide?'💬 Citation du jour masquée':'💬 Citation du jour affichée — elle change chaque jour');}},
       {ic:'ℹ️',label:'Informations & statistiques',fn:infoModal},
       {ic:'🕘',label:'Historique des versions',fn:versionModal},
       {sep:true},
