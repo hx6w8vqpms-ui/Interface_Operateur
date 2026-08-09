@@ -744,6 +744,15 @@ html[data-mode="read"] #modeBtn .ic-lock{display:block}
   #sideResize{display:none}
   .brand .t span{display:none}
 }
+@media (max-width:700px){
+  /* petit écran : recherche pleine largeur, pendule et nom du site masqués */
+  #clockBox{display:none}
+  .brand .t{display:none}
+  #searchWrap{max-width:none}
+  #dirBtn{margin-left:0}
+  /* la pendule étant masquée, inutile de réserver la place de la roue de réglages */
+  html[data-mode="read"] #settingsBtn{display:none !important}
+}
 @media (max-width:600px){
   :root{--header-h:54px}
   #topbar{gap:6px;padding:env(safe-area-inset-top,0px) 8px 0;padding-left:max(8px,env(safe-area-inset-left));padding-right:max(8px,env(safe-area-inset-right))}
@@ -806,20 +815,6 @@ html[data-mode="read"] #modeBtn .ic-lock{display:block}
       <div class="logo">🚄</div>
       <div class="t"><b id="appTitleTxt">Interface</b><span id="appSubTxt">Dépannage TGV &amp; Thalys</span></div>
     </div>
-    <button class="icon-btn ic3d" id="themeBtn" title="Basculer clair / sombre">
-      <span class="ic-sm"><svg viewBox="0 0 24 24" aria-hidden="true">
-        <defs>
-          <radialGradient id="i3sun" cx=".35" cy=".3"><stop offset="0" stop-color="#ffe9a3"/><stop offset=".55" stop-color="#ffc73a"/><stop offset="1" stop-color="#e08a00"/></radialGradient>
-          <radialGradient id="i3moon" cx=".38" cy=".32"><stop offset="0" stop-color="#f4f7fb"/><stop offset=".6" stop-color="#c9d4e2"/><stop offset="1" stop-color="#8fa1b8"/></radialGradient>
-        </defs>
-        <g stroke="#f0a500" stroke-width="1.5" stroke-linecap="round"><path d="M8.6 1.6v2M8.6 13.2v2M1.6 8.6h2M13.2 8.6h2M3.6 3.6l1.4 1.4M12.2 12.2l.9.9M13.6 3.6l-1.4 1.4M5 12.2l-1.4 1.4"/></g>
-        <circle cx="8.6" cy="8.6" r="4.1" fill="url(#i3sun)" stroke="#c77b00" stroke-width=".8"/>
-        <ellipse cx="7.3" cy="7.2" rx="1.6" ry="1" transform="rotate(-30 7.3 7.2)" fill="#fff" opacity=".65"/>
-        <path d="M17.8 10.4a7.1 7.1 0 1 0 5.2 9.5 5.9 5.9 0 0 1-5.2-9.5Z" fill="url(#i3moon)" stroke="#6d7f96" stroke-width=".8"/>
-        <circle cx="15.2" cy="15.2" r=".95" fill="#aebccd"/><circle cx="14" cy="18.6" r=".65" fill="#aebccd"/><circle cx="17" cy="20.2" r=".75" fill="#aebccd"/>
-        <ellipse cx="14.9" cy="13.4" rx="1.4" ry=".8" transform="rotate(-25 14.9 13.4)" fill="#fff" opacity=".7"/>
-      </svg></span>
-    </button>
     <div id="searchWrap">
       <span class="mag"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span>
       <input id="searchInput" type="text" placeholder="Rechercher une fiche, un mot-clé, un fichier, un lien…" autocomplete="off" spellcheck="false">
@@ -856,6 +851,20 @@ html[data-mode="read"] #modeBtn .ic-lock{display:block}
       <div id="clockDate"></div>
     </div>
     <div class="topbar-actions">
+    <button class="icon-btn ic3d" id="themeBtn" title="Basculer clair / sombre">
+      <span class="ic-sm"><svg viewBox="0 0 24 24" aria-hidden="true">
+        <defs>
+          <radialGradient id="i3sun" cx=".35" cy=".3"><stop offset="0" stop-color="#ffe9a3"/><stop offset=".55" stop-color="#ffc73a"/><stop offset="1" stop-color="#e08a00"/></radialGradient>
+          <radialGradient id="i3moon" cx=".38" cy=".32"><stop offset="0" stop-color="#f4f7fb"/><stop offset=".6" stop-color="#c9d4e2"/><stop offset="1" stop-color="#8fa1b8"/></radialGradient>
+        </defs>
+        <g stroke="#f0a500" stroke-width="1.5" stroke-linecap="round"><path d="M8.6 1.6v2M8.6 13.2v2M1.6 8.6h2M13.2 8.6h2M3.6 3.6l1.4 1.4M12.2 12.2l.9.9M13.6 3.6l-1.4 1.4M5 12.2l-1.4 1.4"/></g>
+        <circle cx="8.6" cy="8.6" r="4.1" fill="url(#i3sun)" stroke="#c77b00" stroke-width=".8"/>
+        <ellipse cx="7.3" cy="7.2" rx="1.6" ry="1" transform="rotate(-30 7.3 7.2)" fill="#fff" opacity=".65"/>
+        <path d="M17.8 10.4a7.1 7.1 0 1 0 5.2 9.5 5.9 5.9 0 0 1-5.2-9.5Z" fill="url(#i3moon)" stroke="#6d7f96" stroke-width=".8"/>
+        <circle cx="15.2" cy="15.2" r=".95" fill="#aebccd"/><circle cx="14" cy="18.6" r=".65" fill="#aebccd"/><circle cx="17" cy="20.2" r=".75" fill="#aebccd"/>
+        <ellipse cx="14.9" cy="13.4" rx="1.4" ry=".8" transform="rotate(-25 14.9 13.4)" fill="#fff" opacity=".7"/>
+      </svg></span>
+    </button>
       <button class="icon-btn ic3d" id="modeBtn" title="Basculer édition / lecture seule">
       <span class="ic-unlock"><svg viewBox="0 0 24 24" aria-hidden="true">
         <defs><linearGradient id="i3lockU" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd34d"/><stop offset="1" stop-color="#dd8f00"/></linearGradient>
@@ -1178,9 +1187,10 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='8.41';
+const APP_VERSION='8.42';
 const APP_VERSION_DATE='7 août 2026';
 const CHANGELOG=[
+  ['v8.42',"Barre du haut : le bouton jour/nuit se place à gauche du cadenas · sur petit écran (téléphone), la pendule ainsi que le nom et le descriptif du site sont masqués pour laisser toute la largeur à la barre de recherche"],
   ['v8.41',"Identité par défaut de l'application : elle s'appelle désormais « Interface » et arbore le logo Pac-Man 3D — y compris après « 🧹 Tout effacer » ou au premier lancement ; votre personnalisation (⚙ Réglages → Titre, image & descriptif) reste bien sûr prioritaire"],
   ['v8.40',"Mur : copier / coller de tuiles (outil ⧉ sur chaque tuile, carte « 📋 Coller » en fin de mur — fonctionne aussi entre le mur d'accueil et les murs de fiches) · la fenêtre « Ordre des lignes » affiche enfin le vrai titre de chaque ligne, avec une icône ≡ plus sobre · le bouton du panneau de gauche reprend le symbole barre latérale façon Apple · l'export / import du mur d'accueil emporte aussi l'identité de l'application : titre, descriptif et logo"],
   ['v8.39',"L'ouverture rapide (baguette magique / modifier la sélection) est masquée sur smartphone et iPad — la fonction est réservée aux ordinateurs PC et Mac, où l'ouverture simultanée de plusieurs onglets fonctionne réellement"],
