@@ -1187,9 +1187,10 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='8.42';
+const APP_VERSION='8.43';
 const APP_VERSION_DATE='7 août 2026';
 const CHANGELOG=[
+  ['v8.43',"Coller une tuile : le petit bouton 📋 apparaît maintenant en fin de chaque ligne (favoris du haut compris), à côté des boutons ＋ et ▢ — plus besoin de coller tout en bas puis de déplacer"],
   ['v8.42',"Barre du haut : le bouton jour/nuit se place à gauche du cadenas · sur petit écran (téléphone), la pendule ainsi que le nom et le descriptif du site sont masqués pour laisser toute la largeur à la barre de recherche"],
   ['v8.41',"Identité par défaut de l'application : elle s'appelle désormais « Interface » et arbore le logo Pac-Man 3D — y compris après « 🧹 Tout effacer » ou au premier lancement ; votre personnalisation (⚙ Réglages → Titre, image & descriptif) reste bien sûr prioritaire"],
   ['v8.40',"Mur : copier / coller de tuiles (outil ⧉ sur chaque tuile, carte « 📋 Coller » en fin de mur — fonctionne aussi entre le mur d'accueil et les murs de fiches) · la fenêtre « Ordre des lignes » affiche enfin le vrai titre de chaque ligne, avec une icône ≡ plus sobre · le bouton du panneau de gauche reprend le symbole barre latérale façon Apple · l'export / import du mur d'accueil emporte aussi l'identité de l'application : titre, descriptif et logo"],
@@ -1803,6 +1804,16 @@ function renderWall(owner){
       if(ai>=0){const anc=sorted[ai],nx=sorted[ai+1];ord=nx?(anc.ord+nx.ord)/2:anc.ord+1000;}}
     ctx.list.push({id:'t_'+uid(),kind:'spacer',size:'s',ord});
     ctx.node?touch(ctx.node):save();refreshWall(owner);};
+  const pasteAfter=anchor=>{
+    if(!state.tileClip)return;
+    let ord=Date.now();
+    const sorted=[...ctx.list].sort((a,b)=>a.ord-b.ord);
+    if(!anchor||anchor==='__start')ord=(sorted.length?sorted[0].ord:0)-1;
+    else{const ai=sorted.findIndex(x=>x.id===anchor);
+      if(ai>=0){const anc=sorted[ai],nx=sorted[ai+1];ord=nx?(anc.ord+nx.ord)/2:anc.ord+1000;}}
+    const c=JSON.parse(JSON.stringify(state.tileClip));
+    c.id='t_'+uid();c.ord=ord;
+    ctx.list.push(c);ctx.node?touch(ctx.node):save();refreshWall(owner);toast('📋 Tuile collée');};
   const miniAdd=(anchor,beforeSectionId)=>{
     const miniSp=document.createElement('div');
     miniSp.className='tile add-tile mini size-s';
@@ -1820,7 +1831,14 @@ function renderWall(owner){
       const src=e.dataTransfer.getData('text/rd-tile');
       if(src)moveTile(owner,src,beforeSectionId);});
     wall.appendChild(mini);
-    wall.appendChild(miniSp);};
+    wall.appendChild(miniSp);
+    if(state.tileClip){
+      const miniP=document.createElement('div');
+      miniP.className='tile add-tile mini size-s';
+      miniP.innerHTML='<span class="plus">📋</span>';
+      miniP.title='Coller « '+(state.tileClip.title||'tuile')+' » en fin de cette ligne';
+      miniP.onclick=()=>pasteAfter(anchor||'__start');
+      wall.appendChild(miniP);}};
   for(const t of items){
     /* --- Titre de ligne / saut de ligne --- */
     if(t.kind==='section'){
