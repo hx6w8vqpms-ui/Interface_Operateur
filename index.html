@@ -108,6 +108,9 @@ input,select,textarea{font-family:inherit;color:inherit}
 .brand .logo.custom{background:none;box-shadow:none}
 .brand .logo img{width:100%;height:100%;object-fit:contain}
 html[data-mode="read"] #settingsBtn{visibility:hidden !important;pointer-events:none !important}
+#updBtn{display:none}
+html[data-mode="read"].upd-on #updBtn{display:flex}
+html[data-mode="read"].upd-on #settingsBtn{display:none !important}
 html[data-mode="read"] #fleetBtn{display:none !important}
 /* Icônes de fiche : emoji ou image */
 .nicon{display:inline-flex;align-items:center;justify-content:center}
@@ -153,6 +156,10 @@ html[data-mode="read"] #fleetBtn{display:none !important}
 .wn-chip:hover{border-color:var(--accent);color:var(--accent)}
 .wn-chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
 .wall-sec{scroll-margin-top:52px}
+.tile .tshared{position:absolute;left:8px;bottom:7px;font-size:12px;z-index:3;display:none;
+  filter:drop-shadow(0 1px 1px #0006)}
+.wall.editing .tile .tshared{display:block}
+.wall-sec .tshared{font-size:11px;opacity:.8}
 #quoteBox{max-width:640px}
 #quoteBox .q-txt{font-size:14.5px;font-style:italic;line-height:1.5;color:var(--text)}
 #quoteBox .q-auth{font-size:11.5px;font-weight:700;color:var(--muted);margin-top:3px}
@@ -168,8 +175,10 @@ html[data-mode="read"] #fleetBtn{display:none !important}
 @keyframes pacjT{from{transform:rotate(2deg)}to{transform:rotate(-32deg)}}
 @keyframes pacjB{from{transform:rotate(-2deg)}to{transform:rotate(32deg)}}
 .pac-guy.home .pjT,.pac-guy.home .pjB{animation:none;transform:none}
-.pac-oct{position:absolute;left:-36px;font-size:26px;line-height:1;transform:translateY(-52%);
-  opacity:0;transition:opacity .5s;filter:drop-shadow(0 2px 2px #0004);animation:octbob 1.15s ease-in-out infinite alternate}
+.pac-oct{position:absolute;left:-36px;width:38px;height:38px;transform:translateY(-52%);
+  opacity:0;transition:opacity .5s;animation:octbob 1.15s ease-in-out infinite alternate}
+.int-oct{animation:octbob 1.05s ease-in-out infinite alternate}
+@keyframes mxfall{0%{opacity:0;transform:translateY(-8px)}15%{opacity:1}100%{opacity:0;transform:translateY(28px)}}
 @keyframes octbob{from{margin-top:-2px;rotate:-6deg}to{margin-top:2px;rotate:7deg}}
 .pac-bub{position:absolute;top:3px;background:#fff;color:#1c2430;border:1px solid #00000026;
   border-radius:11px;padding:2.5px 9px;font-size:10.5px;font-weight:800;white-space:nowrap;
@@ -938,6 +947,12 @@ html[data-mode="read"] #modeBtn .ic-lock{display:block}
         <circle cx="11.7" cy="11.7" r=".35" fill="#ff9db2"/>
         <ellipse cx="10.6" cy="10.3" rx="1.8" ry="1" transform="rotate(-30 10.6 10.3)" fill="#fff" opacity=".6"/>
       </svg></button>
+      <button class="icon-btn ic3d" id="updBtn" title="Rechercher une mise à jour des données communes">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none">
+        <defs><linearGradient id="i3upd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4b93ff"/><stop offset="1" stop-color="#1b4fd8"/></linearGradient></defs>
+        <path d="M20.2 12a8.2 8.2 0 1 1-2.4-5.8" stroke="url(#i3upd)" stroke-width="2.9" stroke-linecap="round"/>
+        <path d="M20.4 2.8v4.6h-4.6" stroke="url(#i3upd)" stroke-width="2.9" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg></button>
     </div>
   </header>
 
@@ -1076,6 +1091,7 @@ html[data-mode="read"] #modeBtn .ic-lock{display:block}
         <div class="node-head">
           <button id="nodeIcon" title="Changer l'icône">📄</button>
           <h1 id="nodeTitle" contenteditable="true" spellcheck="false"></h1>
+          <span id="nodeShTag" title="Cette fiche fait partie des données communes (pack partagé)" style="display:none;flex:none;font-size:10px;font-weight:800;letter-spacing:.05em;color:#fff;background:#1e6fd9;border-radius:7px;padding:3px 8px">🌐 COMMUNE</span>
           <div class="node-actions">
             <button class="icon-btn" id="nodePrintBtn" title="Imprimer / PDF cette fiche">
               <svg viewBox="0 0 24 24"><path d="M7 8V4h10v4M7 17H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="7" y="14" width="10" height="7" rx="1"/></svg>
@@ -1225,9 +1241,13 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='8.49';
+const APP_VERSION='8.53';
 const APP_VERSION_DATE='7 août 2026';
 const CHANGELOG=[
+  ['v8.53',"Portée fine des fiches : le menu ⋯ propose trois choix — 🌐 Commune, 👤 Personnelle ou ↩️ Comme la fiche parente — et le réglage le plus proche gagne : une sous-fiche peut rester personnelle (avec toutes ses sous-fiches) au milieu d'une branche commune ; elle est alors exclue du pack partagé, incluse dans l'export perso, et porte un badge « 👤 PERSO » signalant l'exception"],
+  ['v8.52',"Nouvelle console « 🌐 Données communes / personnelles » dans ⚙ Réglages : toutes vos fiches racines avec un interrupteur Commune/Perso (les sous-fiches suivent), le décompte des éléments du mur, et le rappel des réglages fins (menu ⋯ des fiches, champ Portée des tuiles)"],
+  ['v8.51',"Mises à jour automatiques 🔄 : configurez la « Source des mises à jour » (lien vers le pack commun sur un dossier partagé SharePoint / intranet) — vérification silencieuse à chaque lancement, bouton 🔄 à la place de la roue de réglages en lecture seule et première ligne du menu ⚙ en édition ; si un pack plus récent est détecté, une fenêtre propose la mise à jour (Plus tard = rappel « MAJ vX disponible » en bas du panneau à la place du compteur ; Mettre à jour = application immédiate sans toucher au perso) — la source voyage dans le pack, les collègues sont donc câblés dès le premier import · animation de lancement 🏁 : course-poursuite aléatoire entre Pac-Man et la pieuvre (demi-tours compris), qui finit par Pac-Man de retour à sa place et la pieuvre dissoute dans une pluie de caractères façon Matrix · la pieuvre est désormais dessinée en vrai (dôme violet, grands yeux, tentacules à ventouses) et pense en geek : 19 répliques aléatoires (« sudo make café ☕ », « La réponse est 42 », « git push --force 😈 »…)"],
+  ['v8.50',"Données COMMUNES / PERSO 🌐👤 : marquez une fiche comme commune (menu ⋯ → « Rendre commune », sous-fiches comprises, badge 🌐 COMMUNE dans l'en-tête) et les tuiles ou lignes du mur via « Portée : Commune » (badge 🌐 en mode édition) · trois exports dans ⚙ Réglages : TOUT (administrateur), données COMMUNES (pack versionné v1, v2… avec fiches, tuiles, fichiers, catalogue d'appareillages, flotte et identité) et données PERSO (vos fiches, tuiles et réglages) · un seul bouton d'import qui reconnaît le type de fichier : le pack commun remplace uniquement le commun (avertissement si pack plus ancien), l'import perso remplace uniquement le perso — idéal pour diffuser vos mises à jour aux collègues tout en gardant vos données à vous"],
   ['v8.49',"Navigation : bouton ← en tête du fil d'ariane des fiches pour revenir à la fiche consultée précédemment (l'infobulle indique laquelle) — l'historique interne retient vos 60 derniers passages, fiches, accueil et appareillages compris ; le retour du navigateur fonctionne toujours en parallèle"],
   ['v8.48',"Animation Pac-Man enrichie 👾🐙 : une pieuvre surgit à gauche et déclenche la course — Pac-Man dévore la barre jusqu'au bout de l'écran (vitesse constante, garantie d'aller au bout sur toute résolution, même en cas de rotation en cours de route) puis revient se poser à sa place ; la pieuvre le suit plus lentement, s'arrête parfois pour penser dans une bulle (« 💡 Nouvelle idée ! », « Pas de bug ici 👌 ») puis repart, et tout se restaure quand elle sort à droite — un geste ou une touche interrompt toujours tout immédiatement"],
   ['v8.47',"Largeur du panneau de gauche enfin réglable au doigt : sur iPad la poignée devient large avec un grip visible au milieu du bord, et ⚙ Réglages gagne « ↔️ Largeur du panneau de gauche » avec curseur et préréglages (Étroit / Standard / Large / Très large) à aperçu immédiat — sur téléphone, le tiroir suit ce réglage dans la limite de l'écran"],
@@ -1626,6 +1646,15 @@ function normalizeData(){
   const walls=[data.tiles,...data.nodes.map(n=>n.tiles)];
   for(const list of walls)for(const t of list){if(!t.kind)t.kind='tile';if(t.kind==='tile'&&!t.size)t.size='s';}}
 const nodeById=id=>data.nodes.find(n=>n.id===id)||null;
+/* Portée d'une fiche : le réglage explicite le plus proche gagne en remontant l'arbre.
+   shared===true → commune · shared===false → personnelle (même sous une branche commune)
+   · non défini → hérite du parent (défaut : personnelle) */
+function nodeSharedEff(id){let n=nodeById(id),guard=0;
+  while(n&&guard++<100){
+    if(n.shared===true)return true;
+    if(n.shared===false)return false;
+    n=n.parent?nodeById(n.parent):null;}
+  return false;}
 const childrenOf=id=>data.nodes.filter(n=>n.parent===(id||null)).sort((a,b)=>a.ord-b.ord);
 function descendants(id){const out=[];const walk=p=>{for(const c of childrenOf(p)){out.push(c);walk(c.id);}};walk(id);return out;}
 function pathOf(id){const p=[];let n=nodeById(id);let guard=0;
@@ -1803,8 +1832,11 @@ async function deleteNode(id){const n=nodeById(id);const all=[n,...descendants(i
   for(const fid of new Set(fileIds))await maybeDeleteBlob(fid);
   if(all.some(x=>x.id===state.nodeId))navigate('#/home');else render();
   toast('Fiche supprimée');}
-function nodeCtxMenu(id,x,y){if(!isEdit())return;openCtx(x,y,[
+function nodeCtxMenu(id,x,y){if(!isEdit())return;
+  const n=nodeById(id);
+  openCtx(x,y,[
   {ic:'➕',label:'Ajouter une sous-fiche',fn:()=>addNode(id)},
+  {ic:nodeSharedEff(id)?'🌐':'👤',label:'Portée commun / perso…  (actuelle : '+(nodeSharedEff(id)?'🌐 commune':'👤 perso')+')',fn:()=>nodeScopeModal(id)},
   {ic:'⬆️',label:'Monter',fn:()=>shiftNode(id,-1)},
   {ic:'⬇️',label:'Descendre',fn:()=>shiftNode(id,1)},
   {ic:'📦',label:'Déplacer vers…',fn:()=>movePicker(id)},
@@ -1908,7 +1940,7 @@ function renderWall(owner){
       const el=document.createElement('div');
       el.className='wall-sec'+(t.title?'':' blank');
       el.dataset.sec=t.id;
-      el.innerHTML=`<span class="bar"></span><span class="txt">${esc(t.title)}</span><span class="line"></span>
+      el.innerHTML=`<span class="bar"></span><span class="txt">${esc(t.title)}${t.shared?' <span class="tshared" title="Ligne commune — incluse dans le pack partagé">🌐</span>':''}</span><span class="line"></span>
         <div class="sec-tools">
           <button class="tile-tool" data-a="addafter" title="Ajouter une tuile sous ce titre">＋</button>
           <button class="tile-tool" data-a="left" title="Monter">◀</button>
@@ -1937,6 +1969,7 @@ function renderWall(owner){
     el.className='tile size-'+(t.size||'s');
     const kind=t.action?{url:'🔗 LIEN',node:'📄 FICHE',file:'📎 FICHIER'}[t.action.type]:'';
     el.innerHTML=`<div class="veil"></div>
+      ${t.shared?'<span class="tshared" title="Tuile commune — incluse dans le pack partagé">🌐</span>':''}
       <span class="kind">${kind}</span>
       ${t.badge?`<span class="tbadge" style="background:${esc(t.badgeColor||'#b7791f')}">${esc(t.badge)}</span>`:''}
       <span class="selbox">✓</span>
@@ -2237,11 +2270,15 @@ function sectionModal(owner,id){
   openModal(s?'Modifier le titre de ligne':'Nouveau titre de ligne',`
     <div class="field"><label>Texte affiché au-dessus de la ligne</label>
       <input type="text" id="mSecTxt" value="${esc(s?s.title:'')}" placeholder="ex : 🚄 Euroduplex — accès rapides"></div>
+    <label style="display:flex;align-items:center;gap:9px;font-size:13px;font-weight:700;margin:4px 0 8px;cursor:pointer">
+      <input type="checkbox" id="mSecSh" ${s&&s.shared?'checked':''} style="width:16px;height:16px;accent-color:#1e6fd9">
+      🌐 Ligne commune (incluse dans le pack partagé)</label>
     <p style="font-size:12px;color:var(--muted)">💡 Laissez le texte <b>vide</b> pour un simple <b>saut de ligne</b>. Une fois créé, le bouton <b>＋</b> du titre permet d'ajouter des tuiles juste en dessous.</p>`,
     [{label:'Annuler'},{label:s?'Enregistrer':'Ajouter',primary:true,fn:()=>{
       const txt=$('#mSecTxt').value.trim();
-      if(s)s.title=txt;
-      else ctx.list.push({id:'t_'+uid(),kind:'section',title:txt,ord:Date.now()});
+      const sh=$('#mSecSh').checked;
+      if(s){s.title=txt;if(sh)s.shared=true;else delete s.shared;}
+      else ctx.list.push({id:'t_'+uid(),kind:'section',title:txt,ord:Date.now(),...(sh?{shared:true}:{})});
       ctx.node?touch(ctx.node):save();refreshWall(owner);}}]);
   setTimeout(()=>$('#mSecTxt').focus(),60);}
 
@@ -2297,6 +2334,13 @@ function renderNode(){const n=nodeById(state.nodeId);if(!n){navigate('#/home');r
   else ni.textContent=n.icon;
   const tEl=$('#nodeTitle');if(tEl.textContent!==n.title)tEl.textContent=n.title;
   const ed=$('#editor');if(ed.innerHTML!==n.html)ed.innerHTML=n.html;ensureTrailingP();
+  {const eff=nodeSharedEff(n.id);
+   const exc=!eff&&n.parent&&nodeSharedEff(n.parent);
+   const tag=$('#nodeShTag');
+   tag.style.display=(eff||exc)?'inline-block':'none';
+   tag.textContent=eff?'🌐 COMMUNE':'👤 PERSO';
+   tag.style.background=eff?'#1e6fd9':'#5a6b7b';
+   tag.title=eff?'Cette fiche fait partie des données communes (pack partagé)':'Exception : fiche personnelle au sein d\'une branche commune';}
   renderTags(n);renderNodeEquip(n);renderNodeWall(n);renderLinks(n);renderContacts(n);renderFiles(n);renderChildren(n);
   /* en lecture seule, masquer les zones vides et la note vide */
   const emptyNote=!(n.html&&n.html.replace(/<br\s*\/?>/gi,'').replace(/&nbsp;/g,'').trim());
@@ -3136,6 +3180,11 @@ function tileModal(owner,tileId,afterId){
         <span id="mTiBadgePrev" class="tbadge" style="position:static;box-shadow:none;display:none"></span>
       </div>
     </div>
+    <div class="field"><label>Portée — qui reçoit cette tuile ?</label>
+      <div class="seg" id="mTiShSeg">
+        <button data-v="perso">👤 Personnelle</button><button data-v="commune">🌐 Commune (dans le pack)</button>
+      </div>
+    </div>
     <div class="field"><label>Taille</label>
       <div class="seg" id="mTiSizeSeg">
         <button data-v="s">Petite</button><button data-v="m">Moyenne</button><button data-v="w">Bande</button><button data-v="l">Grande</button>
@@ -3220,17 +3269,25 @@ function tileModal(owner,tileId,afterId){
       const badge=$('#mTiBadge').value.trim();
       const badgeColor=badge?$('#mTiBadgePick').value:null;
       if(t){t.title=title;t.sub=$('#mTiSub').value.trim();t.img=img;t.action=action;t.size=st.size;t.color=st.color;
-        t.badge=badge;t.badgeColor=badgeColor;t.imgFit=img?st.fit:null;}
+        t.badge=badge;t.badgeColor=badgeColor;t.imgFit=img?st.fit:null;
+        if(st.shared)t.shared=true;else delete t.shared;}
       else{let ord=Date.now();
         if(afterId){const sorted=[...ctx.list].sort((a,b)=>a.ord-b.ord);
           if(afterId==='__start')ord=(sorted.length?sorted[0].ord:0)-1;
           else{const ai=sorted.findIndex(x=>x.id===afterId);
             if(ai>=0){const anc=sorted[ai],nx=sorted[ai+1];ord=nx?(anc.ord+nx.ord)/2:anc.ord+1000;}}}
         ctx.list.push({id:'t_'+uid(),kind:'tile',title,sub:$('#mTiSub').value.trim(),img,action,
-          size:st.size,color:st.color,badge,badgeColor,imgFit:img?st.fit:null,ord});}
+          size:st.size,color:st.color,badge,badgeColor,imgFit:img?st.fit:null,ord,
+          ...(st.shared?{shared:true}:{})});}
       ctx.node?touch(ctx.node):save();
       if(oldImgFile&&(!img||img.value!==oldImgFile))await maybeDeleteBlob(oldImgFile);
       refreshWall(owner);toast(t?'Tuile mise à jour':'Tuile ajoutée');}}]);
+  /* portée commun / perso */
+  st.shared=!!(t&&t.shared);
+  {const segSh=$('#mTiShSeg');
+   const refSh=()=>[...segSh.children].forEach(b=>b.classList.toggle('on',b.dataset.v===(st.shared?'commune':'perso')));
+   [...segSh.children].forEach(b=>b.onclick=()=>{st.shared=b.dataset.v==='commune';refSh();});
+   refSh();}
   /* taille */
   const segS=$('#mTiSizeSeg');
   const refreshSize=()=>[...segS.children].forEach(b=>b.classList.toggle('on',b.dataset.v===st.size));
@@ -3491,6 +3548,142 @@ function wallOrderModal(owner){
       logEvt('↕️ Mur réorganisé (ordre des lignes)');
       refreshWall(owner);toast('↕️ Ordre des lignes enregistré');}}]);
   draw();}
+/* ---------- Mise à jour automatique des données communes (dossier partagé) ---------- */
+async function fetchPackHead(url){
+  const res=await fetch(url,{cache:'no-store'});
+  if(!res.ok)throw new Error('HTTP '+res.status);
+  const reader=res.body.getReader();const dec=new TextDecoder();let buf='';
+  while(buf.indexOf('\n')<0){const{done,value}=await reader.read();
+    if(done)break;buf+=dec.decode(value,{stream:true});
+    if(buf.length>6e6)break;}
+  try{reader.cancel();}catch(_){}
+  const i=buf.indexOf('\n');
+  return JSON.parse(i>=0?buf.slice(0,i):buf);}
+async function checkUpdate(manual){
+  const url=(data.settings.updateUrl||'').trim();
+  if(!url){if(manual)updateSourceModal();return;}
+  if(manual)toast('⏳ Vérification des mises à jour…');
+  try{
+    const o=await fetchPackHead(url);
+    if(!(o&&o.app==='RailDoc'&&o.format==='pack')){
+      if(manual)toast('⚠️ La source ne contient pas un pack RailDoc valide');return;}
+    if((o.packVersion||0)<=(data.packVer||0)){
+      state.updAvail=null;updateStats();
+      if(manual)toast('✅ Vos données communes sont à jour (pack v'+(data.packVer||0)+')');
+      return;}
+    state.updAvail={ver:o.packVersion,url,head:o};
+    updateStats();
+    proposeUpdate();
+  }catch(e){console.error(e);
+    if(manual)toast('⚠️ Vérification impossible — réseau, droits d\'accès ou lien invalide (voir ⚙ Source des mises à jour)');}}
+function proposeUpdate(){
+  const u=state.updAvail;if(!u)return;
+  const o=u.head;
+  const when=o.exported?new Date(o.exported).toLocaleString('fr-FR'):'';
+  openModal('🔄 Mise à jour disponible',`
+    <p style="font-size:14px;line-height:1.65">Un pack de données communes <b>v${u.ver}</b>${when?' ('+when+')':''} est disponible dans le dossier partagé — vous avez la <b>v${data.packVer||0}</b>.</p>
+    <p style="font-size:13px;line-height:1.6;color:var(--muted);margin-top:8px">La mise à jour remplace les fiches, tuiles et catalogues <b>communs</b> · vos données <b>personnelles ne sont pas touchées</b>.</p>`,
+    [{label:'Plus tard'},
+     {label:'🔄 Mettre à jour',primary:true,fn:()=>{doUpdate();}}]);}
+async function doUpdate(){
+  const u=state.updAvail;if(!u)return;
+  toast('⏳ Téléchargement de la mise à jour…');
+  try{
+    const res=await fetch(u.url,{cache:'no-store'});
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    const blob=await res.blob();
+    const f=new File([blob],'pack.json',{type:'application/json'});
+    const o=JSON.parse(await rdFirstLine(f));
+    await importCommonPack(f,o,true);
+    state.updAvail=null;updateStats();
+  }catch(e){console.error(e);toast('⚠️ Échec du téléchargement de la mise à jour');}}
+function updateSourceModal(){
+  openModal('📡 Source des mises à jour',`
+    <p style="font-size:12.5px;color:var(--muted);line-height:1.65;margin-bottom:10px">Collez le <b>lien direct</b> vers le fichier pack (<code>RailDoc-COMMUN-v….json</code>) déposé dans votre dossier partagé (SharePoint, intranet, serveur…). À chaque lancement, l'application vérifie s'il existe une version plus récente que celle installée.<br>
+    <span style="font-size:11.5px">💡 SharePoint : utilisez un lien de <b>téléchargement direct</b> (…&amp;download=1). Astuce fiable : gardez toujours le <b>même nom de fichier</b> (ex : <code>RailDoc-COMMUN.json</code>) et remplacez-le à chaque nouvelle version — le numéro de version est lu à l'intérieur du fichier.</span></p>
+    <div class="field"><label>Adresse du fichier pack</label>
+      <input type="url" id="mUpdUrl" value="${esc(data.settings.updateUrl||'')}" placeholder="https://…/RailDoc-COMMUN.json"></div>`,
+    [{label:'Annuler'},
+     {label:'Tester',fn:async()=>{
+       const u=$('#mUpdUrl').value.trim();
+       if(!u){toast('Saisissez une adresse');return false;}
+       toast('⏳ Test de la source…');
+       try{const o=await fetchPackHead(u);
+         if(o&&o.app==='RailDoc'&&o.format==='pack')toast('✅ Source valide — pack v'+(o.packVersion||'?')+' détecté');
+         else toast('⚠️ Le fichier lu n\'est pas un pack RailDoc');
+       }catch(e){toast('⚠️ Lecture impossible : '+(e&&e.message?e.message:'erreur réseau ou CORS'));}
+       return false;}},
+     {label:'Enregistrer',primary:true,fn:()=>{
+       data.settings.updateUrl=$('#mUpdUrl').value.trim();
+       save();applyUpdBtn();
+       toast(data.settings.updateUrl?'📡 Source des mises à jour enregistrée (diffusée dans le pack commun)':'📡 Source des mises à jour retirée');}}]);}
+function applyUpdBtn(){
+  document.documentElement.classList.toggle('upd-on',!!(data.settings&&data.settings.updateUrl));}
+/* ---------- Portée d'une fiche : commune / personnelle / héritée ---------- */
+function nodeScopeModal(id){
+  const n=nodeById(id);if(!n)return;
+  if(!isEdit()){toast('🔒 Mode lecture seule');return;}
+  const parentEff=n.parent?nodeSharedEff(n.parent):false;
+  let sel=n.shared===true?'com':n.shared===false?'per':'inh';
+  const btn='display:block;width:100%;text-align:left;border:1.5px solid var(--border-strong);background:var(--panel);border-radius:11px;padding:10px 13px;font-size:13px;font-weight:700;margin-bottom:7px;font-family:inherit;cursor:pointer';
+  openModal('Portée de « '+esc(n.title||'Sans titre')+' »',`
+    <p style="font-size:12.5px;color:var(--muted);line-height:1.6;margin-bottom:12px">La portée s'applique à cette fiche <b>et à toutes ses sous-fiches</b> — sauf celles qui définissent leur propre portée (une sous-fiche peut par exemple rester 👤 personnelle au milieu d'une branche 🌐 commune).</p>
+    <div id="mScopeBox">
+      <button data-v="com" style="${btn}">🌐 <b>Commune</b><br><span style="font-size:11px;color:var(--muted);font-weight:600">Part dans le pack partagé et les mises à jour des collègues</span></button>
+      <button data-v="per" style="${btn}">👤 <b>Personnelle</b><br><span style="font-size:11px;color:var(--muted);font-weight:600">Reste sur cet appareil et dans votre export perso — même si la fiche parente est commune</span></button>
+      <button data-v="inh" style="${btn}">↩️ <b>Comme la fiche parente</b><br><span style="font-size:11px;color:var(--muted);font-weight:600">${n.parent?('Suit le statut du parent — actuellement '+(parentEff?'🌐 commune':'👤 personnelle')):'Réglage par défaut (👤 personnelle)'}</span></button>
+    </div>`,
+    [{label:'Annuler'},{label:'Enregistrer',primary:true,fn:()=>{
+      if(sel==='com')n.shared=true;
+      else if(sel==='per')n.shared=false;
+      else delete n.shared;
+      touch(n);render();
+      const eff=nodeSharedEff(n.id);
+      toast(eff?'🌐 « '+(n.title||'Sans titre')+' » est commune (sous-fiches comprises)':'👤 « '+(n.title||'Sans titre')+' » est personnelle (sous-fiches comprises)');}}]);
+  const paint=()=>{document.querySelectorAll('#mScopeBox button').forEach(b=>{
+    const on=b.dataset.v===sel;
+    b.style.borderColor=on?(b.dataset.v==='com'?'#1e6fd9':'var(--accent)'):'var(--border-strong)';
+    b.style.background=on?(b.dataset.v==='com'?'#1e6fd915':'var(--accent-soft)'):'var(--panel)';});};
+  document.querySelectorAll('#mScopeBox button').forEach(b=>b.onclick=()=>{sel=b.dataset.v;paint();});
+  paint();}
+/* ---------- Console commun / perso ---------- */
+function sharedManagerModal(){
+  if(!isEdit()){toast('🔒 Mode lecture seule');return;}
+  const rowCss='display:flex;align-items:center;gap:10px;border:1px solid var(--border);background:var(--panel-2);border-radius:11px;padding:8px 12px;margin-bottom:6px';
+  const draw=()=>{
+    const roots=childrenOf(null);
+    $('#mShList').innerHTML=roots.map(n=>{
+      const sub=descendants(n.id).length;
+      const on=!!n.shared;
+      return `<div style="${rowCss}">
+        <span style="flex:none">${esc(n.icon||'📄')}</span>
+        <div style="flex:1;min-width:0">
+          <b style="font-size:13px">${esc(n.title||'Sans titre')}</b>
+          ${sub?`<div style="font-size:10.5px;color:var(--muted)">${sub} sous-fiche(s) — suivent le même statut</div>`:''}
+        </div>
+        <button data-sh="${n.id}" style="flex:none;border-radius:999px;padding:5px 13px;font-size:11.5px;font-weight:800;border:1.5px solid ${on?'#1e6fd9':'var(--border-strong)'};color:${on?'#fff':'var(--muted)'};background:${on?'#1e6fd9':'var(--panel)'}">${on?'🌐 Commune':'👤 Perso'}</button>
+      </div>`;}).join('')||'<div class="empty-hint">Aucune fiche pour le moment.</div>';
+    const tc=(data.tiles||[]).filter(t=>t.shared&&t.kind!=='spacer').length;
+    const tp=(data.tiles||[]).filter(t=>!t.shared&&t.kind!=='spacer').length;
+    $('#mShTiles').textContent=`${tc} élément(s) commun(s) · ${tp} personnel(s)`;
+    $('#mShList').querySelectorAll('[data-sh]').forEach(b=>b.onclick=()=>{
+      const n=nodeById(b.dataset.sh);if(!n)return;
+      n.shared=!n.shared;if(!n.shared)delete n.shared;
+      touch(n);draw();
+      if(state.view==='node')renderNode();});};
+  openModal('🌐 Données communes / personnelles',`
+    <p style="font-size:12.5px;color:var(--muted);line-height:1.65;margin-bottom:12px">
+      Les données <b>🌐 communes</b> partent dans le pack partagé (export « données COMMUNES » et mises à jour automatiques) ;
+      les données <b>👤 perso</b> restent sur votre appareil et dans votre export perso.<br>
+      Basculez ici vos <b>fiches racines</b> — leurs sous-fiches suivent automatiquement.
+      Chaque fiche (et sous-fiche) peut aussi définir sa propre portée via son menu <b>⋯</b> → « Portée commun / perso » : une sous-fiche peut rester 👤 personnelle au milieu d'une branche 🌐 commune, avec ses propres sous-fiches.</p>
+    <div style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Fiches</div>
+    <div id="mShList" style="max-height:44vh;overflow-y:auto"></div>
+    <div style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:12px 0 4px">Mur d'accueil</div>
+    <p style="font-size:12px;color:var(--muted);line-height:1.6"><span id="mShTiles"></span><br>
+      Le statut d'une <b>tuile</b> se règle dans sa fenêtre d'édition (champ « <b>Portée</b> »), celui d'un <b>titre de ligne</b> via sa case « Ligne commune ». En mode édition du mur, les éléments communs portent un petit 🌐.</p>`,
+    [{label:'Fermer',primary:true}]);
+  draw();}
 /* ---------- Mot de passe du mode édition ---------- */
 function passwordModal(){
   const pw=Object.assign({enabled:false,code:''},data.settings.pw||{});
@@ -3538,6 +3731,131 @@ function resetAllModal(){
     [{label:'Annuler'},
      {label:'💾 Sauvegarder d\'abord',fn:()=>{exportAll();return false;}},
      {label:'🗑 Tout effacer',danger:true,fn:doFactoryReset}]);}
+/* ---------- Export / import : données COMMUNES (pack) et données PERSO ---------- */
+function collectNodeFids(nodes,fids){
+  for(const n of nodes){
+    for(const a of(n.files||[]))if(a.fileId)fids.add(a.fileId);
+    if(n.iconImg)fids.add(n.iconImg);
+    for(const t of(n.tiles||[])){
+      if(t.img&&t.img.type==='file'&&t.img.value)fids.add(t.img.value);
+      if(t.action&&t.action.type==='file'&&t.action.value)fids.add(t.action.value);}}}
+function collectTileFids(tiles,fids){
+  for(const t of tiles){
+    if(t.img&&t.img.type==='file'&&t.img.value)fids.add(t.img.value);
+    if(t.action&&t.action.type==='file'&&t.action.value)fids.add(t.action.value);}}
+async function packBlobAndSave(head,fids,fname,logLbl){
+  const parts=[new Blob([JSON.stringify(head)+'\n'])];
+  let n=0;
+  for(const k of fids){const f=await idb.get('files',k);if(!f)continue;
+    const h=JSON.stringify({file:k,name:f.name,mime:f.mime,size:f.size||0});
+    parts.push(new Blob([h.slice(0,-1)+',"b64":"',await blobToB64(f.blob),'"}\n']));n++;}
+  const blob=new Blob(parts,{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=fname;
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(url);a.remove();},8000);
+  logEvt(logLbl+' ('+fmtSize(blob.size)+', '+n+' fichier(s))');
+  toast(logLbl+' ('+fmtSize(blob.size)+')');}
+const dstamp=()=>{const d=new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}-${String(d.getHours()).padStart(2,'0')}h${String(d.getMinutes()).padStart(2,'0')}`;};
+async function exportShared(){
+  const nodes=data.nodes.filter(n=>nodeSharedEff(n.id));
+  const tiles=(data.tiles||[]).filter(t=>t.shared);
+  if(!nodes.length&&!tiles.length&&!(data.equipCustom||[]).length&&!Object.keys(data.equipOver||{}).length){
+    toast('🌐 Aucune donnée commune pour le moment — marquez des fiches (menu ⋯ → Rendre commune) ou des tuiles (Portée : Commune)');return;}
+  toast('⏳ Préparation du pack commun…');
+  try{
+    const fids=new Set();
+    collectNodeFids(nodes,fids);collectTileFids(tiles,fids);
+    for(const m of Object.values(data.equipMeta||{}))for(const f of(m&&m.files||[]))if(f.fileId)fids.add(f.fileId);
+    if(data.settings.logoImg)fids.add(data.settings.logoImg);
+    data.packVer=(data.packVer||0)+1;save();
+    const head={app:'RailDoc',format:'pack',version:1,packVersion:data.packVer,exported:new Date().toISOString(),
+      brand:{title:data.settings.title||'Interface',subtitle:data.settings.subtitle||'',logoImg:data.settings.logoImg||null},
+      updateUrl:data.settings.updateUrl||null,
+      nodes,tiles,fleet:data.fleet,fleetSeeded:data.fleetSeeded,
+      equipCustom:data.equipCustom||[],equipOver:data.equipOver||{},equipMeta:data.equipMeta||{},
+      equipPlaces:data.equipPlaces||[],equipGroups:data.equipGroups||{},equipGroupsDel:data.equipGroupsDel||[]};
+    await packBlobAndSave(head,fids,`RailDoc-COMMUN-v${data.packVer}-${dstamp()}.json`,
+      `🌐 Données communes exportées (pack v${data.packVer}, ${nodes.length} fiche(s), ${tiles.filter(t=>t.kind!=='section'&&t.kind!=='spacer').length} tuile(s))`);
+  }catch(e){console.error(e);toast('⚠️ Échec de l\'export commun');}}
+async function exportPerso(){
+  const nodes=data.nodes.filter(n=>!nodeSharedEff(n.id));
+  const tiles=(data.tiles||[]).filter(t=>!t.shared);
+  toast('⏳ Préparation de l\'export perso…');
+  try{
+    const fids=new Set();
+    collectNodeFids(nodes,fids);collectTileFids(tiles,fids);
+    const s=data.settings;
+    const head={app:'RailDoc',format:'perso',version:1,exported:new Date().toISOString(),
+      nodes,tiles,
+      settings:{theme:s.theme,sidebarW:s.sidebarW,quickSel:s.quickSel,noteFore:s.noteFore,
+        noteHilite:s.noteHilite,quoteHide:s.quoteHide,pw:s.pw}};
+    await packBlobAndSave(head,fids,`RailDoc-PERSO-${dstamp()}.json`,
+      `👤 Données perso exportées (${nodes.length} fiche(s), ${tiles.filter(t=>t.kind!=='section'&&t.kind!=='spacer').length} tuile(s))`);
+  }catch(e){console.error(e);toast('⚠️ Échec de l\'export perso');}}
+function fixOrphans(){
+  const ids=new Set(data.nodes.map(n=>n.id));
+  for(const n of data.nodes)if(n.parent&&!ids.has(n.parent))n.parent=null;}
+async function importFilesLines(file){
+  let first=true,nf=0;
+  await rdLines(file,async line=>{
+    if(first){first=false;return;}
+    let rec=null;try{rec=JSON.parse(line);}catch(_){return;}
+    if(rec&&rec.file){
+      await idb.put('files',rec.file,{name:rec.name,mime:rec.mime,size:rec.size,blob:b64ToBlob(rec.b64,rec.mime)});nf++;}});
+  return nf;}
+async function importCommonPack(file,meta,auto){
+  const nT=(meta.tiles||[]).filter(t=>t.kind!=='section'&&t.kind!=='spacer').length;
+  const when=meta.exported?new Date(meta.exported).toLocaleString('fr-FR'):'date inconnue';
+  const older=data.packVer&&meta.packVersion&&meta.packVersion<data.packVer;
+  if(!auto)
+  if(!await confirmDlg('Importer les données communes',
+    `Pack commun <b>v${meta.packVersion||'?'}</b> (${when}) : <b>${meta.nodes.length} fiche(s)</b>, <b>${nT} tuile(s)</b>, catalogue d'appareillages, flotte et identité de l'application.${older?'<br><br>⚠️ <b>Attention :</b> ce pack est <b>plus ancien</b> que celui déjà installé (v'+data.packVer+').':''}<br><br>Les données communes actuelles seront <b>remplacées</b> — vos fiches, tuiles et réglages <b>personnels sont conservés</b>.`))return;
+  toast('⏳ Import des données communes…');
+  try{
+    await importFilesLines(file);
+    data.nodes=data.nodes.filter(n=>!nodeSharedEff(n.id)).concat(meta.nodes);
+    data.tiles=(data.tiles||[]).filter(t=>!t.shared).concat((meta.tiles||[]).map(t=>({...t,shared:true})));
+    if(meta.fleet)data.fleet=meta.fleet;
+    if(meta.fleetSeeded)data.fleetSeeded=meta.fleetSeeded;
+    if(meta.equipCustom)data.equipCustom=meta.equipCustom;
+    if(meta.equipOver)data.equipOver=meta.equipOver;
+    if(meta.equipMeta)data.equipMeta=meta.equipMeta;
+    if(meta.equipPlaces)data.equipPlaces=meta.equipPlaces;
+    if(meta.equipGroups)data.equipGroups=meta.equipGroups;
+    if(meta.equipGroupsDel)data.equipGroupsDel=meta.equipGroupsDel;
+    if(meta.brand){data.settings.title=meta.brand.title||'Interface';
+      data.settings.subtitle=meta.brand.subtitle||'';
+      data.settings.logoImg=meta.brand.logoImg||null;}
+    if(meta.updateUrl)data.settings.updateUrl=meta.updateUrl;
+    applyUpdBtn();
+    data.packVer=meta.packVersion||data.packVer;
+    fixOrphans();normalizeData();
+    save();applyBrand();
+    logEvt(`🌐 Données communes importées (pack v${meta.packVersion||'?'})`);
+    navigate('#/home');render();
+    toast('✅ Données communes mises à jour — vos données perso sont intactes');
+  }catch(e){console.error(e);toast('⚠️ Échec de l\'import commun');}}
+async function importPerso(file,meta){
+  const nT=(meta.tiles||[]).filter(t=>t.kind!=='section'&&t.kind!=='spacer').length;
+  const when=meta.exported?new Date(meta.exported).toLocaleString('fr-FR'):'date inconnue';
+  if(!await confirmDlg('Importer des données personnelles',
+    `Export perso (${when}) : <b>${meta.nodes.length} fiche(s)</b>, <b>${nT} tuile(s)</b> et réglages personnels.<br><br>Vos données personnelles actuelles seront <b>remplacées</b> — les données <b>communes ne bougent pas</b>.`))return;
+  toast('⏳ Import des données perso…');
+  try{
+    await importFilesLines(file);
+    data.nodes=data.nodes.filter(n=>nodeSharedEff(n.id)).concat((meta.nodes||[]).map(n=>{const c={...n};if(c.shared===true)delete c.shared;return c;}));
+    data.tiles=(data.tiles||[]).filter(t=>t.shared).concat((meta.tiles||[]).map(t=>{const c={...t};delete c.shared;return c;}));
+    if(meta.settings)for(const k of['theme','sidebarW','quickSel','noteFore','noteHilite','quoteHide','pw'])
+      if(meta.settings[k]!==undefined)data.settings[k]=meta.settings[k];
+    fixOrphans();normalizeData();
+    save();applyTheme();applyBrand();
+    if(data.settings.sidebarW)document.documentElement.style.setProperty('--sidebar-w',data.settings.sidebarW+'px');
+    logEvt('👤 Données personnelles importées');
+    navigate('#/home');render();
+    toast('✅ Données perso restaurées — les données communes n\'ont pas bougé');
+  }catch(e){console.error(e);toast('⚠️ Échec de l\'import perso');}}
 /* ---------- Export / import du mur d'accueil seul ---------- */
 async function exportWall(){
   toast('⏳ Préparation de l\'export du mur…');
@@ -3644,6 +3962,45 @@ async function infoModal(){
     </div>
     <p style="font-size:11.5px;color:var(--muted);margin-top:12px">RailDoc v${APP_VERSION} — ${APP_VERSION_DATE}.<br>La sauvegarde 💾 exporte l'intégralité de tout ceci : fiches, notes, fichiers, tuiles et ouverture rapide, contacts et favoris, flotte, appareillages personnalisés, illustrations et réglages.</p>`,
     [{label:'Fermer',primary:true}]);}
+/* ---------- Sprites : Pac-Man & Pieuvre (dessinés en SVG) ---------- */
+const PAC_SVG=`<svg viewBox="0 0 40 40" style="width:100%;height:100%;filter:drop-shadow(0 2px 3px #0005)" aria-hidden="true">
+  <defs><radialGradient id="pacg" cx=".35" cy=".3"><stop offset="0" stop-color="#fff3a0"/><stop offset=".55" stop-color="#ffd93b"/><stop offset="1" stop-color="#e0a800"/></radialGradient></defs>
+  <g class="pjT"><path d="M1 20 A19 19 0 0 1 39 20 Z" fill="url(#pacg)" stroke="#b8860b" stroke-width=".8"/><circle cx="24" cy="9.5" r="2.1" fill="#3a2a00"/></g>
+  <g class="pjB"><path d="M1 20 A19 19 0 0 0 39 20 Z" fill="url(#pacg)" stroke="#b8860b" stroke-width=".8"/></g>
+</svg>`;
+const OCTO_SVG=`<svg viewBox="0 0 64 64" style="width:100%;height:100%;filter:drop-shadow(0 2px 3px #0005)" aria-hidden="true">
+  <defs>
+    <radialGradient id="octg" cx=".38" cy=".3"><stop offset="0" stop-color="#e5bcff"/><stop offset=".5" stop-color="#a55be0"/><stop offset="1" stop-color="#6b2aa0"/></radialGradient>
+    <linearGradient id="octt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8e42c8"/><stop offset="1" stop-color="#5c2090"/></linearGradient>
+  </defs>
+  <g fill="url(#octt)" stroke="#4a1a70" stroke-width="1">
+    <path d="M15 37 C10 46 5 49 3 56 C10 54 15 49 18 43 Z"/>
+    <path d="M22 41 C20 51 15 56 14 61 C22 58 26 51 27 44 Z"/>
+    <path d="M31 43 C31 53 29 58 31 63 C36 58 36 51 36 44 Z"/>
+    <path d="M41 41 C44 51 49 56 51 60 C53 53 48 47 45 43 Z"/>
+    <path d="M49 37 C54 45 59 48 61 53 C62 46 57 40 52 36 Z"/>
+  </g>
+  <g fill="#d9a8f5" opacity=".9">
+    <circle cx="7" cy="52" r="1.4"/><circle cx="17" cy="56" r="1.4"/><circle cx="32" cy="58" r="1.5"/>
+    <circle cx="47" cy="55" r="1.4"/><circle cx="57" cy="49" r="1.4"/>
+  </g>
+  <path d="M32 3 C18 3 9.5 14 9.5 26.5 C9.5 35.5 14 41 20 43.5 L44 43.5 C50 41 54.5 35.5 54.5 26.5 C54.5 14 46 3 32 3 Z" fill="url(#octg)" stroke="#4a1a70" stroke-width="1.3"/>
+  <ellipse cx="23" cy="12.5" rx="8" ry="4.6" fill="#fff" opacity=".4" transform="rotate(-18 23 12.5)"/>
+  <circle cx="24" cy="27" r="6.4" fill="#fff" stroke="#4a1a70" stroke-width=".6"/>
+  <circle cx="40" cy="27" r="6.4" fill="#fff" stroke="#4a1a70" stroke-width=".6"/>
+  <circle cx="25.6" cy="28" r="3.1" fill="#2a1240"/><circle cx="41.6" cy="28" r="3.1" fill="#2a1240"/>
+  <circle cx="24.7" cy="26.7" r="1.1" fill="#fff"/><circle cx="40.7" cy="26.7" r="1.1" fill="#fff"/>
+  <path d="M28.5 37 Q32 40 35.5 37" stroke="#4a1a70" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+  <circle cx="17" cy="33.5" r="1.9" fill="#e77" opacity=".45"/><circle cx="47" cy="33.5" r="1.9" fill="#e77" opacity=".45"/>
+</svg>`;
+const OCT_MSGS=[
+  '💡 Nouvelle idée !','Pas de bug ici 👌','sudo make café ☕','404 : pause introuvable',
+  'Ctrl+S… toujours Ctrl+S 💾','Ça marchait hier 🤔','C\'est pas un bug, c\'est une fonctionnalité',
+  '99 petits bugs dans le code 🎵','La réponse est 42','git push --force 😈',
+  'while(!reussi){essayer();}','Reboot et ça repart 🔌','01101000 01101001 = hi !',
+  'RTFM 📖 (avec amour)','Je code donc je suis','Compilation… 99 %…',
+  'Il me faut plus de RAM 🧠','Aucun train cassé pendant ce test 🚄','Je surveille les octets 👀'];
+function octPick(){const i=Math.floor(Math.random()*OCT_MSGS.length);return OCT_MSGS[i];}
 /* ---------- Easter egg : Pac-Man dévore la barre du haut ---------- */
 let pacTimer=null,pacRAF=null,pacEl=null,pacActive=false;
 function pacSchedule(){clearTimeout(pacTimer);
@@ -3666,13 +4023,8 @@ function pacRun(){
   pacEl.style.cssText=`position:fixed;left:0;top:${r.top}px;width:100vw;height:${r.height}px;z-index:90;pointer-events:none;overflow:hidden`;
   pacEl.innerHTML=`
     <div class="pac-eat" style="position:absolute;left:0;top:0;bottom:0;width:0;background:var(--panel)"></div>
-    <div class="pac-guy" style="position:absolute;top:50%;left:${lr.left}px;width:34px;height:34px;margin-top:-17px">
-      <svg viewBox="0 0 40 40" style="width:100%;height:100%;filter:drop-shadow(0 2px 3px #0005)" aria-hidden="true">
-        <defs><radialGradient id="pacg" cx=".35" cy=".3"><stop offset="0" stop-color="#fff3a0"/><stop offset=".55" stop-color="#ffd93b"/><stop offset="1" stop-color="#e0a800"/></radialGradient></defs>
-        <g class="pjT"><path d="M1 20 A19 19 0 0 1 39 20 Z" fill="url(#pacg)" stroke="#b8860b" stroke-width=".8"/><circle cx="24" cy="9.5" r="2.1" fill="#3a2a00"/></g>
-        <g class="pjB"><path d="M1 20 A19 19 0 0 0 39 20 Z" fill="url(#pacg)" stroke="#b8860b" stroke-width=".8"/></g>
-      </svg></div>
-    <div class="pac-oct">🐙</div>
+    <div class="pac-guy" style="position:absolute;top:50%;left:${lr.left}px;width:34px;height:34px;margin-top:-17px">${PAC_SVG}</div>
+    <div class="pac-oct">${OCTO_SVG}</div>
     <div class="pac-bub" style="display:none"></div>`;
   document.body.appendChild(pacEl);
   const eat=pacEl.querySelector('.pac-eat'),guy=pacEl.querySelector('.pac-guy'),
@@ -3688,8 +4040,8 @@ function pacRun(){
   const V_PAC=0.30*SPD,V_OCT=0.085*SPD;
   const x0=lr.left;
   let xP=x0,xO=-36,pacDone=false,last=performance.now(),pauseUntil=0,curPause=null;
-  const pauses=[{at:.30+Math.random()*.12,dur:2600/SPD,msg:'💡 Nouvelle idée !',done:false},
-                {at:.60+Math.random()*.12,dur:2300/SPD,msg:'Pas de bug ici 👌',done:false}];
+  const pauses=[{at:.30+Math.random()*.12,dur:2600/SPD,msg:octPick(),done:false},
+                {at:.60+Math.random()*.12,dur:2300/SPD,msg:octPick(),done:false}];
   if(Math.random()<.35)pauses.splice(Math.random()<.5?0:1,1);
   const step=t=>{
     if(!pacActive)return;
@@ -3717,7 +4069,81 @@ function pacRun(){
     pacRAF=requestAnimationFrame(step);};
   pacRAF=requestAnimationFrame(step);}
 ['pointermove','pointerdown','keydown','wheel','touchstart'].forEach(ev=>
-  addEventListener(ev,()=>{if(pacActive)pacRestore();},{passive:true,capture:true}));
+  addEventListener(ev,()=>{if(pacActive)pacRestore();if(introActive)introCleanup();},{passive:true,capture:true}));
+/* ---------- Animation de lancement : course-poursuite Pac-Man / Pieuvre ---------- */
+let introActive=false,introRAF=null,introEl=null,introEnding=false;
+function introCleanup(){
+  if(introRAF)cancelAnimationFrame(introRAF);introRAF=null;
+  if(introEl){introEl.remove();introEl=null;}
+  const lg=document.querySelector('#brandBox .logo');if(lg)lg.style.visibility='';
+  introActive=false;introEnding=false;}
+function introMatrix(x){
+  if(!introEl)return;
+  const box=document.createElement('div');
+  box.style.cssText=`position:absolute;left:${x-12}px;top:0;bottom:0;width:60px;pointer-events:none`;
+  const chars='アイウエオカキクケコ01<>{}#$%ラミデネ※';
+  for(let i=0;i<14;i++){const s=document.createElement('span');
+    s.textContent=chars[Math.floor(Math.random()*chars.length)];
+    s.style.cssText=`position:absolute;left:${Math.random()*50}px;top:${5+Math.random()*40}%;color:#00e05a;`+
+      `font:700 ${9+Math.random()*6}px ui-monospace,Menlo,monospace;opacity:0;`+
+      `animation:mxfall ${600+Math.random()*550}ms ease-in ${Math.random()*260}ms forwards;`+
+      `text-shadow:0 0 7px #00e05a99`;
+    box.appendChild(s);}
+  introEl.appendChild(box);}
+function introRun(){
+  if(introActive||pacActive)return;
+  try{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;}catch(_){}
+  if(document.hidden||document.querySelector('#modal.on'))return;
+  const tb=$('#topbar');if(!tb)return;
+  const r=tb.getBoundingClientRect();
+  const lg=document.querySelector('#brandBox .logo');
+  const lr=lg?lg.getBoundingClientRect():{left:8};
+  introActive=true;
+  if(lg)lg.style.visibility='hidden';
+  introEl=document.createElement('div');
+  introEl.style.cssText=`position:fixed;left:0;top:${r.top}px;width:100vw;height:${r.height}px;z-index:90;pointer-events:none;overflow:hidden`;
+  introEl.innerHTML=`
+    <div class="pac-guy" style="position:absolute;width:34px;height:34px">${PAC_SVG}</div>
+    <div class="int-oct" style="position:absolute;width:38px;height:38px">${OCTO_SVG}</div>`;
+  document.body.appendChild(introEl);
+  const guy=introEl.querySelector('.pac-guy'),oct=introEl.querySelector('.int-oct');
+  const padTop=parseFloat(getComputedStyle(tb).paddingTop)||0;
+  const midY=padTop+(r.height-padTop)/2;
+  guy.style.top=midY+'px';guy.style.marginTop='-17px';
+  oct.style.top=midY+'px';oct.style.marginTop='-23px';
+  const SPD=window.__pacSpeed||1;
+  /* course-poursuite aléatoire : 1 à 2 demi-tours, puis la pieuvre s'arrête
+     et se dissout façon Matrix pendant que Pac-Man regagne sa place */
+  const flips=1+(Math.random()<.3?1:0);
+  let dir=1,flip=0,xO=-44,xP=-100,last=performance.now(),phase='chase';
+  const octStopAt=.38+Math.random()*.3;
+  const step=t=>{
+    if(!introActive)return;
+    const dt=Math.min(60,t-last);last=t;
+    const W=innerWidth;
+    if(phase==='chase'){
+      const vLead=.46*SPD,vChase=.56*SPD;
+      if(dir===1){xO+=vLead*dt;xP+=vChase*dt;}
+      else{xO-=vChase*dt;xP-=vLead*dt;}
+      guy.style.transform=dir===1?'':'scaleX(-1)';
+      oct.style.transform=dir===1?'':'scaleX(-1)';
+      if(dir===1&&xO>W-70&&flip<flips){dir=-1;flip++;}
+      else if(dir===-1&&xP<W*.35){dir=1;}
+      if(dir===1&&flip>=flips&&xO>=W*octStopAt){phase='final';}
+    }else if(phase==='final'){
+      xP+=.58*SPD*dt;
+      guy.style.transform='';
+      if(!introEnding&&xP>W+60){introEnding=true;
+        guy.classList.add('home');guy.style.left=lr.left+'px';
+        introMatrix(xO);
+        oct.style.transition='opacity .75s,filter .75s';
+        oct.style.opacity='0';oct.style.filter='blur(2px) hue-rotate(120deg) saturate(3)';
+        setTimeout(()=>{if(introActive)introCleanup();},1300/Math.min(SPD,2));
+        return;}
+    }
+    if(!introEnding){guy.style.left=xP+'px';oct.style.left=xO+'px';}
+    introRAF=requestAnimationFrame(step);};
+  introRAF=requestAnimationFrame(step);}
 /* ==========================================================
    Sauvegarde / restauration (export & import complets)
    ========================================================== */
@@ -3782,6 +4208,8 @@ async function importAll(file){
   if(!meta&&file.stream){
     try{const o=JSON.parse(await rdFirstLine(file));
       if(o&&o.app==='RailDoc'&&o.format==='wall'&&Array.isArray(o.tiles)){importWall(file);return;}
+      if(o&&o.app==='RailDoc'&&o.format==='pack'&&Array.isArray(o.nodes)){importCommonPack(file,o);return;}
+      if(o&&o.app==='RailDoc'&&o.format==='perso'&&Array.isArray(o.nodes)){importPerso(file,o);return;}
     }catch(_){}}
   if(meta){
     const nb=meta.data.nodes.length;
@@ -3908,7 +4336,11 @@ async function applyFavicon(){
   link.href=applyFavicon._def.ico;
   tlink.href=applyFavicon._def.touch;}
 async function updateStats(){const nf=(await idb.keys('files')).length;
-  $('#statsLine').textContent=`${data.nodes.length} fiche(s) · ${nf} fichier(s)`;}
+  const sl=$('#statsLine');
+  if(state.updAvail){
+    sl.innerHTML=`<button id="updGo" style="color:#fff;background:#1e6fd9;border-radius:8px;padding:2px 9px;font-size:11px;font-weight:800;animation:pulseWarn 2.4s ease-in-out infinite" title="Cliquer pour lancer la mise à jour des données communes">🔄 MAJ v${state.updAvail.ver} disponible</button>`;
+    $('#updGo').onclick=proposeUpdate;}
+  else sl.textContent=`${data.nodes.length} fiche(s) · ${nf} fichier(s)`;}
 function logsModal(){
   const fmtT=t=>{const d=new Date(t);
     return d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});};
@@ -6865,7 +7297,9 @@ async function init(){
   state.open=new Set(data.settings.open);
   if(data.settings.sidebarW)document.documentElement.style.setProperty('--sidebar-w',data.settings.sidebarW+'px');
   applyTheme();applyBrand();applyMode();tickClock();setInterval(tickClock,1000);
-  initEditor();attachInputRewire();updateStats();pacSchedule();
+  initEditor();attachInputRewire();updateStats();pacSchedule();applyUpdBtn();
+  setTimeout(introRun,900);
+  setTimeout(()=>checkUpdate(false),2600);
   {let raf=null;
    $('#main').addEventListener('scroll',()=>{
      if(raf)return;
@@ -6921,6 +7355,10 @@ async function init(){
   $('#settingsBtn').onclick=e=>{e.stopPropagation();
     const r=e.currentTarget.getBoundingClientRect();
     openCtx(r.right-250,r.bottom+6,[
+      {ic:'🔄',label:'Rechercher une mise à jour des données communes',fn:()=>checkUpdate(true)},
+      {ic:'📡',label:'Source des mises à jour (dossier partagé)…',fn:updateSourceModal},
+      {ic:'🌐',label:'Données communes / personnelles…',fn:sharedManagerModal},
+      {sep:true},
       {ic:'✏️',label:'Titre, image & descriptif de l\'application',fn:brandModal},
       {ic:'🔑',label:'Mot de passe du mode édition…',fn:passwordModal},
       {ic:'↔️',label:'Largeur du panneau de gauche…',fn:sidebarWidthModal},
@@ -6932,13 +7370,15 @@ async function init(){
       {sep:true},
       {ic:'🕑',label:'Journal des actions',fn:logsModal},
       {sep:true},
-      {ic:'💾',label:'Exporter la sauvegarde complète',fn:exportAll},
-      {ic:'📂',label:'Importer une sauvegarde…',fn:()=>$('#fiImport').click()},
+      {ic:'💾',label:'Exporter TOUT (sauvegarde administrateur)',fn:exportAll},
+      {ic:'🌐',label:'Exporter les données COMMUNES (pack v'+((data.packVer||0)+1)+')',fn:exportShared},
+      {ic:'👤',label:'Exporter MES données PERSO',fn:exportPerso},
       {ic:'🧱',label:'Exporter le mur d\'accueil seul',fn:exportWall},
-      {ic:'🧱',label:'Importer un mur d\'accueil…',fn:()=>$('#fiImportWall').click()},
+      {ic:'📂',label:'Importer un fichier RailDoc… (type détecté automatiquement)',fn:()=>$('#fiImport').click()},
       {sep:true},
       {ic:'🧹',label:'Tout effacer — application vierge…',danger:true,fn:resetAllModal}]);};
   $('#dirBtn').onclick=directoryModal;
+  $('#updBtn').onclick=()=>checkUpdate(true);
   $('#addContactBtn').onclick=()=>{if(currentNode&&isEdit())contactModal(currentNode,null);};
 
   /* largeur du panneau latéral : poignée de redimensionnement */
