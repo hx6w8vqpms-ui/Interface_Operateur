@@ -1265,9 +1265,10 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='8.57';
+const APP_VERSION='8.58';
 const APP_VERSION_DATE='7 août 2026';
 const CHANGELOG=[
+  ['v8.58',"Correctif iOS : le champ du code de déverrouillage forçait le clavier numérique (héritage des anciens codes à 4 chiffres) — il accepte désormais le clavier complet, lettres comprises, sans majuscule automatique"],
   ['v8.57',"Source de mise à jour par 📂 fichier local : choisissez le pack dans un dossier de l'appareil (idéal : dossier SharePoint synchronisé OneDrive) — sur PC/Chrome-Edge le fichier est mémorisé et relu à chaque vérification (une autorisation par session), ailleurs le bouton 🔄 rouvre le sélecteur ; l'adresse web reste disponible pour un futur hébergement intranet · les Assistants PAC accèdent désormais à la roue ⚙ avec un menu allégé : recherche et source de MAJ, tous les exports, l'import et les informations — le reste demeure réservé à l'admin · en mode admin déverrouillé, le cadenas laisse place à la 🐙 pieuvre (halo violet) pour distinguer le profil d'un coup d'œil"],
   ['v8.56',"Le bas du panneau de gauche affiche désormais l'état des mises à jour à la place du compteur de fichiers : « Vérification impossible » par défaut (cliquable pour réessayer), puis « ✅ Version à jour » ou « 🔄 Effectuer une mise à jour » selon le résultat — les compteurs de fiches et fichiers restent visibles dans l'infobulle et dans ℹ️ Informations"],
   ['v8.55',"Application vierge épurée : plus de fiches d'exemple — une seule fiche « Guide d'utilisation », entièrement réécrite pour refléter toutes les évolutions (lecture seule et code Assistant, mises à jour 🔄, notes façon Word, mur et rubriques, appareillages tous catalogues, annuaire ⭐) et pensée pour être complétée · titre par défaut : « Interface PAC TGV » · le Pac-Man garde la bouche ouverte quand il se pose à sa place, comme le logo · codes d'accès par défaut renouvelés"],
@@ -7597,8 +7598,8 @@ async function init(){
     if(isEdit()){state.role='read';doModeSwitch();return;}
     openModal('🔒 Déverrouillage',`
       <p style="font-size:12.5px;color:var(--muted);margin-bottom:10px">Entrez votre code d'accès : <b>Assistant PAC</b> (édition du contenu) ou <b>Administrateur</b> (accès complet).</p>
-      <input id="mPwd" type="password" inputmode="numeric" autocomplete="off" placeholder="••••"
-        style="width:100%;box-sizing:border-box;border:2px solid var(--accent);border-radius:12px;padding:11px 12px;font-size:20px;text-align:center;letter-spacing:8px;outline:none">`,
+      <input id="mPwd" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="••••••"
+        style="width:100%;box-sizing:border-box;border:2px solid var(--accent);border-radius:12px;padding:11px 12px;font-size:20px;text-align:center;letter-spacing:6px;outline:none">`,
       [{label:'Annuler'},{label:'Déverrouiller',primary:true,fn:()=>{
         if(!tryUnlock($('#mPwd').value)){toast('⚠️ Code incorrect');return false;}}}]);
     setTimeout(()=>{const i=$('#mPwd');if(i){i.focus();
