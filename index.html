@@ -108,7 +108,6 @@ input,select,textarea{font-family:inherit;color:inherit}
 .brand .logo.custom{background:none;box-shadow:none}
 .brand .logo img{width:100%;height:100%;object-fit:contain}
 html[data-mode="read"] #settingsBtn{visibility:hidden !important;pointer-events:none !important}
-html[data-mode="edit"]:not([data-role="admin"]) #settingsBtn{visibility:hidden !important;pointer-events:none !important}
 #updBtn{display:none}
 html[data-mode="read"].upd-on #updBtn{display:flex}
 html[data-mode="read"].upd-on #settingsBtn{display:none !important}
@@ -685,9 +684,11 @@ html[data-theme="dark"] .eq-cell.rb{background:#22301a;color:#9fce7a;border-colo
 .ic3d svg{width:21px;height:21px;filter:drop-shadow(0 1.2px 1.2px #0004)}
 .side-mini.ic3d svg{width:17px;height:17px}
 .ic3d:hover svg{transform:translateY(-1px) scale(1.08);transition:transform .13s}
-#modeBtn .ic-lock,#modeBtn .ic-unlock{display:none;line-height:0}
+#modeBtn .ic-lock,#modeBtn .ic-unlock,#modeBtn .ic-octo{display:none;line-height:0}
 #themeBtn .ic-sm{line-height:0}
-html[data-mode="edit"] #modeBtn .ic-unlock{display:block}
+html[data-mode="edit"]:not([data-role="admin"]) #modeBtn .ic-unlock{display:block}
+html[data-mode="edit"][data-role="admin"] #modeBtn .ic-octo{display:block}
+html[data-mode="edit"][data-role="admin"] #modeBtn{background:#a55be01c;box-shadow:0 0 0 2px #a55be022}
 html[data-mode="read"] #modeBtn .ic-lock{display:block}
 #eqIll{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;margin:4px 0 8px}
 .eq-illit{margin:0;min-width:120px;max-width:100%}
@@ -912,6 +913,26 @@ html[data-mode="read"] #modeBtn .ic-lock{display:block}
       </svg></span>
     </button>
       <button class="icon-btn ic3d" id="modeBtn" title="Basculer édition / lecture seule">
+      <span class="ic-octo"><svg viewBox="0 0 64 64" aria-hidden="true">
+        <defs>
+          <radialGradient id="octgB" cx=".38" cy=".3"><stop offset="0" stop-color="#e5bcff"/><stop offset=".5" stop-color="#a55be0"/><stop offset="1" stop-color="#6b2aa0"/></radialGradient>
+          <linearGradient id="octtB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8e42c8"/><stop offset="1" stop-color="#5c2090"/></linearGradient>
+        </defs>
+        <g fill="url(#octtB)" stroke="#4a1a70" stroke-width="1">
+          <path d="M15 37 C10 46 5 49 3 56 C10 54 15 49 18 43 Z"/>
+          <path d="M22 41 C20 51 15 56 14 61 C22 58 26 51 27 44 Z"/>
+          <path d="M31 43 C31 53 29 58 31 63 C36 58 36 51 36 44 Z"/>
+          <path d="M41 41 C44 51 49 56 51 60 C53 53 48 47 45 43 Z"/>
+          <path d="M49 37 C54 45 59 48 61 53 C62 46 57 40 52 36 Z"/>
+        </g>
+        <path d="M32 3 C18 3 9.5 14 9.5 26.5 C9.5 35.5 14 41 20 43.5 L44 43.5 C50 41 54.5 35.5 54.5 26.5 C54.5 14 46 3 32 3 Z" fill="url(#octgB)" stroke="#4a1a70" stroke-width="1.3"/>
+        <ellipse cx="23" cy="12.5" rx="8" ry="4.6" fill="#fff" opacity=".4" transform="rotate(-18 23 12.5)"/>
+        <circle cx="24" cy="27" r="6.4" fill="#fff" stroke="#4a1a70" stroke-width=".6"/>
+        <circle cx="40" cy="27" r="6.4" fill="#fff" stroke="#4a1a70" stroke-width=".6"/>
+        <circle cx="25.6" cy="28" r="3.1" fill="#2a1240"/><circle cx="41.6" cy="28" r="3.1" fill="#2a1240"/>
+        <circle cx="24.7" cy="26.7" r="1.1" fill="#fff"/><circle cx="40.7" cy="26.7" r="1.1" fill="#fff"/>
+        <path d="M28.5 37 Q32 40 35.5 37" stroke="#4a1a70" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+      </svg></span>
       <span class="ic-unlock"><svg viewBox="0 0 24 24" aria-hidden="true">
         <defs><linearGradient id="i3lockU" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd34d"/><stop offset="1" stop-color="#dd8f00"/></linearGradient>
         <linearGradient id="i3shU" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e8ecf0"/><stop offset=".5" stop-color="#9aa6b2"/><stop offset="1" stop-color="#dfe4e9"/></linearGradient></defs>
@@ -1218,6 +1239,7 @@ html[data-mode="read"] #modeBtn .ic-lock{display:block}
 <input type="file" id="fiAttach" accept="image/*,.pdf,application/pdf,.doc,.docx,.docm,.xls,.xlsx,.xlsm,.ppt,.pptx,.pptm" multiple hidden>
 <input type="file" id="fiImport" accept=".json,.raildoc,application/json" hidden>
 <input type="file" id="fiImportWall" accept=".json,application/json" hidden>
+<input type="file" id="fiUpdPick" accept=".json,application/json" hidden>
 <input type="file" id="fiTileImg" accept="image/*" hidden>
 <input type="file" id="fiNoteImg" accept="image/*" hidden>
 <input type="file" id="fiIcon" accept="image/*" hidden>
@@ -1243,9 +1265,11 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='8.55';
+const APP_VERSION='8.57';
 const APP_VERSION_DATE='7 août 2026';
 const CHANGELOG=[
+  ['v8.57',"Source de mise à jour par 📂 fichier local : choisissez le pack dans un dossier de l'appareil (idéal : dossier SharePoint synchronisé OneDrive) — sur PC/Chrome-Edge le fichier est mémorisé et relu à chaque vérification (une autorisation par session), ailleurs le bouton 🔄 rouvre le sélecteur ; l'adresse web reste disponible pour un futur hébergement intranet · les Assistants PAC accèdent désormais à la roue ⚙ avec un menu allégé : recherche et source de MAJ, tous les exports, l'import et les informations — le reste demeure réservé à l'admin · en mode admin déverrouillé, le cadenas laisse place à la 🐙 pieuvre (halo violet) pour distinguer le profil d'un coup d'œil"],
+  ['v8.56',"Le bas du panneau de gauche affiche désormais l'état des mises à jour à la place du compteur de fichiers : « Vérification impossible » par défaut (cliquable pour réessayer), puis « ✅ Version à jour » ou « 🔄 Effectuer une mise à jour » selon le résultat — les compteurs de fiches et fichiers restent visibles dans l'infobulle et dans ℹ️ Informations"],
   ['v8.55',"Application vierge épurée : plus de fiches d'exemple — une seule fiche « Guide d'utilisation », entièrement réécrite pour refléter toutes les évolutions (lecture seule et code Assistant, mises à jour 🔄, notes façon Word, mur et rubriques, appareillages tous catalogues, annuaire ⭐) et pensée pour être complétée · titre par défaut : « Interface PAC TGV » · le Pac-Man garde la bouche ouverte quand il se pose à sa place, comme le logo · codes d'accès par défaut renouvelés"],
   ['v8.54',"Trois niveaux d'accès 🔒 : l'application démarre TOUJOURS en lecture seule (consultation + mises à jour automatiques 🔄 uniquement) · le cadenas demande un code — ✏️ Assistant PAC : édition du contenu (fiches, murs, appareillages) sans accès aux réglages ⚙ · 🛠 Administrateur : accès complet, y compris exports, codes et remise à zéro · les codes sont stockés uniquement sous forme de condensats SHA-256 salés (illisibles dans le fichier), modifiables par l'admin (⚙ → Codes d'accès) et diffusés automatiquement via le pack commun"],
   ['v8.53',"Portée fine des fiches : le menu ⋯ propose trois choix — 🌐 Commune, 👤 Personnelle ou ↩️ Comme la fiche parente — et le réglage le plus proche gagne : une sous-fiche peut rester personnelle (avec toutes ses sous-fiches) au milieu d'une branche commune ; elle est alors exclue du pack partagé, incluse dans l'export perso, et porte un badge « 👤 PERSO » signalant l'exception"],
@@ -3606,22 +3630,78 @@ async function fetchPackHead(url){
   try{reader.cancel();}catch(_){}
   const i=buf.indexOf('\n');
   return JSON.parse(i>=0?buf.slice(0,i):buf);}
+async function readPackFromHandle(manual){
+  let h=null;try{h=await idb.get('kv','updHandle');}catch(_){}
+  if(!h)return null;
+  try{
+    if(h.queryPermission){
+      let perm=await h.queryPermission({mode:'read'});
+      if(perm!=='granted'){
+        if(!manual)return 'perm';
+        perm=await h.requestPermission({mode:'read'});
+        if(perm!=='granted')return 'perm';}}
+    return await h.getFile();
+  }catch(e){console.error(e);return null;}}
+async function pickPackFile(){
+  if(window.showOpenFilePicker){
+    try{
+      const[h]=await showOpenFilePicker({types:[{description:'Pack RailDoc (.json)',accept:{'application/json':['.json']}}]});
+      try{await idb.put('kv','updHandle',h);}catch(_){}
+      data.settings.updateMode='file';
+      data.settings.updateFileName=h.name;save();applyUpdBtn();
+      return await h.getFile();
+    }catch(_){return null;}}
+  return new Promise(res=>{const fi=$('#fiUpdPick');
+    fi.onchange=e=>{const f=e.target.files[0];fi.value='';
+      if(f){data.settings.updateMode='file';data.settings.updateFileName=f.name;save();applyUpdBtn();}
+      res(f||null);};
+    fi.click();});}
 async function checkUpdate(manual){
+  const mode=data.settings.updateMode||((data.settings.updateUrl||'').trim()?'url':null);
+  /* --- mode fichier local (dossier partagé synchronisé sur l'appareil) --- */
+  if(mode==='file'){
+    if(manual)toast('⏳ Lecture du fichier de pack…');
+    let f=await readPackFromHandle(manual);
+    if(f==='perm'){state.updOk=false;state.updAvail=null;updateStats();return;}
+    if(!f&&manual)f=await pickPackFile();
+    if(!f){state.updOk=false;state.updAvail=null;updateStats();
+      if(manual)toast('⚠️ Aucun fichier de pack sélectionné');
+      return;}
+    try{
+      const o=JSON.parse(await rdFirstLine(f));
+      if(!(o&&o.app==='RailDoc'&&o.format==='pack')){
+        if(manual)toast('⚠️ Ce fichier n\'est pas un pack RailDoc');
+        state.updOk=false;state.updAvail=null;updateStats();return;}
+      if((o.packVersion||0)<=(data.packVer||0)){
+        state.updAvail=null;state.updOk=true;updateStats();
+        if(manual)toast('✅ Vos données communes sont à jour (pack v'+(data.packVer||0)+')');
+        return;}
+      state.updAvail={ver:o.packVersion,head:o,file:f};state.updOk=false;
+      updateStats();proposeUpdate();
+    }catch(e){console.error(e);
+      state.updOk=false;state.updAvail=null;updateStats();
+      if(manual)toast('⚠️ Fichier de pack illisible');}
+    return;}
+  /* --- mode adresse web --- */
   const url=(data.settings.updateUrl||'').trim();
-  if(!url){if(manual)updateSourceModal();return;}
+  if(!url){state.updOk=false;state.updAvail=null;updateStats();
+    if(manual&&(isAdmin()||isEdit()))updateSourceModal();
+    else if(manual)toast('⚠️ Aucune source de mise à jour configurée sur cette application');
+    return;}
   if(manual)toast('⏳ Vérification des mises à jour…');
   try{
     const o=await fetchPackHead(url);
     if(!(o&&o.app==='RailDoc'&&o.format==='pack')){
       if(manual)toast('⚠️ La source ne contient pas un pack RailDoc valide');return;}
     if((o.packVersion||0)<=(data.packVer||0)){
-      state.updAvail=null;updateStats();
+      state.updAvail=null;state.updOk=true;updateStats();
       if(manual)toast('✅ Vos données communes sont à jour (pack v'+(data.packVer||0)+')');
       return;}
-    state.updAvail={ver:o.packVersion,url,head:o};
+    state.updAvail={ver:o.packVersion,url,head:o};state.updOk=false;
     updateStats();
     proposeUpdate();
   }catch(e){console.error(e);
+    state.updOk=false;state.updAvail=null;updateStats();
     if(manual)toast('⚠️ Vérification impossible — réseau, droits d\'accès ou lien invalide (voir ⚙ Source des mises à jour)');}}
 function proposeUpdate(){
   const u=state.updAvail;if(!u)return;
@@ -3634,22 +3714,34 @@ function proposeUpdate(){
      {label:'🔄 Mettre à jour',primary:true,fn:()=>{doUpdate();}}]);}
 async function doUpdate(){
   const u=state.updAvail;if(!u)return;
-  toast('⏳ Téléchargement de la mise à jour…');
+  toast('⏳ Récupération de la mise à jour…');
   try{
-    const res=await fetch(u.url,{cache:'no-store'});
-    if(!res.ok)throw new Error('HTTP '+res.status);
-    const blob=await res.blob();
-    const f=new File([blob],'pack.json',{type:'application/json'});
+    let f=null;
+    if(u.file){
+      f=await readPackFromHandle(true);
+      if(!f||f==='perm')f=u.file;}
+    else{
+      const res=await fetch(u.url,{cache:'no-store'});
+      if(!res.ok)throw new Error('HTTP '+res.status);
+      f=new File([await res.blob()],'pack.json',{type:'application/json'});}
     const o=JSON.parse(await rdFirstLine(f));
     await importCommonPack(f,o,true);
-    state.updAvail=null;updateStats();
-  }catch(e){console.error(e);toast('⚠️ Échec du téléchargement de la mise à jour');}}
+    state.updAvail=null;state.updOk=true;updateStats();
+  }catch(e){console.error(e);toast('⚠️ Échec de la récupération de la mise à jour');}}
 function updateSourceModal(){
   openModal('📡 Source des mises à jour',`
-    <p style="font-size:12.5px;color:var(--muted);line-height:1.65;margin-bottom:10px">Collez le <b>lien direct</b> vers le fichier pack (<code>RailDoc-COMMUN-v….json</code>) déposé dans votre dossier partagé (SharePoint, intranet, serveur…). À chaque lancement, l'application vérifie s'il existe une version plus récente que celle installée.<br>
-    <span style="font-size:11.5px">💡 SharePoint : utilisez un lien de <b>téléchargement direct</b> (…&amp;download=1). Astuce fiable : gardez toujours le <b>même nom de fichier</b> (ex : <code>RailDoc-COMMUN.json</code>) et remplacez-le à chaque nouvelle version — le numéro de version est lu à l'intérieur du fichier.</span></p>
-    <div class="field"><label>Adresse du fichier pack</label>
-      <input type="url" id="mUpdUrl" value="${esc(data.settings.updateUrl||'')}" placeholder="https://…/RailDoc-COMMUN.json"></div>`,
+    <p style="font-size:12.5px;color:var(--muted);line-height:1.65;margin-bottom:12px">Deux façons d'alimenter les mises à jour du contenu commun :</p>
+    <div style="border:1px solid var(--border-strong);border-radius:12px;padding:11px 13px;margin-bottom:10px">
+      <b style="font-size:13px">📂 Fichier local (recommandé)</b>
+      <p style="font-size:11.5px;color:var(--muted);line-height:1.6;margin:5px 0 9px">Choisissez le fichier pack dans un dossier de l'appareil — par exemple le dossier SharePoint <b>synchronisé par OneDrive</b> : OneDrive le tient à jour, et le bouton 🔄 relit toujours la dernière version. Gardez le <b>même nom de fichier</b> à chaque publication (ex : <code>RailDoc-COMMUN.json</code>).</p>
+      <button type="button" class="btn small" id="mUpdPickBtn">📂 Choisir le fichier du pack…</button>
+      <span id="mUpdFileName" style="font-size:11.5px;color:var(--muted);margin-left:8px">${data.settings.updateMode==='file'&&data.settings.updateFileName?esc(data.settings.updateFileName):''}</span>
+    </div>
+    <div style="border:1px solid var(--border);border-radius:12px;padding:11px 13px">
+      <b style="font-size:13px">🌐 Adresse web</b>
+      <p style="font-size:11.5px;color:var(--muted);line-height:1.6;margin:5px 0 9px">Pour un hébergement intranet / serveur web qui autorise la lecture (CORS). Les liens SharePoint classiques ne fonctionnent pas.</p>
+      <input type="url" id="mUpdUrl" value="${esc(data.settings.updateUrl||'')}" placeholder="https://…/RailDoc-COMMUN.json" style="width:100%;box-sizing:border-box;border:1px solid var(--border-strong);background:var(--bg-soft);border-radius:9px;padding:8px 11px;font-size:13px">
+    </div>`,
     [{label:'Annuler'},
      {label:'Tester',fn:async()=>{
        const u=$('#mUpdUrl').value.trim();
@@ -3661,11 +3753,22 @@ function updateSourceModal(){
        }catch(e){toast('⚠️ Lecture impossible : '+(e&&e.message?e.message:'erreur réseau ou CORS'));}
        return false;}},
      {label:'Enregistrer',primary:true,fn:()=>{
-       data.settings.updateUrl=$('#mUpdUrl').value.trim();
+       const u=$('#mUpdUrl').value.trim();
+       data.settings.updateUrl=u;
+       if(u)data.settings.updateMode='url';
+       else if(data.settings.updateMode==='url')data.settings.updateMode=null;
        save();applyUpdBtn();
-       toast(data.settings.updateUrl?'📡 Source des mises à jour enregistrée (diffusée dans le pack commun)':'📡 Source des mises à jour retirée');}}]);}
+       toast((data.settings.updateMode==='file'||u)?'📡 Source des mises à jour enregistrée':'📡 Source des mises à jour retirée');}}]);
+  $('#mUpdPickBtn').onclick=async()=>{
+    const f=await pickPackFile();
+    if(!f){toast('Aucun fichier choisi');return;}
+    $('#mUpdFileName').textContent=data.settings.updateFileName||f.name;
+    try{const o=JSON.parse(await rdFirstLine(f));
+      if(o&&o.app==='RailDoc'&&o.format==='pack')toast('✅ Pack v'+(o.packVersion||'?')+' détecté — source enregistrée');
+      else toast('⚠️ Ce fichier n\'est pas un pack RailDoc');
+    }catch(_){toast('⚠️ Fichier illisible');}};}
 function applyUpdBtn(){
-  document.documentElement.classList.toggle('upd-on',!!(data.settings&&data.settings.updateUrl));}
+  document.documentElement.classList.toggle('upd-on',!!(data.settings&&(data.settings.updateUrl||data.settings.updateMode==='file')));}
 /* ---------- Portée d'une fiche : commune / personnelle / héritée ---------- */
 function nodeScopeModal(id){
   const n=nodeById(id);if(!n)return;
@@ -3816,6 +3919,8 @@ async function exportShared(){
     const head={app:'RailDoc',format:'pack',version:1,packVersion:data.packVer,exported:new Date().toISOString(),
       brand:{title:data.settings.title||'Interface PAC TGV',subtitle:data.settings.subtitle||'',logoImg:data.settings.logoImg||null},
       updateUrl:data.settings.updateUrl||null,
+      updateMode:data.settings.updateMode||null,
+      updateFileName:data.settings.updateFileName||null,
       auth:data.settings.auth||null,
       nodes,tiles,fleet:data.fleet,fleetSeeded:data.fleetSeeded,
       equipCustom:data.equipCustom||[],equipOver:data.equipOver||{},equipMeta:data.equipMeta||{},
@@ -3873,6 +3978,8 @@ async function importCommonPack(file,meta,auto){
       data.settings.subtitle=meta.brand.subtitle||'';
       data.settings.logoImg=meta.brand.logoImg||null;}
     if(meta.updateUrl)data.settings.updateUrl=meta.updateUrl;
+    if(meta.updateMode&&!data.settings.updateMode)data.settings.updateMode=meta.updateMode;
+    if(meta.updateFileName&&!data.settings.updateFileName)data.settings.updateFileName=meta.updateFileName;
     if(meta.auth&&meta.auth.adminHash)data.settings.auth=meta.auth;
     applyUpdBtn();
     data.packVer=meta.packVersion||data.packVer;
@@ -4384,10 +4491,16 @@ async function applyFavicon(){
   tlink.href=applyFavicon._def.touch;}
 async function updateStats(){const nf=(await idb.keys('files')).length;
   const sl=$('#statsLine');
+  const counts=`${data.nodes.length} fiche(s) · ${nf} fichier(s)`;
   if(state.updAvail){
-    sl.innerHTML=`<button id="updGo" style="color:#fff;background:#1e6fd9;border-radius:8px;padding:2px 9px;font-size:11px;font-weight:800;animation:pulseWarn 2.4s ease-in-out infinite" title="Cliquer pour lancer la mise à jour des données communes">🔄 MAJ v${state.updAvail.ver} disponible</button>`;
+    sl.innerHTML=`<button id="updGo" style="color:#fff;background:#1e6fd9;border-radius:8px;padding:2px 9px;font-size:11px;font-weight:800;animation:pulseWarn 2.4s ease-in-out infinite;cursor:pointer" title="Un pack v${state.updAvail.ver} est disponible — cliquer pour mettre à jour (${counts})">🔄 Effectuer une mise à jour</button>`;
     $('#updGo').onclick=proposeUpdate;}
-  else sl.textContent=`${data.nodes.length} fiche(s) · ${nf} fichier(s)`;}
+  else if(state.updOk){
+    sl.innerHTML=`<button id="updGo" style="color:#128a3e;font-weight:800;font-size:11px;cursor:pointer;padding:2px 4px" title="Données communes à jour (pack v${data.packVer||0}) — cliquer pour revérifier (${counts})">✅ Version à jour</button>`;
+    $('#updGo').onclick=()=>checkUpdate(true);}
+  else{
+    sl.innerHTML=`<button id="updGo" style="color:var(--muted);font-size:11px;cursor:pointer;padding:2px 4px" title="La vérification de mise à jour n'a pas encore abouti (source non configurée, hors ligne ou dossier inaccessible) — cliquer pour réessayer (${counts})">Vérification impossible</button>`;
+    $('#updGo').onclick=()=>checkUpdate(true);}}
 function logsModal(){
   const fmtT=t=>{const d=new Date(t);
     return d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});};
@@ -7412,29 +7525,35 @@ async function init(){
   checkAppVersion();
   $('#settingsBtn').onclick=e=>{e.stopPropagation();
     const r=e.currentTarget.getBoundingClientRect();
-    openCtx(r.right-250,r.bottom+6,[
+    const items=[
       {ic:'🔄',label:'Rechercher une mise à jour des données communes',fn:()=>checkUpdate(true)},
-      {ic:'📡',label:'Source des mises à jour (dossier partagé)…',fn:updateSourceModal},
-      {ic:'🌐',label:'Données communes / personnelles…',fn:sharedManagerModal},
-      {sep:true},
+      {ic:'📡',label:'Source des mises à jour (dossier partagé)…',fn:updateSourceModal}];
+    if(isAdmin())items.push({ic:'🌐',label:'Données communes / personnelles…',fn:sharedManagerModal});
+    items.push({sep:true});
+    if(isAdmin())items.push(
       {ic:'✏️',label:'Titre, image & descriptif de l\'application',fn:brandModal},
       {ic:'🔑',label:'Codes d\'accès (Assistant PAC / Admin)…',fn:codesModal},
       {ic:'↔️',label:'Largeur du panneau de gauche…',fn:sidebarWidthModal},
       {ic:'💬',label:(data.settings.quoteHide?'Afficher':'Masquer')+' la citation du jour',fn:()=>{
         data.settings.quoteHide=!data.settings.quoteHide;save();renderQuote();
-        toast(data.settings.quoteHide?'💬 Citation du jour masquée':'💬 Citation du jour affichée — elle change chaque jour');}},
-      {ic:'ℹ️',label:'Informations & statistiques',fn:infoModal},
+        toast(data.settings.quoteHide?'💬 Citation du jour masquée':'💬 Citation du jour affichée — elle change chaque jour');}});
+    items.push(
+      {ic:'ℹ️',label:'Informations & statistiques',fn:infoModal});
+    if(isAdmin())items.push(
       {ic:'🕘',label:'Historique des versions',fn:versionModal},
       {sep:true},
-      {ic:'🕑',label:'Journal des actions',fn:logsModal},
+      {ic:'🕑',label:'Journal des actions',fn:logsModal});
+    items.push(
       {sep:true},
-      {ic:'💾',label:'Exporter TOUT (sauvegarde administrateur)',fn:exportAll},
+      {ic:'💾',label:'Exporter TOUT (sauvegarde complète)',fn:exportAll},
       {ic:'🌐',label:'Exporter les données COMMUNES (pack v'+((data.packVer||0)+1)+')',fn:exportShared},
       {ic:'👤',label:'Exporter MES données PERSO',fn:exportPerso},
       {ic:'🧱',label:'Exporter le mur d\'accueil seul',fn:exportWall},
-      {ic:'📂',label:'Importer un fichier RailDoc… (type détecté automatiquement)',fn:()=>$('#fiImport').click()},
+      {ic:'📂',label:'Importer un fichier RailDoc… (type détecté automatiquement)',fn:()=>$('#fiImport').click()});
+    if(isAdmin())items.push(
       {sep:true},
-      {ic:'🧹',label:'Tout effacer — application vierge…',danger:true,fn:resetAllModal}]);};
+      {ic:'🧹',label:'Tout effacer — application vierge…',danger:true,fn:resetAllModal});
+    openCtx(r.right-250,r.bottom+6,items);};
   $('#dirBtn').onclick=directoryModal;
   $('#updBtn').onclick=()=>checkUpdate(true);
   $('#addContactBtn').onclick=()=>{if(currentNode&&isEdit())contactModal(currentNode,null);};
