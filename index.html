@@ -77,6 +77,7 @@ body{
 }
 button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer}
 input,select,textarea{font-family:inherit;color:inherit}
+#modal input[type=password]{color:var(--text);caret-color:var(--accent)}
 ::selection{background:var(--accent);color:#fff}
 ::-webkit-scrollbar{width:10px;height:10px}
 ::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:8px;border:2px solid transparent;background-clip:content-box}
@@ -214,8 +215,10 @@ html[data-mode="edit"] #quickBtn.primary{color:#fff;background:var(--edit);borde
 .tree-row:hover{background:var(--bg-soft)}
 .tree-row.active{background:var(--accent-soft);color:var(--accent);font-weight:600}
 .tree-row.drag-over{outline:2px dashed var(--accent);outline-offset:-2px}
-.tree-row.scope-perso::before{content:'';position:absolute;left:0;top:5px;bottom:5px;width:3px;
-  border-radius:2px;background:var(--edit);opacity:.85}
+/* fiches perso : léger halo violet derrière le titre */
+.tree-row.scope-perso .tree-label{background:var(--edit-soft);border-radius:7px;
+  padding:1px 7px;box-shadow:0 0 9px 3px var(--edit-soft)}
+html[data-theme="dark"] .tree-row.scope-perso .tree-label{background:#b48cff10;box-shadow:0 0 7px 2px #b48cff0d}
 .tree-caret{width:20px;height:20px;min-width:20px;display:flex;align-items:center;justify-content:center;border-radius:6px;color:var(--muted);font-size:9px;transition:transform .15s}
 .tree-caret.open{transform:rotate(90deg)}
 .tree-caret.leaf{visibility:hidden}
@@ -468,7 +471,10 @@ html[data-theme="dark"] ::selection{background:#c1275866}
   border-radius:10px;background:var(--panel);cursor:pointer;font-size:13.5px;min-width:0}
 .sl-item:hover{background:var(--accent-soft);border-color:var(--accent)}
 .sl-item .sl-ic{flex-shrink:0;display:flex;width:18px;justify-content:center}
-.sl-item .sl-lbl{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;text-align:left}
+.sl-item .sl-txt{flex:1;min-width:0;display:flex;flex-direction:column;text-align:left;gap:1px}
+.sl-item .sl-lbl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.sl-item .sl-sub{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;color:var(--muted);font-weight:500}
+.sl-item .sl-badge{flex:none;font-size:10px;font-weight:800;color:#fff;border-radius:999px;padding:2.5px 8px;letter-spacing:.02em;box-shadow:0 1px 3px #0002}
 .sl-item .sl-tools{display:none;gap:1px;flex-shrink:0}
 html[data-role="editor"] .sl-item .sl-tools,html[data-role="admin"] .sl-item .sl-tools{display:flex}
 .sl-item .sl-tools button{border:none;background:none;cursor:pointer;font-size:12px;padding:2px 4px;border-radius:6px;opacity:.55}
@@ -795,7 +801,7 @@ html[data-mode="read"] #modeBtn .ic-lock{display:block}
 .modal-foot{display:flex;justify-content:flex-end;gap:9px;padding:0 22px 20px}
 .field{margin-bottom:14px}
 .field label{display:block;font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
-.field input[type=text],.field input[type=url],.field input[type=email],.field input[type=tel],.field input[type=number],.field select,.field textarea{
+.field input[type=text],.field input[type=url],.field input[type=email],.field input[type=tel],.field input[type=number],.field input[type=password],.field select,.field textarea{
   width:100%;border:1px solid var(--border-strong);background:var(--bg-soft);border-radius:11px;
   padding:10px 13px;font-size:14px;outline:none;transition:all .13s}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);background:var(--panel);box-shadow:0 0 0 3px var(--accent-soft)}
@@ -873,7 +879,7 @@ html[data-mode="read"] #modeBtn .ic-lock{display:block}
   .bigbtn{height:62px}
   h1,#nodeTitle{font-size:22px}
   /* iOS : évite le zoom automatique au focus des champs (police < 16px) */
-  #searchInput,#eqSearch,#tagInput,.tag-editin,#modal input[type=text],#modal input[type=number],#modal input[type=email],#modal input[type=url],#modal input[type=tel],#modal select,#modal textarea{font-size:16px}
+  #searchInput,#eqSearch,#tagInput,.tag-editin,#modal input[type=text],#modal input[type=number],#modal input[type=email],#modal input[type=url],#modal input[type=tel],#modal input[type=password],#modal select,#modal textarea{font-size:16px}
 }
 @media (pointer:coarse){
   /* Lancement rapide : réservé aux ordinateurs (l'ouverture d'onglets multiples est
@@ -897,6 +903,11 @@ html[data-mode="read"] #modeBtn .ic-lock{display:block}
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <radialGradient id="g3glo" cx=".33" cy=".28"><stop offset="0" stop-color="#a8d0ff"/><stop offset=".5" stop-color="#2e7ae0"/><stop offset="1" stop-color="#0b3a80"/></radialGradient>
+  <radialGradient id="g3perh" cx=".35" cy=".3"><stop offset="0" stop-color="#e6edf6"/><stop offset=".55" stop-color="#93a7bd"/><stop offset="1" stop-color="#42546a"/></radialGradient>
+  <linearGradient id="g3perb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9bcd2"/><stop offset="1" stop-color="#3c4e63"/></linearGradient>
+</defs></svg>
 <div id="iosCap" aria-hidden="true"></div>
 <div id="app">
 
@@ -952,14 +963,25 @@ html[data-mode="read"] #modeBtn .ic-lock{display:block}
     </div>
     <div class="topbar-actions">
     <button class="icon-btn" id="scopeBtn" style="display:none">
-      <span class="ic-sm" data-sf="common" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
-        <circle cx="12" cy="12" r="8.2"/><ellipse cx="12" cy="12" rx="3.7" ry="8.2"/>
-        <path d="M4.5 9h15M4.5 15h15"/></svg></span>
-      <span class="ic-sm" data-sf="perso" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-        <circle cx="12" cy="7.8" r="3.7"/><path d="M4.8 19.6c1.4-3.7 4.1-5.6 7.2-5.6s5.8 1.9 7.2 5.6"/></svg></span>
-      <span class="ic-sm" data-sf="all" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-        <circle cx="8.6" cy="9.2" r="5.6"/><ellipse cx="8.6" cy="9.2" rx="2.5" ry="5.6"/><path d="M3.5 7.4h10.2M3.5 11h10.2"/>
-        <circle cx="17.1" cy="12.6" r="2.7"/><path d="M12.1 20.4c1-2.7 2.8-4 5-4s4 1.3 5 4"/></svg></span>
+      <span class="ic-sm" data-sf="common" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" width="21" height="21">        <circle cx="12" cy="12" r="9" fill="url(#g3glo)"/>
+        <g fill="none" stroke="#ffffff99" stroke-width="1.17" stroke-linecap="round">
+          <ellipse cx="12" cy="12" rx="4.05" ry="8.73"/>
+          <path d="M3.63 8.85c5.40 1.98 11.34 1.98 16.74 0"/>
+          <path d="M3.63 15.15c5.40 -1.98 11.34 -1.98 16.74 0"/>
+        </g>
+        <ellipse cx="9.03" cy="7.50" rx="2.49" ry="1.43" fill="#ffffff4a"/></svg></span>
+      <span class="ic-sm" data-sf="perso" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" width="21" height="21">        <path d="M12 12.72c-7.17 0-12.50 4.51-14.55 12.09 4.30 1.84 9.22 2.87 14.55 2.87s10.25-1.02 14.55-2.87c-2.05-7.58-7.38-12.09-14.55-12.09z" fill="url(#g3perb)"/>
+        <circle cx="12" cy="7.6" r="4.1" fill="url(#g3perh)"/>
+        <ellipse cx="10.65" cy="5.88" rx="1.02" ry="0.61" fill="#ffffff40"/></svg></span>
+      <span class="ic-sm" data-sf="all" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" width="21" height="21">        <circle cx="8.4" cy="8.8" r="6.2" fill="url(#g3glo)"/>
+        <g fill="none" stroke="#ffffff99" stroke-width="0.81" stroke-linecap="round">
+          <ellipse cx="8.4" cy="8.8" rx="2.79" ry="6.01"/>
+          <path d="M2.63 6.63c3.72 1.36 7.81 1.36 11.53 0"/>
+          <path d="M2.63 10.97c3.72 -1.36 7.81 -1.36 11.53 0"/>
+        </g>
+        <ellipse cx="6.35" cy="5.70" rx="1.72" ry="0.98" fill="#ffffff4a"/>        <path d="M16.6 17.15c-5.25 0-9.15 3.30-10.65 8.85 3.15 1.35 6.75 2.10 10.65 2.10s7.50-0.75 10.65-2.10c-1.50-5.55-5.40-8.85-10.65-8.85z" fill="url(#g3perb)"/>
+        <circle cx="16.6" cy="13.4" r="3.0" fill="url(#g3perh)"/>
+        <ellipse cx="15.61" cy="12.14" rx="0.74" ry="0.45" fill="#ffffff40"/></svg></span>
     </button>
     <button class="icon-btn ic3d" id="themeBtn" title="Basculer clair / sombre">
       <span class="ic-sm"><svg viewBox="0 0 24 24" aria-hidden="true">
@@ -1179,10 +1201,18 @@ html[data-mode="read"] #modeBtn .ic-lock{display:block}
         <div class="node-head">
           <button id="nodeIcon" title="Changer l'icône">📄</button>
           <h1 id="nodeTitle" contenteditable="true" spellcheck="false"></h1>
-          <span id="nodeShTag" title="Cette fiche fait partie des données communes (pack partagé)" style="display:none;flex:none;font-size:10px;font-weight:800;letter-spacing:.05em;color:#fff;background:#1e6fd9;border-radius:7px;padding:3px 8px">🌐 COMMUNE</span>
           <div class="node-actions">
-            <button class="icon-btn" id="nodePrintBtn" title="Imprimer / PDF cette fiche">
-              <svg viewBox="0 0 24 24"><path d="M7 8V4h10v4M7 17H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="7" y="14" width="10" height="7" rx="1"/></svg>
+            <button class="icon-btn" id="nodeScopeBtn" style="display:none">
+              <span id="nscGlo" style="display:none;line-height:0"><svg viewBox="0 0 24 24" aria-hidden="true">        <circle cx="12" cy="12" r="9" fill="url(#g3glo)"/>
+        <g fill="none" stroke="#ffffff99" stroke-width="1.17" stroke-linecap="round">
+          <ellipse cx="12" cy="12" rx="4.05" ry="8.73"/>
+          <path d="M3.63 8.85c5.40 1.98 11.34 1.98 16.74 0"/>
+          <path d="M3.63 15.15c5.40 -1.98 11.34 -1.98 16.74 0"/>
+        </g>
+        <ellipse cx="9.03" cy="7.50" rx="2.49" ry="1.43" fill="#ffffff4a"/></svg></span>
+              <span id="nscPer" style="display:none;line-height:0"><svg viewBox="0 0 24 24" aria-hidden="true">        <path d="M12 12.72c-7.17 0-12.50 4.51-14.55 12.09 4.30 1.84 9.22 2.87 14.55 2.87s10.25-1.02 14.55-2.87c-2.05-7.58-7.38-12.09-14.55-12.09z" fill="url(#g3perb)"/>
+        <circle cx="12" cy="7.6" r="4.1" fill="url(#g3perh)"/>
+        <ellipse cx="10.65" cy="5.88" rx="1.02" ry="0.61" fill="#ffffff40"/></svg></span>
             </button>
             <button class="icon-btn" id="nodeMenuBtn" title="Options de la fiche">
               <svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.4" fill="currentColor"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/><circle cx="12" cy="19" r="1.4" fill="currentColor"/></svg>
@@ -1332,9 +1362,21 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='8.79';
+const APP_VERSION='8.91';
 const APP_VERSION_DATE='7 août 2026';
 const CHANGELOG=[
+  ['v8.91',"Thème sombre : le halo violet des fiches perso est atténué (plus discret, sans perdre le repérage)"],
+  ['v8.90',"Colonne de gauche : le trait violet des fiches perso est remplacé par un très léger halo violet derrière le titre — repérage toujours immédiat, rendu plus doux"],
+  ['v8.89',"Nouveaux logos 3D commun / perso : un globe bleu brillant pour le commun, une silhouette 3D pour le perso — utilisés sur le bouton de filtre admin (globe, silhouette, ou les deux pour « tout ») et dans l'en-tête des fiches, où l'ancien badge texte laisse place à un simple bouton-logo à l'emplacement de l'ex-bouton Imprimer : logo visible selon la portée (le commun reste discret en lecture seule), cliquable en édition pour changer la portée"],
+  ['v8.88',"Le bouton Imprimer est retiré de l'en-tête des fiches (l'impression reste possible via le menu du navigateur, Cmd/Ctrl+P)"],
+  ['v8.87',"Saisie des codes d'accès : les caractères s'affichent désormais bien contrastés (couleur de texte franche, fond doux, curseur French Berry) — dans la fenêtre de déverrouillage comme dans ⚙ → Codes d'accès, en clair et en sombre"],
+  ['v8.86',"Portée des nouvelles tuiles fiabilisée : à l'enregistrement, si le champ Portée n'a pas été modifié à la main, la tuile adopte le statut de la ligne où elle atterrit réellement (calculé sur sa position finale, quel que soit le bouton ＋ utilisé) · une tuile collée 📋 adopte de même la portée de sa ligne d'arrivée au lieu de garder celle d'origine"],
+  ['v8.85',"Filtre admin commun/perso du mur : les emplacements vides ▢ (pure mise en page) ne comptent plus pour conserver une ligne et ne s'affichent plus en mode filtré — plus de lignes communes apparaissant « vides » en affichage perso à cause d'anciens emplacements vides marqués perso par la migration"],
+  ['v8.84',"Nouvelle tuile : sa portée par défaut suit désormais le statut de la ligne où elle est créée — dans une ligne 👤 personnelle, la tuile est proposée en perso (et en commun dans une ligne commune) ; avant la première ligne, défaut habituel du mur — le choix reste modifiable dans la fenêtre"],
+  ['v8.83',"En lecture seule, le badge « 🌐 COMMUNE » n'apparaît plus dans l'en-tête des fiches — le commun est la normalité pour l'utilisateur ; seul « 👤 PERSO » reste visible pour repérer ses propres ajouts · en mode édition (Assistant PAC / Admin), les deux badges restent affichés et cliquables pour choisir la portée"],
+  ['v8.82',"Liste simple des murs de fiches : chaque ligne affiche désormais le titre (ou nom court), le sous-titre de la tuile en dessous, et son étiquette colorée à droite — toujours sans images ni chargement"],
+  ['v8.81',"Menu ⚙ : l'entrée « Exporter les données COMMUNES » n'affiche plus le numéro de pack entre parenthèses"],
+  ['v8.80',"Correction Safari (macOS/iPadOS) : les gros exports (Exporter TOUT, données COMMUNES) restaient en fichier « .download » incomplet — Safari télécharge les blobs en flux et l'adresse était libérée au bout de 8 secondes, tronquant les fichiers volumineux ; elle reste désormais disponible 30 minutes (tous les exports passent par le même mécanisme fiabilisé)"],
   ['v8.79',"Le filtre admin commun/perso s'applique aussi au mur Documentation : en « communes uniquement », les lignes et tuiles perso sont masquées (et inversement) — une ligne d'un autre statut reste estompée si elle contient des tuiles du statut affiché, la barre de rubriques et le raccourci ⭐ suivent, fonctionnement identique à la colonne de gauche"],
   ['v8.78',"Colonne de gauche : les fiches 👤 personnelles portent un fin liseré vertical violet sur leur bord gauche — repérage immédiat, sans surcharger les noms ; les fiches communes restent épurées"],
   ['v8.77',"Menu ⚙ : séparation ajoutée entre « Source des mises à jour » et « Données communes / personnelles » · nouveau bouton admin à halo violet, à la place du bouton clair/sombre (l'admin travaille en sombre) : par appuis successifs, la colonne de gauche n'affiche que les fiches 🌐 communes, que les 👤 perso, ou tout — pictogrammes dessinés (globe, silhouette, les deux) ; les fiches d'un autre statut restent estompées quand elles contiennent des fiches du statut affiché, pour garder le chemin"],
@@ -1815,7 +1857,7 @@ function homeScopeFilter(){
   const secKeep=new Set();let curSec=null;
   for(const t of sorted){
     if(t.kind==='section'){curSec=t;if(tileSharedEff(t,null)===want)secKeep.add(t.id);}
-    else if(tileSharedEff(t,null)===want){if(curSec)secKeep.add(curSec.id);}}
+    else if(t.kind==='tile'&&tileSharedEff(t,null)===want){if(curSec)secKeep.add(curSec.id);}}
   return{want,secKeep};}
 /* bouton admin de filtre d'affichage commun / perso */
 function applyScopeBtn(){
@@ -2095,7 +2137,7 @@ function renderWall(owner){
     if(!anchor||anchor==='__start')ord=(sorted.length?sorted[0].ord:0)-1;
     else{const ai=sorted.findIndex(x=>x.id===anchor);
       if(ai>=0){const anc=sorted[ai],nx=sorted[ai+1];ord=nx?(anc.ord+nx.ord)/2:anc.ord+1000;}}
-    ctx.list.push({id:'t_'+uid(),kind:'spacer',size:'s',ord});
+    ctx.list.push(wallApplyLineScope(ctx,owner,{id:'t_'+uid(),kind:'spacer',size:'s',ord}));
     ctx.node?touch(ctx.node):save();refreshWall(owner);};
   const pasteAfter=anchor=>{
     if(!state.tileClip)return;
@@ -2106,6 +2148,8 @@ function renderWall(owner){
       if(ai>=0){const anc=sorted[ai],nx=sorted[ai+1];ord=nx?(anc.ord+nx.ord)/2:anc.ord+1000;}}
     const c=JSON.parse(JSON.stringify(state.tileClip));
     c.id='t_'+uid();c.ord=ord;
+    /* la tuile collée adopte la portée de la ligne où elle arrive */
+    wallApplyLineScope(ctx,owner,c);
     ctx.list.push(c);ctx.node?touch(ctx.node):save();refreshWall(owner);toast('📋 Tuile collée');};
   const miniAdd=(anchor,beforeSectionId)=>{
     const miniSp=document.createElement('div');
@@ -2153,7 +2197,7 @@ function renderWall(owner){
       wireTools(el,t);wireDnd(el,t);
       if(editing)el.style.cursor='pointer',el.onclick=e=>{if(!e.target.closest('.tile-tool'))sectionModal(owner,t.id);};
       wall.appendChild(el);continue;}
-    if(SF&&tileSharedEff(t,ctx.node)!==SF.want)continue;
+    if(SF&&(t.kind==='spacer'||tileSharedEff(t,ctx.node)!==SF.want))continue;
     /* --- Emplacement vide --- */
     if(t.kind==='spacer'){
       const el=document.createElement('div');
@@ -2231,7 +2275,7 @@ function renderWall(owner){
     const addSp=document.createElement('div');addSp.className='tile add-tile size-s';
     addSp.innerHTML='<span class="plus">▢</span><b>Emplacement vide</b>';
     addSp.title='Case invisible qui réserve une place : idéale pour aérer le mur ou décaler des tuiles';
-    addSp.onclick=()=>{ctx.list.push({id:'t_'+uid(),kind:'spacer',size:'s',ord:Date.now()});
+    addSp.onclick=()=>{ctx.list.push(wallApplyLineScope(ctx,owner,{id:'t_'+uid(),kind:'spacer',size:'s',ord:Date.now()}));
       ctx.node?touch(ctx.node):save();refreshWall(owner);};
     wall.appendChild(addSp);
     if(state.tileClip){
@@ -2240,6 +2284,7 @@ function renderWall(owner){
       addP.title='Coller ici une copie de la tuile copiée';
       addP.onclick=()=>{const c=JSON.parse(JSON.stringify(state.tileClip));
         c.id='t_'+uid();c.ord=Date.now();
+        wallApplyLineScope(ctx,owner,c);
         ctx.list.push(c);ctx.node?touch(ctx.node):save();refreshWall(owner);toast('📋 Tuile collée');};
       wall.appendChild(addP);}
     const addSec=document.createElement('div');addSec.className='tile add-sec';
@@ -2569,15 +2614,19 @@ function renderNode(){const n=nodeById(state.nodeId);if(!n){navigate('#/home');r
   const ed=$('#editor');if(ed.innerHTML!==n.html)ed.innerHTML=n.html;ensureTrailingP();
   {const eff=nodeSharedEff(n.id);
    const exc=!eff&&n.parent&&nodeSharedEff(n.parent);
-   const tag=$('#nodeShTag');
-   tag.style.display='inline-block';
-   tag.textContent=eff?'🌐 COMMUNE':'👤 PERSO';
-   tag.style.background=eff?'#1e6fd9':'#5a6b7b';
-   tag.style.cursor=isEdit()?'pointer':'default';
-   tag.title=(eff?'Cette fiche fait partie des données communes (pack partagé)'
+   const b=$('#nodeScopeBtn');
+   /* en lecture seule, le commun est la normalité : rien ; seul le logo 👤 perso s'affiche.
+      En édition (Assistant PAC / Admin), le logo 3D est visible et cliquable pour choisir. */
+   if(eff&&!isEdit()){b.style.display='none';}
+   else{
+   b.style.display='flex';
+   $('#nscGlo').style.display=eff?'flex':'none';
+   $('#nscPer').style.display=eff?'none':'flex';
+   b.style.cursor=isEdit()?'pointer':'default';
+   b.title=(eff?'Fiche commune — incluse dans le pack partagé'
      :exc?'Exception : fiche personnelle au sein d\'une branche commune'
      :'Fiche personnelle — elle reste sur cet appareil')+(isEdit()?' · cliquer pour changer la portée':'');
-   tag.onclick=()=>{if(isEdit())nodeScopeModal(n.id);};}
+   b.onclick=()=>{if(isEdit())nodeScopeModal(n.id);};}}
   renderTags(n);renderNodeEquip(n);renderNodeWall(n);renderLinks(n);renderContacts(n);renderFiles(n);renderChildren(n);
   /* en lecture seule, masquer les zones vides et la note vide */
   const emptyNote=!(n.html&&n.html.replace(/<br\s*\/?>/gi,'').replace(/&nbsp;/g,'').trim());
@@ -2671,7 +2720,11 @@ function renderSimpleList(n,el){
       const ic=t.action.type==='node'?`<span class="nicon" data-nicon="${t.action.value}"></span>`
         :(t.action.type==='file'?'📄':'🔗');
       row.innerHTML=`<span class="sl-ic">${ic}</span>
-        <span class="sl-lbl">${esc(t.alias||t.title||'Sans titre')}</span>
+        <span class="sl-txt">
+          <span class="sl-lbl">${esc(t.alias||t.title||'Sans titre')}</span>
+          ${t.sub?`<span class="sl-sub">${esc(t.sub)}</span>`:''}
+        </span>
+        ${t.badge?`<span class="sl-badge" style="background:${esc(t.badgeColor||'#b7791f')}">${esc(t.badge)}</span>`:''}
         <span class="sl-tools">
           <button data-a="ren" title="Renommer dans la liste (nom court)">✏️</button>
           <button data-a="up" title="Monter dans cette ligne">▲</button>
@@ -3584,6 +3637,30 @@ async function autoTilePreview(owner,tileId,url){
     if(old)await maybeDeleteBlob(old);
     refreshWall(owner);
   }catch(_){/* l'aperçu réel est un bonus : la vignette reste */}}
+/* Portée effective de la LIGNE où une nouvelle tuile va être insérée :
+   on remonte jusqu'au titre de ligne précédent ; avant la première ligne,
+   défaut du mur (commun à l'accueil, portée de la fiche sur un mur de fiche). */
+/* Portée de la ligne contenant une position donnée du mur (dernier titre avant cet ord) */
+function wallApplyLineScope(ctx,owner,c){
+  const lineEff=wallLineScopeAtOrd(ctx,c.ord);
+  const fe=ctx.node?nodeSharedEff(ctx.node.id):true;
+  if(owner==='home'){if(lineEff)delete c.shared;else c.shared=false;}
+  else{if(lineEff===fe)delete c.shared;else c.shared=lineEff;}
+  return c;}
+function wallLineScopeAtOrd(ctx,ord){
+  let eff=ctx.node?nodeSharedEff(ctx.node.id):true;
+  for(const x of [...ctx.list].sort((a,b)=>a.ord-b.ord)){
+    if(x.ord<ord&&x.kind==='section')eff=tileSharedEff(x,ctx.node);}
+  return eff;}
+function wallLineScopeAt(ctx,afterId){
+  const sorted=[...ctx.list].sort((a,b)=>a.ord-b.ord);
+  let idx;
+  if(afterId==='__start')idx=-1;
+  else if(afterId)idx=sorted.findIndex(x=>x.id===afterId);
+  else idx=sorted.length-1;
+  for(let j=idx;j>=0;j--){const t=sorted[j];
+    if(t&&t.kind==='section')return tileSharedEff(t,ctx.node);}
+  return ctx.node?nodeSharedEff(ctx.node.id):true;}
 function tileModal(owner,tileId,afterId){
   const ctx=wallCtx(owner);
   const t=tileId?ctx.list.find(x=>x.id===tileId):null;
@@ -3710,6 +3787,13 @@ function tileModal(owner,tileId,afterId){
           else{const ai=sorted.findIndex(x=>x.id===afterId);
             if(ai>=0){const anc=sorted[ai],nx=sorted[ai+1];ord=nx?(anc.ord+nx.ord)/2:anc.ord+1000;}}}
         const nid='t_'+uid();
+        /* sécurité : si l'utilisateur n'a pas touché au champ Portée, la tuile
+           adopte le statut de la ligne où elle atterrit réellement */
+        if(!st.scopeTouched){
+          const lineEff=wallLineScopeAtOrd(ctx,ord);
+          if(owner==='home')st.scope=lineEff?'commune':'perso';
+          else{const fe=ctx.node?nodeSharedEff(ctx.node.id):true;
+            st.scope=lineEff===fe?'inherit':(lineEff?'commune':'perso');}}
         /* aperçu automatique : tuile « fichier en ligne » créée sans image */
         let bgPrevUrl=null;
         if(!img&&action.type==='url'){
@@ -3727,10 +3811,16 @@ function tileModal(owner,tileId,afterId){
   /* portée commun / perso / héritée */
   if(t&&t.shared===false)st.scope='perso';
   else if(t&&t.shared===true)st.scope='commune';
-  else st.scope=owner==='home'?'commune':'inherit';
+  else if(t)st.scope=owner==='home'?'commune':'inherit';
+  else{
+    /* nouvelle tuile : par défaut, elle suit le statut de la ligne où elle arrive */
+    const lineEff=wallLineScopeAt(ctx,afterId);
+    if(owner==='home')st.scope=lineEff?'commune':'perso';
+    else{const fe=ctx.node?nodeSharedEff(ctx.node.id):true;
+      st.scope=lineEff===fe?'inherit':(lineEff?'commune':'perso');}}
   {const segSh=$('#mTiShSeg');
    const refSh=()=>[...segSh.children].forEach(b=>b.classList.toggle('on',b.dataset.v===st.scope));
-   [...segSh.children].forEach(b=>b.onclick=()=>{st.scope=b.dataset.v;refSh();});
+   [...segSh.children].forEach(b=>b.onclick=()=>{st.scope=b.dataset.v;st.scopeTouched=true;refSh();});
    refSh();}
   /* taille */
   const segS=$('#mTiSizeSeg');
@@ -4320,12 +4410,22 @@ async function packBlobAndSave(head,fids,fname,logLbl){
     const h=JSON.stringify({file:k,name:f.name,mime:f.mime,size:f.size||0});
     parts.push(new Blob([h.slice(0,-1)+',"b64":"',await blobToB64(f.blob),'"}\n']));n++;}
   const blob=new Blob(parts,{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download=fname;
-  document.body.appendChild(a);a.click();
-  setTimeout(()=>{URL.revokeObjectURL(url);a.remove();},8000);
+  dlBlob(blob,fname);
   logEvt(logLbl+' ('+fmtSize(blob.size)+', '+n+' fichier(s))');
   toast(logLbl+' ('+fmtSize(blob.size)+')');}
+/* Téléchargement d'un Blob — compatible Safari/macOS.
+   Safari lit l'URL du blob EN FLUX pendant le téléchargement : la révoquer au bout
+   de quelques secondes tronque les gros exports (fichier « .download » incomplet).
+   On garde donc l'URL vivante 30 minutes (libérée aussi à la fermeture de la page). */
+const _dlUrls=[];
+addEventListener('pagehide',()=>{for(const u of _dlUrls)try{URL.revokeObjectURL(u);}catch(_){}});
+function dlBlob(blob,fname){
+  const url=URL.createObjectURL(blob);_dlUrls.push(url);
+  const a=document.createElement('a');a.href=url;a.download=fname;a.rel='noopener';
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{try{URL.revokeObjectURL(url);}catch(_){}
+    const i=_dlUrls.indexOf(url);if(i>=0)_dlUrls.splice(i,1);
+    a.remove();},1800000);}
 const dstamp=()=>{const d=new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}-${String(d.getHours()).padStart(2,'0')}h${String(d.getMinutes()).padStart(2,'0')}`;};
 async function exportShared(){
@@ -4478,12 +4578,7 @@ async function exportWall(){
       const h=JSON.stringify({file:k,name:f.name,mime:f.mime,size:f.size||0});
       parts.push(new Blob([h.slice(0,-1)+',"b64":"',await blobToB64(f.blob),'"}\n']));n++;}
     const blob=new Blob(parts,{type:'application/json'});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');a.href=url;
-    const d=new Date();
-    a.download=`RailDoc-mur-${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}-${String(d.getHours()).padStart(2,'0')}h${String(d.getMinutes()).padStart(2,'0')}.json`;
-    document.body.appendChild(a);a.click();
-    setTimeout(()=>{URL.revokeObjectURL(url);a.remove();},8000);
+    dlBlob(blob,`RailDoc-mur-${dstamp()}.json`);
     logEvt(`🧱 Mur d'accueil exporté (${tiles.length} élément(s), ${n} fichier(s), ${fmtSize(blob.size)})`);
     toast(`🧱 Mur d'accueil exporté (${fmtSize(blob.size)})`);
   }catch(e){console.error(e);toast('⚠️ Échec de l\'export du mur');}}
@@ -4878,12 +4973,7 @@ async function exportAll(){
       parts.push(new Blob([head.slice(0,-1)+',"b64":"',await blobToB64(f.blob),'"}\n']));
       n++;if(n%5===0)toast(`⏳ Préparation… ${n} fichier(s)`);}
     const blob=new Blob(parts,{type:'application/json'});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');a.href=url;
-    const d=new Date();
-    a.download=`RailDoc-sauvegarde-${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}-${String(d.getHours()).padStart(2,'0')}h${String(d.getMinutes()).padStart(2,'0')}.json`;
-    document.body.appendChild(a);a.click();
-    setTimeout(()=>{URL.revokeObjectURL(url);a.remove();},8000);
+    dlBlob(blob,`RailDoc-sauvegarde-${dstamp()}.json`);
     logEvt(`💾 Sauvegarde exportée (${fmtSize(blob.size)}, ${n} fichier(s))`);
     toast(`💾 Sauvegarde exportée (${fmtSize(blob.size)})`);
   }catch(e){console.error(e);toast('⚠️ Échec de l\'export : '+(e&&e.message?e.message:'erreur'));}}
@@ -8101,7 +8191,7 @@ async function init(){
       {ic:'📂',label:'Importer un fichier RailDoc… (type détecté automatiquement)',fn:()=>$('#fiImport').click()},
       {sep:true},
       {ic:'💾',label:'Exporter TOUT (sauvegarde complète)',fn:exportAll},
-      {ic:'🌐',label:'Exporter les données COMMUNES (pack v'+((data.packVer||0)+1)+')',fn:exportShared},
+      {ic:'🌐',label:'Exporter les données COMMUNES',fn:exportShared},
       {ic:'👤',label:'Exporter MES données PERSO',fn:exportPerso},
       {ic:'🧱',label:'Exporter le mur d\'accueil seul',fn:exportWall},
       {sep:true});
@@ -8171,7 +8261,7 @@ async function init(){
     openModal('🔒 Déverrouillage',`
       <p style="font-size:12.5px;color:var(--muted);margin-bottom:10px">Entrez votre code d'accès pour passer en mode édition.</p>
       <input id="mPwd" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="••••••"
-        style="width:100%;box-sizing:border-box;border:2px solid var(--accent);border-radius:12px;padding:11px 12px;font-size:20px;text-align:center;letter-spacing:6px;outline:none">`,
+        style="width:100%;box-sizing:border-box;border:2px solid var(--accent);border-radius:12px;padding:11px 12px;font-size:20px;text-align:center;letter-spacing:6px;outline:none;color:var(--text);background:var(--bg-soft);font-weight:700">`,
       [{label:'Annuler'},{label:'Déverrouiller',primary:true,fn:()=>{
         if(!tryUnlock($('#mPwd').value)){toast('⚠️ Code incorrect');return false;}}}]);
     setTimeout(()=>{const i=$('#mPwd');if(i){i.focus();
@@ -8182,7 +8272,6 @@ async function init(){
   /* fiche */
   $('#nodeIcon').onclick=()=>{if(!isEdit()||!currentNode)return;nodeIconPicker(currentNode);};
   $('#nodeMenuBtn').onclick=e=>{e.stopPropagation();if(currentNode)nodeCtxMenu(currentNode.id,e.clientX,e.clientY);};
-  $('#nodePrintBtn').onclick=()=>window.print();
   $('#addLinkBtn').onclick=()=>{if(currentNode)linkModal(currentNode,null);};
   $('#addFileBtn').onclick=()=>$('#fiAttach').click();
   $('#sortFilesBtn').onclick=e=>{if(!currentNode||!isEdit())return;
