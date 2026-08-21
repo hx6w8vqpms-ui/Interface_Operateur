@@ -25,9 +25,13 @@ html{background:var(--bg)}
   --panel-2:#f7f8fa;
   --text:#171a20;
   --muted:#69707d;
-  --accent:#c2143f;          /* carmin SNCF */
-  --accent-soft:#c2143f14;
-  --accent-2:#8e0f2f;
+  --accent:#c12758;          /* French Berry SNCF — sélection */
+  --accent-soft:#c1275814;
+  --accent-2:#b01678;        /* French Berry, nuance pourpre */
+  --edit:#7b2fbf;            /* violet « pieuvre admin » — actions d'édition */
+  --edit-soft:#7b2fbf14;
+  --edit-soft2:#7b2fbf26;
+  --edit-border:#7b2fbf55;
   --ok:#158a5c;
   --warn:#b7791f;
   --border:#00000014;
@@ -38,7 +42,7 @@ html{background:var(--bg)}
   --radius-sm:10px;
   --sidebar-w:288px;
   --header-h:62px;
-  --tile-grad:linear-gradient(135deg,#c2143f,#5b1030);
+  --tile-grad:linear-gradient(135deg,#c12758,#b01678);
 }
 html[data-theme="dark"]{
   --bg:#0e1015;
@@ -47,16 +51,20 @@ html[data-theme="dark"]{
   --panel-2:#1e2330;
   --text:#e9ebf2;
   --muted:#98a0b0;
-  --accent:#ff4d6d;
-  --accent-soft:#ff4d6d1c;
-  --accent-2:#ff8fa3;
+  --accent:#c12758;          /* French Berry — même teinte qu'en thème clair */
+  --accent-soft:#c1275826;
+  --accent-2:#b01678;
+  --edit:#b48cff;
+  --edit-soft:#b48cff1f;
+  --edit-soft2:#b48cff33;
+  --edit-border:#b48cff55;
   --ok:#2fbf85;
   --warn:#e2b04a;
   --border:#ffffff14;
   --border-strong:#ffffff26;
   --shadow:0 1px 2px #00000055,0 8px 30px #00000066;
   --shadow-lg:0 10px 50px #000000aa;
-  --tile-grad:linear-gradient(135deg,#ff4d6d,#701a3a);
+  --tile-grad:linear-gradient(135deg,#c12758,#b01678);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
@@ -144,11 +152,13 @@ html[data-mode="read"] #fleetBtn{display:none !important}
 #clockTime{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.01em}
 #clockDate{font-size:10.5px;color:var(--muted);text-transform:capitalize;margin-top:1px}
 .topbar-actions{display:flex;gap:2px;align-items:center}
-.wall-nav{position:sticky;top:0;z-index:24;display:flex;gap:7px;align-items:center;
-  overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
-  padding:8px 2px;margin:0 -2px 4px;
-  background:color-mix(in srgb,var(--bg) 86%,transparent);
+#wallBar{position:sticky;top:0;z-index:24;display:flex;flex-direction:column;gap:7px;align-items:stretch;
+  padding:8px 2px;margin:0 -2px 6px;
+  background:color-mix(in srgb,var(--bg) 88%,transparent);
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+#wallBtns{display:flex;gap:9px;flex-wrap:wrap;justify-content:flex-end}
+.wall-nav{display:flex;gap:7px;align-items:center;flex:1;min-width:220px;
+  overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .wall-nav::-webkit-scrollbar{display:none}
 .wn-chip{flex:none;border:1.5px solid var(--border-strong);background:var(--panel);color:var(--muted);
   border-radius:999px;padding:6px 13px;font-size:12px;font-weight:700;white-space:nowrap;
@@ -156,16 +166,19 @@ html[data-mode="read"] #fleetBtn{display:none !important}
 .wn-chip:hover{border-color:var(--accent);color:var(--accent)}
 .wn-chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
 .wall-sec{scroll-margin-top:52px}
-.tile .tshared{position:absolute;left:8px;bottom:7px;font-size:12px;z-index:3;display:none;
+.tile .tshared{position:absolute;left:8px;bottom:7px;font-size:12px;z-index:3;display:block;
   filter:drop-shadow(0 1px 1px #0006)}
 .wall.editing .tile .tshared{display:block}
 .wall-sec .tshared{font-size:11px;opacity:.8}
 #quoteBox{max-width:640px}
 #quoteBox .q-txt{font-size:14.5px;font-style:italic;line-height:1.5;color:var(--text)}
 #quoteBox .q-auth{font-size:11.5px;font-weight:700;color:var(--muted);margin-top:3px}
-#editWallBtn,#nodeWallEditBtn{color:#c2143f;border-color:#d98a9b;background:#c2143f0d}
-#editWallBtn:hover,#nodeWallEditBtn:hover{background:#c2143f1c}
-#editWallBtn.primary,#nodeWallEditBtn.primary{color:#fff;background:var(--accent);border-color:var(--accent)}
+#editWallBtn,#nodeWallEditBtn,#wallOrderBtn,#nodeWallSimpleBtn,#addLinkBtn,#addFileBtn,#addContactBtn{color:var(--edit);border-color:var(--edit-border);background:var(--edit-soft)}
+#editWallBtn:hover,#nodeWallEditBtn:hover,#wallOrderBtn:hover,#nodeWallSimpleBtn:hover,#addLinkBtn:hover,#addFileBtn:hover,#addContactBtn:hover{background:var(--edit-soft2)}
+#editWallBtn.primary,#nodeWallEditBtn.primary{color:#fff;background:var(--edit);border-color:var(--edit)}
+html[data-mode="edit"] #quickBtn{color:var(--edit);border-color:var(--edit-border);background:var(--edit-soft)}
+html[data-mode="edit"] #quickBtn:hover{background:var(--edit-soft2)}
+html[data-mode="edit"] #quickBtn.primary{color:#fff;background:var(--edit);border-color:var(--edit)}
 .inf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:9px}
 .inf-card{border:1px solid var(--border);background:var(--panel-2);border-radius:12px;padding:10px 12px}
 .inf-card .iv{font-size:16.5px;font-weight:800}
@@ -191,8 +204,8 @@ html[data-mode="read"] #fleetBtn{display:none !important}
 /* ---------- Sidebar ---------- */
 .side-head{display:flex;align-items:center;justify-content:space-between;padding:14px 14px 6px}
 .side-head span{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600}
-.side-add{font-size:12px;font-weight:600;color:var(--accent);padding:5px 9px;border-radius:8px}
-.side-add:hover{background:var(--accent-soft)}
+.side-add{font-size:12px;font-weight:600;color:var(--edit);padding:5px 9px;border-radius:8px}
+.side-add:hover{background:var(--edit-soft)}
 .side-mini{width:22px;height:22px;border-radius:7px;color:var(--muted);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center}
 .side-mini:hover{background:var(--accent-soft);color:var(--accent)}
 #tree{flex:1;padding:2px 10px 16px;overflow-y:auto}
@@ -201,6 +214,8 @@ html[data-mode="read"] #fleetBtn{display:none !important}
 .tree-row:hover{background:var(--bg-soft)}
 .tree-row.active{background:var(--accent-soft);color:var(--accent);font-weight:600}
 .tree-row.drag-over{outline:2px dashed var(--accent);outline-offset:-2px}
+.tree-row.scope-perso::before{content:'';position:absolute;left:0;top:5px;bottom:5px;width:3px;
+  border-radius:2px;background:var(--edit);opacity:.85}
 .tree-caret{width:20px;height:20px;min-width:20px;display:flex;align-items:center;justify-content:center;border-radius:6px;color:var(--muted);font-size:9px;transition:transform .15s}
 .tree-caret.open{transform:rotate(90deg)}
 .tree-caret.leaf{visibility:hidden}
@@ -291,7 +306,7 @@ html[data-mode="read"] #fleetBtn{display:none !important}
 .wall-sec.blank .line{opacity:.35}
 .wall:not(.editing) .wall-sec.blank .line{opacity:0}
 .wall-sec .sec-tools .tile-tool{background:var(--bg-soft);color:var(--muted)}
-.wall-sec .sec-tools .tile-tool:hover{background:var(--accent);color:#fff}
+.wall-sec .sec-tools .tile-tool:hover{background:var(--edit);color:#fff}
 .tile.add-sec{grid-column:1/-1;grid-row:span 1;min-height:44px;background:transparent;border:2px dashed var(--border-strong);
   box-shadow:none;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--muted);font-size:12.5px;font-weight:600}
 .tile.add-sec:hover{border-color:var(--accent);color:var(--accent);transform:none}
@@ -332,7 +347,7 @@ html[data-mode="read"] #fleetBtn{display:none !important}
 .wall.editing .tile:not(.add-tile):not(.add-sec){animation:wiggle 3s ease-in-out infinite}
 @keyframes wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(.4deg)}75%{transform:rotate(-.4deg)}}
 .tile-tool{width:28px;height:28px;border-radius:9px;background:#000000b0;color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
-.tile-tool:hover{background:var(--accent)}
+.tile-tool:hover{background:var(--edit)}
 .tile.add-tile{background:transparent;border:2px dashed var(--border-strong);box-shadow:none;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;color:var(--muted)}
 .tile.add-tile:hover{border-color:var(--accent);color:var(--accent);transform:none}
 .tile.add-tile .plus{font-size:26px}
@@ -381,7 +396,9 @@ html[data-mode="read"] #fleetBtn{display:none !important}
 
 /* ---------- Éditeur de note ---------- */
 .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
-#editorCard{margin-bottom:24px;overflow:hidden}
+#editorCard{margin-bottom:24px}
+#editorBar{border-radius:var(--radius) var(--radius) 0 0}
+#editor{border-radius:0 0 var(--radius) var(--radius)}
 #editorBar{display:flex;align-items:center;gap:2px;padding:7px 10px;border-bottom:1px solid var(--border);flex-wrap:wrap;
   position:sticky;top:0;background:color-mix(in srgb,var(--panel) 92%,transparent);backdrop-filter:blur(8px);z-index:5}
 .eb{min-width:31px;height:31px;padding:0 7px;border-radius:8px;font-size:13.5px;color:var(--muted);display:inline-flex;align-items:center;justify-content:center;font-weight:600}
@@ -427,10 +444,39 @@ html[data-mode="edit"] #editor .rd-toc-head:hover{color:var(--accent)}
 #editor .rd-toc li{margin:4px 0}
 #editor .rd-toc a{text-decoration:none;font-weight:600;font-size:13.5px;cursor:pointer;color:var(--accent)}
 #editor .rd-toc a:hover{text-decoration:underline}
+#editor .rd-ftoc{background:var(--panel-2);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin:10px 0}
+#editor .rd-ftoc-head{font-weight:750;font-size:13px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+html[data-mode="edit"] #editor .rd-ftoc-head{cursor:pointer}
+html[data-mode="edit"] #editor .rd-ftoc-head:hover{color:var(--accent)}
+#editor .rd-ftoc ul{margin:2px 0;padding-left:2px;list-style:none}
+#editor .rd-ftoc li{margin:5px 0}
+#editor .rd-ftoc a{text-decoration:none;font-weight:600;font-size:13.5px;cursor:pointer;color:var(--accent)}
+#editor .rd-ftoc a:hover{text-decoration:underline}
+#editor .rd-ftoc .fsz{font-size:11px;color:var(--muted);font-weight:600;margin-left:6px}
+
+::selection{background:#c1275842}
+html[data-theme="dark"] ::selection{background:#c1275866}
+/* ---------- Liste simplifiée du mur d'une fiche ---------- */
+#nodeWallSimple{display:flex;flex-direction:column;gap:5px}
+#nodeWallSimple .sl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:5px}
+#nodeWallSimple .sl-cat{display:flex;align-items:center;gap:8px;margin-top:7px}
+#nodeWallSimple .sl-cat:first-child{margin-top:0}
+#nodeWallSimple .sl-cat .bar{width:4px;height:14px;border-radius:2px;background:var(--accent);flex:none}
+#nodeWallSimple .sl-cat .txt{font-size:13px;font-weight:750;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#nodeWallSimple .sl-cat .line{flex:1;height:1px;background:var(--border-strong)}
+.sl-item{display:flex;align-items:center;gap:8px;padding:8px 11px;border:1px solid var(--border-strong);
+  border-radius:10px;background:var(--panel);cursor:pointer;font-size:13.5px;min-width:0}
+.sl-item:hover{background:var(--accent-soft);border-color:var(--accent)}
+.sl-item .sl-ic{flex-shrink:0;display:flex;width:18px;justify-content:center}
+.sl-item .sl-lbl{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;text-align:left}
+.sl-item .sl-tools{display:none;gap:1px;flex-shrink:0}
+html[data-role="editor"] .sl-item .sl-tools,html[data-role="admin"] .sl-item .sl-tools{display:flex}
+.sl-item .sl-tools button{border:none;background:none;cursor:pointer;font-size:12px;padding:2px 4px;border-radius:6px;opacity:.55}
+.sl-item .sl-tools button:hover{opacity:1;background:var(--edit-soft2);color:var(--edit)}
 
 /* ---------- Mode lecture seule ---------- */
 html[data-mode="read"] .side-add,html[data-mode="read"] .tree-more,
-html[data-mode="read"] #editWallBtn,html[data-mode="read"] #wallOrderBtn,html[data-mode="read"] #nodeWallEditBtn,
+html[data-mode="read"] #editWallBtn,html[data-mode="read"] #wallOrderBtn,html[data-mode="read"] #nodeWallEditBtn,html[data-mode="read"] #nodeWallSimpleBtn,
 html[data-mode="read"] #addLinkBtn,html[data-mode="read"] #addFileBtn,
 html[data-mode="read"] .fdel,html[data-mode="read"] .link-chip .del,
 html[data-mode="read"] .fmove,html[data-mode="read"] .cmove,
@@ -441,7 +487,7 @@ html[data-mode="read"] #scanBtn,html[data-mode="read"] #packBtn,
 html[data-mode="read"] #nodeMenuBtn{display:none !important}
 html[data-mode="read"] #editor:empty:before,html[data-mode="read"] #nodeTitle:empty:before{content:none}
 #modeBtn{font-size:15px}
-html[data-mode="edit"] #modeBtn{color:var(--accent);background:var(--accent-soft);box-shadow:0 0 0 2px var(--accent-soft)}
+html[data-mode="edit"] #modeBtn{color:var(--edit);background:var(--edit-soft);box-shadow:0 0 0 2px var(--edit-soft)}
 
 /* ---------- Liens / fichiers / sous-fiches ---------- */
 .zone{margin-bottom:24px}
@@ -689,6 +735,11 @@ html[data-theme="dark"] .eq-cell.rb{background:#22301a;color:#9fce7a;border-colo
 html[data-mode="edit"]:not([data-role="admin"]) #modeBtn .ic-unlock{display:block}
 html[data-mode="edit"][data-role="admin"] #modeBtn .ic-octo{display:block}
 html[data-mode="edit"][data-role="admin"] #modeBtn{background:#a55be01c;box-shadow:0 0 0 2px #a55be022}
+/* filtre d'affichage commun/perso : réservé à l'admin, remplace le bouton clair/sombre */
+html[data-role="admin"] #scopeBtn{display:flex !important;color:var(--edit);background:#a55be01c;box-shadow:0 0 0 2px #a55be022;border-radius:12px}
+html[data-role="admin"] #themeBtn{display:none !important}
+.tree-row.scope-dim{opacity:.42}
+.wall-sec.scope-dim{opacity:.45}
 html[data-mode="read"] #modeBtn .ic-lock{display:block}
 #eqIll{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;margin:4px 0 8px}
 .eq-illit{margin:0;min-width:120px;max-width:100%}
@@ -751,7 +802,9 @@ html[data-mode="read"] #modeBtn .ic-lock{display:block}
 .seg{display:flex;background:var(--bg-soft);border-radius:11px;padding:4px;gap:4px}
 .seg button{flex:1;padding:8px 6px;border-radius:8px;font-size:12.5px;font-weight:600;color:var(--muted);transition:all .13s}
 .seg button.on{background:var(--panel);color:var(--accent);box-shadow:0 1px 4px #00000018}
-.emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;margin-top:8px}
+.emoji-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:3px;margin-top:4px}
+.emo-wrap{max-height:44vh;overflow:auto;margin-top:8px;border:1px solid var(--border-strong);border-radius:12px;padding:2px 10px 10px;background:var(--bg-soft);overscroll-behavior:contain}
+.emo-cat{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:9px 2px 3px;position:sticky;top:0;background:var(--bg-soft);z-index:1}
 .emoji-grid button{font-size:21px;padding:7px 0;border-radius:9px}
 .emoji-grid button:hover{background:var(--accent-soft)}
 .img-preview{margin-top:10px;border-radius:12px;overflow:hidden;border:1px solid var(--border);max-height:150px;display:flex;align-items:center;justify-content:center;background:var(--bg-soft)}
@@ -898,6 +951,16 @@ html[data-mode="read"] #modeBtn .ic-lock{display:block}
       <div id="clockDate"></div>
     </div>
     <div class="topbar-actions">
+    <button class="icon-btn" id="scopeBtn" style="display:none">
+      <span class="ic-sm" data-sf="common" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+        <circle cx="12" cy="12" r="8.2"/><ellipse cx="12" cy="12" rx="3.7" ry="8.2"/>
+        <path d="M4.5 9h15M4.5 15h15"/></svg></span>
+      <span class="ic-sm" data-sf="perso" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <circle cx="12" cy="7.8" r="3.7"/><path d="M4.8 19.6c1.4-3.7 4.1-5.6 7.2-5.6s5.8 1.9 7.2 5.6"/></svg></span>
+      <span class="ic-sm" data-sf="all" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <circle cx="8.6" cy="9.2" r="5.6"/><ellipse cx="8.6" cy="9.2" rx="2.5" ry="5.6"/><path d="M3.5 7.4h10.2M3.5 11h10.2"/>
+        <circle cx="17.1" cy="12.6" r="2.7"/><path d="M12.1 20.4c1-2.7 2.8-4 5-4s4 1.3 5 4"/></svg></span>
+    </button>
     <button class="icon-btn ic3d" id="themeBtn" title="Basculer clair / sombre">
       <span class="ic-sm"><svg viewBox="0 0 24 24" aria-hidden="true">
         <defs>
@@ -1083,13 +1146,15 @@ html[data-mode="read"] #modeBtn .ic-lock{display:block}
               <div class="q-auth"></div>
             </div>
           </div>
-          <div style="display:flex;gap:9px;flex-wrap:wrap">
+        </div>
+        <div id="wallBar">
+          <div id="wallBtns">
             <button class="btn" id="quickBtn">🚀 Lancement rapide</button>
             <button class="btn" id="editWallBtn">✏️ Modifier le mur</button>
             <button class="btn" id="wallOrderBtn" title="Réorganiser le mur ligne par ligne : chaque titre de ligne se déplace avec toutes ses tuiles"><svg viewBox="0 0 24 24" style="width:15px;height:15px;margin-right:2px" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg> Ordre des lignes</button>
           </div>
+          <div id="wallNav" class="wall-nav" style="display:none"></div>
         </div>
-        <div id="wallNav" class="wall-nav" style="display:none"></div>
         <div class="wall-wrap"><div id="wall" class="wall"></div></div>
       </div>
     </section>
@@ -1131,9 +1196,10 @@ html[data-mode="read"] #modeBtn .ic-lock{display:block}
         <div class="zone" id="nodeWallZone">
           <div class="zone-head">
             <h3>🧱 Accès rapide de cette fiche <span class="count" id="nodeWallCount"></span></h3>
+            <button class="btn small" id="nodeWallSimpleBtn" title="Basculer entre les tuiles et une liste simplifiée sans images (choix appliqué pour tous les utilisateurs de cette fiche)">🗒 Liste simple</button>
             <button class="btn small" id="nodeWallEditBtn">✏️ Modifier</button>
           </div>
-          <div class="wall-wrap"><div id="nodeWall" class="wall"></div></div>
+          <div class="wall-wrap"><div id="nodeWallSimple" style="display:none"></div><div id="nodeWall" class="wall"></div></div>
         </div>
 
         <!-- Note riche -->
@@ -1169,6 +1235,7 @@ html[data-mode="read"] #modeBtn .ic-lock{display:block}
             <button class="eb" data-cmd="removeFormat" title="Effacer la mise en forme">⌫</button>
             <span class="eb-sep"></span>
             <button class="eb" data-act="toc" title="Sommaire interactif des sous-fiches : insérer — puis actualiser ou supprimer via ce même bouton">🧭</button>
+            <button class="eb" data-act="ftoc" title="Sommaire des fichiers de la fiche : insérer la liste cliquable des fichiers importés — puis actualiser ou supprimer via ce même bouton">📎</button>
             <button class="eb" data-act="clean" title="Style par défaut : retire polices, tailles et couleurs importées (sélection, ou toute la note si rien n'est sélectionné)">🧹</button>
             <button class="eb" data-act="erase" title="Effacer entièrement la note (pièces jointes, liens, mots-clés et sous-fiches conservés)">🗑</button>
           </div>
@@ -1265,9 +1332,30 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='8.58';
+const APP_VERSION='8.79';
 const APP_VERSION_DATE='7 août 2026';
 const CHANGELOG=[
+  ['v8.79',"Le filtre admin commun/perso s'applique aussi au mur Documentation : en « communes uniquement », les lignes et tuiles perso sont masquées (et inversement) — une ligne d'un autre statut reste estompée si elle contient des tuiles du statut affiché, la barre de rubriques et le raccourci ⭐ suivent, fonctionnement identique à la colonne de gauche"],
+  ['v8.78',"Colonne de gauche : les fiches 👤 personnelles portent un fin liseré vertical violet sur leur bord gauche — repérage immédiat, sans surcharger les noms ; les fiches communes restent épurées"],
+  ['v8.77',"Menu ⚙ : séparation ajoutée entre « Source des mises à jour » et « Données communes / personnelles » · nouveau bouton admin à halo violet, à la place du bouton clair/sombre (l'admin travaille en sombre) : par appuis successifs, la colonne de gauche n'affiche que les fiches 🌐 communes, que les 👤 perso, ou tout — pictogrammes dessinés (globe, silhouette, les deux) ; les fiches d'un autre statut restent estompées quand elles contiennent des fiches du statut affiché, pour garder le chemin"],
+  ['v8.76',"Menu ⚙ réorganisé : après « Données communes / personnelles » viennent désormais Importer, puis les quatre exports (TOUT, COMMUNES, PERSO, mur), puis les réglages (Titre, Codes d'accès, Largeur, Citation, Vérification des liens, Informations, Historique, Journal) jusqu'à « Tout effacer » — chaque groupe séparé par un trait"],
+  ['v8.75',"Sommaire automatique des fichiers 📎 : comme le sommaire des sous-fiches 🧭, un nouveau bouton de la barre d'outils insère dans la note la liste cliquable des fichiers importés dans la fiche — icône par type (📕 PDF, 📘 Word, 📗 Excel, 📙 PowerPoint, 🖼 image), taille du fichier, un clic ouvre le document dans un nouvel onglet · même fonctionnement : 📎 (ou un clic sur l'en-tête) pour actualiser ou supprimer, contenu préservé par le nettoyage de style 🧹"],
+  ['v8.74',"La portée d'une ligne du mur entraîne ses tuiles : marquer une ligne 👤 personnelle passe toutes les tuiles de la ligne en perso ; la repasser en commune ramène ses tuiles en commun (mur d'accueil) ou à la portée de la fiche (mur d'une fiche) — uniquement lors d'un changement effectif, un simple renommage de ligne ne touche pas aux tuiles"],
+  ['v8.73',"Thème sombre : le French Berry garde exactement les mêmes teintes qu'en thème clair (#C12758 / #B01678), y compris pour le dégradé des tuiles et la surbrillance du texte · les boutons du mur (Lancement rapide, Modifier le mur, Ordre des lignes) restent désormais au-dessus de la ligne défilante des rubriques dans la barre collante"],
+  ['v8.72',"French Berry ajusté aux nuances officielles fournies : sélection #C12758, nuance pourpre #B01678 (liens visités du sommaire, dégradé par défaut des tuiles désormais entre les deux nuances) — versions éclaircies équivalentes en thème sombre"],
+  ['v8.71',"Nouveau code couleur : toutes les actions d'édition passent au violet « pieuvre admin » — cadenas déverrouillé, ＋ Ajouter, Modifier le mur, Ordre des lignes, Liste simple, ajout de lien/fichier/contact, outils de tuiles et de lignes — tandis que la couleur de sélection (éléments actifs, fiche courante, boutons de format, surbrillance du texte) adopte le French Berry SNCF (Pantone 206 C, #CE0037), en clair comme en sombre"],
+  ['v8.70',"Tuiles « fichier en ligne » : prévisualisation automatique — à la création d'une tuile ouvrant un fichier par lien (PDF, Word, Excel…), une vignette par type de fichier (couleur, sigle, nom) est générée instantanément hors ligne, puis l'application tente en arrière-plan de récupérer le vrai aperçu (1re page d'un PDF, image elle-même) et l'applique si le serveur l'autorise · un lien direct vers une image devient automatiquement l'image de la tuile · nouveau bouton « 📑 Aperçu du fichier » dans la fenêtre de tuile pour (re)lancer la récupération à la main — les liens SharePoint/intranet protégés retombent proprement sur la vignette par type"],
+  ['v8.69',"Portées repensées : les tuiles du mur d'une fiche suivent désormais par défaut la portée (commun/perso) de leur fiche — choix ponctuel possible (↩️ Comme la fiche / 🌐 / 👤) · le mur d'accueil devient commun par défaut, 👤 Personnelle sur sélection (vos tuiles existantes non marquées restent perso, rien n'est publié à votre insu) · le badge de portée n'apparaît plus que sur les éléments 👤 personnels — le commun, cas général, reste épuré · export/import entièrement alignés : le pack retire les tuiles perso des fiches communes, une mise à jour préserve vos tuiles perso posées sur des murs communs, et l'export perso les emporte aussi"],
+  ['v8.68',"Liste simplifiée : la séparation par lignes du mur est conservée — chaque titre de ligne apparaît comme un en-tête de groupe (barre colorée + trait, comme sur le mur) et le classement ▲▼ s'effectue à l'intérieur de chaque ligne, pour une meilleure lisibilité"],
+  ['v8.67',"Correction : après « Tout effacer », les codes d'accès par défaut sont recréés immédiatement (auparavant, impossible de déverrouiller les modes Assistant PAC ou Admin avant d'avoir rechargé la page) — la session en cours reste par ailleurs déverrouillée pour continuer la configuration"],
+  ['v8.66',"Accès rapide d'une fiche en liste simplifiée : le bouton « 🗒 Liste simple » (édition) bascule le mur de la fiche en liste compacte sans images — ouverture du fichier, du lien ou de la fiche en un clic, sans chargement de visuels · noms courts personnalisables (✏️, sans toucher au nom de la tuile) et classement propre à la liste (▲▼), définis par l'éditeur et diffusés à tous via le pack commun · « ✏️ Modifier » réaffiche temporairement les tuiles pour les éditer, « 🧱 Revenir aux tuiles » rétablit l'affichage normal · réglage propre à chaque fiche"],
+  ['v8.65',"Détection des liens morts : l'application inspecte les tuiles (mur d'accueil et murs de fiches), les liens des fiches et les adresses présentes dans les notes — références internes cassées (fiche supprimée, fichier manquant) détectées à coup sûr, adresses web injoignables ou trop lentes signalées avec prudence (un lien intranet peut sembler mort hors du réseau SNCF) · vérification automatique en arrière-plan une fois par semaine, ou à la demande via ⚙ Réglages → « Vérifier les liens » · les Assistants PAC et l'admin sont prévenus au déverrouillage si des liens sont à vérifier, avec un rapport détaillé et un bouton 🔎 pour aller directement sur la fiche ou le mur concerné"],
+  ['v8.64',"Le pack commun embarque désormais l'ouverture rapide par défaut : la sélection de tuiles (communes) de l'exportateur est appliquée chez les collègues tant qu'ils n'ont pas personnalisé la leur — dès qu'un utilisateur coche ou décoche lui-même une tuile, son choix devient prioritaire et les mises à jour suivantes ne l'écrasent plus (ses tuiles perso cochées sont de toute façon conservées)"],
+  ['v8.63',"Icône de fiche : le choix d'emoji affiche désormais l'ensemble des émoticônes disponibles (plus de 1 400), classées par catégories — Rail & atelier, Documents, Communication, Smileys, Transport, Nature, Objets, Symboles, Drapeaux… — dans une liste déroulante ; un clic applique toujours l'icône immédiatement"],
+  ['v8.62',"Notes : la barre d'outils reste désormais réellement collée en haut de l'écran pendant toute l'édition d'une longue note — un réglage d'affichage de la carte (overflow) neutralisait silencieusement ce comportement pourtant prévu"],
+  ['v8.61',"Cohérence du fil d'ariane : le « 🏠 Accueil » en tête de l'arborescence des fiches devient « 📕 Documentation », avec la même icône livre 3D que l'onglet du panneau de gauche"],
+  ['v8.60',"Le badge de portée s'affiche désormais sur TOUTES les fiches — 🌐 COMMUNE (bleu) ou 👤 PERSO (gris), y compris les nouvelles fiches — et devient cliquable en mode édition pour changer la portée directement"],
+  ['v8.59',"Mur : les boutons Ouverture rapide / Modifier le mur / Ordre des lignes rejoignent la barre collante des rubriques — visibles où que vous soyez dans le mur · le déverrouillage ne révèle plus l'existence d'un niveau administrateur · mises à jour : le pack s'appelle désormais Interface-COMMUN.json et se place dans le MÊME dossier que le fichier HTML (lu automatiquement en hébergement web ; sur PC, sélectionnez-le une fois, il est mémorisé) — l'export commun sort directement sous ce nom · console commun/perso refaite : bouton 🔄 Actualiser, exceptions listées sous chaque fiche racine (sous-fiches au statut différent, avec accès direct au réglage) et compteurs corrigés distinguant clairement Fiches et Mur"],
   ['v8.58',"Correctif iOS : le champ du code de déverrouillage forçait le clavier numérique (héritage des anciens codes à 4 chiffres) — il accepte désormais le clavier complet, lettres comprises, sans majuscule automatique"],
   ['v8.57',"Source de mise à jour par 📂 fichier local : choisissez le pack dans un dossier de l'appareil (idéal : dossier SharePoint synchronisé OneDrive) — sur PC/Chrome-Edge le fichier est mémorisé et relu à chaque vérification (une autorisation par session), ailleurs le bouton 🔄 rouvre le sélecteur ; l'adresse web reste disponible pour un futur hébergement intranet · les Assistants PAC accèdent désormais à la roue ⚙ avec un menu allégé : recherche et source de MAJ, tous les exports, l'import et les informations — le reste demeure réservé à l'admin · en mode admin déverrouillé, le cadenas laisse place à la 🐙 pieuvre (halo violet) pour distinguer le profil d'un coup d'œil"],
   ['v8.56',"Le bas du panneau de gauche affiche désormais l'état des mises à jour à la place du compteur de fichiers : « Vérification impossible » par défaut (cliquable pour réessayer), puis « ✅ Version à jour » ou « 🔄 Effectuer une mise à jour » selon le résultat — les compteurs de fiches et fichiers restent visibles dans l'infobulle et dans ℹ️ Informations"],
@@ -1719,6 +1807,24 @@ function authCheck(code){
   if(h===a.editorHash)return 'editor';
   return null;}
 const isAdmin=()=>state.role==='admin';
+/* filtre admin commun/perso appliqué au mur d'accueil : quelles lignes garder */
+function homeScopeFilter(){
+  if(!(isAdmin()&&data.settings.scopeFilter&&data.settings.scopeFilter!=='all'))return null;
+  const want=data.settings.scopeFilter==='common';
+  const sorted=[...(data.tiles||[])].sort((a,b)=>a.ord-b.ord);
+  const secKeep=new Set();let curSec=null;
+  for(const t of sorted){
+    if(t.kind==='section'){curSec=t;if(tileSharedEff(t,null)===want)secKeep.add(t.id);}
+    else if(tileSharedEff(t,null)===want){if(curSec)secKeep.add(curSec.id);}}
+  return{want,secKeep};}
+/* bouton admin de filtre d'affichage commun / perso */
+function applyScopeBtn(){
+  const b=$('#scopeBtn');if(!b)return;
+  const f=data.settings.scopeFilter||'all';
+  b.querySelectorAll('[data-sf]').forEach(s=>s.style.display=s.dataset.sf===f?'flex':'none');
+  b.title=f==='common'?'Affichage : fiches COMMUNES uniquement — cliquer : perso uniquement'
+    :f==='perso'?'Affichage : fiches PERSO uniquement — cliquer : tout afficher'
+    :'Affichage : toutes les fiches — cliquer : communes uniquement';}
 const nodeById=id=>data.nodes.find(n=>n.id===id)||null;
 /* Portée d'une fiche : le réglage explicite le plus proche gagne en remontant l'arbre.
    shared===true → commune · shared===false → personnelle (même sous une branche commune)
@@ -1730,6 +1836,13 @@ function nodeSharedEff(id){let n=nodeById(id),guard=0;
     n=n.parent?nodeById(n.parent):null;}
   return false;}
 const childrenOf=id=>data.nodes.filter(n=>n.parent===(id||null)).sort((a,b)=>a.ord-b.ord);
+/* Portée d'une tuile / ligne du mur : héritée par défaut —
+   mur d'accueil = commune, mur d'une fiche = comme la fiche.
+   t.shared true/false = choix explicite ponctuel. */
+function tileSharedEff(t,node){
+  if(t.shared===true)return true;
+  if(t.shared===false)return false;
+  return node?nodeSharedEff(node.id):true;}
 function descendants(id){const out=[];const walk=p=>{for(const c of childrenOf(p)){out.push(c);walk(c.id);}};walk(id);return out;}
 function pathOf(id){const p=[];let n=nodeById(id);let guard=0;
   while(n&&guard++<50){p.unshift(n);n=n.parent?nodeById(n.parent):null;}return p;}
@@ -1833,12 +1946,25 @@ function render(){
 
 /* ---------- Arborescence ---------- */
 function renderTree(){const tree=$('#tree');tree.innerHTML='';
+  /* filtre admin : commun uniquement / perso uniquement / tout.
+     Les fiches d'un autre statut restent visibles en estompé si elles
+     contiennent des fiches du statut affiché (pour garder le chemin). */
+  const F=(isAdmin()&&data.settings.scopeFilter&&data.settings.scopeFilter!=='all')?data.settings.scopeFilter:null;
+  let vis=null,match=null;
+  if(F){vis=new Set();match=new Set();
+    for(const n of data.nodes){
+      if(nodeSharedEff(n.id)===(F==='common')){match.add(n.id);
+        let p=n,guard=0;
+        while(p&&guard++<100){vis.add(p.id);p=p.parent?nodeById(p.parent):null;}}}}
   const build=(parent,container)=>{
     for(const n of childrenOf(parent)){
+      if(vis&&!vis.has(n.id))continue;
       const kids=childrenOf(n.id);
       const item=document.createElement('div');item.className='tree-item';
       const row=document.createElement('div');row.className='tree-row';row.draggable=isEdit();row.dataset.id=n.id;
       if(state.nodeId===n.id)row.classList.add('active');
+      if(vis&&!match.has(n.id))row.classList.add('scope-dim');
+      if(!nodeSharedEff(n.id))row.classList.add('scope-perso');
       const caret=document.createElement('button');
       caret.className='tree-caret'+(kids.length?'':' leaf')+(state.open.has(n.id)?' open':'');
       caret.textContent='▶';
@@ -1865,7 +1991,8 @@ function renderTree(){const tree=$('#tree');tree.innerHTML='';
   };
   build(null,tree);
   hydrateIcons(tree);
-  if(!data.nodes.length)tree.innerHTML='<div class="empty-hint" style="padding:10px">Aucune fiche — cliquez sur « ＋ Ajouter ».</div>';}
+  if(!data.nodes.length)tree.innerHTML='<div class="empty-hint" style="padding:10px">Aucune fiche — cliquez sur « ＋ Ajouter ».</div>';
+  else if(F&&!tree.children.length)tree.innerHTML='<div class="empty-hint" style="padding:10px">'+(F==='common'?'Aucune fiche 🌐 commune.':'Aucune fiche 👤 perso.')+'</div>';}
 function moveNode(srcId,destId){
   if(destId&&(srcId===destId||descendants(srcId).some(d=>d.id===destId))){toast('Impossible : déplacement dans sa propre sous-fiche');return;}
   const n=nodeById(srcId);n.parent=destId||null;n.ord=Date.now();
@@ -1938,6 +2065,7 @@ function renderWall(owner){
   wall.classList.toggle('quick',quick);
   wall.innerHTML='';
   const items=[...ctx.list].sort((a,b)=>a.ord-b.ord);
+  const SF=owner==='home'?homeScopeFilter():null;
   const wireTools=(el,t)=>{el.querySelectorAll('.tile-tool').forEach(b=>b.onclick=e=>{e.stopPropagation();
     if(b.dataset.a==='edit')t.kind==='section'?sectionModal(owner,t.id):tileModal(owner,t.id);
     else if(b.dataset.a==='copy'){
@@ -2009,10 +2137,12 @@ function renderWall(owner){
     if(t.kind==='section'){
       if(editing)miniAdd(segLastId,t.id);
       segLastId=t.id;
+      if(SF&&!SF.secKeep.has(t.id))continue;
       const el=document.createElement('div');
       el.className='wall-sec'+(t.title?'':' blank');
+      if(SF&&tileSharedEff(t,ctx.node)!==SF.want)el.classList.add('scope-dim');
       el.dataset.sec=t.id;
-      el.innerHTML=`<span class="bar"></span><span class="txt">${esc(t.title)}${t.shared?' <span class="tshared" title="Ligne commune — incluse dans le pack partagé">🌐</span>':''}</span><span class="line"></span>
+      el.innerHTML=`<span class="bar"></span><span class="txt">${esc(t.title)}${tileSharedEff(t,ctx.node)?'':' <span class="tshared" title="Ligne personnelle — conservée sur cet appareil, non incluse dans le pack partagé">👤</span>'}</span><span class="line"></span>
         <div class="sec-tools">
           <button class="tile-tool" data-a="addafter" title="Ajouter une tuile sous ce titre">＋</button>
           <button class="tile-tool" data-a="left" title="Monter">◀</button>
@@ -2023,6 +2153,7 @@ function renderWall(owner){
       wireTools(el,t);wireDnd(el,t);
       if(editing)el.style.cursor='pointer',el.onclick=e=>{if(!e.target.closest('.tile-tool'))sectionModal(owner,t.id);};
       wall.appendChild(el);continue;}
+    if(SF&&tileSharedEff(t,ctx.node)!==SF.want)continue;
     /* --- Emplacement vide --- */
     if(t.kind==='spacer'){
       const el=document.createElement('div');
@@ -2041,7 +2172,7 @@ function renderWall(owner){
     el.className='tile size-'+(t.size||'s');
     const kind=t.action?{url:'🔗 LIEN',node:'📄 FICHE',file:'📎 FICHIER'}[t.action.type]:'';
     el.innerHTML=`<div class="veil"></div>
-      ${t.shared?'<span class="tshared" title="Tuile commune — incluse dans le pack partagé">🌐</span>':''}
+      ${tileSharedEff(t,ctx.node)?'':'<span class="tshared" title="Tuile personnelle — conservée sur cet appareil, non incluse dans le pack partagé">👤</span>'}
       <span class="kind">${kind}</span>
       ${t.badge?`<span class="tbadge" style="background:${esc(t.badgeColor||'#b7791f')}">${esc(t.badge)}</span>`:''}
       <span class="selbox">✓</span>
@@ -2081,7 +2212,7 @@ function renderWall(owner){
       if(quick){if(!isSelectable(t))return;
         state.quickSel.has(t.id)?state.quickSel.delete(t.id):state.quickSel.add(t.id);
         el.classList.toggle('selected');
-        data.settings.quickSel=[...state.quickSel];save();
+        data.settings.quickSel=[...state.quickSel];data.settings.quickSelCustom=true;save();
         updateQuickBar();return;}
       if(editing){tileModal(owner,t.id);return;}
       runAction(t.action,true);};
@@ -2250,10 +2381,14 @@ function renderQuote(){
   box.querySelector('.q-auth').textContent='— '+q[1];}
 function renderWallNav(){try{
   const box=$('#wallNav');if(!box)return;
+  const bar=$('#wallBar');
   const sorted=[...(data.tiles||[])].sort((a,b)=>a.ord-b.ord);
-  const secs=sorted.filter(t=>t.kind==='section'&&(t.title||'').trim());
+  const SF=homeScopeFilter();
+  const secs=sorted.filter(t=>t.kind==='section'&&(t.title||'').trim()&&(!SF||SF.secKeep.has(t.id)));
   const firstSecIdx=sorted.findIndex(t=>t.kind==='section');
-  const hasFav=firstSecIdx>0;
+  const favTiles=(firstSecIdx>0?sorted.slice(0,firstSecIdx):[]).filter(t=>t.kind!=='section'&&(!SF||tileSharedEff(t,null)===SF.want));
+  const hasFav=favTiles.length>0;
+  if(bar)bar.style.display=(secs.length||isEdit())?'flex':'none';
   if(!secs.length){box.style.display='none';return;}
   box.style.display='flex';
   box.innerHTML=(hasFav?'<button class="wn-chip" data-top="1" title="Revenir en haut (tuiles favorites)">⭐</button>':'')+
@@ -2263,14 +2398,16 @@ function renderWallNav(){try{
     if(ch.dataset.top){m.scrollTo({top:0,behavior:'smooth'});return;}
     const el=document.querySelector('.wall-sec[data-sec="'+ch.dataset.sec+'"]');
     if(!el)return;
+    const bar=document.querySelector('#wallBar')||box;
     const y=el.getBoundingClientRect().top-m.getBoundingClientRect().top+m.scrollTop
-      -(box.getBoundingClientRect().height+14);
+      -(bar.getBoundingClientRect().height+14);
     m.scrollTo({top:Math.max(0,y),behavior:'smooth'});});
   wallNavSpy();}catch(e){console.error(e);}}
 function wallNavSpy(){try{
   const box=$('#wallNav');
   if(!box||box.style.display==='none'||state.view!=='home')return;
-  const nb=box.getBoundingClientRect().bottom+8;
+  const bar=document.querySelector('#wallBar')||box;
+  const nb=bar.getBoundingClientRect().bottom+8;
   let act=null;
   document.querySelectorAll('#wall .wall-sec[data-sec]').forEach(el=>{
     if(el.getBoundingClientRect().top<=nb)act=el.dataset.sec;});
@@ -2343,14 +2480,28 @@ function sectionModal(owner,id){
     <div class="field"><label>Texte affiché au-dessus de la ligne</label>
       <input type="text" id="mSecTxt" value="${esc(s?s.title:'')}" placeholder="ex : 🚄 Euroduplex — accès rapides"></div>
     <label style="display:flex;align-items:center;gap:9px;font-size:13px;font-weight:700;margin:4px 0 8px;cursor:pointer">
-      <input type="checkbox" id="mSecSh" ${s&&s.shared?'checked':''} style="width:16px;height:16px;accent-color:#1e6fd9">
-      🌐 Ligne commune (incluse dans le pack partagé)</label>
+      <input type="checkbox" id="mSecSh" ${s&&s.shared===false?'checked':''} style="width:16px;height:16px;accent-color:#1e6fd9">
+      👤 Ligne personnelle (conservée sur cet appareil, non incluse dans le pack)</label>
     <p style="font-size:12px;color:var(--muted)">💡 Laissez le texte <b>vide</b> pour un simple <b>saut de ligne</b>. Une fois créé, le bouton <b>＋</b> du titre permet d'ajouter des tuiles juste en dessous.</p>`,
     [{label:'Annuler'},{label:s?'Enregistrer':'Ajouter',primary:true,fn:()=>{
       const txt=$('#mSecTxt').value.trim();
-      const sh=$('#mSecSh').checked;
-      if(s){s.title=txt;if(sh)s.shared=true;else delete s.shared;}
-      else ctx.list.push({id:'t_'+uid(),kind:'section',title:txt,ord:Date.now(),...(sh?{shared:true}:{})});
+      const pers=$('#mSecSh').checked;
+      if(s){
+        const persAvant=s.shared===false;
+        s.title=txt;if(pers)s.shared=false;else delete s.shared;
+        /* la portée de la ligne s'applique à toutes les tuiles de la ligne */
+        if(pers!==persAvant){
+          const sorted=[...ctx.list].sort((a,b)=>a.ord-b.ord);
+          const i=sorted.findIndex(x=>x.id===s.id);
+          let nProp=0;
+          for(let j=i+1;j<sorted.length&&sorted[j].kind!=='section';j++){
+            const t2=sorted[j];if(t2.kind!=='tile')continue;
+            if(pers)t2.shared=false;else delete t2.shared;
+            nProp++;}
+          if(nProp)toast(pers
+            ?'👤 Ligne personnelle — ses '+nProp+' tuile(s) passent en perso'
+            :'🌐 Ligne '+(ctx.node?'remise à la portée de la fiche':'commune')+' — ses '+nProp+' tuile(s) suivent');}}
+      else ctx.list.push({id:'t_'+uid(),kind:'section',title:txt,ord:Date.now(),...(pers?{shared:false}:{})});
       ctx.node?touch(ctx.node):save();refreshWall(owner);}}]);
   setTimeout(()=>$('#mSecTxt').focus(),60);}
 
@@ -2393,7 +2544,17 @@ function renderNode(){const n=nodeById(state.nodeId);if(!n){navigate('#/home');r
   if(lbl){const bk=document.createElement('button');bk.className='crumb-back';
     bk.innerHTML='←';bk.title=lbl+'  (fiche consultée précédemment)';
     bk.onclick=navBack;crumb.appendChild(bk);}
-  const home=document.createElement('button');home.textContent='🏠 Accueil';home.onclick=()=>navigate('#/home');
+  const home=document.createElement('button');
+  home.innerHTML=`<svg viewBox="0 0 64 64" style="width:14px;height:14px;vertical-align:-2px;margin-right:3px" aria-hidden="true">
+    <defs><linearGradient id="bkC2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8496f"/><stop offset="1" stop-color="#96082c"/></linearGradient>
+    <linearGradient id="bkP2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d9d5cb"/></linearGradient></defs>
+    <path d="M4 15 Q18 5 32 12 Q46 5 60 15 L60 49 Q46 41 32 48 Q18 41 4 49 Z" fill="url(#bkC2)"/>
+    <path d="M32 12 L32 48" stroke="#6d0620" stroke-width="2.4"/>
+    <path d="M8 17 Q19 9.5 30 14.5 L30 44.5 Q19 39.5 8 44.5 Z" fill="url(#bkP2)"/>
+    <path d="M56 17 Q45 9.5 34 14.5 L34 44.5 Q45 39.5 56 44.5 Z" fill="url(#bkP2)"/>
+  </svg>Documentation`;
+  home.title='Revenir à l\'accueil de la documentation (mur d\'accès rapide)';
+  home.onclick=()=>navigate('#/home');
   crumb.appendChild(home);
   const path=pathOf(n.id);
   path.forEach((p,i)=>{const sep=document.createElement('span');sep.className='sep';sep.textContent='▸';crumb.appendChild(sep);
@@ -2409,10 +2570,14 @@ function renderNode(){const n=nodeById(state.nodeId);if(!n){navigate('#/home');r
   {const eff=nodeSharedEff(n.id);
    const exc=!eff&&n.parent&&nodeSharedEff(n.parent);
    const tag=$('#nodeShTag');
-   tag.style.display=(eff||exc)?'inline-block':'none';
+   tag.style.display='inline-block';
    tag.textContent=eff?'🌐 COMMUNE':'👤 PERSO';
    tag.style.background=eff?'#1e6fd9':'#5a6b7b';
-   tag.title=eff?'Cette fiche fait partie des données communes (pack partagé)':'Exception : fiche personnelle au sein d\'une branche commune';}
+   tag.style.cursor=isEdit()?'pointer':'default';
+   tag.title=(eff?'Cette fiche fait partie des données communes (pack partagé)'
+     :exc?'Exception : fiche personnelle au sein d\'une branche commune'
+     :'Fiche personnelle — elle reste sur cet appareil')+(isEdit()?' · cliquer pour changer la portée':'');
+   tag.onclick=()=>{if(isEdit())nodeScopeModal(n.id);};}
   renderTags(n);renderNodeEquip(n);renderNodeWall(n);renderLinks(n);renderContacts(n);renderFiles(n);renderChildren(n);
   /* en lecture seule, masquer les zones vides et la note vide */
   const emptyNote=!(n.html&&n.html.replace(/<br\s*\/?>/gi,'').replace(/&nbsp;/g,'').trim());
@@ -2465,7 +2630,76 @@ function renderNodeWall(n){const zone=$('#nodeWallZone');
   const btn=$('#nodeWallEditBtn');
   btn.textContent=editing?'✔️ Terminer':'✏️ Modifier';
   btn.classList.toggle('primary',editing);
+  const sb=$('#nodeWallSimpleBtn');
+  sb.textContent=n.wallSimple?'🧱 Revenir aux tuiles':'🗒 Liste simple';
+  sb.style.display=editing?'none':'';
+  /* pendant l'édition du mur, on montre toujours les vraies tuiles */
+  const simple=!!n.wallSimple&&!editing;
+  $('#nodeWall').style.display=simple?'none':'';
+  const sEl=$('#nodeWallSimple');
+  sEl.style.display=simple?'':'none';
+  if(simple){renderSimpleList(n,sEl);return;}
+  sEl.innerHTML='';
   renderWall(n.id);}
+/* Liste simplifiée : accès en un clic, sans images. Noms courts (alias) et ordre
+   propres à la liste, définis en édition et diffusés à tous via le pack commun.
+   La séparation par lignes du mur (titres de section) est conservée pour la lisibilité :
+   chaque titre forme un groupe, le classement ▲▼ se fait à l'intérieur du groupe. */
+function slGroups(n){
+  const sorted=[...(n.tiles||[])].sort((a,b)=>a.ord-b.ord);
+  const groups=[];let cur={sec:null,items:[]};groups.push(cur);
+  for(const t of sorted){
+    if(t.kind==='section'){cur={sec:t,items:[]};groups.push(cur);continue;}
+    if(t.kind==='spacer'||!t.action)continue;
+    cur.items.push(t);}
+  for(const g of groups)
+    g.items.sort((a,b)=>((a.simpleOrd!==undefined?a.simpleOrd:a.ord)-(b.simpleOrd!==undefined?b.simpleOrd:b.ord)));
+  return groups.filter(g=>g.items.length);}
+function renderSimpleList(n,el){
+  el.innerHTML='';
+  const groups=slGroups(n);
+  if(!groups.length){el.innerHTML='<div class="empty-hint">Aucune tuile pour le moment — bouton « ✏️ Modifier » pour en ajouter.</div>';return;}
+  const E=isEdit();
+  for(const g of groups){
+    if(g.sec&&(g.sec.title||'').trim()){
+      const h=document.createElement('div');h.className='sl-cat';
+      h.innerHTML=`<span class="bar"></span><span class="txt">${esc(g.sec.title)}</span><span class="line"></span>`;
+      el.appendChild(h);}
+    const grid=document.createElement('div');grid.className='sl-grid';
+    g.items.forEach((t,idx)=>{
+      const row=document.createElement('div');row.className='sl-item';
+      const ic=t.action.type==='node'?`<span class="nicon" data-nicon="${t.action.value}"></span>`
+        :(t.action.type==='file'?'📄':'🔗');
+      row.innerHTML=`<span class="sl-ic">${ic}</span>
+        <span class="sl-lbl">${esc(t.alias||t.title||'Sans titre')}</span>
+        <span class="sl-tools">
+          <button data-a="ren" title="Renommer dans la liste (nom court)">✏️</button>
+          <button data-a="up" title="Monter dans cette ligne">▲</button>
+          <button data-a="dn" title="Descendre dans cette ligne">▼</button>
+        </span>`;
+      row.onclick=e=>{if(e.target.closest('.sl-tools'))return;runAction(t.action,true);};
+      if(E){
+        row.querySelector('[data-a="ren"]').onclick=e=>{e.stopPropagation();slRename(n,t);};
+        row.querySelector('[data-a="up"]').onclick=e=>{e.stopPropagation();slMove(n,g,idx,-1);};
+        row.querySelector('[data-a="dn"]').onclick=e=>{e.stopPropagation();slMove(n,g,idx,1);};}
+      grid.appendChild(row);});
+    el.appendChild(grid);}
+  hydrateIcons(el);}
+function slMove(n,g,idx,dir){
+  const j=idx+dir;if(j<0||j>=g.items.length)return;
+  const mv=g.items.splice(idx,1)[0];g.items.splice(j,0,mv);
+  g.items.forEach((t,i)=>t.simpleOrd=i);
+  touch(n);renderSimpleList(n,$('#nodeWallSimple'));}
+function slRename(n,t){
+  openModal('Nom court dans la liste',`
+    <div class="field"><label>Nom affiché dans la liste simplifiée (laisser vide pour reprendre « ${esc(t.title||'Sans titre')} »)</label>
+      <input type="text" id="mSlAlias" value="${esc(t.alias||'')}" placeholder="${esc(t.title||'')}"></div>
+    <p style="font-size:11.5px;color:var(--muted)">La tuile d'origine garde son nom : ce nom court ne concerne que la liste simplifiée, pour tous les utilisateurs.</p>`,
+    [{label:'Annuler'},{label:'Valider',primary:true,fn:()=>{
+      const v=$('#mSlAlias').value.trim();
+      if(v)t.alias=v;else delete t.alias;
+      touch(n);renderSimpleList(n,$('#nodeWallSimple'));}}]);
+  setTimeout(()=>{const i=$('#mSlAlias');if(i){i.focus();i.select();}},80);}
 function renderTags(n){const bar=$('#tagBar');bar.innerHTML='';
   const E=isEdit();
   const saveT=()=>{touch(n);renderTags(n);};
@@ -2742,7 +2976,7 @@ function updateColorBars(){
 function ensureTrailingP(){
   const ed=$('#editor');if(!ed)return;
   const last=ed.lastElementChild;
-  if(last&&(/^(TABLE|IMG|HR|FIGURE|BLOCKQUOTE)$/.test(last.tagName)||(last.classList&&last.classList.contains('rd-toc')))){
+  if(last&&(/^(TABLE|IMG|HR|FIGURE|BLOCKQUOTE)$/.test(last.tagName)||(last.classList&&(last.classList.contains('rd-toc')||last.classList.contains('rd-ftoc'))))){
     const pe=document.createElement('p');pe.innerHTML='<br>';ed.appendChild(pe);}}
 function initEditor(){
   const ed=$('#editor');
@@ -2790,6 +3024,7 @@ function initEditor(){
     else if(b.dataset.act==='imgnote'){$('#fiNoteImg').click();return;}
     else if(b.dataset.act==='table'){e.stopPropagation();handleTable(e);return;}
     else if(b.dataset.act==='toc'){e.stopPropagation();tocMenuOrInsert(b);return;}
+    else if(b.dataset.act==='ftoc'){e.stopPropagation();ftocMenuOrInsert(b);return;}
     else if(b.dataset.act==='clean'){cleanStyleAction();return;}
     else if(b.dataset.act==='erase'){eraseNote();return;}
     saveEditor();});
@@ -2823,10 +3058,16 @@ function initEditor(){
       e.preventDefault();e.stopPropagation();
       tocMenu(e.clientX,e.clientY);
       return;}
+    const fh=e.target.closest('.rd-ftoc-head');
+    if(fh&&isEdit()){
+      e.preventDefault();e.stopPropagation();
+      ftocMenu(e.clientX,e.clientY);
+      return;}
     const a=e.target.closest('a');
     if(!a)return;
     e.preventDefault();
     if(a.dataset.node){nodeById(a.dataset.node)?navigate('#/node/'+a.dataset.node):toast('Cette fiche n\'existe plus');}
+    else if(a.dataset.file){openFileNewTab(a.dataset.file);}
     else if(a.getAttribute('href'))openURLNewTab(a.getAttribute('href'));});
   /* collage : images conservées, texte ramené au style par défaut (structure préservée) */
   ed.addEventListener('paste',e=>{const cd=e.clipboardData;if(!cd)return;
@@ -2870,10 +3111,10 @@ function cleanHtmlToDefault(html){
         node.remove();continue;}
       for(const at of[...node.attributes]){
         const nm=at.name.toLowerCase();
-        const ok=(tag==='A'&&(nm==='href'||nm==='data-node'))
+        const ok=(tag==='A'&&(nm==='href'||nm==='data-node'||nm==='data-file'))
               ||(tag==='IMG'&&(nm==='src'||nm==='alt'||nm==='style'))
               ||(tag==='INPUT'&&(nm==='type'||nm==='checked'))
-              ||((tag==='DIV'||tag==='LABEL')&&nm==='class'&&/^(todo|rd-toc|rd-toc-head)$/.test(at.value))
+              ||((tag==='DIV'||tag==='LABEL'||tag==='SPAN')&&nm==='class'&&/^(todo|rd-toc|rd-toc-head|rd-ftoc|rd-ftoc-head|fsz)$/.test(at.value))
               ||(tag==='DIV'&&nm==='contenteditable');
         if(!ok)node.removeAttribute(at.name);}
       if(tag==='IMG'&&!/^(data:|blob:|https?:)/i.test(node.getAttribute('src')||''))node.remove();}
@@ -2896,7 +3137,7 @@ async function cleanStyleAction(){
 
 async function eraseNote(){
   const ed=$('#editor');
-  if(!ed.textContent.trim()&&!ed.querySelector('img,table,.rd-toc,input')){toast('La note est déjà vide');return;}
+  if(!ed.textContent.trim()&&!ed.querySelector('img,table,.rd-toc,.rd-ftoc,input')){toast('La note est déjà vide');return;}
   if(await confirmDlg('Effacer la note',
     'Effacer <b>tout le contenu</b> de la note de cette fiche ?<br><br>Les pièces jointes, liens, mots-clés, sous-fiches et le mur de la fiche ne sont pas touchés.')){
     ed.innerHTML='';saveEditor();
@@ -2931,6 +3172,41 @@ function tocMenuOrInsert(btn){
   if(!has){insertToc();return;}
   const r=btn.getBoundingClientRect();
   tocMenu(r.left,r.bottom+6);}
+
+/* ---------- Sommaire automatique des fichiers de la fiche ---------- */
+function ftocIcon(a){
+  if(/pdf/i.test(a.mime)||/\.pdf$/i.test(a.name||''))return '📕';
+  const off=officeInfo(a.name||'');
+  if(off)return off.letter==='W'?'📘':(off.letter==='X'?'📗':(off.letter==='P'?'📙':'📄'));
+  if(/^image\//i.test(a.mime||''))return '🖼';
+  return '📄';}
+function ftocHtmlFor(n){
+  if(!(n.files||[]).length)return '';
+  const items=n.files.map(a=>
+    `<li><a data-file="${a.fileId}">${ftocIcon(a)} ${esc(a.name||'Document')}</a><span class="fsz">${fmtSize(a.size||0)}</span></li>`).join('');
+  return `<div class="rd-ftoc" contenteditable="false"><div class="rd-ftoc-head">📎 Fichiers de la fiche</div><ul>${items}</ul></div>`;}
+function insertFtoc(){if(!currentNode)return;
+  const html=ftocHtmlFor(currentNode);
+  if(!html){toast('Cette fiche n\'a pas encore de fichiers importés (zone « Fichiers »)');return;}
+  const ed=$('#editor');
+  const old=ed.querySelector('.rd-ftoc');
+  if(old)old.outerHTML=html;
+  else{const toc=ed.querySelector('.rd-toc');
+    if(toc)toc.insertAdjacentHTML('afterend',html);
+    else ed.insertAdjacentHTML('afterbegin',html);}
+  saveEditor();toast('📎 Sommaire des fichiers inséré — un clic ouvre le fichier, 📎 pour actualiser ou supprimer');}
+function ftocMenu(x,y){
+  const el=$('#editor').querySelector('.rd-ftoc');if(!el)return;
+  openCtx(x,y,[
+    {ic:'🔄',label:'Actualiser le sommaire des fichiers',fn:insertFtoc},
+    {sep:true},
+    {ic:'🗑',label:'Supprimer le sommaire des fichiers',danger:true,fn:()=>{el.remove();saveEditor();toast('Sommaire des fichiers supprimé — le bouton 📎 permet de le réinsérer');}}]);}
+function ftocMenuOrInsert(btn){
+  if(!currentNode)return;
+  const has=$('#editor').querySelector('.rd-ftoc');
+  if(!has){insertFtoc();return;}
+  const r=btn.getBoundingClientRect();
+  ftocMenu(r.left,r.bottom+6);}
 
 /* ---------- Tableaux dans la note ---------- */
 function tableCtx(){const sel=window.getSelection();if(!sel||!sel.rangeCount)return null;
@@ -3045,7 +3321,7 @@ function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('on');
   clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('on'),2600);}
 
 /* ---------- Sélecteur d'icône ---------- */
-const EMOJIS=['🚄','🚈','🛤','⚡','🔧','🔩','⚙️','🛠','📄','📋','📖','📚','🗂','📁','🧰','🧯','🔌','💡','🖥','📞','☎️','📻','🧭','🗺','⚠️','🚨','✅','❌','🅿️','🚪','🪟','❄️','🔥','💧','🛑','🔋','🧲','📐','🎛','🎚','🔔','🏁','🇫🇷','🇧🇪','🇬🇧','🇩🇪','🟥','🟦'];
+const EMOJI_CATS=[["Rail, atelier & signalisation",["🚄","🚅","🚈","🚂","🚃","🚋","🚝","🚞","🚟","🚠","🚡","🚉","🛤","🛑","🚦","🚥","⚠️","🚨","⚡","🔌","🔋","🧲","🔧","🔩","⚙️","🛠","🧰","🧯","📐","🎛","🎚","🔦","🔭","🔬","🧪","🏗","🏭","⛽","🛢"]],["Documents & bureau",["📄","📃","📋","📑","📖","📕","📗","📘","📙","📚","🗂","📁","📂","🗃","🗄","📝","✏️","🖊","🖋","✒️","📌","📎","🖇","📏","🗒","🗓","📅","📆","📊","📈","📉","🗞","📰","🏷","🔖","💼"]],["Communication",["📞","☎️","📱","📲","📻","🎧","🎙","📡","📢","📣","🔔","🔕","✉️","📧","📨","📤","📥","📦","💬","🗨","💻","🖥","⌨️","🖱","🖨","💾","💿","🌐"]],["Smileys & personnes",["😀","😁","😂","😃","😄","😅","😆","😇","😈","😉","😊","😋","😌","😍","😎","😏","😐","😑","😒","😓","😔","😕","😖","😗","😘","😙","😚","😛","😜","😝","😞","😟","😠","😡","😢","😣","😤","😥","😦","😧","😨","😩","😪","😫","😬","😭","😮","😯","😰","😱","😲","😳","😴","😵","😶","😷","😸","😹","😺","😻","😼","😽","😾","😿","🙀","🙁","🙂","🙃","🙄","🙅","🙆","🙇","🙈","🙉","🙊","🙋","🙌","🙍","🙎","🙏"]],["Transport & lieux",["🚀","🚁","🚆","🚇","🚊","🚌","🚍","🚎","🚏","🚐","🚑","🚒","🚓","🚔","🚕","🚖","🚗","🚘","🚙","🚚","🚛","🚜","🚢","🚣","🚤","🚧","🚩","🚪","🚫","🚬","🚭","🚮","🚯","🚰","🚱","🚲","🚳","🚴","🚵","🚶","🚷","🚸","🚹","🚺","🚻","🚼","🚽","🚾","🚿","🛀","🛁","🛂","🛃","🛄","🛅","🛆","🛇","🛈","🛉","🛊","🛋","🛌","🛍","🛎","🛏","🛐","🛒","🛓","🛔","🛕","🛖","🛗","🛝","🛞","🛟","🛡","🛣","🛥","🛦","🛧","🛨","🛩","🛪","🛫","🛬","🛰","🛱","🛲","🛳","🛴","🛵","🛶","🛷","🛸","🛹","🛺","🛻","🛼"]],["Nature & météo",["🌀","🌁","🌂","🌃","🌄","🌅","🌆","🌇","🌈","🌉","🌊","🌋","🌌","🌍","🌎","🌏","🌑","🌒","🌓","🌔","🌕","🌖","🌗","🌘","🌙","🌚","🌛","🌜","🌝","🌞","🌟","🌠","🌡","🌢","🌣","🌤","🌥","🌦","🌧","🌨","🌩","🌪","🌫","🌬","☀️","⛅","☁️","⛈","❄️","☃️","⛄","💨","💧","💦","☔"]],["Objets & symboles",["💠","💡","💢","💣","💤","💥","💩","💪","💫","💭","💮","💯","💰","💱","💲","💳","💴","💵","💶","💷","💸","💹","💺","💽","📀","📇","📍","📒","📓","📔","📛","📜","📟","📠","📩","📪","📫","📬","📭","📮","📯","📳","📴","📵","📶","📷","📸","📹","📺","📼","📽","📾","📿","🔀","🔁","🔂","🔃","🔄","🔅","🔆","🔇","🔈","🔉","🔊","🔍","🔎","🔏","🔐","🔑","🔒","🔓","🔗","🔘","🔙","🔚","🔛","🔜","🔝","🔞","🔟","🔠","🔡","🔢","🔣","🔤","🔥","🔨","🔪","🔫","🔮","🔯","🔰","🔱","🔲","🔳","🔴","🔵","🔶","🔷","🔸","🔹","🔺","🔻","🔼","🔽","🔾","🔿","🕀","🕁","🕂","🕃","🕄","🕅","🕆","🕇","🕈","🕉","🕊","🕋","🕌","🕍","🕎","🕏","🕐","🕑","🕒","🕓","🕔","🕕","🕖","🕗","🕘","🕙","🕚","🕛","🕜","🕝","🕞","🕟","🕠","🕡","🕢","🕣","🕤","🕥","🕦","🕧","🕨","🕩","🕪","🕫","🕬","🕭","🕮","🕯","🕰","🕱","🕲","🕳","🕴","🕵","🕶","🕷","🕸","🕹","🕺","🕻","🕼","🕽","🕾","🕿","🖀","🖁","🖂","🖃","🖄","🖅","🖆","🖈","🖉","🖌","🖍","🖎","🖏","🖐","🖑","🖒","🖓","🖔","🖕","🖖","🖗","🖘","🖙","🖚","🖛","🖜","🖝","🖞","🖟","🖠","🖡","🖢","🖣","🖤","🖦","🖧","🖩","🖪","🖫","🖬","🖭","🖮","🖯","🖰","🖲","🖳","🖴","🖵","🖶","🖷","🖸","🖹","🖺","🖻","🖼","🖽","🖾","🖿","🗀","🗁","🗅","🗆","🗇","🗈","🗉","🗊","🗋","🗌","🗍","🗎","🗏","🗐","🗑","🗔","🗕","🗖","🗗","🗘","🗙","🗚","🗛","🗜","🗝","🗟","🗠","🗡","🗢","🗣","🗤","🗥","🗦","🗧","🗩","🗪","🗫","🗬","🗭","🗮","🗯","🗰","🗱","🗲","🗳","🗴","🗵","🗶","🗷","🗸","🗹","🗺","🗻","🗼","🗽","🗾","🗿"]],["Divers & récents",["🤀","🤁","🤂","🤃","🤄","🤅","🤆","🤇","🤈","🤉","🤊","🤋","🤌","🤍","🤎","🤏","🤐","🤑","🤒","🤓","🤔","🤕","🤖","🤗","🤘","🤙","🤚","🤛","🤜","🤝","🤞","🤟","🤠","🤡","🤢","🤣","🤤","🤥","🤦","🤧","🤨","🤩","🤪","🤫","🤬","🤭","🤮","🤯","🤰","🤱","🤲","🤳","🤴","🤵","🤶","🤷","🤸","🤹","🤺","🤻","🤼","🤽","🤾","🤿","🥀","🥁","🥂","🥃","🥄","🥅","🥆","🥇","🥈","🥉","🥊","🥋","🥌","🥍","🥎","🥏","🥐","🥑","🥒","🥓","🥔","🥕","🥖","🥗","🥘","🥙","🥚","🥛","🥜","🥝","🥞","🥟","🥠","🥡","🥢","🥣","🥤","🥥","🥦","🥧","🥨","🥩","🥪","🥫","🥬","🥭","🥮","🥯","🥰","🥱","🥲","🥳","🥴","🥵","🥶","🥷","🥸","🥹","🥺","🥻","🥼","🥽","🥾","🥿","🦀","🦁","🦂","🦃","🦄","🦅","🦆","🦇","🦈","🦉","🦊","🦋","🦌","🦍","🦎","🦏","🦐","🦑","🦒","🦓","🦔","🦕","🦖","🦗","🦘","🦙","🦚","🦛","🦜","🦝","🦞","🦟","🦠","🦡","🦢","🦣","🦤","🦥","🦦","🦧","🦨","🦩","🦪","🦫","🦬","🦭","🦮","🦯","🦰","🦱","🦲","🦳","🦴","🦵","🦶","🦷","🦸","🦹","🦺","🦻","🦼","🦽","🦾","🦿","🧀","🧁","🧂","🧃","🧄","🧅","🧆","🧇","🧈","🧉","🧊","🧋","🧌","🧍","🧎","🧏","🧐","🧑","🧒","🧓","🧔","🧕","🧖","🧗","🧘","🧙","🧚","🧛","🧜","🧝","🧞","🧟","🧠","🧡","🧢","🧣","🧤","🧥","🧦","🧧","🧨","🧩","🧫","🧬","🧭","🧮","🧱","🧳","🧴","🧵","🧶","🧷","🧸","🧹","🧺","🧻","🧼","🧽","🧾","🧿","🩰","🩱","🩲","🩳","🩴","🩸","🩹","🩺","🩻","🩼","🪀","🪁","🪂","🪃","🪄","🪅","🪆","🪐","🪑","🪒","🪓","🪔","🪕","🪖","🪗","🪘","🪙","🪚","🪛","🪜","🪝","🪞","🪟","🪠","🪡","🪢","🪣","🪤","🪥","🪦","🪧","🪨","🪩","🪪","🪫","🪬","🪰","🪱","🪲","🪳","🪴","🪵","🪶","🪷","🪸","🪹","🪺","🫀","🫁","🫂","🫃","🫄","🫅","🫐","🫑","🫒","🫓","🫔","🫕","🫖"]],["Signes & formes",["☀","☁","☂","☃","☄","★","☆","☇","☈","☉","☊","☋","☌","☍","☎","☏","☐","☑","☒","☓","☕","☖","☗","☘","☙","☚","☛","☜","☝","☞","☟","☠","☡","☢","☣","☤","☥","☦","☧","☨","☩","☪","☫","☬","☭","☮","☯","☰","☱","☲","☳","☴","☵","☶","☷","☸","☹","☺","☻","☼","☽","☾","☿","♀","♁","♂","♃","♄","♅","♆","♇","♈","♉","♊","♋","♌","♍","♎","♏","♐","♑","♒","♓","♔","♕","♖","♗","♘","♙","♚","♛","♜","♝","♞","♟","♠","♡","♢","♣","♤","♥","♦","♧","♨","♩","♪","♫","♬","♭","♮","♯","♰","♱","♲","♳","♴","♵","♶","♷","♸","♹","♺","♻","♼","♽","♾","♿","⚀","⚁","⚂","⚃","⚄","⚅","⚆","⚇","⚈","⚉","⚊","⚋","⚌","⚍","⚎","⚏","⚐","⚑","⚒","⚓","⚔","⚕","⚖","⚗","⚘","⚙","⚚","⚛","⚜","⚝","⚞","⚟","⚠","⚢","⚣","⚤","⚥","⚦","⚧","⚨","⚩","⚪","⚫","⚬","⚭","⚮","⚯","⚰","⚱","⚲","⚳","⚴","⚵","⚶","⚷","⚸","⚹","⚺","⚻","⚼","⚽","⚾","⚿","⛀","⛁","⛂","⛃","⛆","⛇","⛉","⛊","⛋","⛌","⛍","⛎","⛏","⛐","⛑","⛒","⛓","⛔","⛕","⛖","⛗","⛘","⛙","⛚","⛛","⛜","⛝","⛞","⛟","⛠","⛡","⛢","⛣","⛤","⛥","⛦","⛧","⛨","⛩","⛪","⛫","⛬","⛭","⛮","⛯","⛰","⛱","⛲","⛳","⛴","⛵","⛶","⛷","⛸","⛹","⛺","⛻","⛼","⛾","⛿","✀","✁","✂","✃","✄","✅","✆","✇","✈","✉","✊","✋","✌","✍","✎","✏","✐","✑","✒","✓","✔","✕","✖","✗","✘","✙","✚","✛","✜","✝","✞","✟","✠","✡","✢","✣","✤","✥","✦","✧","✨","✩","✪","✫","✬","✭","✮","✯","✰","✱","✲","✳","✴","✵","✶","✷","✸","✹","✺","✻","✼","✽","✾","✿","❀","❁","❂","❃","❄","❅","❆","❇","❈","❉","❊","❋","❌","❍","❎","❏","❐","❑","❒","❓","❔","❕","❖","❗","❘","❙","❚","❛","❜","❝","❞","❟","❠","❡","❢","❣","❤","❥","❦","❧","❨","❩","❪","❫","❬","❭","❮","❯","❰","❱","❲","❳","❴","❵","❶","❷","❸","❹","❺","❻","❼","❽","❾","❿","➀","➁","➂","➃","➄","➅","➆","➇","➈","➉","➊","➋","➌","➍","➎","➏","➐","➑","➒","➓","➔","➕","➖","➗","➘","➙","➚","➛","➜","➝","➞","➟","➠","➡","➢","➣","➤","➥","➦","➧","➨","➩","➪","➫","➬","➭","➮","➯","➰","➱","➲","➳","➴","➵","➶","➷","➸","➹","➺","➻","➼","➽","➾","➿","✖️","‼️","⁉️","🟠","🟡","🟢","🟣","🟤","🟥","🟧","🟨","🟩","🟦","🟪","🟫","⬛","⬜"]],["Drapeaux",["🇫🇷","🇧🇪","🇬🇧","🇩🇪","🇮🇹","🇪🇸","🇨🇭","🇳🇱","🇱🇺","🇦🇹","🇵🇹","🇪🇺","🏁","🏳️","🏴"]]];
 function nodeIconPicker(n){
   let newImgFile=null,removeImg=false;
   openModal('Icône de la fiche',`
@@ -3057,7 +3333,7 @@ function nodeIconPicker(n){
       <div class="img-preview" id="mIcPrev" style="display:${n.iconImg?'flex':'none'}"></div>
     </div>
     <div class="field"><label>Ou choisissez un emoji (application immédiate)</label>
-      <div class="emoji-grid">${EMOJIS.map(e=>`<button data-e="${e}">${e}</button>`).join('')}</div></div>
+      <div class="emo-wrap">${EMOJI_CATS.map(([c,L])=>`<div class="emo-cat">${c}</div><div class="emoji-grid">${L.map(e=>`<button data-e="${e}">${e}</button>`).join('')}</div>`).join('')}</div></div>
     <div class="field"><label>Ou saisissez un emoji / caractère</label>
       <input type="text" id="mEmojiFree" maxlength="4" placeholder="ex : 🚦"></div>`,
     [{label:'Annuler'},{label:'Valider',primary:true,fn:async()=>{
@@ -3231,6 +3507,83 @@ function monogramFile(url){
   let hh=host;if(g.measureText(hh).width>560)hh=hh.slice(0,38)+'…';
   g.fillText(hh,320,320);
   return new Promise(res=>c.toBlob(b=>res(new File([b],host+'-vignette.png',{type:'image/png'})),'image/png'));}
+/* ---------- Aperçu automatique des tuiles « fichier en ligne » ---------- */
+const FILE_VIG={pdf:['#d93025','PDF'],doc:['#1a56b8','DOC'],docx:['#1a56b8','DOC'],odt:['#1a56b8','ODT'],rtf:['#1a56b8','RTF'],
+  xls:['#1e7e45','XLS'],xlsx:['#1e7e45','XLS'],xlsm:['#1e7e45','XLS'],csv:['#1e7e45','CSV'],tsv:['#1e7e45','CSV'],ods:['#1e7e45','ODS'],
+  ppt:['#c43e1c','PPT'],pptx:['#c43e1c','PPT'],odp:['#c43e1c','ODP'],
+  zip:['#6b7280','ZIP'],rar:['#6b7280','RAR'],'7z':['#6b7280','7Z'],txt:['#475569','TXT']};
+const IMG_EXTS=['png','jpg','jpeg','gif','webp','svg','bmp','avif'];
+function normURL(u){return /^[a-z][a-z0-9+.-]*:/i.test(u)?u:'https://'+u;}
+function urlFileExt(u){
+  try{const path=new URL(normURL(u)).pathname;
+    const m=path.match(/\.([a-z0-9]{1,5})$/i);if(!m)return null;
+    const e=m[1].toLowerCase();
+    if(IMG_EXTS.includes(e))return 'img';
+    return FILE_VIG[e]?e:null;
+  }catch(_){return null;}}
+/* Vignette générée hors ligne : couleur + sigle par type de fichier + nom du fichier.
+   Fonctionne partout (intranet, hors ligne), aucune requête réseau. */
+function fileTypeVignette(url){
+  const ext=urlFileExt(url);const fv=FILE_VIG[ext]||['#c2143f','DOC'];
+  let name='';try{name=decodeURIComponent(new URL(normURL(url)).pathname.split('/').pop()||'');}catch(_){}
+  const c=document.createElement('canvas');c.width=640;c.height=336;
+  const g=c.getContext('2d');
+  const gr=g.createLinearGradient(0,0,640,336);gr.addColorStop(0,fv[0]);gr.addColorStop(1,'#111827');
+  g.fillStyle=gr;g.fillRect(0,0,640,336);
+  /* feuille avec coin replié */
+  g.fillStyle='rgba(255,255,255,.13)';
+  g.beginPath();g.moveTo(430,42);g.lineTo(552,42);g.lineTo(596,86);g.lineTo(596,224);g.lineTo(430,224);g.closePath();g.fill();
+  g.fillStyle='rgba(255,255,255,.28)';
+  g.beginPath();g.moveTo(552,42);g.lineTo(596,86);g.lineTo(552,86);g.closePath();g.fill();
+  g.font='800 116px Arial';g.fillStyle='#fff';g.textAlign='left';g.textBaseline='middle';
+  g.fillText(fv[1],44,148);
+  g.font='600 26px Arial';g.globalAlpha=.92;
+  let nn=name||url,cut=false;
+  while(nn.length>4&&g.measureText(nn+(cut?'…':'')).width>552){nn=nn.slice(0,-1);cut=true;}
+  g.fillText(nn+(cut?'…':''),44,288);
+  return new Promise(res=>c.toBlob(b=>res(new File([b],(name||'fichier')+'-vignette.png',{type:'image/png'})),'image/png'));}
+/* Tente de lire le fichier en ligne pour un VRAI aperçu : 1re page d'un PDF, ou l'image
+   elle-même. Ne fonctionne que si le serveur l'autorise (même origine ou CORS ouvert) —
+   les liens SharePoint/intranet protégés échouent en silence. */
+async function remoteFilePreview(url){
+  const u=normURL(url);
+  if(location.protocol==='https:'&&/^http:/i.test(u))return null;
+  const ctl=new AbortController();const to=setTimeout(()=>ctl.abort(),12000);
+  let r;
+  try{r=await fetch(u,{signal:ctl.signal,cache:'no-store'});}
+  catch(_){clearTimeout(to);return null;}
+  clearTimeout(to);
+  if(!r.ok)return null;
+  const blob=await r.blob();
+  let name='';try{name=decodeURIComponent(new URL(u).pathname.split('/').pop()||'');}catch(_){}
+  if(/pdf/i.test(blob.type)||/\.pdf$/i.test(name)){
+    if(!ensurePdfJs())return null;
+    try{
+      const pdf=await pdfjsLib.getDocument({data:await blob.arrayBuffer(),isEvalSupported:false}).promise;
+      const page=await pdf.getPage(1);
+      const vp1=page.getViewport({scale:1});
+      const vp=page.getViewport({scale:640/vp1.width});
+      const cv=document.createElement('canvas');cv.width=Math.round(vp.width);cv.height=Math.round(vp.height);
+      const g2=cv.getContext('2d');g2.fillStyle='#fff';g2.fillRect(0,0,cv.width,cv.height);
+      await page.render({canvasContext:g2,viewport:vp}).promise;
+      try{pdf.destroy();}catch(_){}
+      return await new Promise(res=>cv.toBlob(b=>res(b?new File([b],(name||'apercu')+'.jpg',{type:'image/jpeg'}):null),'image/jpeg',0.82));
+    }catch(_){return null;}}
+  if(/^image\//i.test(blob.type))return new File([blob],name||'image',{type:blob.type});
+  return null;}
+/* Après création d'une tuile « fichier en ligne » : tentative d'aperçu réel en arrière-plan ;
+   en cas de succès, il remplace la vignette par type. */
+async function autoTilePreview(owner,tileId,url){
+  try{
+    const f=await remoteFilePreview(url);if(!f)return;
+    const ctx=wallCtx(owner);if(!ctx)return;
+    const t=ctx.list.find(x=>x.id===tileId);if(!t)return;
+    const old=t.img&&t.img.type==='file'?t.img.value:null;
+    t.img={type:'file',value:await storeFile(f)};t.imgFit='cover';
+    ctx.node?touch(ctx.node):save();
+    if(old)await maybeDeleteBlob(old);
+    refreshWall(owner);
+  }catch(_){/* l'aperçu réel est un bonus : la vignette reste */}}
 function tileModal(owner,tileId,afterId){
   const ctx=wallCtx(owner);
   const t=tileId?ctx.list.find(x=>x.id===tileId):null;
@@ -3254,8 +3607,13 @@ function tileModal(owner,tileId,afterId){
     </div>
     <div class="field"><label>Portée — qui reçoit cette tuile ?</label>
       <div class="seg" id="mTiShSeg">
-        <button data-v="perso">👤 Personnelle</button><button data-v="commune">🌐 Commune (dans le pack)</button>
+        ${owner==='home'
+          ?'<button data-v="commune">🌐 Commune (défaut)</button><button data-v="perso">👤 Personnelle</button>'
+          :'<button data-v="inherit">↩️ Comme la fiche ('+(ctx.node&&nodeSharedEff(ctx.node.id)?'🌐 commune':'👤 perso')+')</button><button data-v="commune">🌐 Commune</button><button data-v="perso">👤 Personnelle</button>'}
       </div>
+      <p style="font-size:11px;color:var(--muted);margin-top:5px">${owner==='home'
+        ?'Le mur d\'accueil est commun par défaut — marquez 👤 Personnelle une tuile à garder pour vous.'
+        :'Par défaut, la tuile suit la portée de sa fiche. Un badge 👤 signale les tuiles personnelles.'}</p>
     </div>
     <div class="field"><label>Taille</label>
       <div class="seg" id="mTiSizeSeg">
@@ -3280,6 +3638,7 @@ function tileModal(owner,tileId,afterId){
         <button class="btn small" id="mTiAutoShot" title="Miniature réelle de la page (internet requis, sites publics uniquement — pas les liens VPN/intranet)">📸 Capture du site</button>
         <button class="btn small" id="mTiAutoLogo" title="Logo (favicon) du site — internet requis">🔖 Logo</button>
         <button class="btn small" id="mTiAutoMono" title="Vignette générée hors ligne : couleur unique par site + initiale — fonctionne partout, y compris intranet">🅰 Monogramme</button>
+        <button class="btn small" id="mTiAutoFile" title="Aperçu du fichier en ligne : vraie 1re page d'un PDF ou image elle-même si le serveur l'autorise ; sinon vignette par type de fichier (PDF, Word, Excel…) générée hors ligne">📑 Aperçu du fichier</button>
       </div>
       <div class="seg" id="mTiFitSeg" style="display:none;margin-top:8px">
         <button data-v="cover">Remplie (recadrée)</button><button data-v="contain">Entière</button><button data-v="small">Réduite</button>
@@ -3342,23 +3701,36 @@ function tileModal(owner,tileId,afterId){
       const badgeColor=badge?$('#mTiBadgePick').value:null;
       if(t){t.title=title;t.sub=$('#mTiSub').value.trim();t.img=img;t.action=action;t.size=st.size;t.color=st.color;
         t.badge=badge;t.badgeColor=badgeColor;t.imgFit=img?st.fit:null;
-        if(st.shared)t.shared=true;else delete t.shared;}
+        if(st.scope==='perso')t.shared=false;
+        else if(st.scope==='commune'&&owner!=='home')t.shared=true;
+        else delete t.shared;}
       else{let ord=Date.now();
         if(afterId){const sorted=[...ctx.list].sort((a,b)=>a.ord-b.ord);
           if(afterId==='__start')ord=(sorted.length?sorted[0].ord:0)-1;
           else{const ai=sorted.findIndex(x=>x.id===afterId);
             if(ai>=0){const anc=sorted[ai],nx=sorted[ai+1];ord=nx?(anc.ord+nx.ord)/2:anc.ord+1000;}}}
-        ctx.list.push({id:'t_'+uid(),kind:'tile',title,sub:$('#mTiSub').value.trim(),img,action,
+        const nid='t_'+uid();
+        /* aperçu automatique : tuile « fichier en ligne » créée sans image */
+        let bgPrevUrl=null;
+        if(!img&&action.type==='url'){
+          const ext=urlFileExt(action.value);
+          if(ext==='img')img={type:'url',value:action.value};
+          else if(ext){img={type:'file',value:await storeFile(await fileTypeVignette(action.value))};
+            st.fit='cover';bgPrevUrl=action.value;}}
+        ctx.list.push({id:nid,kind:'tile',title,sub:$('#mTiSub').value.trim(),img,action,
           size:st.size,color:st.color,badge,badgeColor,imgFit:img?st.fit:null,ord,
-          ...(st.shared?{shared:true}:{})});}
+          ...(st.scope==='perso'?{shared:false}:(st.scope==='commune'&&owner!=='home'?{shared:true}:{}))});
+        if(bgPrevUrl)setTimeout(()=>autoTilePreview(owner,nid,bgPrevUrl),80);}
       ctx.node?touch(ctx.node):save();
       if(oldImgFile&&(!img||img.value!==oldImgFile))await maybeDeleteBlob(oldImgFile);
       refreshWall(owner);toast(t?'Tuile mise à jour':'Tuile ajoutée');}}]);
-  /* portée commun / perso */
-  st.shared=!!(t&&t.shared);
+  /* portée commun / perso / héritée */
+  if(t&&t.shared===false)st.scope='perso';
+  else if(t&&t.shared===true)st.scope='commune';
+  else st.scope=owner==='home'?'commune':'inherit';
   {const segSh=$('#mTiShSeg');
-   const refSh=()=>[...segSh.children].forEach(b=>b.classList.toggle('on',b.dataset.v===(st.shared?'commune':'perso')));
-   [...segSh.children].forEach(b=>b.onclick=()=>{st.shared=b.dataset.v==='commune';refSh();});
+   const refSh=()=>[...segSh.children].forEach(b=>b.classList.toggle('on',b.dataset.v===st.scope));
+   [...segSh.children].forEach(b=>b.onclick=()=>{st.scope=b.dataset.v;refSh();});
    refSh();}
   /* taille */
   const segS=$('#mTiSizeSeg');
@@ -3442,6 +3814,15 @@ function tileModal(owner,tileId,afterId){
     st.newImgFile=f;st.imgMode='file';st.fit='cover';st.imgAttId=null;
     refreshImgSeg();refreshFit();
     toast('🅰 Monogramme généré — fonctionne hors ligne et en intranet');};
+  $('#mTiAutoFile').onclick=async()=>{const u=autoUrl();if(!u)return;
+    toast('⏳ Récupération de l\'aperçu du fichier…');
+    let f=null;
+    try{f=await remoteFilePreview(u);}catch(_){}
+    if(f)toast('📑 Aperçu réel du fichier appliqué');
+    else{f=await fileTypeVignette(u);
+      toast('📑 Fichier non lisible directement (accès protégé, intranet ou CORS) — vignette par type appliquée');}
+    st.newImgFile=f;st.imgMode='file';st.fit='cover';st.imgAttId=null;
+    refreshImgSeg();refreshFit();};
   const attSel=$('#mTiImgAtt');
   attSel.onchange=()=>{st.imgAttId=attSel.value||null;refreshImgSeg();};
   makeFileSearch(attSel,'🔎 Rechercher une pièce jointe par son nom…');
@@ -3657,9 +4038,25 @@ async function pickPackFile(){
       if(f){data.settings.updateMode='file';data.settings.updateFileName=f.name;save();applyUpdBtn();}
       res(f||null);};
     fi.click();});}
+const PACK_FILENAME='Interface-COMMUN.json';
+async function checkPackFile(f,manual,fromFileMode){
+  try{
+    const o=JSON.parse(await rdFirstLine(f));
+    if(!(o&&o.app==='RailDoc'&&o.format==='pack')){
+      if(manual)toast('⚠️ Ce fichier n\'est pas un pack de données communes');
+      state.updOk=false;state.updAvail=null;updateStats();return;}
+    if((o.packVersion||0)<=(data.packVer||0)){
+      state.updAvail=null;state.updOk=true;updateStats();
+      if(manual)toast('✅ Vos données communes sont à jour (pack v'+(data.packVer||0)+')');
+      return;}
+    state.updAvail={ver:o.packVersion,head:o,file:f};state.updOk=false;
+    updateStats();proposeUpdate();
+  }catch(e){console.error(e);
+    state.updOk=false;state.updAvail=null;updateStats();
+    if(manual)toast('⚠️ Fichier de pack illisible');}}
 async function checkUpdate(manual){
   const mode=data.settings.updateMode||((data.settings.updateUrl||'').trim()?'url':null);
-  /* --- mode fichier local (dossier partagé synchronisé sur l'appareil) --- */
+  /* --- mode fichier mémorisé --- */
   if(mode==='file'){
     if(manual)toast('⏳ Lecture du fichier de pack…');
     let f=await readPackFromHandle(manual);
@@ -3668,42 +4065,48 @@ async function checkUpdate(manual){
     if(!f){state.updOk=false;state.updAvail=null;updateStats();
       if(manual)toast('⚠️ Aucun fichier de pack sélectionné');
       return;}
+    await checkPackFile(f,manual,true);
+    return;}
+  /* --- mode adresse web explicite --- */
+  const url=(data.settings.updateUrl||'').trim();
+  if(mode==='url'&&url){
+    if(manual)toast('⏳ Vérification des mises à jour…');
     try{
-      const o=JSON.parse(await rdFirstLine(f));
+      const o=await fetchPackHead(url);
       if(!(o&&o.app==='RailDoc'&&o.format==='pack')){
-        if(manual)toast('⚠️ Ce fichier n\'est pas un pack RailDoc');
-        state.updOk=false;state.updAvail=null;updateStats();return;}
+        if(manual)toast('⚠️ La source ne contient pas un pack RailDoc valide');return;}
       if((o.packVersion||0)<=(data.packVer||0)){
         state.updAvail=null;state.updOk=true;updateStats();
         if(manual)toast('✅ Vos données communes sont à jour (pack v'+(data.packVer||0)+')');
         return;}
-      state.updAvail={ver:o.packVersion,head:o,file:f};state.updOk=false;
+      state.updAvail={ver:o.packVersion,url,head:o};state.updOk=false;
       updateStats();proposeUpdate();
     }catch(e){console.error(e);
       state.updOk=false;state.updAvail=null;updateStats();
-      if(manual)toast('⚠️ Fichier de pack illisible');}
+      if(manual)toast('⚠️ Vérification impossible — réseau, droits d\'accès ou lien invalide (voir ⚙ Source des mises à jour)');}
     return;}
-  /* --- mode adresse web --- */
-  const url=(data.settings.updateUrl||'').trim();
-  if(!url){state.updOk=false;state.updAvail=null;updateStats();
-    if(manual&&(isAdmin()||isEdit()))updateSourceModal();
-    else if(manual)toast('⚠️ Aucune source de mise à jour configurée sur cette application');
-    return;}
-  if(manual)toast('⏳ Vérification des mises à jour…');
+  /* --- par défaut : le pack « ${PACK_FILENAME} » posé à CÔTÉ du fichier HTML.
+     Fonctionne automatiquement quand l'application est servie par un site web ;
+     ouvert en fichier local (PC), le navigateur interdit cette lecture : on retombe
+     alors sur le fichier mémorisé, puis sur le sélecteur au clic. --- */
   try{
-    const o=await fetchPackHead(url);
-    if(!(o&&o.app==='RailDoc'&&o.format==='pack')){
-      if(manual)toast('⚠️ La source ne contient pas un pack RailDoc valide');return;}
-    if((o.packVersion||0)<=(data.packVer||0)){
-      state.updAvail=null;state.updOk=true;updateStats();
-      if(manual)toast('✅ Vos données communes sont à jour (pack v'+(data.packVer||0)+')');
+    const o=await fetchPackHead(PACK_FILENAME);
+    if(o&&o.app==='RailDoc'&&o.format==='pack'){
+      if((o.packVersion||0)<=(data.packVer||0)){
+        state.updAvail=null;state.updOk=true;updateStats();
+        if(manual)toast('✅ Vos données communes sont à jour (pack v'+(data.packVer||0)+')');
+        return;}
+      state.updAvail={ver:o.packVersion,url:PACK_FILENAME,head:o};state.updOk=false;
+      updateStats();proposeUpdate();
       return;}
-    state.updAvail={ver:o.packVersion,url,head:o};state.updOk=false;
-    updateStats();
-    proposeUpdate();
-  }catch(e){console.error(e);
-    state.updOk=false;state.updAvail=null;updateStats();
-    if(manual)toast('⚠️ Vérification impossible — réseau, droits d\'accès ou lien invalide (voir ⚙ Source des mises à jour)');}}
+  }catch(_){/* fichier local : lecture directe interdite par le navigateur */}
+  let f=await readPackFromHandle(manual);
+  if(f&&f!=='perm'){await checkPackFile(f,manual,true);return;}
+  if(manual){
+    toast('📂 Sélectionnez le pack « '+PACK_FILENAME+' » (dans le dossier du fichier HTML)');
+    const pf=await pickPackFile();
+    if(pf){await checkPackFile(pf,manual,true);return;}}
+  state.updOk=false;state.updAvail=null;updateStats();}
 function proposeUpdate(){
   const u=state.updAvail;if(!u)return;
   const o=u.head;
@@ -3734,7 +4137,7 @@ function updateSourceModal(){
     <p style="font-size:12.5px;color:var(--muted);line-height:1.65;margin-bottom:12px">Deux façons d'alimenter les mises à jour du contenu commun :</p>
     <div style="border:1px solid var(--border-strong);border-radius:12px;padding:11px 13px;margin-bottom:10px">
       <b style="font-size:13px">📂 Fichier local (recommandé)</b>
-      <p style="font-size:11.5px;color:var(--muted);line-height:1.6;margin:5px 0 9px">Choisissez le fichier pack dans un dossier de l'appareil — par exemple le dossier SharePoint <b>synchronisé par OneDrive</b> : OneDrive le tient à jour, et le bouton 🔄 relit toujours la dernière version. Gardez le <b>même nom de fichier</b> à chaque publication (ex : <code>RailDoc-COMMUN.json</code>).</p>
+      <p style="font-size:11.5px;color:var(--muted);line-height:1.6;margin:5px 0 9px">Règle simple : le pack s'appelle <b><code>Interface-COMMUN.json</code></b> et vit <b>dans le même dossier que le fichier HTML</b> (dossier réseau du PC pro, ou plus tard le site web — où il sera lu automatiquement). Sur PC, choisissez-le une fois avec ce bouton : Chrome/Edge le mémorisent, le 🔄 le relira ensuite.</p>
       <button type="button" class="btn small" id="mUpdPickBtn">📂 Choisir le fichier du pack…</button>
       <span id="mUpdFileName" style="font-size:11.5px;color:var(--muted);margin-left:8px">${data.settings.updateMode==='file'&&data.settings.updateFileName?esc(data.settings.updateFileName):''}</span>
     </div>
@@ -3769,7 +4172,7 @@ function updateSourceModal(){
       else toast('⚠️ Ce fichier n\'est pas un pack RailDoc');
     }catch(_){toast('⚠️ Fichier illisible');}};}
 function applyUpdBtn(){
-  document.documentElement.classList.toggle('upd-on',!!(data.settings&&(data.settings.updateUrl||data.settings.updateMode==='file')));}
+  document.documentElement.classList.add('upd-on');}
 /* ---------- Portée d'une fiche : commune / personnelle / héritée ---------- */
 function nodeScopeModal(id){
   const n=nodeById(id);if(!n)return;
@@ -3801,39 +4204,53 @@ function nodeScopeModal(id){
 function sharedManagerModal(){
   if(!isEdit()){toast('🔒 Mode lecture seule');return;}
   const rowCss='display:flex;align-items:center;gap:10px;border:1px solid var(--border);background:var(--panel-2);border-radius:11px;padding:8px 12px;margin-bottom:6px';
+  const subCss='display:flex;align-items:center;gap:8px;border:1px dashed var(--border-strong);background:var(--panel);border-radius:9px;padding:5px 10px;margin:0 0 5px 26px;font-size:11.5px';
   const draw=()=>{
     const roots=childrenOf(null);
     $('#mShList').innerHTML=roots.map(n=>{
-      const sub=descendants(n.id).length;
-      const on=!!n.shared;
+      const eff=nodeSharedEff(n.id);
+      const desc=descendants(n.id);
+      const overrides=desc.filter(d=>typeof d.shared==='boolean'&&nodeSharedEff(d.id)!==eff);
+      const affected=desc.filter(d=>nodeSharedEff(d.id)!==eff).length;
       return `<div style="${rowCss}">
         <span style="flex:none">${esc(n.icon||'📄')}</span>
         <div style="flex:1;min-width:0">
           <b style="font-size:13px">${esc(n.title||'Sans titre')}</b>
-          ${sub?`<div style="font-size:10.5px;color:var(--muted)">${sub} sous-fiche(s) — suivent le même statut</div>`:''}
+          <div style="font-size:10.5px;color:var(--muted)">${desc.length?desc.length+' sous-fiche(s)':'aucune sous-fiche'}${overrides.length?' — <span style="color:#e07b00;font-weight:800">⚠ '+affected+' avec statut différent</span>':''}</div>
         </div>
-        <button data-sh="${n.id}" style="flex:none;border-radius:999px;padding:5px 13px;font-size:11.5px;font-weight:800;border:1.5px solid ${on?'#1e6fd9':'var(--border-strong)'};color:${on?'#fff':'var(--muted)'};background:${on?'#1e6fd9':'var(--panel)'}">${on?'🌐 Commune':'👤 Perso'}</button>
-      </div>`;}).join('')||'<div class="empty-hint">Aucune fiche pour le moment.</div>';
-    const tc=(data.tiles||[]).filter(t=>t.shared&&t.kind!=='spacer').length;
-    const tp=(data.tiles||[]).filter(t=>!t.shared&&t.kind!=='spacer').length;
-    $('#mShTiles').textContent=`${tc} élément(s) commun(s) · ${tp} personnel(s)`;
+        <button data-sh="${n.id}" style="flex:none;border-radius:999px;padding:5px 13px;font-size:11.5px;font-weight:800;border:1.5px solid ${eff?'#1e6fd9':'var(--border-strong)'};color:${eff?'#fff':'var(--muted)'};background:${eff?'#1e6fd9':'var(--panel)'}">${eff?'🌐 Commune':'👤 Perso'}</button>
+      </div>`+overrides.map(o=>{
+        const oEff=nodeSharedEff(o.id);
+        return `<div style="${subCss}">
+          <span>↳</span>
+          <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(o.icon||'📄')} ${esc(o.title||'Sans titre')}<span style="color:var(--muted)"> — exception ${oEff?'🌐 commune':'👤 perso'}${descendants(o.id).length?' (avec '+descendants(o.id).length+' sous-fiche(s))':''}</span></span>
+          <button data-scope="${o.id}" title="Modifier la portée de cette sous-fiche" style="flex:none;border:1px solid var(--border-strong);border-radius:7px;padding:2px 8px;font-size:10.5px;font-weight:700;color:var(--muted)">Modifier…</button>
+        </div>`;}).join('');}).join('')||'<div class="empty-hint">Aucune fiche pour le moment.</div>';
+    const totC=data.nodes.filter(n=>nodeSharedEff(n.id)).length;
+    const totP=data.nodes.length-totC;
+    const tc=(data.tiles||[]).filter(t=>tileSharedEff(t,null)&&t.kind!=='spacer').length;
+    const tp=(data.tiles||[]).filter(t=>!tileSharedEff(t,null)&&t.kind!=='spacer').length;
+    $('#mShTiles').innerHTML=`Fiches : <b>${totC}</b> commune(s) · <b>${totP}</b> perso &nbsp;·&nbsp; Mur d'accueil : <b>${tc}</b> élément(s) commun(s) · <b>${tp}</b> perso`;
     $('#mShList').querySelectorAll('[data-sh]').forEach(b=>b.onclick=()=>{
       const n=nodeById(b.dataset.sh);if(!n)return;
-      n.shared=!n.shared;if(!n.shared)delete n.shared;
+      const eff=nodeSharedEff(n.id);
+      n.shared=!eff;if(n.shared===false&&!n.parent)delete n.shared;
       touch(n);draw();
-      if(state.view==='node')renderNode();});};
+      if(state.view==='node')renderNode();});
+    $('#mShList').querySelectorAll('[data-scope]').forEach(b=>b.onclick=()=>{nodeScopeModal(b.dataset.scope);});};
   openModal('🌐 Données communes / personnelles',`
-    <p style="font-size:12.5px;color:var(--muted);line-height:1.65;margin-bottom:12px">
-      Les données <b>🌐 communes</b> partent dans le pack partagé (export « données COMMUNES » et mises à jour automatiques) ;
-      les données <b>👤 perso</b> restent sur votre appareil et dans votre export perso.<br>
-      Basculez ici vos <b>fiches racines</b> — leurs sous-fiches suivent automatiquement.
-      Chaque fiche (et sous-fiche) peut aussi définir sa propre portée via son menu <b>⋯</b> → « Portée commun / perso » : une sous-fiche peut rester 👤 personnelle au milieu d'une branche 🌐 commune, avec ses propres sous-fiches.</p>
-    <div style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Fiches</div>
-    <div id="mShList" style="max-height:44vh;overflow-y:auto"></div>
-    <div style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:12px 0 4px">Mur d'accueil</div>
-    <p style="font-size:12px;color:var(--muted);line-height:1.6"><span id="mShTiles"></span><br>
-      Le statut d'une <b>tuile</b> se règle dans sa fenêtre d'édition (champ « <b>Portée</b> »), celui d'un <b>titre de ligne</b> via sa case « Ligne commune ». En mode édition du mur, les éléments communs portent un petit 🌐.</p>`,
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <p style="flex:1;font-size:12.5px;color:var(--muted);line-height:1.6;margin:0">
+        Les données <b>🌐 communes</b> partent dans le pack partagé ; les <b>👤 perso</b> restent sur votre appareil.
+        Basculez les fiches racines ici (leurs sous-fiches suivent) — les <b>exceptions</b> (sous-fiches au statut différent) sont listées sous chaque fiche.</p>
+      <button class="btn small" id="mShRefresh" title="Recalculer les statuts et les compteurs">🔄 Actualiser</button>
+    </div>
+    <div style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Fiches racines</div>
+    <div id="mShList" style="max-height:46vh;overflow-y:auto"></div>
+    <div id="mShTiles" style="font-size:12.5px;margin-top:12px;border-top:1px solid var(--border);padding-top:10px"></div>
+    <p style="font-size:11px;color:var(--muted);margin-top:6px">Mur d'accueil : <b>commun par défaut</b> (👤 sur sélection). Murs des fiches : les tuiles <b>suivent la portée de leur fiche</b> par défaut. Le badge 👤 n'apparaît que sur les éléments personnels ; réglage dans la fenêtre d'édition de chaque tuile ou ligne.</p>`,
     [{label:'Fermer',primary:true}]);
+  $('#mShRefresh').onclick=draw;
   draw();}
 /* ---------- Mot de passe du mode édition ---------- */
 function codesModal(){
@@ -3864,6 +4281,12 @@ async function doFactoryReset(){
     try{localStorage.removeItem('rd_fore');localStorage.removeItem('rd_hilite');}catch(_){}
     data=seed();
     normalizeData();
+    /* recréer les codes d'accès par défaut (sinon aucun déverrouillage possible
+       avant rechargement de la page) et rester déverrouillé pour continuer */
+    data.settings.auth={salt:'RDsel#2026',
+      adminHash:'aea3f61888ac82881a27b3a090fbee8eb9de15ca4b4d51514799c87caebf4e4b',
+      editorHash:'6ffd97e71791d218c4d5318395cb5eae1240ff024ca56a824695d1d31df216c0'};
+    data.settings.mode='edit';
     state.open=new Set();state.quickSel=new Set();state.editWallOwner=null;state.quickMode=false;
     await idb.put('kv','data',JSON.parse(JSON.stringify(data)));
     applyTheme();applyBrand();applyMode();
@@ -3906,8 +4329,9 @@ async function packBlobAndSave(head,fids,fname,logLbl){
 const dstamp=()=>{const d=new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}-${String(d.getHours()).padStart(2,'0')}h${String(d.getMinutes()).padStart(2,'0')}`;};
 async function exportShared(){
-  const nodes=data.nodes.filter(n=>nodeSharedEff(n.id));
-  const tiles=(data.tiles||[]).filter(t=>t.shared);
+  const nodes=data.nodes.filter(n=>nodeSharedEff(n.id))
+    .map(n=>({...n,tiles:(n.tiles||[]).filter(t=>tileSharedEff(t,n))}));
+  const tiles=(data.tiles||[]).filter(t=>tileSharedEff(t,null));
   if(!nodes.length&&!tiles.length&&!(data.equipCustom||[]).length&&!Object.keys(data.equipOver||{}).length){
     toast('🌐 Aucune donnée commune pour le moment — marquez des fiches (menu ⋯ → Rendre commune) ou des tuiles (Portée : Commune)');return;}
   toast('⏳ Préparation du pack commun…');
@@ -3923,23 +4347,30 @@ async function exportShared(){
       updateMode:data.settings.updateMode||null,
       updateFileName:data.settings.updateFileName||null,
       auth:data.settings.auth||null,
+      quickSel:(data.settings.quickSel||[]).filter(id=>tiles.some(t=>t.id===id)),
       nodes,tiles,fleet:data.fleet,fleetSeeded:data.fleetSeeded,
       equipCustom:data.equipCustom||[],equipOver:data.equipOver||{},equipMeta:data.equipMeta||{},
       equipPlaces:data.equipPlaces||[],equipGroups:data.equipGroups||{},equipGroupsDel:data.equipGroupsDel||[]};
-    await packBlobAndSave(head,fids,`RailDoc-COMMUN-v${data.packVer}-${dstamp()}.json`,
+    await packBlobAndSave(head,fids,PACK_FILENAME,
       `🌐 Données communes exportées (pack v${data.packVer}, ${nodes.length} fiche(s), ${tiles.filter(t=>t.kind!=='section'&&t.kind!=='spacer').length} tuile(s))`);
   }catch(e){console.error(e);toast('⚠️ Échec de l\'export commun');}}
 async function exportPerso(){
   const nodes=data.nodes.filter(n=>!nodeSharedEff(n.id));
-  const tiles=(data.tiles||[]).filter(t=>!t.shared);
+  const tiles=(data.tiles||[]).filter(t=>!tileSharedEff(t,null));
+  /* tuiles perso posées sur les murs de fiches communes */
+  const persoWalls=[];
+  for(const n of data.nodes)if(nodeSharedEff(n.id)){
+    const pt=(n.tiles||[]).filter(t=>t.shared===false);
+    if(pt.length)persoWalls.push({nodeId:n.id,tiles:pt});}
   toast('⏳ Préparation de l\'export perso…');
   try{
     const fids=new Set();
     collectNodeFids(nodes,fids);collectTileFids(tiles,fids);
+    for(const w of persoWalls)collectTileFids(w.tiles,fids);
     const s=data.settings;
     const head={app:'RailDoc',format:'perso',version:1,exported:new Date().toISOString(),
-      nodes,tiles,
-      settings:{theme:s.theme,sidebarW:s.sidebarW,quickSel:s.quickSel,noteFore:s.noteFore,
+      nodes,tiles,persoWalls,
+      settings:{theme:s.theme,sidebarW:s.sidebarW,quickSel:s.quickSel,quickSelCustom:s.quickSelCustom,noteFore:s.noteFore,
         noteHilite:s.noteHilite,quoteHide:s.quoteHide}};
     await packBlobAndSave(head,fids,`RailDoc-PERSO-${dstamp()}.json`,
       `👤 Données perso exportées (${nodes.length} fiche(s), ${tiles.filter(t=>t.kind!=='section'&&t.kind!=='spacer').length} tuile(s))`);
@@ -3965,8 +4396,15 @@ async function importCommonPack(file,meta,auto){
   toast('⏳ Import des données communes…');
   try{
     await importFilesLines(file);
-    data.nodes=data.nodes.filter(n=>!nodeSharedEff(n.id)).concat(meta.nodes);
-    data.tiles=(data.tiles||[]).filter(t=>!t.shared).concat((meta.tiles||[]).map(t=>({...t,shared:true})));
+    /* tuiles perso ajoutées localement sur les murs des fiches communes : préservées */
+    const persoWalls={};
+    for(const n of data.nodes)if(nodeSharedEff(n.id)){
+      const pt=(n.tiles||[]).filter(t=>t.shared===false);
+      if(pt.length)persoWalls[n.id]=pt;}
+    data.nodes=data.nodes.filter(n=>!nodeSharedEff(n.id)).concat(meta.nodes.map(n=>{
+      const pt=persoWalls[n.id];
+      return pt?{...n,tiles:[...(n.tiles||[]).filter(t=>!pt.some(p=>p.id===t.id)),...pt]}:n;}));
+    data.tiles=(data.tiles||[]).filter(t=>tileSharedEff(t,null)===false).concat((meta.tiles||[]).map(t=>({...t,shared:true})));
     if(meta.fleet)data.fleet=meta.fleet;
     if(meta.fleetSeeded)data.fleetSeeded=meta.fleetSeeded;
     if(meta.equipCustom)data.equipCustom=meta.equipCustom;
@@ -3982,6 +4420,13 @@ async function importCommonPack(file,meta,auto){
     if(meta.updateMode&&!data.settings.updateMode)data.settings.updateMode=meta.updateMode;
     if(meta.updateFileName&&!data.settings.updateFileName)data.settings.updateFileName=meta.updateFileName;
     if(meta.auth&&meta.auth.adminHash)data.settings.auth=meta.auth;
+    /* Ouverture rapide par défaut du pack : appliquée tant que l'utilisateur
+       n'a pas personnalisé sa propre sélection (ses tuiles perso cochées sont conservées) */
+    if(Array.isArray(meta.quickSel)&&!data.settings.quickSelCustom){
+      const perso=(data.settings.quickSel||[]).filter(id=>{
+        const t=data.tiles.find(x=>x.id===id);return t&&tileSharedEff(t,null)===false;});
+      data.settings.quickSel=[...new Set([...meta.quickSel.filter(id=>data.tiles.some(t=>t.id===id)),...perso])];
+      state.quickSel=new Set(data.settings.quickSel);}
     applyUpdBtn();
     data.packVer=meta.packVersion||data.packVer;
     fixOrphans();normalizeData();
@@ -3999,8 +4444,12 @@ async function importPerso(file,meta){
   try{
     await importFilesLines(file);
     data.nodes=data.nodes.filter(n=>nodeSharedEff(n.id)).concat((meta.nodes||[]).map(n=>{const c={...n};if(c.shared===true)delete c.shared;return c;}));
-    data.tiles=(data.tiles||[]).filter(t=>t.shared).concat((meta.tiles||[]).map(t=>{const c={...t};delete c.shared;return c;}));
-    if(meta.settings)for(const k of['theme','sidebarW','quickSel','noteFore','noteHilite','quoteHide'])
+    data.tiles=(data.tiles||[]).filter(t=>tileSharedEff(t,null)).concat((meta.tiles||[]).map(t=>({...t,shared:false})));
+    if(Array.isArray(meta.persoWalls))for(const w of meta.persoWalls){
+      const n=nodeById(w.nodeId);if(!n)continue;
+      n.tiles=(n.tiles||[]).filter(t=>t.shared!==false&&!w.tiles.some(p=>p.id===t.id))
+        .concat(w.tiles.map(t=>({...t,shared:false})));}
+    if(meta.settings)for(const k of['theme','sidebarW','quickSel','quickSelCustom','noteFore','noteHilite','quoteHide'])
       if(meta.settings[k]!==undefined)data.settings[k]=meta.settings[k];
     fixOrphans();normalizeData();
     save();applyTheme();applyBrand();
@@ -4059,7 +4508,7 @@ async function importWall(file){
         await idb.put('files',rec.file,{name:rec.name,mime:rec.mime,size:rec.size,blob:b64ToBlob(rec.b64,rec.mime)});nf++;}});
     data.tiles=meta.tiles;
     for(const t of data.tiles){if(!t.kind)t.kind='tile';if(t.kind==='tile'&&!t.size)t.size='s';}
-    if(Array.isArray(meta.quickSel)&&meta.quickSel.length)data.settings.quickSel=[...new Set(meta.quickSel)];
+    if(Array.isArray(meta.quickSel)&&meta.quickSel.length){data.settings.quickSel=[...new Set(meta.quickSel)];data.settings.quickSelCustom=true;}
     if(meta.brand){
       data.settings.title=meta.brand.title||'Interface PAC TGV';
       data.settings.subtitle=meta.brand.subtitle||'';
@@ -4070,6 +4519,116 @@ async function importWall(file){
     navigate('#/home');render();
     toast('✅ Mur d\'accueil importé !');
   }catch(e){console.error(e);toast('⚠️ Échec de l\'import du mur');}}
+/* ---------- Détection des liens morts ---------- */
+/* Inventaire de tout ce qui « pointe » quelque part : tuiles (mur d'accueil et murs de
+   fiches), liens des fiches, liens http(s) dans les notes. */
+function collectLinkTargets(){
+  const out=[];
+  const addTiles=(list,where,nav)=>{for(const t of(list||[])){
+    if(t.kind==='section'||t.kind==='spacer'||!t.action)continue;
+    const lbl=t.title||'Sans titre';
+    if(t.action.type==='url')out.push({cat:'url',url:t.action.value,where,label:'Tuile « '+lbl+' »',nav});
+    else if(t.action.type==='node')out.push({cat:'node',target:t.action.value,where,label:'Tuile « '+lbl+' »',nav});
+    else if(t.action.type==='file')out.push({cat:'file',target:t.action.value,where,label:'Tuile « '+lbl+' »',nav});}};
+  addTiles(data.tiles,"Mur d'accueil",{type:'home'});
+  for(const n of data.nodes){
+    const where='Fiche « '+(n.title||'Sans titre')+' »',nav={type:'node',id:n.id};
+    addTiles(n.tiles,where,nav);
+    for(const l of(n.links||[])){
+      const type=l.type||'url';
+      if(type==='url')out.push({cat:'url',url:l.url,where,label:l.label?'Lien « '+l.label+' »':'Lien',nav});
+      else if(type==='node')out.push({cat:'node',target:l.target,where,label:l.label?'Lien « '+l.label+' »':'Lien interne',nav});
+      else if(type==='file')out.push({cat:'file',target:l.target,where,label:l.label?'Lien « '+l.label+' »':'Lien fichier',nav});}
+    if(n.html){let m;const re=/href="(https?:[^"]+)"/g;
+      while((m=re.exec(n.html)))out.push({cat:'url',url:m[1].replace(/&amp;/g,'&'),where,label:'Dans la note',nav});}}
+  return out;}
+/* Sonde une adresse http(s). CORS oblige, un site externe joignable répond souvent en
+   « opaque » (statut invisible) : on sait alors seulement qu'il répond. Un rejet réseau
+   ou un délai dépassé signale en revanche un lien probablement mort. */
+async function probeURL(url){
+  try{
+    if(location.protocol==='https:'&&/^http:/i.test(url))return{ok:true,note:'non vérifiable (http depuis https)'};
+    const ctl=new AbortController();const to=setTimeout(()=>ctl.abort(),12000);
+    let r;
+    try{r=await fetch(url,{mode:'no-cors',cache:'no-store',redirect:'follow',signal:ctl.signal});}
+    finally{clearTimeout(to);}
+    if(r.type!=='opaque'&&r.status>=400)return{ok:false,err:'réponse HTTP '+r.status};
+    return{ok:true};
+  }catch(e){
+    return{ok:false,err:(e&&e.name==='AbortError')?'délai dépassé (12 s)':'injoignable'};}}
+let linkCheckBusy=false;
+async function checkAllLinks(manual){
+  if(linkCheckBusy)return;linkCheckBusy=true;
+  try{
+    if(manual)toast('⏳ Vérification des liens en cours…');
+    const items=collectLinkTargets();
+    const issues=[];
+    /* références internes : vérification sûre, même hors ligne */
+    let fileKeys=null;
+    try{fileKeys=new Set(await idb.keys('files'));}catch(_){fileKeys=null;}
+    for(const it of items){
+      if(it.cat==='node'&&!nodeById(it.target))
+        issues.push({sev:'int',where:it.where,label:it.label,err:'la fiche visée n\'existe plus',nav:it.nav});
+      else if(it.cat==='file'&&fileKeys&&!fileKeys.has(it.target))
+        issues.push({sev:'int',where:it.where,label:it.label,err:'le fichier visé est introuvable',nav:it.nav});}
+    /* liens externes : uniquement si le poste est en ligne */
+    const urlItems=items.filter(it=>it.cat==='url'&&/^https?:/i.test(it.url||''));
+    let checkedUrls=0;
+    if(navigator.onLine&&urlItems.length){
+      const uniq=[...new Set(urlItems.map(it=>it.url))];
+      checkedUrls=uniq.length;
+      const res={};let i=0;
+      const worker=async()=>{while(i<uniq.length){const u=uniq[i++];res[u]=await probeURL(u);
+        if(manual&&uniq.length>8)toast('⏳ Vérification des liens… '+Object.keys(res).length+'/'+uniq.length);}};
+      await Promise.all([worker(),worker(),worker(),worker()]);
+      for(const it of urlItems){const r=res[it.url];
+        if(r&&r.ok===false)issues.push({sev:'ext',where:it.where,label:it.label,url:it.url,err:r.err,nav:it.nav});}}
+    data.linkReport={ts:Date.now(),nTargets:items.length,nUrls:checkedUrls,online:navigator.onLine,issues};
+    save();
+    if(manual){
+      if(issues.length)linkReportModal();
+      else toast('✅ Aucun lien mort détecté ('+items.length+' cible(s), '+checkedUrls+' adresse(s) testée(s))');}
+    else if(issues.length&&isEdit())
+      toast('🔗 '+issues.length+' lien(s) à vérifier — détail dans ⚙ Réglages');
+  }catch(e){console.error(e);if(manual)toast('⚠️ Vérification des liens impossible');}
+  finally{linkCheckBusy=false;}}
+function linkReportIssues(){return(data.linkReport&&data.linkReport.issues)||[];}
+/* Avis aux Assistants PAC et à l'admin au déverrouillage */
+function notifyLinkReport(){
+  const n=linkReportIssues().length;
+  if(n)setTimeout(()=>toast('🔗 '+n+' lien(s) à vérifier — détail dans ⚙ Réglages'),900);}
+function linkReportModal(){
+  const rep=data.linkReport;
+  const iss=linkReportIssues();
+  const when=rep?new Date(rep.ts).toLocaleString('fr-FR'):null;
+  const ints=iss.filter(i=>i.sev==='int'),exts=iss.filter(i=>i.sev==='ext');
+  const row=i=>`
+    <div style="display:flex;gap:8px;align-items:flex-start;padding:8px 2px;border-bottom:1px solid var(--border)">
+      <span style="flex-shrink:0">${i.sev==='int'?'❌':'⚠️'}</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:600;font-size:13px">${esc(i.where)} — ${esc(i.label)}</div>
+        ${i.url?`<div style="font-size:11.5px;color:var(--muted);word-break:break-all">${esc(i.url)}</div>`:''}
+        <div style="font-size:12px;color:var(--muted)">${esc(i.err)}</div>
+      </div>
+      <button class="btn small" data-goto="${i.nav.type==='node'?i.nav.id:''}" style="flex-shrink:0">🔎 Voir</button>
+    </div>`;
+  openModal('🔗 Vérification des liens',`
+    ${when?`<p style="font-size:12px;color:var(--muted);margin-bottom:10px">Dernière vérification : ${esc(when)}${rep.online===false?' — <b>poste hors ligne</b> : seules les références internes ont été contrôlées':''}</p>`:''}
+    ${iss.length===0?'<p>✅ Aucun problème détecté.</p>':''}
+    ${ints.length?`<h4 style="margin:8px 0 2px">❌ Références internes cassées (${ints.length})</h4>
+      <p style="font-size:11.5px;color:var(--muted);margin:0 0 4px">Fiche supprimée ou fichier manquant : à corriger.</p>${ints.map(row).join('')}`:''}
+    ${exts.length?`<h4 style="margin:14px 0 2px">⚠️ Adresses qui ne répondent pas (${exts.length})</h4>
+      <p style="font-size:11.5px;color:var(--muted);margin:0 0 4px">Attention : un lien intranet ou SharePoint peut apparaître injoignable simplement parce que ce poste n'est pas sur le bon réseau — vérifiez avant de supprimer.</p>${exts.map(row).join('')}`:''}`,
+    [{label:'Fermer'},{label:'↻ Tout revérifier',primary:true,fn:()=>{setTimeout(()=>checkAllLinks(true),50);}}]);
+  $$('#modal [data-goto]').forEach(b=>b.onclick=()=>{
+    const id=b.dataset.goto;closeModal();
+    navigate(id?'#/node/'+id:'#/home');});}
+/* Vérification automatique en arrière-plan : au plus une fois tous les 7 jours */
+function autoLinkCheck(){
+  const last=(data.linkReport&&data.linkReport.ts)||0;
+  if(Date.now()-last<7*24*3600*1000)return;
+  checkAllLinks(false);}
+
 /* ---------- Informations & statistiques ---------- */
 async function infoModal(){
   let filesN=0,filesSz=0;
@@ -7466,6 +8025,12 @@ async function init(){
     if(data.settings.auth.editorHash==='5c3f13cb596e80801336b3508eb3c7c8fb9ebbf219ea004fc9deb25f881abbf5')data.settings.auth.editorHash='6ffd97e71791d218c4d5318395cb5eae1240ff024ca56a824695d1d31df216c0';}
   {const t=(data.settings.title||'').trim();
    if(t==='RailDoc'||t==='Interface')data.settings.title='Interface PAC TGV';}
+  /* migration : le mur d'accueil devient commun par défaut — les éléments
+     jusqu'ici non marqués (implicitement perso) sont figés en perso explicite
+     pour ne rien publier à l'insu de l'utilisateur */
+  if(!data.tileScopeMig){
+    for(const t of(data.tiles||[]))if(t.shared===undefined)t.shared=false;
+    data.tileScopeMig=true;}
   state.open=new Set(data.settings.open);
   if(data.settings.sidebarW)document.documentElement.style.setProperty('--sidebar-w',data.settings.sidebarW+'px');
   applyTheme();applyBrand();applyMode();tickClock();setInterval(tickClock,1000);
@@ -7524,13 +8089,22 @@ async function init(){
     save();renderTree();};
   $('#collapseAllBtn').onclick=()=>{state.open.clear();save();renderTree();};
   checkAppVersion();
+  setTimeout(autoLinkCheck,15000);
   $('#settingsBtn').onclick=e=>{e.stopPropagation();
     const r=e.currentTarget.getBoundingClientRect();
     const items=[
       {ic:'🔄',label:'Rechercher une mise à jour des données communes',fn:()=>checkUpdate(true)},
       {ic:'📡',label:'Source des mises à jour (dossier partagé)…',fn:updateSourceModal}];
-    if(isAdmin())items.push({ic:'🌐',label:'Données communes / personnelles…',fn:sharedManagerModal});
-    items.push({sep:true});
+    if(isAdmin())items.push({sep:true},{ic:'🌐',label:'Données communes / personnelles…',fn:sharedManagerModal});
+    items.push(
+      {sep:true},
+      {ic:'📂',label:'Importer un fichier RailDoc… (type détecté automatiquement)',fn:()=>$('#fiImport').click()},
+      {sep:true},
+      {ic:'💾',label:'Exporter TOUT (sauvegarde complète)',fn:exportAll},
+      {ic:'🌐',label:'Exporter les données COMMUNES (pack v'+((data.packVer||0)+1)+')',fn:exportShared},
+      {ic:'👤',label:'Exporter MES données PERSO',fn:exportPerso},
+      {ic:'🧱',label:'Exporter le mur d\'accueil seul',fn:exportWall},
+      {sep:true});
     if(isAdmin())items.push(
       {ic:'✏️',label:'Titre, image & descriptif de l\'application',fn:brandModal},
       {ic:'🔑',label:'Codes d\'accès (Assistant PAC / Admin)…',fn:codesModal},
@@ -7538,19 +8112,16 @@ async function init(){
       {ic:'💬',label:(data.settings.quoteHide?'Afficher':'Masquer')+' la citation du jour',fn:()=>{
         data.settings.quoteHide=!data.settings.quoteHide;save();renderQuote();
         toast(data.settings.quoteHide?'💬 Citation du jour masquée':'💬 Citation du jour affichée — elle change chaque jour');}});
+    {const nLk=linkReportIssues().length;
+     items.push(
+      {ic:'🔗',label:nLk?('Liens à vérifier — ⚠️ '+nLk+' problème(s)'):'Vérifier les liens (liens morts)',fn:()=>{
+        linkReportIssues().length?linkReportModal():checkAllLinks(true);}});}
     items.push(
       {ic:'ℹ️',label:'Informations & statistiques',fn:infoModal});
     if(isAdmin())items.push(
       {ic:'🕘',label:'Historique des versions',fn:versionModal},
       {sep:true},
       {ic:'🕑',label:'Journal des actions',fn:logsModal});
-    items.push(
-      {sep:true},
-      {ic:'💾',label:'Exporter TOUT (sauvegarde complète)',fn:exportAll},
-      {ic:'🌐',label:'Exporter les données COMMUNES (pack v'+((data.packVer||0)+1)+')',fn:exportShared},
-      {ic:'👤',label:'Exporter MES données PERSO',fn:exportPerso},
-      {ic:'🧱',label:'Exporter le mur d\'accueil seul',fn:exportWall},
-      {ic:'📂',label:'Importer un fichier RailDoc… (type détecté automatiquement)',fn:()=>$('#fiImport').click()});
     if(isAdmin())items.push(
       {sep:true},
       {ic:'🧹',label:'Tout effacer — application vierge…',danger:true,fn:resetAllModal});
@@ -7592,12 +8163,13 @@ async function init(){
     const role=authCheck(v);
     if(!role)return false;
     state.role=role;doModeSwitch();
-    toast(role==='admin'?'🛠 Accès administrateur — contenu et réglages':'✏️ Accès Assistant PAC — contenu modifiable, réglages ⚙ réservés à l\'administrateur');
+    toast(role==='admin'?'🐙 Accès administrateur — contenu et réglages':'✏️ Mode édition activé (Assistant PAC)');
+    notifyLinkReport();
     return true;};
   $('#modeBtn').onclick=()=>{
     if(isEdit()){state.role='read';doModeSwitch();return;}
     openModal('🔒 Déverrouillage',`
-      <p style="font-size:12.5px;color:var(--muted);margin-bottom:10px">Entrez votre code d'accès : <b>Assistant PAC</b> (édition du contenu) ou <b>Administrateur</b> (accès complet).</p>
+      <p style="font-size:12.5px;color:var(--muted);margin-bottom:10px">Entrez votre code d'accès pour passer en mode édition.</p>
       <input id="mPwd" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="••••••"
         style="width:100%;box-sizing:border-box;border:2px solid var(--accent);border-radius:12px;padding:11px 12px;font-size:20px;text-align:center;letter-spacing:6px;outline:none">`,
       [{label:'Annuler'},{label:'Déverrouiller',primary:true,fn:()=>{
@@ -7632,6 +8204,12 @@ async function init(){
   $('#nodeWallEditBtn').onclick=()=>{if(!currentNode)return;
     state.editWallOwner=state.editWallOwner===currentNode.id?null:currentNode.id;
     renderNodeWall(currentNode);};
+  $('#nodeWallSimpleBtn').onclick=()=>{if(!currentNode||!isEdit())return;
+    currentNode.wallSimple=!currentNode.wallSimple;touch(currentNode);
+    renderNodeWall(currentNode);
+    toast(currentNode.wallSimple
+      ?'🗒 Cette fiche affiche désormais son accès rapide en liste simplifiée (sans images) pour tous — ✏️ pour renommer, ▲▼ pour classer'
+      :'🧱 Cette fiche réaffiche ses tuiles normales pour tous');};
   $('#scanBtn').onclick=()=>{if(isEdit())scanModal();};
   $('#packBtn').onclick=()=>{if(isEdit())$('#fiPack').click();};
   $('#fiScanDir').addEventListener('change',e=>{runScan(e.target.files);e.target.value='';});
@@ -7640,6 +8218,15 @@ async function init(){
 
   /* thème / sauvegarde */
   $('#themeBtn').onclick=()=>{data.settings.theme=data.settings.theme==='dark'?'light':'dark';applyTheme();save();};
+  $('#scopeBtn').onclick=()=>{if(!isAdmin())return;
+    const cur=data.settings.scopeFilter||'all';
+    const nxt=cur==='all'?'common':(cur==='common'?'perso':'all');
+    data.settings.scopeFilter=nxt;save();applyScopeBtn();renderTree();
+    refreshWall('home');renderWallNav();
+    toast(nxt==='common'?'🌐 Affichage : fiches et mur COMMUNS uniquement'
+      :nxt==='perso'?'👤 Affichage : fiches et mur PERSO uniquement'
+      :'🌐👤 Affichage : tout (commun et perso)');};
+  applyScopeBtn();
 
   $('#fiImport').addEventListener('change',e=>{const f=e.target.files[0];e.target.value='';if(f)importAll(f);});
   $('#fiImportWall').addEventListener('change',e=>{const f=e.target.files[0];e.target.value='';if(f)importWall(f);});
