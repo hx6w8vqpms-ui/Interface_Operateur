@@ -116,10 +116,8 @@ input,select,textarea{font-family:inherit;color:inherit}
 .brand .logo{width:34px;height:34px;border-radius:10px;background:var(--tile-grad);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:var(--shadow);flex:none;overflow:hidden}
 .brand .logo.custom{background:none;box-shadow:none}
 .brand .logo img{width:100%;height:100%;object-fit:contain}
-html[data-mode="read"] #settingsBtn{visibility:hidden !important;pointer-events:none !important}
-#updBtn{display:none}
-html[data-mode="read"].upd-on #updBtn{display:flex}
-html[data-mode="read"].upd-on #settingsBtn{display:none !important}
+
+#updBtn{display:none !important}
 html[data-mode="read"] #fleetBtn{display:none !important}
 /* Icônes de fiche : emoji ou image */
 .nicon{display:inline-flex;align-items:center;justify-content:center}
@@ -459,6 +457,16 @@ html[data-mode="edit"] #editor .rd-ftoc-head:hover{color:var(--accent)}
 
 ::selection{background:#c1275842}
 html[data-theme="dark"] ::selection{background:#c1275866}
+/* ---------- Métadonnées de fiche : référence & date d'application ---------- */
+#metaBar{display:none;gap:10px;flex-wrap:wrap;margin:7px 0 2px;align-items:center}
+.meta-f{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--muted)}
+.meta-f input{border:1px solid var(--border-strong);background:var(--bg-soft);border-radius:9px;
+  padding:6px 10px;font-size:12.5px;color:var(--text);outline:none}
+.meta-f input[type=text]{width:170px}
+.meta-f input:focus{border-color:var(--accent);background:var(--panel)}
+.meta-chip{font-size:11.5px;font-weight:700;background:var(--bg-soft);border:1px solid var(--border);
+  border-radius:999px;padding:3.5px 11px;color:var(--muted);white-space:nowrap}
+
 /* ---------- Liste simplifiée du mur d'une fiche ---------- */
 #nodeWallSimple{display:flex;flex-direction:column;gap:5px}
 #nodeWallSimple .sl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:5px}
@@ -856,8 +864,6 @@ html[data-mode="read"] #modeBtn .ic-lock{display:block}
   .brand .t{display:none}
   #searchWrap{max-width:none}
   #dirBtn{margin-left:0}
-  /* la pendule étant masquée, inutile de réserver la place de la roue de réglages */
-  html[data-mode="read"] #settingsBtn{display:none !important}
 }
 @media (max-width:600px){
   :root{--header-h:54px}
@@ -1220,6 +1226,7 @@ html[data-mode="read"] #modeBtn .ic-lock{display:block}
           </div>
         </div>
         <div id="tagBar"></div>
+        <div id="metaBar"></div>
         <div id="nodeEquipSugs"></div>
 
         <!-- Mur d'accès rapide de la fiche -->
@@ -1362,9 +1369,13 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='8.91';
+const APP_VERSION='8.95';
 const APP_VERSION_DATE='7 août 2026';
 const CHANGELOG=[
+  ['v8.95',"Notes de service : deux nouveaux champs sur chaque fiche — 📄 Référence et 📅 Date d'application — saisis sous les mots-clés en édition, affichés en pastilles en lecture · les cartes de sous-fiches les affichent, la recherche trouve les fiches par leur référence, et le tri ↕ des sous-fiches propose trois ordres supplémentaires : par référence, par date d'application (récentes ou anciennes d'abord), les fiches sans valeur restant en fin de liste"],
+  ['v8.94',"Optimisation mémoire des gros contenus : les exports encodent désormais chaque fichier par tranches de 6 Mo (la mémoire vive n'est plus sollicitée par le fichier entier — une sauvegarde de plusieurs Go reste légère, y compris sur iPad) et l'import décode de même par tranches · demande de stockage persistant au navigateur pour protéger les données hors ligne d'une purge automatique (Safari/iPad) · « Exporter TOUT » génère désormais le jeu complet : sauvegarde TOUT, données COMMUNES, PERSO et mur — rangés d'un coup dans le dossier de travail s'il est lié"],
+  ['v8.93',"Menu ⚙ unifié pour tous : en lecture seule, le bouton 🔄 laisse place à la roue de réglages avec un menu minimal — Rechercher une mise à jour et « Dossier des mises à jour / de travail » (fenêtre rappelant la synchronisation OneDrive), pour définir le dossier dès l'installation d'un poste · l'entrée « Source des mises à jour » fusionne dans cette fenêtre (bouton 📡 Autres sources, admin) · menu Assistant PAC : + Importer et les exports · réservés à l'admin : Titre, Codes d'accès, Largeur, Citation, Liens à vérifier, Informations, Historique et Journal"],
+  ['v8.92',"Dossier de travail local/cloud : liez le dossier contenant le HTML (Chrome/Edge) — l'application y range automatiquement les exports (Sauvegardes/, Perso/, Murs/, 10 derniers conservés) et lit/écrit le pack Interface-COMMUN.json à la racine, qui devient la source prioritaire des mises à jour · sur une bibliothèque SharePoint synchronisée par OneDrive, le rangement remonte tout seul dans le cloud (l'accès SharePoint direct étant bloqué par les navigateurs) · sur iPad/Safari : stockage interne conservé, synchronisation par 🔄 · en bas de la colonne de gauche, « Vérification impossible » laisse place à un état sur une ligne : ☁️ cloud (à jour / MAJ / non vérifié) · 📁 local (lié / interne), cliquable (vérifier, gérer le dossier)"],
   ['v8.91',"Thème sombre : le halo violet des fiches perso est atténué (plus discret, sans perdre le repérage)"],
   ['v8.90',"Colonne de gauche : le trait violet des fiches perso est remplacé par un très léger halo violet derrière le titre — repérage toujours immédiat, rendu plus doux"],
   ['v8.89',"Nouveaux logos 3D commun / perso : un globe bleu brillant pour le commun, une silhouette 3D pour le perso — utilisés sur le bouton de filtre admin (globe, silhouette, ou les deux pour « tout ») et dans l'en-tête des fiches, où l'ancien badge texte laisse place à un simple bouton-logo à l'emplacement de l'ex-bouton Imprimer : logo visible selon la portée (le commun reste discret en lecture seule), cliquable en édition pour changer la portée"],
@@ -2627,7 +2638,7 @@ function renderNode(){const n=nodeById(state.nodeId);if(!n){navigate('#/home');r
      :exc?'Exception : fiche personnelle au sein d\'une branche commune'
      :'Fiche personnelle — elle reste sur cet appareil')+(isEdit()?' · cliquer pour changer la portée':'');
    b.onclick=()=>{if(isEdit())nodeScopeModal(n.id);};}}
-  renderTags(n);renderNodeEquip(n);renderNodeWall(n);renderLinks(n);renderContacts(n);renderFiles(n);renderChildren(n);
+  renderTags(n);renderMeta(n);renderNodeEquip(n);renderNodeWall(n);renderLinks(n);renderContacts(n);renderFiles(n);renderChildren(n);
   /* en lecture seule, masquer les zones vides et la note vide */
   const emptyNote=!(n.html&&n.html.replace(/<br\s*\/?>/gi,'').replace(/&nbsp;/g,'').trim());
   $('#editorCard').style.display=(!isEdit()&&emptyNote)?'none':'';
@@ -2753,6 +2764,24 @@ function slRename(n,t){
       if(v)t.alias=v;else delete t.alias;
       touch(n);renderSimpleList(n,$('#nodeWallSimple'));}}]);
   setTimeout(()=>{const i=$('#mSlAlias');if(i){i.focus();i.select();}},80);}
+function fmtDateFR(d){if(!d)return '';const m=String(d).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  return m?m[3]+'/'+m[2]+'/'+m[1]:String(d);}
+/* Référence & date d'application : aide au tri des notes de service */
+function renderMeta(n){const bar=$('#metaBar');if(!bar)return;
+  if(isEdit()){
+    bar.style.display='flex';
+    bar.innerHTML=`
+      <label class="meta-f">📄 Référence <input type="text" id="mRefDoc" placeholder="ex : RH0077, NG 2026-12…" value="${esc(n.refDoc||'')}"></label>
+      <label class="meta-f">📅 Date d'application <input type="date" id="mDateApp" value="${esc(n.dateApp||'')}"></label>`;
+    $('#mRefDoc').onchange=e=>{const v=e.target.value.trim();
+      if(v)n.refDoc=v;else delete n.refDoc;touch(n);renderChildren(n);};
+    $('#mDateApp').onchange=e=>{const v=e.target.value;
+      if(v)n.dateApp=v;else delete n.dateApp;touch(n);};
+  }else{
+    if(!n.refDoc&&!n.dateApp){bar.style.display='none';bar.innerHTML='';return;}
+    bar.style.display='flex';
+    bar.innerHTML=[n.refDoc?`<span class="meta-chip">📄 ${esc(n.refDoc)}</span>`:'',
+      n.dateApp?`<span class="meta-chip">📅 Applicable : ${fmtDateFR(n.dateApp)}</span>`:''].join('');}}
 function renderTags(n){const bar=$('#tagBar');bar.innerHTML='';
   const E=isEdit();
   const saveT=()=>{touch(n);renderTags(n);};
@@ -2994,17 +3023,26 @@ function sortFiles(mode){const n=currentNode;if(!n)return;
   n.files.sort(cmp);touch(n);renderFiles(n);toast('↕ Fichiers triés');}
 function sortChildren(mode){const n=currentNode;if(!n)return;
   const kids=childrenOf(n.id);if(!kids.length)return;
+  const nz=(v,inv)=>(a,b)=>{const x=v(a),y=v(b);   /* vides toujours en fin */
+    if(!x&&!y)return 0;if(!x)return 1;if(!y)return -1;
+    return inv?y.localeCompare(x,'fr',{numeric:true,sensitivity:'base'})
+              :x.localeCompare(y,'fr',{numeric:true,sensitivity:'base'});};
   const cmp={az:(a,b)=>(a.title||'').localeCompare(b.title||'','fr',{numeric:true,sensitivity:'base'}),
              za:(a,b)=>(b.title||'').localeCompare(a.title||'','fr',{numeric:true,sensitivity:'base'}),
              recent:(a,b)=>b.updated-a.updated,
-             old:(a,b)=>a.updated-b.updated}[mode];
+             old:(a,b)=>a.updated-b.updated,
+             ref:nz(k=>k.refDoc||''),
+             dateNew:nz(k=>k.dateApp||'',true),
+             dateOld:nz(k=>k.dateApp||'')}[mode];
   kids.sort(cmp);kids.forEach((k,i)=>k.ord=i);
   save();renderChildren(n);renderTree();toast('↕ Sous-fiches triées');}
 function renderChildren(n){const grid=$('#childrenList');grid.innerHTML='';
   const kids=childrenOf(n.id);
   $('#childrenCount').textContent=kids.length||'';
   for(const c of kids){const card=document.createElement('div');card.className='child-card';
-    const sub=[childrenOf(c.id).length?childrenOf(c.id).length+' sous-fiche(s)':null,
+    const sub=[c.refDoc?'📄 '+esc(c.refDoc):null,
+               c.dateApp?'📅 '+fmtDateFR(c.dateApp):null,
+               childrenOf(c.id).length?childrenOf(c.id).length+' sous-fiche(s)':null,
                c.files.length?c.files.length+' fichier(s)':null].filter(Boolean).join(' · ');
     card.innerHTML=`<span class="ic nicon" data-nicon="${c.id}"></span><div style="min-width:0"><div class="tt">${esc(c.title||'Sans titre')}</div>${sub?`<div class="sub">${sub}</div>`:''}</div>
       <div class="cmove">
@@ -3958,7 +3996,7 @@ function doSearch(){
   const rNodes=[],rFiles=[],rLinks=[],rTiles=[],rContacts=[];
   for(const n of data.nodes){
     const content=stripHtml(n.html);
-    const inTitle=match(n.title),inTags=match(n.tags.join(' ')),inBody=match(content);
+    const inTitle=match(n.title)||match(n.refDoc||''),inTags=match(n.tags.join(' ')),inBody=match(content);
     if(inTitle||inTags||inBody){
       let snip='';
       if(inBody&&!inTitle){const idx=content.toLowerCase().indexOf(words[0]);
@@ -4102,6 +4140,100 @@ async function fetchPackHead(url){
   try{reader.cancel();}catch(_){}
   const i=buf.indexOf('\n');
   return JSON.parse(i>=0?buf.slice(0,i):buf);}
+/* ===================== Dossier de travail (mode local / cloud) =====================
+   Le HTML vit à la racine d'un dossier que l'application organise :
+   racine = HTML + Interface-COMMUN.json · sous-dossiers gérés : Sauvegardes/, Perso/, Murs/.
+   Sur un poste pro, ce dossier peut être une bibliothèque SharePoint synchronisée par
+   OneDrive : le rangement local remonte alors automatiquement dans le cloud.
+   Safari/iPad ne permettent pas de lier un dossier : stockage interne + MAJ par 🔄. */
+let workDirHandle=null,workDirState='none'; /* none | ask | ok | unsupported */
+async function workDirPerm(handle,ask){
+  try{
+    if(!handle)return false;
+    if(!handle.queryPermission)return true;
+    let p=await handle.queryPermission({mode:'readwrite'});
+    if(p==='granted')return true;
+    if(!ask)return false;
+    p=await handle.requestPermission({mode:'readwrite'});
+    return p==='granted';
+  }catch(_){return false;}}
+async function workDirInit(){
+  try{workDirHandle=await idb.get('kv','workDir')||null;}catch(_){workDirHandle=null;}
+  if(!workDirHandle){workDirState=window.showDirectoryPicker?'none':'unsupported';updateStats();return;}
+  workDirState=(await workDirPerm(workDirHandle,false))?'ok':'ask';
+  updateStats();
+  if(workDirState==='ok')checkUpdate(false);}
+async function workDirLink(){
+  if(!window.showDirectoryPicker){
+    toast('📁 Ce navigateur ne permet pas de lier un dossier (Chrome ou Edge requis) — sur iPad le stockage reste interne, la mise à jour passe par 🔄');
+    return;}
+  try{
+    const h=await showDirectoryPicker({mode:'readwrite'});
+    workDirHandle=h;workDirState='ok';
+    try{await idb.put('kv','workDir',h);}catch(_){}
+    for(const d of['Sauvegardes','Perso','Murs'])try{await h.getDirectoryHandle(d,{create:true});}catch(_){}
+    updateStats();
+    logEvt('📁 Dossier de travail lié : '+(h.name||''));
+    toast('📁 Dossier « '+(h.name||'')+' » lié — exports rangés automatiquement (Sauvegardes/, Perso/, Murs/), pack commun lu et écrit à la racine. Sur un dossier OneDrive/SharePoint synchronisé, tout remonte dans le cloud.');
+    checkUpdate(false);
+  }catch(_){/* sélection annulée */}}
+async function workDirUnlink(){
+  workDirHandle=null;workDirState=window.showDirectoryPicker?'none':'unsupported';
+  try{await idb.del('kv','workDir');}catch(_){}
+  updateStats();toast('📁 Dossier de travail délié — les exports repassent par les Téléchargements');}
+async function workDirWrite(subdir,fname,blob){
+  if(!workDirHandle)return false;
+  if(!(await workDirPerm(workDirHandle,true))){workDirState='ask';updateStats();return false;}
+  try{
+    const dir=subdir?await workDirHandle.getDirectoryHandle(subdir,{create:true}):workDirHandle;
+    const fh=await dir.getFileHandle(fname,{create:true});
+    const w=await fh.createWritable();
+    await w.write(blob);await w.close();
+    workDirState='ok';updateStats();
+    return true;
+  }catch(e){console.error(e);return false;}}
+async function workDirCleanup(subdir,keep){
+  try{
+    if(!workDirHandle)return;
+    const dir=await workDirHandle.getDirectoryHandle(subdir);
+    const names=[];
+    for await(const entry of dir.values())if(entry.kind==='file'&&/\.json$/i.test(entry.name))names.push(entry.name);
+    names.sort(); /* noms horodatés → ordre chronologique */
+    while(names.length>keep){const nm=names.shift();try{await dir.removeEntry(nm);}catch(_){}}
+  }catch(_){}}
+async function workDirReadPack(){
+  try{
+    if(!workDirHandle)return null;
+    if(!(await workDirPerm(workDirHandle,false)))return null;
+    const fh=await workDirHandle.getFileHandle(PACK_FILENAME);
+    return await fh.getFile();
+  }catch(_){return null;}}
+/* Enregistre un export : rangé dans le dossier de travail si lié, sinon téléchargement */
+async function saveExport(blob,fname,subdir,label){
+  if(workDirHandle&&await workDirWrite(subdir,fname,blob)){
+    if(subdir)workDirCleanup(subdir,10);
+    toast('📁 '+(label||fname)+' → '+(subdir?subdir+'/':'racine du dossier de travail')+' ('+fmtSize(blob.size)+')');
+    return true;}
+  dlBlob(blob,fname);
+  return false;}
+function workDirModal(){
+  const st=workDirHandle?(workDirState==='ask'?'🟠 Dossier lié — autorisation à redonner (cliquer « Vérifier »)':'🟢 Dossier lié : « '+esc(workDirHandle.name||'')+' »')
+    :(window.showDirectoryPicker?'⚪ Aucun dossier lié — stockage navigateur':'⚪ Non disponible sur ce navigateur (stockage interne)');
+  openModal('📁 Dossier de travail (local / cloud)',`
+    <p style="font-size:12.5px;line-height:1.65;color:var(--muted)">Liez le dossier qui contient le fichier HTML : l'application y <b>range automatiquement</b> vos exports
+    (<b>Sauvegardes/</b> pour les sauvegardes complètes, <b>Perso/</b>, <b>Murs/</b> — les 10 plus récents sont conservés)
+    et lit/écrit le pack commun <b>${esc(PACK_FILENAME)}</b> à la racine.</p>
+    <p style="font-size:12.5px;line-height:1.65;color:var(--muted);margin-top:8px">☁️ <b>Mode cloud</b> : choisissez un dossier d'une bibliothèque
+    <b>SharePoint synchronisée par OneDrive</b> — le rangement local remonte alors tout seul dans le cloud, et les collègues récupèrent le pack.
+    📴 Sur iPad (Safari), le dossier ne peut pas être lié : tout reste stocké dans l'application, et la synchronisation se fait par 🔄 (vérification des différences avec le pack).</p>
+    <p style="font-size:13px;margin-top:10px"><b>État :</b> ${st}</p>`,
+    window.showDirectoryPicker
+      ?[{label:'Fermer'},
+        ...(isAdmin()?[{label:'📡 Autres sources…',fn:()=>{setTimeout(updateSourceModal,60);}}]:[]),
+        ...(workDirHandle?[{label:'✂️ Délier',fn:workDirUnlink}]:[]),
+        {label:workDirHandle?'📁 Changer de dossier…':'📁 Lier un dossier…',primary:true,fn:()=>{setTimeout(workDirLink,60);}}]
+      :[{label:'Fermer',primary:true},
+        ...(isAdmin()?[{label:'📡 Autres sources…',fn:()=>{setTimeout(updateSourceModal,60);}}]:[])]);}
 async function readPackFromHandle(manual){
   let h=null;try{h=await idb.get('kv','updHandle');}catch(_){}
   if(!h)return null;
@@ -4145,6 +4277,16 @@ async function checkPackFile(f,manual,fromFileMode){
     state.updOk=false;state.updAvail=null;updateStats();
     if(manual)toast('⚠️ Fichier de pack illisible');}}
 async function checkUpdate(manual){
+  /* --- dossier de travail lié : le pack se lit à sa racine --- */
+  if(workDirHandle){
+    let wf=await workDirReadPack();
+    if(!wf&&manual&&await workDirPerm(workDirHandle,true)){workDirState='ok';wf=await workDirReadPack();}
+    if(wf){await checkPackFile(wf,manual);return;}
+    state.updOk=false;state.updAvail=null;updateStats();
+    if(manual)toast(workDirState==='ask'
+      ?'📁 Autorisez l\'accès au dossier de travail pour vérifier les mises à jour'
+      :'📁 Aucun pack '+PACK_FILENAME+' à la racine du dossier de travail — un « Export des données COMMUNES » le créera');
+    return;}
   const mode=data.settings.updateMode||((data.settings.updateUrl||'').trim()?'url':null);
   /* --- mode fichier mémorisé --- */
   if(mode==='file'){
@@ -4403,14 +4545,14 @@ function collectTileFids(tiles,fids){
   for(const t of tiles){
     if(t.img&&t.img.type==='file'&&t.img.value)fids.add(t.img.value);
     if(t.action&&t.action.type==='file'&&t.action.value)fids.add(t.action.value);}}
-async function packBlobAndSave(head,fids,fname,logLbl){
+async function packBlobAndSave(head,fids,fname,logLbl,subdir){
   const parts=[new Blob([JSON.stringify(head)+'\n'])];
   let n=0;
   for(const k of fids){const f=await idb.get('files',k);if(!f)continue;
     const h=JSON.stringify({file:k,name:f.name,mime:f.mime,size:f.size||0});
-    parts.push(new Blob([h.slice(0,-1)+',"b64":"',await blobToB64(f.blob),'"}\n']));n++;}
+    await pushFileB64(parts,h,f.blob);n++;}
   const blob=new Blob(parts,{type:'application/json'});
-  dlBlob(blob,fname);
+  await saveExport(blob,fname,subdir,logLbl);
   logEvt(logLbl+' ('+fmtSize(blob.size)+', '+n+' fichier(s))');
   toast(logLbl+' ('+fmtSize(blob.size)+')');}
 /* Téléchargement d'un Blob — compatible Safari/macOS.
@@ -4473,7 +4615,7 @@ async function exportPerso(){
       settings:{theme:s.theme,sidebarW:s.sidebarW,quickSel:s.quickSel,quickSelCustom:s.quickSelCustom,noteFore:s.noteFore,
         noteHilite:s.noteHilite,quoteHide:s.quoteHide}};
     await packBlobAndSave(head,fids,`RailDoc-PERSO-${dstamp()}.json`,
-      `👤 Données perso exportées (${nodes.length} fiche(s), ${tiles.filter(t=>t.kind!=='section'&&t.kind!=='spacer').length} tuile(s))`);
+      `👤 Données perso exportées (${nodes.length} fiche(s), ${tiles.filter(t=>t.kind!=='section'&&t.kind!=='spacer').length} tuile(s))`,'Perso');
   }catch(e){console.error(e);toast('⚠️ Échec de l\'export perso');}}
 function fixOrphans(){
   const ids=new Set(data.nodes.map(n=>n.id));
@@ -4576,9 +4718,9 @@ async function exportWall(){
     let n=0;
     for(const k of fids){const f=await idb.get('files',k);if(!f)continue;
       const h=JSON.stringify({file:k,name:f.name,mime:f.mime,size:f.size||0});
-      parts.push(new Blob([h.slice(0,-1)+',"b64":"',await blobToB64(f.blob),'"}\n']));n++;}
+      await pushFileB64(parts,h,f.blob);n++;}
     const blob=new Blob(parts,{type:'application/json'});
-    dlBlob(blob,`RailDoc-mur-${dstamp()}.json`);
+    await saveExport(blob,`RailDoc-mur-${dstamp()}.json`,'Murs','🧱 Mur d\'accueil');
     logEvt(`🧱 Mur d'accueil exporté (${tiles.length} élément(s), ${n} fichier(s), ${fmtSize(blob.size)})`);
     toast(`🧱 Mur d'accueil exporté (${fmtSize(blob.size)})`);
   }catch(e){console.error(e);toast('⚠️ Échec de l\'export du mur');}}
@@ -4683,13 +4825,14 @@ async function checkAllLinks(manual){
     if(manual){
       if(issues.length)linkReportModal();
       else toast('✅ Aucun lien mort détecté ('+items.length+' cible(s), '+checkedUrls+' adresse(s) testée(s))');}
-    else if(issues.length&&isEdit())
+    else if(issues.length&&isAdmin())
       toast('🔗 '+issues.length+' lien(s) à vérifier — détail dans ⚙ Réglages');
   }catch(e){console.error(e);if(manual)toast('⚠️ Vérification des liens impossible');}
   finally{linkCheckBusy=false;}}
 function linkReportIssues(){return(data.linkReport&&data.linkReport.issues)||[];}
 /* Avis aux Assistants PAC et à l'admin au déverrouillage */
 function notifyLinkReport(){
+  if(!isAdmin())return;
   const n=linkReportIssues().length;
   if(n)setTimeout(()=>toast('🔗 '+n+' lien(s) à vérifier — détail dans ⚙ Réglages'),900);}
 function linkReportModal(){
@@ -4956,8 +5099,28 @@ function introRun(){
    ========================================================== */
 const blobToB64=blob=>new Promise((res,rej)=>{const r=new FileReader();
   r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(blob);});
-const b64ToBlob=(b64,mime)=>{const bin=atob(b64);const arr=new Uint8Array(bin.length);
-  for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);return new Blob([arr],{type:mime});};
+/* Export par tranches : chaque fichier est lu et encodé en base64 par blocs de 6 Mo
+   (multiple de 3 octets → tranches concaténables), poussés comme fragments de Blob.
+   La mémoire vive n'est jamais sollicitée par le fichier entier — indispensable
+   pour les sauvegardes de plusieurs Go et le fonctionnement sur iPad. */
+const B64_CHUNK=6*1024*1024;
+async function pushFileB64(parts,headJson,blob){
+  parts.push(new Blob([headJson.slice(0,-1)+',"b64":"']));
+  for(let o=0;o<blob.size;o+=B64_CHUNK){
+    const buf=new Uint8Array(await blob.slice(o,Math.min(blob.size,o+B64_CHUNK)).arrayBuffer());
+    let bin='';const STEP=0x8000;
+    for(let i=0;i<buf.length;i+=STEP)bin+=String.fromCharCode.apply(null,buf.subarray(i,i+STEP));
+    parts.push(new Blob([btoa(bin)]));}
+  parts.push(new Blob(['"}\n']));}
+/* Import : décodage base64 par tranches de 8 Mo (multiple de 4 → décodables séparément) */
+const b64ToBlob=(b64,mime)=>{
+  const parts=[];const STEP=8*1024*1024;
+  for(let o=0;o<b64.length;o+=STEP){
+    const bin=atob(b64.substr(o,STEP));
+    const arr=new Uint8Array(bin.length);
+    for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);
+    parts.push(arr);}
+  return new Blob(parts,{type:mime});};
 async function exportAll(){
   toast('⏳ Préparation de la sauvegarde…');
   try{
@@ -4970,12 +5133,17 @@ async function exportAll(){
     for(const k of keys){const f=await idb.get('files',k);
       if(!f)continue;
       const head=JSON.stringify({file:k,name:f.name,mime:f.mime,size:f.size||0});
-      parts.push(new Blob([head.slice(0,-1)+',"b64":"',await blobToB64(f.blob),'"}\n']));
+      await pushFileB64(parts,head,f.blob);
       n++;if(n%5===0)toast(`⏳ Préparation… ${n} fichier(s)`);}
     const blob=new Blob(parts,{type:'application/json'});
-    dlBlob(blob,`RailDoc-sauvegarde-${dstamp()}.json`);
+    await saveExport(blob,`RailDoc-sauvegarde-${dstamp()}.json`,'Sauvegardes','💾 Sauvegarde complète');
     logEvt(`💾 Sauvegarde exportée (${fmtSize(blob.size)}, ${n} fichier(s))`);
     toast(`💾 Sauvegarde exportée (${fmtSize(blob.size)})`);
+    /* génère dans la foulée les trois autres exports : commun, perso, mur */
+    try{await exportShared();}catch(e){console.error(e);}
+    try{await exportPerso();}catch(e){console.error(e);}
+    try{await exportWall();}catch(e){console.error(e);}
+    toast('💾 Jeu complet généré : sauvegarde TOUT + données COMMUNES + PERSO + mur'+(workDirHandle?' — rangé dans le dossier de travail':''));
   }catch(e){console.error(e);toast('⚠️ Échec de l\'export : '+(e&&e.message?e.message:'erreur'));}}
 /* Lecture en flux d'un fichier texte, ligne par ligne (jamais tout en mémoire) */
 async function rdFirstLine(file){
@@ -5140,17 +5308,28 @@ async function applyFavicon(){
   link.href=applyFavicon._def.ico;
   tlink.href=applyFavicon._def.touch;}
 async function updateStats(){const nf=(await idb.keys('files')).length;
-  const sl=$('#statsLine');
+  const sl=$('#statsLine');if(!sl)return;
   const counts=`${data.nodes.length} fiche(s) · ${nf} fichier(s)`;
+  /* état LOCAL sur la même ligne : dossier lié (= cloud via OneDrive) ou stockage interne */
+  const loc=workDirHandle?(workDirState==='ask'?'📁 autoriser':'📁 lié'):'📁 interne';
+  const locTitle=workDirHandle
+    ?(workDirState==='ask'?'Dossier de travail lié mais autorisation à redonner — cliquer'
+      :'Dossier de travail lié : exports rangés automatiquement, pack lu à la racine (cloud si dossier OneDrive/SharePoint)')
+    :'Stockage interne au navigateur — un dossier de travail peut être lié (Chrome/Edge) via le clic';
+  const menu=()=>{
+    const items=[{ic:'🔄',label:'Vérifier les mises à jour maintenant',fn:()=>checkUpdate(true)},
+      {ic:'📁',label:'Dossier de travail (local / cloud)…',fn:workDirModal}];
+    const r=sl.getBoundingClientRect();
+    openCtx(Math.max(8,r.left),Math.max(60,r.top-96),items);};
   if(state.updAvail){
     sl.innerHTML=`<button id="updGo" style="color:#fff;background:#1e6fd9;border-radius:8px;padding:2px 9px;font-size:11px;font-weight:800;animation:pulseWarn 2.4s ease-in-out infinite;cursor:pointer" title="Un pack v${state.updAvail.ver} est disponible — cliquer pour mettre à jour (${counts})">🔄 Effectuer une mise à jour</button>`;
     $('#updGo').onclick=proposeUpdate;}
   else if(state.updOk){
-    sl.innerHTML=`<button id="updGo" style="color:#128a3e;font-weight:800;font-size:11px;cursor:pointer;padding:2px 4px" title="Données communes à jour (pack v${data.packVer||0}) — cliquer pour revérifier (${counts})">✅ Version à jour</button>`;
-    $('#updGo').onclick=()=>checkUpdate(true);}
+    sl.innerHTML=`<button id="updGo" style="color:#128a3e;font-weight:800;font-size:11px;cursor:pointer;padding:2px 4px" title="Données communes à jour (pack v${data.packVer||0}) · ${locTitle} (${counts})">☁️ À jour · ${loc}</button>`;
+    $('#updGo').onclick=menu;}
   else{
-    sl.innerHTML=`<button id="updGo" style="color:var(--muted);font-size:11px;cursor:pointer;padding:2px 4px" title="La vérification de mise à jour n'a pas encore abouti (source non configurée, hors ligne ou dossier inaccessible) — cliquer pour réessayer (${counts})">Vérification impossible</button>`;
-    $('#updGo').onclick=()=>checkUpdate(true);}}
+    sl.innerHTML=`<button id="updGo" style="color:var(--muted);font-size:11px;cursor:pointer;padding:2px 4px" title="Cloud non vérifié (source non configurée, hors ligne ou dossier inaccessible) · ${locTitle} (${counts})">☁️ non vérifié · ${loc}</button>`;
+    $('#updGo').onclick=menu;}}
 function logsModal(){
   const fmtT=t=>{const d=new Date(t);
     return d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});};
@@ -8094,6 +8273,9 @@ function renderEquip(){
    Initialisation & événements globaux
    ========================================================== */
 async function init(){
+  /* demander le stockage persistant : protège les données hors ligne (Safari/iPad
+     peut sinon purger le stockage des sites peu visités) */
+  try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();}catch(_){}
   try{DB=await openDB();}
   catch(e){document.body.innerHTML='<div style="padding:40px;font-family:sans-serif">⚠️ Votre navigateur bloque le stockage local (mode privé ?). RailDoc a besoin du stockage du navigateur pour fonctionner.</div>';return;}
   data=await idb.get('kv','data');
@@ -8180,41 +8362,40 @@ async function init(){
   $('#collapseAllBtn').onclick=()=>{state.open.clear();save();renderTree();};
   checkAppVersion();
   setTimeout(autoLinkCheck,15000);
+  workDirInit();
   $('#settingsBtn').onclick=e=>{e.stopPropagation();
     const r=e.currentTarget.getBoundingClientRect();
+    /* lecture seule : menu minimal (MAJ + dossier) · Assistant : + import/exports · Admin : tout */
     const items=[
       {ic:'🔄',label:'Rechercher une mise à jour des données communes',fn:()=>checkUpdate(true)},
-      {ic:'📡',label:'Source des mises à jour (dossier partagé)…',fn:updateSourceModal}];
+      {ic:'📁',label:'Dossier des mises à jour / de travail (OneDrive)…',fn:workDirModal}];
     if(isAdmin())items.push({sep:true},{ic:'🌐',label:'Données communes / personnelles…',fn:sharedManagerModal});
-    items.push(
+    if(isEdit())items.push(
       {sep:true},
       {ic:'📂',label:'Importer un fichier RailDoc… (type détecté automatiquement)',fn:()=>$('#fiImport').click()},
       {sep:true},
-      {ic:'💾',label:'Exporter TOUT (sauvegarde complète)',fn:exportAll},
+      {ic:'💾',label:'Exporter TOUT (génère aussi commun, perso et mur)',fn:exportAll},
       {ic:'🌐',label:'Exporter les données COMMUNES',fn:exportShared},
       {ic:'👤',label:'Exporter MES données PERSO',fn:exportPerso},
-      {ic:'🧱',label:'Exporter le mur d\'accueil seul',fn:exportWall},
-      {sep:true});
-    if(isAdmin())items.push(
-      {ic:'✏️',label:'Titre, image & descriptif de l\'application',fn:brandModal},
-      {ic:'🔑',label:'Codes d\'accès (Assistant PAC / Admin)…',fn:codesModal},
-      {ic:'↔️',label:'Largeur du panneau de gauche…',fn:sidebarWidthModal},
-      {ic:'💬',label:(data.settings.quoteHide?'Afficher':'Masquer')+' la citation du jour',fn:()=>{
-        data.settings.quoteHide=!data.settings.quoteHide;save();renderQuote();
-        toast(data.settings.quoteHide?'💬 Citation du jour masquée':'💬 Citation du jour affichée — elle change chaque jour');}});
-    {const nLk=linkReportIssues().length;
-     items.push(
-      {ic:'🔗',label:nLk?('Liens à vérifier — ⚠️ '+nLk+' problème(s)'):'Vérifier les liens (liens morts)',fn:()=>{
-        linkReportIssues().length?linkReportModal():checkAllLinks(true);}});}
-    items.push(
-      {ic:'ℹ️',label:'Informations & statistiques',fn:infoModal});
-    if(isAdmin())items.push(
-      {ic:'🕘',label:'Historique des versions',fn:versionModal},
-      {sep:true},
-      {ic:'🕑',label:'Journal des actions',fn:logsModal});
-    if(isAdmin())items.push(
-      {sep:true},
-      {ic:'🧹',label:'Tout effacer — application vierge…',danger:true,fn:resetAllModal});
+      {ic:'🧱',label:'Exporter le mur d\'accueil seul',fn:exportWall});
+    if(isAdmin()){
+      const nLk=linkReportIssues().length;
+      items.push(
+        {sep:true},
+        {ic:'✏️',label:'Titre, image & descriptif de l\'application',fn:brandModal},
+        {ic:'🔑',label:'Codes d\'accès (Assistant PAC / Admin)…',fn:codesModal},
+        {ic:'↔️',label:'Largeur du panneau de gauche…',fn:sidebarWidthModal},
+        {ic:'💬',label:(data.settings.quoteHide?'Afficher':'Masquer')+' la citation du jour',fn:()=>{
+          data.settings.quoteHide=!data.settings.quoteHide;save();renderQuote();
+          toast(data.settings.quoteHide?'💬 Citation du jour masquée':'💬 Citation du jour affichée — elle change chaque jour');}},
+        {ic:'🔗',label:nLk?('Liens à vérifier — ⚠️ '+nLk+' problème(s)'):'Vérifier les liens (liens morts)',fn:()=>{
+          linkReportIssues().length?linkReportModal():checkAllLinks(true);}},
+        {ic:'ℹ️',label:'Informations & statistiques',fn:infoModal},
+        {ic:'🕘',label:'Historique des versions',fn:versionModal},
+        {sep:true},
+        {ic:'🕑',label:'Journal des actions',fn:logsModal},
+        {sep:true},
+        {ic:'🧹',label:'Tout effacer — application vierge…',danger:true,fn:resetAllModal});}
     openCtx(r.right-250,r.bottom+6,items);};
   $('#dirBtn').onclick=directoryModal;
   $('#updBtn').onclick=()=>checkUpdate(true);
@@ -8288,7 +8469,11 @@ async function init(){
       {ic:'🔤',label:'Titre (A → Z)',fn:()=>sortChildren('az')},
       {ic:'🔡',label:'Titre (Z → A)',fn:()=>sortChildren('za')},
       {ic:'🕑',label:'Modifiées récemment d\'abord',fn:()=>sortChildren('recent')},
-      {ic:'🕰',label:'Plus anciennes d\'abord',fn:()=>sortChildren('old')}]);
+      {ic:'🕰',label:'Plus anciennes d\'abord',fn:()=>sortChildren('old')},
+      {sep:true},
+      {ic:'📄',label:'Référence (A → Z)',fn:()=>sortChildren('ref')},
+      {ic:'📅',label:'Date d\'application — récentes d\'abord',fn:()=>sortChildren('dateNew')},
+      {ic:'📅',label:'Date d\'application — anciennes d\'abord',fn:()=>sortChildren('dateOld')}]);
     e.stopPropagation();};
   $('#nodeWallEditBtn').onclick=()=>{if(!currentNode)return;
     state.editWallOwner=state.editWallOwner===currentNode.id?null:currentNode.id;
