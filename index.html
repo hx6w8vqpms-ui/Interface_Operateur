@@ -1378,9 +1378,10 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='9.00';
+const APP_VERSION='9.01';
 const APP_VERSION_DATE='7 août 2026';
 const CHANGELOG=[
+  ['v9.01',"Correction iPad : la restauration d'une sauvegarde échouait (y compris pour des fichiers modestes) car chaque pièce jointe était reconstruite en un seul bloc de texte base64 en mémoire — au-delà de la limite de Safari sur iPad. La lecture se fait désormais en vrai flux, décodée par petits segments : la mémoire reste bornée quelle que soit la taille (testé jusqu'à plusieurs Go), et cela vaut pour tous les imports (sauvegarde TOUT, pack commun, perso, mur) · en cas d'échec, le message indique désormais la cause"],
   ['v9.00',"Barre du haut : la punaise 📍 Lieux & Abréviations reste collée au bouton annuaire 📞 (les deux forment un duo à gauche de la pendule)"],
   ['v8.99',"Mise en page : la barre Référence / Date d'application respire davantage et les suggestions d'appareillages ne chevauchent plus ces champs en mode édition"],
   ['v8.98',"Correction : un lien « Fiche interne » (zone Liens) ou une tuile ouvrant une fiche naviguent désormais dans la même fenêtre au lieu d'ouvrir un nouvel onglet — sur Safari en fichier local, le nouvel onglet repartait avec un stockage vide et affichait « fichier introuvable » ; le bouton ← du fil d'ariane permet de revenir à la fiche précédente"],
@@ -4696,14 +4697,71 @@ async function exportPerso(){
 function fixOrphans(){
   const ids=new Set(data.nodes.map(n=>n.id));
   for(const n of data.nodes)if(n.parent&&!ids.has(n.parent))n.parent=null;}
-async function importFilesLines(file){
-  let first=true,nf=0;
-  await rdLines(file,async line=>{
-    if(first){first=false;return;}
-    let rec=null;try{rec=JSON.parse(line);}catch(_){return;}
-    if(rec&&rec.file){
-      await idb.put('files',rec.file,{name:rec.name,mime:rec.mime,size:rec.size,blob:b64ToBlob(rec.b64,rec.mime)});nf++;}});
+/* Lecture en VRAI flux des enregistrements de fichiers d'un export NDJSON.
+   L'ancienne lecture reconstruisait chaque ligne entière en mémoire : pour une
+   pièce jointe de 200 Mo, cela faisait ~270 Mo de texte base64 d'un bloc — au-delà
+   de la limite mémoire de Safari sur iPad (d'où « échec de la restauration »,
+   alors que le même fichier passait sur Mac). Ici, la charge base64 est décodée
+   au fil de l'eau par petits segments alignés : la mémoire reste bornée. */
+async function streamFileRecords(file,onFirstLine,onFileRec){
+  const reader=file.stream().getReader();
+  const dec=new TextDecoder();
+  const MARK='"b64":"';
+  let mode=0; /* 0=1re ligne · 1=en-tête d'enregistrement · 2=charge base64 · 3=fin de ligne */
+  let buf='',rec=null,parts=null,pend='',nf=0;
+  const decodeB64=final=>{
+    const take=final?pend.length:pend.length-(pend.length%4);
+    if(take<=0)return;
+    const seg=pend.slice(0,take);pend=pend.slice(take);
+    const bin=atob(seg);
+    const arr=new Uint8Array(bin.length);
+    for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);
+    parts.push(arr);};
+  const feed=async txt=>{
+    let s=txt;
+    while(s.length){
+      if(mode===2){ /* charge base64 : jusqu'au guillemet fermant */
+        const q=s.indexOf('"');
+        if(q<0){pend+=s;s='';decodeB64(false);}
+        else{pend+=s.slice(0,q);s=s.slice(q+1);
+          decodeB64(true);
+          const blob=new Blob(parts,{type:rec.mime||'application/octet-stream'});
+          await onFileRec(rec,blob);nf++;
+          rec=null;parts=null;pend='';mode=3;}
+        continue;}
+      if(mode===3){ /* consomme la fin de ligne ( }\n ) */
+        const nl=s.indexOf('\n');
+        if(nl<0){s='';}else{s=s.slice(nl+1);buf='';mode=1;}
+        continue;}
+      if(mode===0){ /* première ligne : les données */
+        const nl=s.indexOf('\n');
+        if(nl<0){buf+=s;s='';}
+        else{buf+=s.slice(0,nl);s=s.slice(nl+1);
+          await onFirstLine(buf);buf='';mode=1;}
+        continue;}
+      /* mode 1 : en-tête (court) jusqu'au marqueur "b64":" */
+      buf+=s;s='';
+      const mi=buf.indexOf(MARK);
+      if(mi>=0){
+        const hdr=buf.slice(0,mi)+MARK+'"}';
+        s=buf.slice(mi+MARK.length);buf='';
+        try{rec=JSON.parse(hdr);}catch(_){rec=null;}
+        if(rec&&rec.file){parts=[];pend='';mode=2;}
+        else{mode=3;} /* enregistrement inconnu : sauter la ligne */
+      }else{
+        /* lignes complètes sans charge base64 : ignorées proprement */
+        let nl;while((nl=buf.indexOf('\n'))>=0)buf=buf.slice(nl+1);
+        if(buf.length>2000000)buf=buf.slice(-1000); /* garde-fou */
+      }}};
+  while(true){const{done,value}=await reader.read();
+    if(done)break;
+    await feed(dec.decode(value,{stream:true}));}
+  await feed(dec.decode());
+  if(mode===2)throw new Error('sauvegarde tronquée (fichier incomplet)');
   return nf;}
+async function importFilesLines(file){
+  return await streamFileRecords(file,async()=>{},async(rec,blob)=>{
+    await idb.put('files',rec.file,{name:rec.name,mime:rec.mime,size:rec.size,blob});});}
 async function importCommonPack(file,meta,auto){
   const nT=(meta.tiles||[]).filter(t=>t.kind!=='section'&&t.kind!=='spacer').length;
   const when=meta.exported?new Date(meta.exported).toLocaleString('fr-FR'):'date inconnue';
@@ -5268,14 +5326,10 @@ async function importAll(file){
       for(const u of Object.values(urlCache))URL.revokeObjectURL(u);urlCache={};
       try{for(const k of await idb.keys('kv'))if(String(k).startsWith('thumb_'))await idb.del('kv',k);}catch(_){}
       for(const k of Object.keys(thumbCache))delete thumbCache[k];
-      let first=true,nf=0;
-      await rdLines(file,async line=>{
-        if(first){first=false;return;}
-        let rec=null;
-        try{rec=JSON.parse(line);}catch(_){return;}
-        if(rec&&rec.file){
-          await idb.put('files',rec.file,{name:rec.name,mime:rec.mime,size:rec.size,blob:b64ToBlob(rec.b64,rec.mime)});
-          nf++;if(nf%5===0)toast(`⏳ Restauration… ${nf} fichier(s)`);}});
+      let nf=0;
+      await streamFileRecords(file,async()=>{},async(rec,blob)=>{
+        await idb.put('files',rec.file,{name:rec.name,mime:rec.mime,size:rec.size,blob});
+        nf++;if(nf%5===0)toast(`⏳ Restauration… ${nf} fichier(s)`);});
       data=meta.data;
       normalizeData();
       state.open=new Set(data.settings.open||[]);
@@ -5284,7 +5338,7 @@ async function importAll(file){
       logEvt(`♻️ Sauvegarde restaurée (${when}, ${nf} fichier(s))`);
       navigate('#/home');render();updateStats();
       toast('✅ Sauvegarde restaurée !');
-    }catch(e){console.error(e);toast('⚠️ Échec de la restauration');}
+    }catch(e){console.error(e);toast('⚠️ Échec de la restauration : '+(e&&e.message?e.message:'erreur'));}
     return;}
   /* ancien format v1 (fichier JSON unique) */
   let payload;
@@ -5316,7 +5370,7 @@ async function importAll(file){
     logEvt(`♻️ Sauvegarde restaurée (${when})`);
     navigate('#/home');render();updateStats();
     toast('✅ Sauvegarde restaurée !');
-  }catch(e){console.error(e);toast('⚠️ Échec de la restauration');}}
+  }catch(e){console.error(e);toast('⚠️ Échec de la restauration : '+(e&&e.message?e.message:'erreur'));}}
 
 /* ==========================================================
    Horloge, thème, identité, stats
