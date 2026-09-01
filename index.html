@@ -457,6 +457,74 @@ html[data-mode="edit"] #editor .rd-ftoc-head:hover{color:var(--accent)}
 
 ::selection{background:#c1275842}
 html[data-theme="dark"] ::selection{background:#c1275866}
+/* ---------- Retour visuel au survol : tout ce qui se clique réagit ---------- */
+.tile,.child-card,.file-card,.link-chip,.dir-row,.tree-row,.hc-card,.hc-slide,.sl-item,.wn-chip,.move-opt,.btn,.icon-btn,.eb,.seg button,.emoji-grid button,.sw{cursor:pointer}
+@media (hover:hover){
+  .tile:not(.spacer):not(.add-tile),.child-card,.file-card,.hc-card,.sl-item,.btn,.icon-btn,.wn-chip,.link-chip{transition:transform .14s ease,box-shadow .14s ease,background .14s ease,border-color .14s ease}
+  .tile:not(.spacer):not(.add-tile):hover,.child-card:hover,.file-card:hover,.hc-card:hover,.sl-item:hover{transform:translateY(-2px);box-shadow:0 8px 22px #00000024,0 0 0 2px var(--accent-soft)}
+  .btn:hover:not(:disabled),.icon-btn:hover{transform:translateY(-1px)}
+  .wn-chip:hover,.link-chip:hover{transform:translateY(-1px);box-shadow:0 3px 10px #0000001c}
+  .tree-row:hover,.dir-row:hover{box-shadow:inset 3px 0 0 var(--accent)}
+  .hc-slide:hover img,.hc-card:hover img{filter:brightness(1.06)}
+}
+
+/* ---------- Illustration de fiche ---------- */
+#nodeIllus{margin:2px 0 14px}
+.illus-box{position:relative;border-radius:14px;overflow:hidden;box-shadow:var(--shadow);background:var(--bg-soft)}
+.illus-box img{width:100%;display:block;object-fit:cover}
+.illus-band img{height:150px}
+.illus-bandXL img{height:280px}
+.illus-full img{object-fit:contain;max-height:58vh;height:auto}
+.illus-mini{max-width:46%;margin:0 auto}
+.illus-miniR{max-width:36%;margin-left:auto}
+html[data-mode="edit"] .illus-box{cursor:pointer}
+.illus-chip{position:absolute;top:8px;left:8px;font-size:10.5px;font-weight:800;color:#fff;background:#00000080;
+  border-radius:999px;padding:3px 9px;backdrop-filter:blur(4px)}
+.illus-add{display:flex;align-items:center;justify-content:center;gap:8px;border:2px dashed var(--border-strong);
+  border-radius:14px;padding:13px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;width:100%}
+.illus-add:hover{border-color:var(--edit);color:var(--edit);background:var(--edit-soft)}
+#nodeCarBtn{opacity:.4}
+#nodeCarBtn.on{opacity:1;background:var(--accent-soft);box-shadow:0 0 0 2px var(--accent-soft)}
+html[data-mode="read"] #nodeCarBtn{display:none !important}
+
+/* ---------- Carrousel du mur Documentation ---------- */
+#homeCarousel{position:relative;display:none;margin:0 0 6px}
+#homeCarousel.hc-hero,#homeCarousel.hc-multi{position:sticky;top:0;z-index:26;background:color-mix(in srgb,var(--bg) 92%,transparent);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:6px 2px 6px;margin:0 -2px 4px}
+#homeCarousel.hc-hero .hc-frame{position:relative;height:min(24vh,210px);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+#homeCarousel .hc-track{scrollbar-width:none}
+#homeCarousel .hc-track::-webkit-scrollbar{display:none}
+#homeCarousel.hc-multi .hc-track{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 2px 4px}
+.hc-card{position:relative;border-radius:14px;overflow:hidden;box-shadow:var(--shadow);cursor:pointer;background:var(--bg-soft)}
+#homeCarousel.hc-multi .hc-card{flex:0 0 min(260px,72vw);height:150px;scroll-snap-align:start}
+.hc-card img{width:100%;height:100%;object-fit:cover;display:block}
+.hc-ct{position:absolute;left:0;right:0;bottom:0;padding:20px 12px 8px;color:#fff;font-weight:800;font-size:13.5px;
+  background:linear-gradient(transparent,#000000b0);text-shadow:0 1px 4px #0008;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#homeCarousel.hc-mosaic .hc-track{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+#homeCarousel.hc-mosaic .hc-card{height:130px}
+.hc-cfg{position:absolute;top:8px;right:8px;z-index:5;width:30px;height:30px;border-radius:50%;
+  background:#00000066;color:#fff;font-size:14px;display:none;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+html[data-mode="edit"] .hc-cfg{display:flex}
+#homeCarousel.hc-multi .hc-arr,#homeCarousel.hc-mosaic .hc-arr{display:none}
+#homeCarousel.hc-multi .hc-arrm{position:absolute;top:50%;transform:translateY(-50%);z-index:4;width:30px;height:30px;
+  border-radius:50%;background:#00000059;color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .2s;backdrop-filter:blur(3px)}
+#homeCarousel.hc-multi:hover .hc-arrm{opacity:1}
+.hc-arrm.prev{left:6px}.hc-arrm.next{right:6px}
+.hc-slide{position:absolute;inset:0;opacity:0;transition:opacity .7s;cursor:pointer}
+.hc-slide.on{opacity:1}
+.hc-slide img{width:100%;height:100%;object-fit:cover;display:block}
+.hc-title{position:absolute;left:0;right:0;bottom:0;padding:26px 18px 12px;color:#fff;font-weight:800;font-size:16.5px;
+  background:linear-gradient(transparent,#000000b3);text-shadow:0 1px 5px #0009;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hc-dots{position:absolute;bottom:10px;right:14px;display:flex;gap:5px;z-index:3}
+.hc-dot{width:7px;height:7px;border-radius:50%;background:#ffffff5c;cursor:pointer}
+.hc-dot.on{background:#fff}
+.hc-arr{position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:32px;height:32px;border-radius:50%;
+  background:#00000059;color:#fff;font-size:15px;display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .2s;backdrop-filter:blur(3px)}
+.hc-arr.prev{left:10px}.hc-arr.next{right:10px}
+#homeCarousel:hover .hc-arr{opacity:1}
+
 /* ---------- Métadonnées de fiche : référence & date d'application ---------- */
 #metaBar{display:none;gap:10px 14px;flex-wrap:wrap;margin:8px 0 18px;align-items:center}
 .meta-f{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--muted)}
@@ -1184,6 +1252,7 @@ html[data-mode="read"] #modeBtn .ic-lock{display:block}
             </div>
           </div>
         </div>
+        <div id="homeCarousel"></div>
         <div id="wallBar">
           <div id="wallBtns">
             <button class="btn" id="quickBtn">🚀 Lancement rapide</button>
@@ -1217,6 +1286,7 @@ html[data-mode="read"] #modeBtn .ic-lock{display:block}
           <button id="nodeIcon" title="Changer l'icône">📄</button>
           <h1 id="nodeTitle" contenteditable="true" spellcheck="false"></h1>
           <div class="node-actions">
+            <button class="icon-btn" id="nodeCarBtn" style="display:none" title="Afficher cette fiche dans le carrousel du mur Documentation">🎠</button>
             <button class="icon-btn" id="nodeScopeBtn" style="display:none">
               <span id="nscGlo" style="display:none;line-height:0"><svg viewBox="0 0 24 24" aria-hidden="true">        <circle cx="12" cy="12" r="9" fill="url(#g3glo)"/>
         <g fill="none" stroke="#ffffff99" stroke-width="1.17" stroke-linecap="round">
@@ -1237,6 +1307,7 @@ html[data-mode="read"] #modeBtn .ic-lock{display:block}
         <div id="tagBar"></div>
         <div id="metaBar"></div>
         <div id="nodeEquipSugs"></div>
+        <div id="nodeIllus"></div>
 
         <!-- Mur d'accès rapide de la fiche -->
         <div class="zone" id="nodeWallZone">
@@ -1351,11 +1422,14 @@ html[data-mode="read"] #modeBtn .ic-lock{display:block}
 <!-- Entrées fichiers cachées -->
 <input type="file" id="fiAttach" accept="image/*,.pdf,application/pdf,.doc,.docx,.docm,.xls,.xlsx,.xlsm,.ppt,.pptx,.pptm" multiple hidden>
 <input type="file" id="fiImport" accept=".json,.raildoc,application/json" hidden>
+<input type="file" id="fiImportParts" accept=".json,application/json" multiple hidden>
 <input type="file" id="fiImportWall" accept=".json,application/json" hidden>
 <input type="file" id="fiUpdPick" accept=".json,application/json" hidden>
 <input type="file" id="fiTileImg" accept="image/*" hidden>
 <input type="file" id="fiNoteImg" accept="image/*" hidden>
 <input type="file" id="fiIcon" accept="image/*" hidden>
+<input type="file" id="fiIllus" accept="image/*" hidden>
+<input type="file" id="fiChar" accept="image/svg+xml,image/png,image/webp,.svg,.png,.webp" hidden>
 <input type="file" id="fiScanDir" webkitdirectory hidden>
 <input type="file" id="fiScanFiles" accept=".pdf,application/pdf,.doc,.docx,.docm,.xls,.xlsx,.xlsm,.ppt,.pptx,.pptm" multiple hidden>
 <input type="file" id="fiPack" accept=".json,application/json" hidden>
@@ -1378,9 +1452,14 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='9.01';
+const APP_VERSION='9.06';
 const APP_VERSION_DATE='7 août 2026';
 const CHANGELOG=[
+  ['v9.06',"Vie à l'écran : retour visuel au survol de tout ce qui se clique (léger relief, ombre et halo sur tuiles, cartes, puces, lignes, boutons) · le carrousel reste affiché en permanence en haut du mur, collant comme la barre des boutons (sauf en mosaïque) · nouvelles animations d'inactivité aléatoires : un personnage part explorer l'écran ou joue à cache-cache depuis les bords en lançant ses citations, en plus de Pac qui dévore la barre du haut — le moindre mouvement, clic ou touche fait tout disparaître · nouveau menu admin 🎭 Personnages & citations : Pac, Octo (citations geek) et le Chef (citations à personnaliser), dessins SVG/PNG importables de même taille, ajout de personnages, activation, bouton ▶ pour tester · tout est diffusé via le pack commun et inclus dans les sauvegardes"],
+  ['v9.05',"Carrousel du mur Documentation : trois modes d'affichage au choix via la molette 🎛 (mode édition) — 🖼 Panorama (une grande image, comme avant), 🎞 Vignettes défilantes (plusieurs cartes côte à côte, défilement automatique en boucle, flèches au survol), ▦ Mosaïque (toutes les vignettes en grille, sans défilement) — le mode choisi est diffusé aux collègues via le pack commun"],
+  ['v9.04',"Correction : le menu de l'illustration (affichages, remplacer, retirer, carrousel) s'ouvrait puis se refermait aussitôt — le clic qui l'ouvrait le refermait dans la foulée ; il reste maintenant ouvert"],
+  ['v9.03',"Illustration de fiche 🖼 : chaque fiche peut recevoir une image (zone sous les mots-clés en édition) avec cinq affichages au choix — bandeau, grand bandeau, entière, vignette centrée, vignette à droite — réglés d'un clic sur l'image · nouveau carrousel dynamique en haut du mur Documentation : les fiches marquées 🎠 y défilent (illustration + titre, rotation automatique toutes les 5 s, flèches, points, clic = ouvrir la fiche) · le bouton 🎠 dans l'en-tête de la fiche (mode édition) ajoute ou retire la fiche du carrousel · l'illustration voyage dans les packs et sauvegardes"],
+  ['v9.02',"Sauvegardes compatibles SharePoint : au-delà de 1,5 Go, « Exporter TOUT » découpe automatiquement la sauvegarde en plusieurs fichiers « partie X sur N » de moins de 1,5 Go chacun — SharePoint refusant les fichiers de plus de 2 Go · pour restaurer : importer la partie 1, l'application demande alors les autres parties (sélection multiple), vérifie qu'elles appartiennent bien à la même sauvegarde et qu'aucune ne manque, puis restaure le tout en flux · une sauvegarde plus petite reste un fichier unique, comme avant"],
   ['v9.01',"Correction iPad : la restauration d'une sauvegarde échouait (y compris pour des fichiers modestes) car chaque pièce jointe était reconstruite en un seul bloc de texte base64 en mémoire — au-delà de la limite de Safari sur iPad. La lecture se fait désormais en vrai flux, décodée par petits segments : la mémoire reste bornée quelle que soit la taille (testé jusqu'à plusieurs Go), et cela vaut pour tous les imports (sauvegarde TOUT, pack commun, perso, mur) · en cas d'échec, le message indique désormais la cause"],
   ['v9.00',"Barre du haut : la punaise 📍 Lieux & Abréviations reste collée au bouton annuaire 📞 (les deux forment un duo à gauche de la pendule)"],
   ['v8.99',"Mise en page : la barre Référence / Date d'application respire davantage et les suggestions d'appareillages ne chevauchent plus ces champs en mode édition"],
@@ -1545,7 +1624,9 @@ function fileRefCount(id){let n=0;
   if(data.settings.logoImg===id)n++;
   for(const nd of data.nodes){for(const a of nd.files)if(a.fileId===id)n++;
     if(nd.iconImg===id)n++;
+    if(nd.illus===id)n++;
     for(const l of nd.links||[])if(l.type==='file'&&l.target===id)n++;}
+  for(const c of data.chars||[])if(c.img===id)n++;
   for(const it of data.equipCustom||[])if(it.img===id)n++;
   for(const k in data.equipOver||{})if(data.equipOver[k].img===id)n++;
   for(const k in data.equipMeta||{})for(const f of (data.equipMeta[k].files||[]))if(f.fileId===id)n++;
@@ -2450,7 +2531,78 @@ function renderQuote(){
   box.style.display='block';
   box.querySelector('.q-txt').textContent='« '+q[0]+' »';
   box.querySelector('.q-auth').textContent='— '+q[1];}
+/* ---------- Carrousel dynamique du mur Documentation ---------- */
+let hcTimer=null,hcIdx=0;
+const CAR_MODES=[['hero','🖼 Panorama — une grande image à la fois'],
+  ['multi','🎞 Vignettes défilantes — plusieurs à la fois'],
+  ['mosaic','▦ Mosaïque — toutes les vignettes, sans défilement']];
+function carModeMenu(x,y){
+  const cur=data.carouselMode||'hero';
+  openCtx(x,y,CAR_MODES.map(([v,lbl])=>({ic:cur===v?'✓':' ',label:lbl,fn:()=>{
+    data.carouselMode=v;save();renderCarousel();
+    toast('🎛 Affichage du carrousel : '+lbl.split(' — ')[0]+' (diffusé aux collègues via le pack commun)');}})));}
+function renderCarousel(){
+  const box=$('#homeCarousel');if(!box)return;
+  if(hcTimer){clearInterval(hcTimer);hcTimer=null;}
+  const SF=homeScopeFilter();
+  let list=data.nodes.filter(n=>n.carousel&&n.illus);
+  if(SF)list=list.filter(n=>nodeSharedEff(n.id)===SF.want);
+  if(!list.length){box.style.display='none';box.innerHTML='';box.className='';const wb=$('#wallBar');if(wb)wb.style.top='0px';return;}
+  const mode=data.carouselMode||'hero';
+  box.style.display='block';
+  box.className='hc-'+mode;
+  /* la barre du mur se colle juste sous le carrousel (lui-même collant, sauf mosaïque) */
+  requestAnimationFrame(()=>{const wb=$('#wallBar');if(!wb)return;
+    wb.style.top=(mode==='mosaic')?'0px':(box.offsetHeight-2)+'px';});
+  const cfg=isEdit()?'<button class="hc-cfg" title="Mode d\'affichage du carrousel (panorama, vignettes, mosaïque)">🎛</button>':'';
+  const wire=()=>{const cb=box.querySelector('.hc-cfg');
+    if(cb)cb.onclick=e=>{e.preventDefault();e.stopPropagation();carModeMenu(e.clientX,e.clientY);};};
+  if(mode==='multi'||mode==='mosaic'){
+    /* plusieurs vignettes à la fois : bande défilante ou grille complète */
+    box.innerHTML=`<div class="hc-track">${list.map((n,i)=>`
+        <div class="hc-card" data-node="${n.id}"><img alt=""><div class="hc-ct">${esc(n.icon)} ${esc(n.title||'Sans titre')}</div></div>`).join('')}</div>`
+      +(mode==='multi'&&list.length>1?'<button class="hc-arrm prev">◀</button><button class="hc-arrm next">▶</button>':'')
+      +cfg;
+    list.forEach((n,i)=>{fileURL(n.illus).then(u=>{
+      const im=box.querySelectorAll('.hc-card img')[i];if(u&&im)im.src=u;});});
+    box.querySelectorAll('.hc-card').forEach(c=>c.onclick=()=>navigate('#/node/'+c.dataset.node));
+    if(mode==='multi'){
+      const track=box.querySelector('.hc-track');
+      const step=dir=>{const cards=track.querySelectorAll('.hc-card');if(!cards.length)return;
+        const w=cards[0].offsetWidth+10;
+        const max=track.scrollWidth-track.clientWidth;
+        let x=track.scrollLeft+dir*w;
+        if(dir>0&&track.scrollLeft>=max-4)x=0;              /* boucle */
+        if(dir<0&&track.scrollLeft<=4)x=max;
+        track.scrollTo({left:Math.max(0,Math.min(max,x)),behavior:'smooth'});};
+      const pv=box.querySelector('.hc-arrm.prev'),nx=box.querySelector('.hc-arrm.next');
+      if(pv)pv.onclick=e=>{e.stopPropagation();step(-1);};
+      if(nx)nx.onclick=e=>{e.stopPropagation();step(1);};
+      if(list.length>1)hcTimer=setInterval(()=>{
+        if(state.view==='home'&&!box.matches(':hover'))step(1);},5000);}
+    wire();return;}
+  /* mode panorama (une grande image) */
+  box.innerHTML='<div class="hc-frame">'+list.map((n,i)=>`<div class="hc-slide${i===0?' on':''}" data-node="${n.id}">
+      <img alt=""><div class="hc-title">${esc(n.icon)} ${esc(n.title||'Sans titre')}</div></div>`).join('')
+    +(list.length>1?`<div class="hc-dots">${list.map((_,i)=>`<span class="hc-dot${i===0?' on':''}" data-i="${i}"></span>`).join('')}</div>
+      <button class="hc-arr prev">◀</button><button class="hc-arr next">▶</button>`:'')
+    +cfg+'</div>';
+  list.forEach((n,i)=>{fileURL(n.illus).then(u=>{
+    const im=box.querySelectorAll('.hc-slide img')[i];if(u&&im)im.src=u;});});
+  hcIdx=0;
+  const show=i=>{hcIdx=(i+list.length)%list.length;
+    box.querySelectorAll('.hc-slide').forEach((s,j)=>s.classList.toggle('on',j===hcIdx));
+    box.querySelectorAll('.hc-dot').forEach((d,j)=>d.classList.toggle('on',j===hcIdx));};
+  box.querySelectorAll('.hc-slide').forEach(s=>s.onclick=()=>navigate('#/node/'+s.dataset.node));
+  box.querySelectorAll('.hc-dot').forEach(d=>d.onclick=e=>{e.stopPropagation();show(+d.dataset.i);});
+  const pv=box.querySelector('.hc-arr.prev'),nx=box.querySelector('.hc-arr.next');
+  if(pv)pv.onclick=e=>{e.stopPropagation();show(hcIdx-1);};
+  if(nx)nx.onclick=e=>{e.stopPropagation();show(hcIdx+1);};
+  if(list.length>1)hcTimer=setInterval(()=>{
+    if(state.view==='home'&&!box.matches(':hover'))show(hcIdx+1);},5000);
+  wire();}
 function renderWallNav(){try{
+  renderCarousel();
   const box=$('#wallNav');if(!box)return;
   const bar=$('#wallBar');
   const sorted=[...(data.tiles||[])].sort((a,b)=>a.ord-b.ord);
@@ -2653,7 +2805,7 @@ function renderNode(){const n=nodeById(state.nodeId);if(!n){navigate('#/home');r
      :exc?'Exception : fiche personnelle au sein d\'une branche commune'
      :'Fiche personnelle — elle reste sur cet appareil')+(isEdit()?' · cliquer pour changer la portée':'');
    b.onclick=()=>{if(isEdit())nodeScopeModal(n.id);};}}
-  renderTags(n);renderMeta(n);renderNodeEquip(n);renderNodeWall(n);renderLinks(n);renderContacts(n);renderFiles(n);renderChildren(n);
+  renderTags(n);renderMeta(n);renderIllus(n);renderNodeEquip(n);renderNodeWall(n);renderLinks(n);renderContacts(n);renderFiles(n);renderChildren(n);
   /* en lecture seule, masquer les zones vides et la note vide */
   const emptyNote=!(n.html&&n.html.replace(/<br\s*\/?>/gi,'').replace(/&nbsp;/g,'').trim());
   $('#editorCard').style.display=(!isEdit()&&emptyNote)?'none':'';
@@ -2802,6 +2954,56 @@ function renderMeta(n){const bar=$('#metaBar');if(!bar)return;
     bar.innerHTML=[n.refDoc?`<span class="meta-chip">📄 ${esc(n.refDoc)}</span>`:'',
       n.dateApp?`<span class="meta-chip">📅 Applicable : ${fmtDateFR(n.dateApp)}</span>`:''].join('');
     fixEq();}}
+/* ---------- Illustration de la fiche ---------- */
+const ILLUS_MODES=[['band','▬ Bandeau'],['bandXL','▮ Grand bandeau'],['full','⛶ Entière'],['mini','▣ Vignette centrée'],['miniR','◨ Vignette à droite']];
+function renderIllus(n){const box=$('#nodeIllus');if(!box)return;
+  const E=isEdit();
+  const cb=$('#nodeCarBtn');
+  if(cb){cb.style.display=E?'flex':'none';cb.classList.toggle('on',!!n.carousel);
+    cb.title=n.carousel?'🎠 Cette fiche apparaît dans le carrousel du mur Documentation — cliquer pour l\'en retirer'
+      :'Afficher cette fiche (illustration + titre) dans le carrousel du mur Documentation';
+    cb.onclick=()=>{if(!isEdit())return;
+      if(!n.illus&&!n.carousel){toast('🎠 Ajoutez d\'abord une illustration à la fiche (zone sous les mots-clés)');return;}
+      n.carousel=!n.carousel;touch(n);renderIllus(n);
+      toast(n.carousel?'🎠 Fiche ajoutée au carrousel du mur Documentation':'Fiche retirée du carrousel');};}
+  if(!n.illus){
+    box.innerHTML=E?'<button class="illus-add" id="illusAdd">🖼 Ajouter une illustration à la fiche…</button>':'';
+    box.style.display=E?'':'none';
+    const b=$('#illusAdd');
+    if(b)b.onclick=()=>illusPick(n);
+    return;}
+  box.style.display='';
+  const mode=n.illusMode||'band';
+  box.innerHTML=`<div class="illus-box illus-${esc(mode)}" id="illusBox">
+      <img alt="Illustration de la fiche">
+      ${n.carousel&&E?'<span class="illus-chip">🎠 Carrousel</span>':''}
+    </div>`;
+  fileURL(n.illus).then(u=>{const im=box.querySelector('img');if(u&&im)im.src=u;});
+  if(E)$('#illusBox').onclick=e=>{e.preventDefault();e.stopPropagation();illusMenu(n,e.clientX,e.clientY);};}
+function illusPick(n){const fi=$('#fiIllus');
+  fi.onchange=async e=>{const f=e.target.files[0];fi.value='';if(!f)return;
+    const old=n.illus||null;
+    n.illus=await storeFile(f);
+    if(!n.illusMode)n.illusMode='band';
+    touch(n);
+    if(old)await maybeDeleteBlob(old);
+    renderIllus(n);
+    toast('🖼 Illustration ajoutée — cliquez dessus pour choisir son affichage ou l\'envoyer au carrousel');};
+  fi.click();}
+function illusMenu(n,x,y){
+  const items=ILLUS_MODES.map(([v,lbl])=>({ic:(n.illusMode||'band')===v?'✓':' ',label:lbl,fn:()=>{
+    n.illusMode=v;touch(n);renderIllus(n);}}));
+  items.push({sep:true},
+    {ic:'🎠',label:n.carousel?'Retirer du carrousel du mur':'Afficher dans le carrousel du mur',fn:()=>{
+      n.carousel=!n.carousel;touch(n);renderIllus(n);
+      toast(n.carousel?'🎠 Fiche ajoutée au carrousel':'Fiche retirée du carrousel');}},
+    {sep:true},
+    {ic:'🔄',label:'Remplacer l\'image…',fn:()=>illusPick(n)},
+    {ic:'🗑',label:'Retirer l\'illustration',danger:true,fn:async()=>{
+      const old=n.illus;n.illus=null;n.carousel=false;touch(n);
+      if(old)await maybeDeleteBlob(old);
+      renderIllus(n);toast('Illustration retirée');}});
+  openCtx(x,y,items);}
 function renderTags(n){const bar=$('#tagBar');bar.innerHTML='';
   const E=isEdit();
   const saveT=()=>{touch(n);renderTags(n);};
@@ -4615,6 +4817,7 @@ function collectNodeFids(nodes,fids){
   for(const n of nodes){
     for(const a of(n.files||[]))if(a.fileId)fids.add(a.fileId);
     if(n.iconImg)fids.add(n.iconImg);
+    if(n.illus)fids.add(n.illus);
     for(const t of(n.tiles||[])){
       if(t.img&&t.img.type==='file'&&t.img.value)fids.add(t.img.value);
       if(t.action&&t.action.type==='file'&&t.action.value)fids.add(t.action.value);}}}
@@ -4659,6 +4862,7 @@ async function exportShared(){
     collectNodeFids(nodes,fids);collectTileFids(tiles,fids);
     for(const m of Object.values(data.equipMeta||{}))for(const f of(m&&m.files||[]))if(f.fileId)fids.add(f.fileId);
     if(data.settings.logoImg)fids.add(data.settings.logoImg);
+    for(const c of data.chars||[])if(c.img)fids.add(c.img);
     data.packVer=(data.packVer||0)+1;save();
     const head={app:'RailDoc',format:'pack',version:1,packVersion:data.packVer,exported:new Date().toISOString(),
       brand:{title:data.settings.title||'Interface PAC TGV',subtitle:data.settings.subtitle||'',logoImg:data.settings.logoImg||null},
@@ -4666,6 +4870,8 @@ async function exportShared(){
       updateMode:data.settings.updateMode||null,
       updateFileName:data.settings.updateFileName||null,
       auth:data.settings.auth||null,
+      carouselMode:data.carouselMode||null,
+      chars:data.chars||null,
       quickSel:(data.settings.quickSel||[]).filter(id=>tiles.some(t=>t.id===id)),
       nodes,tiles,fleet:data.fleet,fleetSeeded:data.fleetSeeded,
       equipCustom:data.equipCustom||[],equipOver:data.equipOver||{},equipMeta:data.equipMeta||{},
@@ -4796,6 +5002,8 @@ async function importCommonPack(file,meta,auto){
     if(meta.updateMode&&!data.settings.updateMode)data.settings.updateMode=meta.updateMode;
     if(meta.updateFileName&&!data.settings.updateFileName)data.settings.updateFileName=meta.updateFileName;
     if(meta.auth&&meta.auth.adminHash)data.settings.auth=meta.auth;
+    if(meta.carouselMode)data.carouselMode=meta.carouselMode;
+    if(Array.isArray(meta.chars)&&meta.chars.length)data.chars=meta.chars;
     /* Ouverture rapide par défaut du pack : appliquée tant que l'utilisateur
        n'a pas personnalisé sa propre sélection (ses tuiles perso cochées sont conservées) */
     if(Array.isArray(meta.quickSel)&&!data.settings.quickSelCustom){
@@ -5001,6 +5209,64 @@ function autoLinkCheck(){
   if(Date.now()-last<7*24*3600*1000)return;
   checkAllLinks(false);}
 
+/* ---------- Personnages & citations (admin) ---------- */
+function charsModal(){
+  const chars=charsList();
+  const row=c=>`<div class="ch-row" data-id="${c.id}" style="display:flex;gap:12px;align-items:flex-start;border:1px solid var(--border);border-radius:12px;padding:10px;margin-bottom:8px;background:var(--panel-2)">
+    <div class="ch-prev" style="width:60px;height:60px;flex:none;border-radius:12px;background:var(--bg-soft);padding:5px;box-sizing:border-box"></div>
+    <div style="flex:1;min-width:0">
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <input type="text" data-f="name" value="${esc(c.name||'')}" placeholder="Nom du personnage" style="flex:1;min-width:130px;border:1px solid var(--border-strong);background:var(--bg-soft);border-radius:9px;padding:6px 10px;font-size:13px;color:var(--text)">
+        <label style="font-size:12px;font-weight:700;display:flex;gap:5px;align-items:center;cursor:pointer"><input type="checkbox" data-f="on" ${c.on!==false?'checked':''} style="width:15px;height:15px;accent-color:var(--accent)"> actif</label>
+        <button class="btn small" data-a="img" title="Importer un dessin SVG ou PNG (fond transparent conseillé)">🖼 Image…</button>
+        ${c.img?'<button class="btn small" data-a="imgdel" title="Revenir au dessin intégré">↩︎</button>':''}
+        ${c.builtin?'':'<button class="btn small" data-a="del" title="Supprimer ce personnage">🗑</button>'}
+      </div>
+      <textarea data-f="quotes" rows="3" placeholder="Une citation par ligne…" style="width:100%;box-sizing:border-box;margin-top:7px;border:1px solid var(--border-strong);background:var(--bg-soft);border-radius:9px;padding:7px 10px;font-size:12.5px;color:var(--text);resize:vertical">${esc((c.quotes||[]).join('\n'))}</textarea>
+    </div></div>`;
+  const collect=()=>{$$('#chList .ch-row').forEach(r=>{const c=chars.find(x=>x.id===r.dataset.id);if(!c)return;
+    c.name=r.querySelector('[data-f="name"]').value.trim()||c.name||'Personnage';
+    c.on=r.querySelector('[data-f="on"]').checked;
+    c.quotes=r.querySelector('[data-f="quotes"]').value.split('\n').map(s=>s.trim()).filter(Boolean);});
+    save();};
+  openModal('🎭 Personnages & citations',`
+    <p style="font-size:12.5px;color:var(--muted);line-height:1.6;margin-bottom:10px">Quand personne ne touche à l'application, un personnage part explorer l'écran ou joue à cache-cache en lançant une de ses citations (Pac dévore aussi la barre du haut de temps en temps). Le moindre mouvement de souris, clic ou touche fait tout disparaître.
+    Importez vos propres dessins <b>SVG/PNG</b> (même taille pour tous, fond transparent conseillé) et modifiez les citations — <b>une par ligne</b>. Le tout est diffusé via le pack commun et inclus dans les sauvegardes.</p>
+    <div id="chList" style="max-height:52vh;overflow-y:auto">${chars.map(row).join('')}</div>
+    <button class="btn small" id="chAdd">＋ Ajouter un personnage</button>
+    <button class="btn small" id="chTest" title="Lancer une scène tout de suite pour voir le résultat">▶ Tester une animation</button>`,
+    [{label:'Fermer',primary:true,fn:collect}]);
+  $('#modal').classList.add('wide');
+  const wire=()=>{
+    $$('#chList .ch-row').forEach(r=>{const c=chars.find(x=>x.id===r.dataset.id);if(!c)return;
+      charFill(r.querySelector('.ch-prev'),c);
+      r.querySelector('[data-a="img"]').onclick=()=>{const fi=$('#fiChar');
+        fi.onchange=async e=>{const f=e.target.files[0];fi.value='';if(!f)return;
+          collect();const old=c.img;c.img=await storeFile(f);save();
+          if(old)await maybeDeleteBlob(old);
+          $('#chList').innerHTML=chars.map(row).join('');wire();
+          toast('🖼 Dessin de « '+c.name+' » importé');};
+        fi.click();};
+      const bd=r.querySelector('[data-a="imgdel"]');
+      if(bd)bd.onclick=async()=>{collect();const old=c.img;c.img=null;save();if(old)await maybeDeleteBlob(old);
+        $('#chList').innerHTML=chars.map(row).join('');wire();};
+      const del=r.querySelector('[data-a="del"]');
+      if(del)del.onclick=async()=>{collect();
+        const i=chars.indexOf(c);if(i<0)return;const old=c.img;chars.splice(i,1);save();
+        if(old)await maybeDeleteBlob(old);
+        $('#chList').innerHTML=chars.map(row).join('');wire();};});};
+  wire();
+  $('#chAdd').onclick=()=>{collect();
+    chars.push({id:'c_'+uid(),name:'Nouveau personnage',builtin:null,img:null,on:true,quotes:[]});
+    save();$('#chList').innerHTML=chars.map(row).join('');wire();
+    const last=$('#chList .ch-row:last-child input[data-f="name"]');if(last){last.focus();last.select();}};
+  $('#chTest').onclick=()=>{collect();closeModal();
+    const on=chars.filter(c=>c.on!==false);
+    if(!on.length){toast('Aucun personnage actif');return;}
+    const c=on[Math.floor(Math.random()*on.length)];
+    clearTimeout(pacTimer);
+    setTimeout(()=>{if(pacActive)return;Math.random()<.5?sceneExplore(c):scenePeek(c);},300);};}
+
 /* ---------- Informations & statistiques ---------- */
 async function infoModal(){
   let filesN=0,filesSz=0;
@@ -5084,16 +5350,119 @@ const OCT_MSGS=[
   'while(!reussi){essayer();}','Reboot et ça repart 🔌','01101000 01101001 = hi !',
   'RTFM 📖 (avec amour)','Je code donc je suis','Compilation… 99 %…',
   'Il me faut plus de RAM 🧠','Aucun train cassé pendant ce test 🚄','Je surveille les octets 👀'];
-function octPick(){const i=Math.floor(Math.random()*OCT_MSGS.length);return OCT_MSGS[i];}
-/* ---------- Easter egg : Pac-Man dévore la barre du haut ---------- */
-let pacTimer=null,pacRAF=null,pacEl=null,pacActive=false;
+const CHEF_SVG=`<svg viewBox="0 0 64 64" style="width:100%;height:100%;filter:drop-shadow(0 2px 3px #0005)" aria-hidden="true">
+  <defs><radialGradient id="chfg" cx=".4" cy=".35"><stop offset="0" stop-color="#ffe3c9"/><stop offset=".6" stop-color="#f3b98f"/><stop offset="1" stop-color="#c8875a"/></radialGradient>
+  <linearGradient id="chft" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d7dde6"/></linearGradient></defs>
+  <path d="M14 30 C10 14 22 9 30 12 C36 5 52 9 50 22 C56 24 54 33 48 33 L16 33 C11 33 11 30 14 30 Z" fill="url(#chft)" stroke="#9aa4b1" stroke-width="1.2"/>
+  <rect x="16" y="31" width="32" height="6" rx="2" fill="#e6ebf1" stroke="#9aa4b1" stroke-width="1"/>
+  <circle cx="32" cy="44" r="14" fill="url(#chfg)" stroke="#8a5a3a" stroke-width="1"/>
+  <circle cx="26.5" cy="42" r="1.9" fill="#2a1a10"/><circle cx="37.5" cy="42" r="1.9" fill="#2a1a10"/>
+  <path d="M24 50 C28 46 36 46 40 50 C36 49 28 49 24 50 Z" fill="#3b2a1e"/>
+  <path d="M27 54 Q32 57 37 54" stroke="#7a3d2a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+</svg>`;
+/* ---------- Personnages animés & leurs citations (⚙ → Personnages) ---------- */
+function charsList(){
+  if(!Array.isArray(data.chars)||!data.chars.length){
+    data.chars=[
+      {id:'pac',name:'Pac',builtin:'pac',img:null,on:true,quotes:['Waka waka 🟡','Miam, un octet !','Objectif : la barre du haut 🍒']},
+      {id:'octo',name:'Octo',builtin:'octo',img:null,on:true,quotes:[...OCT_MSGS]},
+      {id:'chef',name:'Le Chef',builtin:'chef',img:null,on:true,quotes:['On respecte la procédure 📋','Un dépannage propre, c\'est un dépannage documenté','Café d\'abord, diagnostic ensuite ☕','Le train n\'attend pas… mais il repart grâce à vous 🚄','Vérifié deux fois, réparé une fois ✅']}];}
+  return data.chars;}
+function charQuote(c){const q=(c&&c.quotes&&c.quotes.length)?c.quotes:OCT_MSGS;return q[Math.floor(Math.random()*q.length)];}
+function octPick(){return charQuote(charsList().find(x=>x.id==='octo'));}
+/* remplit un conteneur avec le dessin du personnage (image importée ou dessin intégré) */
+function charFill(el,c){
+  el.innerHTML='';
+  if(c&&c.img){const im=document.createElement('img');im.alt='';
+    im.style.cssText='width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 2px 3px #0005)';
+    fileURL(c.img).then(u=>{if(u)im.src=u;});el.appendChild(im);return;}
+  const b=c?c.builtin:null;
+  el.innerHTML=b==='pac'?PAC_SVG:b==='octo'?OCTO_SVG:CHEF_SVG;}
+function charEl(c,size){
+  const d=document.createElement('div');
+  d.style.cssText=`position:absolute;width:${size}px;height:${size}px;pointer-events:none;will-change:transform,left,top`;
+  if(c.builtin==='pac'&&!c.img)d.classList.add('pac-guy');
+  charFill(d,c);return d;}
+/* ---------- Animations d'inactivité (l'application reste affichée en permanence) ---------- */
+let pacTimer=null,pacRAF=null,pacEl=null,pacActive=false,idleTimers=[];
 function pacSchedule(){clearTimeout(pacTimer);
-  pacTimer=setTimeout(pacRun,180000+Math.random()*300000);}
+  pacTimer=setTimeout(idleRun,90000+Math.random()*210000);}
 function pacRestore(){
   if(pacRAF)cancelAnimationFrame(pacRAF);pacRAF=null;
+  idleTimers.forEach(clearTimeout);idleTimers=[];
   if(pacEl){pacEl.remove();pacEl=null;}
   const lg=document.querySelector('#brandBox .logo');if(lg)lg.style.visibility='';
   pacActive=false;pacSchedule();}
+function idleLayer(){pacEl=document.createElement('div');
+  pacEl.style.cssText='position:fixed;inset:0;z-index:90;pointer-events:none;overflow:hidden';
+  document.body.appendChild(pacEl);return pacEl;}
+/* tirage d'une scène : Pac dévore la barre / un personnage explore l'écran / cache-cache */
+function idleRun(){
+  if(pacActive||introActive)return;
+  if(document.hidden||document.querySelector('#modal.on')){pacSchedule();return;}
+  try{if(matchMedia('(prefers-reduced-motion: reduce)').matches){pacSchedule();return;}}catch(_){}
+  const chars=charsList().filter(c=>c.on!==false);
+  const r=Math.random();
+  if(r<0.34||!chars.length){pacRun();return;}
+  const c=chars[Math.floor(Math.random()*chars.length)];
+  if(r<0.67)sceneExplore(c);else scenePeek(c);}
+/* un personnage se promène sur l'écran, s'arrête pour lâcher une citation, puis sort */
+function sceneExplore(c){
+  pacActive=true;const L=idleLayer();const S=46;
+  const el=charEl(c,S);
+  const bub=document.createElement('div');bub.className='pac-bub';bub.style.display='none';
+  L.append(el,bub);
+  const W=innerWidth,H=innerHeight;
+  const pts=[{x:-S-4,y:80+Math.random()*Math.max(60,H-200)}];
+  const n=3+Math.floor(Math.random()*3);
+  for(let i=0;i<n;i++)pts.push({x:40+Math.random()*Math.max(60,W-80-S),y:70+Math.random()*Math.max(60,H-140-S)});
+  pts.push({x:Math.random()<.5?-S-10:W+10,y:80+Math.random()*Math.max(60,H-200)});
+  const quoteAt=new Set();if(c.quotes&&c.quotes.length)while(quoteAt.size<Math.min(2,n))quoteAt.add(1+Math.floor(Math.random()*n));
+  let seg=0,pos={...pts[0]},last=performance.now(),pauseUntil=0;
+  const V=0.16*(window.__pacSpeed||1);
+  el.style.left=pos.x+'px';el.style.top=pos.y+'px';
+  const step=t=>{if(!pacActive)return;
+    const dt=Math.min(60,t-last);last=t;
+    if(t<pauseUntil){pacRAF=requestAnimationFrame(step);return;}
+    if(bub.style.display!=='none')bub.style.display='none';
+    const tgt=pts[seg+1];if(!tgt){pacRestore();return;}
+    const dx=tgt.x-pos.x,dy=tgt.y-pos.y,d=Math.hypot(dx,dy)||1;
+    const mv=V*dt;
+    if(d<=mv){pos={...tgt};seg++;
+      if(quoteAt.has(seg)){bub.textContent=charQuote(c);bub.style.display='block';
+        bub.style.left=Math.max(4,Math.min(pos.x-30,W-190))+'px';bub.style.top=Math.max(4,pos.y-40)+'px';
+        pauseUntil=t+2400;}}
+    else{pos.x+=dx/d*mv;pos.y+=dy/d*mv;}
+    el.style.left=pos.x+'px';el.style.top=pos.y+'px';
+    el.style.transform=dx<0?'scaleX(-1)':'';
+    pacRAF=requestAnimationFrame(step);};
+  pacRAF=requestAnimationFrame(step);}
+/* cache-cache : le personnage pointe le bout du nez depuis un bord, lance une citation, se cache */
+function scenePeek(c){
+  pacActive=true;const L=idleLayer();const S=58;
+  const el=charEl(c,S);el.style.transition='transform .55s cubic-bezier(.3,1.4,.5,1)';
+  const bub=document.createElement('div');bub.className='pac-bub';bub.style.display='none';
+  L.append(el,bub);
+  const W=innerWidth,H=innerHeight;
+  const spots=[];const nS=2+Math.floor(Math.random()*2);
+  for(let i=0;i<nS;i++)spots.push({side:['left','right','bottom'][Math.floor(Math.random()*3)],pos:0.15+Math.random()*0.7});
+  let i=0;
+  const next=()=>{if(!pacActive)return;
+    if(i>=spots.length){pacRestore();return;}
+    const sp=spots[i++];let hideT,showT,x,y;
+    if(sp.side==='left'){x=-S;y=sp.pos*(H-S);hideT='translateX(0)';showT=`translateX(${Math.round(S*.75)}px)`;}
+    else if(sp.side==='right'){x=W;y=sp.pos*(H-S);hideT='translateX(0)';showT=`translateX(-${Math.round(S*.75)}px) scaleX(-1)`;}
+    else{x=sp.pos*(W-S);y=H;hideT='translateY(0)';showT=`translateY(-${Math.round(S*.8)}px)`;}
+    el.style.left=x+'px';el.style.top=y+'px';el.style.transform=hideT;bub.style.display='none';
+    idleTimers.push(setTimeout(()=>{if(!pacActive)return;el.style.transform=showT;
+      idleTimers.push(setTimeout(()=>{if(!pacActive)return;
+        if(c.quotes&&c.quotes.length){bub.textContent=charQuote(c);bub.style.display='block';
+          const bx=sp.side==='right'?Math.max(4,W-S*.75-186):(sp.side==='left'?Math.round(S*.8)+4:Math.max(4,Math.min(x-40,W-190)));
+          const by=sp.side==='bottom'?H-Math.round(S*.8)-40:Math.max(8,y-40);
+          bub.style.left=bx+'px';bub.style.top=by+'px';}
+        idleTimers.push(setTimeout(()=>{if(!pacActive)return;bub.style.display='none';el.style.transform=hideT;
+          idleTimers.push(setTimeout(next,750));},2400));},650));},350));};
+  next();}
 function pacRun(){
   if(pacActive)return;
   if(document.hidden||document.querySelector('#modal.on')){pacSchedule();return;}
@@ -5113,6 +5482,9 @@ function pacRun(){
   document.body.appendChild(pacEl);
   const eat=pacEl.querySelector('.pac-eat'),guy=pacEl.querySelector('.pac-guy'),
         oct=pacEl.querySelector('.pac-oct'),bub=pacEl.querySelector('.pac-bub');
+  {const cp=charsList().find(x=>x.id==='pac'),co=charsList().find(x=>x.id==='octo');
+   if(cp&&cp.img)charFill(guy,cp);
+   if(co&&co.img)charFill(oct,co);}
   const padTop=parseFloat(getComputedStyle(tb).paddingTop)||0;
   const midY=padTop+(r.height-padTop)/2;
   guy.style.top=midY+'px';guy.style.marginTop='-17px';
@@ -5255,30 +5627,92 @@ const b64ToBlob=(b64,mime)=>{
     for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);
     parts.push(arr);}
   return new Blob(parts,{type:mime});};
+/* Taille maximale d'un fichier de sauvegarde : au-delà, découpage en parties.
+   1,5 Go passe sous la limite classique de SharePoint (2 Go par fichier). */
+let PART_MAX=1536*1024*1024;
 async function exportAll(){
   toast('⏳ Préparation de la sauvegarde…');
   try{
     const keys=await idb.keys('files');
     /* Format v2 « NDJSON » : 1re ligne = données, puis une ligne par fichier.
-       Construit par morceaux (Blob de Blobs) pour rester léger en mémoire :
-       indispensable sur iPad (WebKit) et pour relire de grosses sauvegardes sur PC. */
-    const parts=[new Blob([JSON.stringify({app:'RailDoc',version:2,format:'ndjson',exported:new Date().toISOString(),data})+'\n'])];
-    let n=0;
+       Construit par morceaux (Blob de Blobs) pour rester léger en mémoire.
+       Si l'ensemble dépasse PART_MAX, la sauvegarde sort en plusieurs fichiers
+       « partie X sur N » (SharePoint refuse les fichiers de plus de 2 Go). */
+    const bodies=[[]];let n=0;
     for(const k of keys){const f=await idb.get('files',k);
       if(!f)continue;
       const head=JSON.stringify({file:k,name:f.name,mime:f.mime,size:f.size||0});
-      await pushFileB64(parts,head,f.blob);
+      let cur=bodies[bodies.length-1];
+      if(cur.length&&new Blob(cur).size+Math.ceil((f.size||0)*4/3)>PART_MAX){
+        cur=[];bodies.push(cur);}
+      await pushFileB64(cur,head,f.blob);
       n++;if(n%5===0)toast(`⏳ Préparation… ${n} fichier(s)`);}
-    const blob=new Blob(parts,{type:'application/json'});
-    await saveExport(blob,`RailDoc-sauvegarde-${dstamp()}.json`,'Sauvegardes','💾 Sauvegarde complète');
-    logEvt(`💾 Sauvegarde exportée (${fmtSize(blob.size)}, ${n} fichier(s))`);
-    toast(`💾 Sauvegarde exportée (${fmtSize(blob.size)})`);
+    const N=bodies.length,d=dstamp(),exported=new Date().toISOString();
+    if(N===1){
+      const blob=new Blob([new Blob([JSON.stringify({app:'RailDoc',version:2,format:'ndjson',exported,data})+'\n']),...bodies[0]],{type:'application/json'});
+      await saveExport(blob,`RailDoc-sauvegarde-${d}.json`,'Sauvegardes','💾 Sauvegarde complète');
+      logEvt(`💾 Sauvegarde exportée (${fmtSize(blob.size)}, ${n} fichier(s))`);
+      toast(`💾 Sauvegarde exportée (${fmtSize(blob.size)})`);
+    }else{
+      const setId='set_'+uid();let tot=0;
+      for(let i=0;i<N;i++){
+        const head=JSON.stringify({app:'RailDoc',version:2,format:'ndjson-part',part:i+1,of:N,setId,exported,
+          ...(i===0?{data}:{})})+'\n';
+        const blob=new Blob([new Blob([head]),...bodies[i]],{type:'application/json'});
+        tot+=blob.size;
+        await saveExport(blob,`RailDoc-sauvegarde-${d}-partie${i+1}sur${N}.json`,'Sauvegardes',`💾 Sauvegarde partie ${i+1}/${N}`);}
+      logEvt(`💾 Sauvegarde exportée en ${N} parties (${fmtSize(tot)}, ${n} fichier(s))`);
+      toast(`💾 Sauvegarde en ${N} parties de moins de 1,5 Go chacune (compatibles SharePoint) — les ${N} fichiers sont nécessaires pour restaurer`);}
     /* génère dans la foulée les trois autres exports : commun, perso, mur */
     try{await exportShared();}catch(e){console.error(e);}
     try{await exportPerso();}catch(e){console.error(e);}
     try{await exportWall();}catch(e){console.error(e);}
     toast('💾 Jeu complet généré : sauvegarde TOUT + données COMMUNES + PERSO + mur'+(workDirHandle?' — rangé dans le dossier de travail':''));
   }catch(e){console.error(e);toast('⚠️ Échec de l\'export : '+(e&&e.message?e.message:'erreur'));}}
+/* ---------- Restauration d'une sauvegarde en plusieurs parties ---------- */
+async function importParts(file,head){
+  if(head.part!==1||!head.data){
+    toast('📦 Ceci est la partie '+head.part+' sur '+head.of+' — sélectionnez d\'abord la PARTIE 1 (les autres vous seront demandées ensuite)');
+    return;}
+  const nb=head.data.nodes.length;
+  const when=head.exported?new Date(head.exported).toLocaleString('fr-FR'):'date inconnue';
+  if(!await confirmDlg('Restaurer une sauvegarde en '+head.of+' parties',
+    `Cette sauvegarde (${when}) contient <b>${nb} fiche(s)</b> et a été découpée en <b>${head.of} fichiers</b>.<br><br>Après confirmation, sélectionnez les <b>${head.of-1} autre(s) partie(s)</b> (partie 2 à ${head.of}).<br><br>⚠️ Elle <b>remplacera intégralement</b> le contenu actuel de l'application sur cet appareil.`))return;
+  let others=[];
+  if(head.of>1){
+    others=await new Promise(res=>{const fi=$('#fiImportParts');
+      fi.onchange=e=>{const fs=[...e.target.files];fi.value='';res(fs);};
+      fi.click();});
+    if(!others.length){toast('⚠️ Restauration annulée — les autres parties n\'ont pas été sélectionnées');return;}}
+  /* vérifier l'ensemble : mêmes setId, toutes les parties présentes */
+  const byPart={1:file};
+  for(const f of others){
+    try{const o=JSON.parse(await rdFirstLine(f));
+      if(o&&o.format==='ndjson-part'&&o.setId===head.setId)byPart[o.part]=f;}catch(_){}}
+  const missing=[];for(let i=1;i<=head.of;i++)if(!byPart[i])missing.push(i);
+  if(missing.length){toast('⚠️ Partie(s) manquante(s) ou d\'une autre sauvegarde : '+missing.join(', '));return;}
+  await restoreFromParts(head,byPart);}
+async function restoreFromParts(head,byPart){
+  toast('⏳ Restauration en cours…');
+  try{
+    await idb.clear('files');
+    for(const u of Object.values(urlCache))URL.revokeObjectURL(u);urlCache={};
+    try{for(const k of await idb.keys('kv'))if(String(k).startsWith('thumb_'))await idb.del('kv',k);}catch(_){}
+    for(const k of Object.keys(thumbCache))delete thumbCache[k];
+    let nf=0;
+    for(let i=1;i<=head.of;i++){
+      await streamFileRecords(byPart[i],async()=>{},async(rec,blob)=>{
+        await idb.put('files',rec.file,{name:rec.name,mime:rec.mime,size:rec.size,blob});
+        nf++;if(nf%5===0)toast(`⏳ Restauration… partie ${i}/${head.of} · ${nf} fichier(s)`);});}
+    data=head.data;
+    normalizeData();
+    state.open=new Set(data.settings.open||[]);
+    applyTheme();applyBrand();applyMode();
+    await idb.put('kv','data',JSON.parse(JSON.stringify(data)));
+    logEvt(`♻️ Sauvegarde en ${head.of} parties restaurée (${nf} fichier(s))`);
+    navigate('#/home');render();updateStats();
+    toast('✅ Sauvegarde restaurée ('+head.of+' parties, '+nf+' fichier(s)) !');
+  }catch(e){console.error(e);toast('⚠️ Échec de la restauration : '+(e&&e.message?e.message:'erreur'));}}
 /* Lecture en flux d'un fichier texte, ligne par ligne (jamais tout en mémoire) */
 async function rdFirstLine(file){
   const reader=file.stream().getReader();const dec=new TextDecoder();let buf='';
@@ -5311,6 +5745,7 @@ async function importAll(file){
     }catch(_){meta=null;}}
   if(!meta&&file.stream){
     try{const o=JSON.parse(await rdFirstLine(file));
+      if(o&&o.app==='RailDoc'&&o.format==='ndjson-part'){importParts(file,o);return;}
       if(o&&o.app==='RailDoc'&&o.format==='wall'&&Array.isArray(o.tiles)){importWall(file);return;}
       if(o&&o.app==='RailDoc'&&o.format==='pack'&&Array.isArray(o.nodes)){importCommonPack(file,o);return;}
       if(o&&o.app==='RailDoc'&&o.format==='perso'&&Array.isArray(o.nodes)){importPerso(file,o);return;}
@@ -8518,6 +8953,7 @@ async function init(){
         {ic:'💬',label:(data.settings.quoteHide?'Afficher':'Masquer')+' la citation du jour',fn:()=>{
           data.settings.quoteHide=!data.settings.quoteHide;save();renderQuote();
           toast(data.settings.quoteHide?'💬 Citation du jour masquée':'💬 Citation du jour affichée — elle change chaque jour');}},
+        {ic:'🎭',label:'Personnages & citations (animations)…',fn:charsModal},
         {ic:'🔗',label:nLk?('Liens à vérifier — ⚠️ '+nLk+' problème(s)'):'Vérifier les liens (liens morts)',fn:()=>{
           linkReportIssues().length?linkReportModal():checkAllLinks(true);}},
         {ic:'ℹ️',label:'Informations & statistiques',fn:infoModal},
