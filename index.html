@@ -188,7 +188,7 @@ html[data-mode="edit"] #quickBtn.primary{color:#fff;background:var(--edit);borde
 @keyframes pacjB{from{transform:rotate(-2deg)}to{transform:rotate(32deg)}}
 .pac-guy.home .pjT{animation:none;transform:rotate(-26deg)}
 .pac-guy.home .pjB{animation:none;transform:rotate(26deg)}
-.pac-oct{position:absolute;left:-36px;width:38px;height:38px;transform:translateY(-52%);
+.pac-oct{position:absolute;left:-36px;width:46px;height:46px;transform:translateY(-52%);
   opacity:0;transition:opacity .5s;animation:octbob 1.15s ease-in-out infinite alternate}
 .int-oct{animation:octbob 1.05s ease-in-out infinite alternate}
 @keyframes mxfall{0%{opacity:0;transform:translateY(-8px)}15%{opacity:1}100%{opacity:0;transform:translateY(28px)}}
@@ -1452,9 +1452,12 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='9.08';
+const APP_VERSION='9.11';
 const APP_VERSION_DATE='7 août 2026';
 const CHANGELOG=[
+  ['v9.11',"Correction Safari : une pièce jointe géante pouvait faire dépasser la limite à une partie d'export (fichier de 1,83 Go interrompu) — les gros fichiers sont désormais découpés en segments répartis sur plusieurs parties, aucune ne dépassant plus la limite (900 Mo sur Safari, 1,5 Go ailleurs) ; à la restauration, les segments sont ré-assemblés automatiquement, même à cheval sur deux parties — rappel : avec un dossier de travail lié (Chrome/Edge), la bibliothèque de sauvegarde évite complètement ces gros fichiers"],
+  ['v9.10',"Menu ⚙ : nouvelle entrée « ⬆️ Rechercher une nouvelle version de l'application » (tous profils) — inspecte les fichiers HTML du dossier de travail et, en hébergé, le serveur lui-même ; si une version plus récente existe, propose de recharger (hébergé) ou indique le fichier à utiliser (les données ne bougent pas)"],
+  ['v9.09',"Octo redessiné pour mieux ressortir dans les animations : violet plus vif, contour marqué, grands yeux brillants, sourire affirmé, joues roses et halo lumineux autour du personnage — et légèrement agrandi dans la scène de la barre du haut"],
   ['v9.08',"Sauvegarde fiable sur tous les navigateurs : nouvelle « bibliothèque de sauvegarde » au format dossier (Sauvegarde/ : inventaire, données légères et chaque pièce jointe en petit fichier binaire — plus jamais de fichier géant) · en local, « Exporter TOUT » l'écrit de façon incrémentale dans le dossier de travail (seuls les nouveaux fichiers sont copiés) et OneDrive la pousse vers SharePoint · en cloud, l'application hébergée détecte automatiquement une bibliothèque plus récente posée à côté d'elle et propose de la récupérer — y compris sur iPad/iPhone, qui ne télécharge que ce qui lui manque · entrée « 📚 Récupérer la dernière sauvegarde » pour tous les profils · Safari : parties d'export limitées à 900 Mo (téléchargements fiables) · correction HEIC : les photos iPhone/iPad sont converties en JPEG à l'import pour s'afficher partout"],
   ['v9.07',"Animations d'inactivité : l'écran s'assombrit et se floute en fondu derrière les personnages pour les faire ressortir (voile plus léger pendant la scène de la barre du haut) ; tout redevient net instantanément à la première interaction"],
   ['v9.06',"Vie à l'écran : retour visuel au survol de tout ce qui se clique (léger relief, ombre et halo sur tuiles, cartes, puces, lignes, boutons) · le carrousel reste affiché en permanence en haut du mur, collant comme la barre des boutons (sauf en mosaïque) · nouvelles animations d'inactivité aléatoires : un personnage part explorer l'écran ou joue à cache-cache depuis les bords en lançant ses citations, en plus de Pac qui dévore la barre du haut — le moindre mouvement, clic ou touche fait tout disparaître · nouveau menu admin 🎭 Personnages & citations : Pac, Octo (citations geek) et le Chef (citations à personnaliser), dessins SVG/PNG importables de même taille, ajout de personnages, activation, bouton ▶ pour tester · tout est diffusé via le pack commun et inclus dans les sauvegardes"],
@@ -4991,9 +4994,23 @@ async function streamFileRecords(file,onFirstLine,onFileRec){
   await feed(dec.decode());
   if(mode===2)throw new Error('sauvegarde tronquée (fichier incomplet)');
   return nf;}
+/* Ré-assemble les enregistrements segmentés (seg/of) avant livraison */
+function segAssembler(onFileRec){
+  const acc={};
+  return async(rec,blob)=>{
+    if(!rec.seg){await onFileRec(rec,blob);return;}
+    const a=acc[rec.file]||(acc[rec.file]={parts:[],got:0});
+    a.parts[rec.seg-1]=blob;a.got++;
+    if(a.got>=rec.of){
+      const full=new Blob(a.parts.filter(Boolean),{type:rec.mime||'application/octet-stream'});
+      delete acc[rec.file];
+      const r2={...rec};delete r2.seg;delete r2.of;
+      await onFileRec(r2,full);}};}
 async function importFilesLines(file){
-  return await streamFileRecords(file,async()=>{},async(rec,blob)=>{
-    await idb.put('files',rec.file,{name:rec.name,mime:rec.mime,size:rec.size,blob});});}
+  let nf=0;
+  await streamFileRecords(file,async()=>{},segAssembler(async(rec,blob)=>{
+    await idb.put('files',rec.file,{name:rec.name,mime:rec.mime,size:rec.size,blob});nf++;}));
+  return nf;}
 async function importCommonPack(file,meta,auto){
   const nT=(meta.tiles||[]).filter(t=>t.kind!=='section'&&t.kind!=='spacer').length;
   const when=meta.exported?new Date(meta.exported).toLocaleString('fr-FR'):'date inconnue';
@@ -5344,30 +5361,32 @@ const PAC_SVG=`<svg viewBox="0 0 40 40" style="width:100%;height:100%;filter:dro
   <g class="pjT"><path d="M1 20 A19 19 0 0 1 39 20 Z" fill="url(#pacg)" stroke="#b8860b" stroke-width=".8"/><circle cx="24" cy="9.5" r="2.1" fill="#3a2a00"/></g>
   <g class="pjB"><path d="M1 20 A19 19 0 0 0 39 20 Z" fill="url(#pacg)" stroke="#b8860b" stroke-width=".8"/></g>
 </svg>`;
-const OCTO_SVG=`<svg viewBox="0 0 64 64" style="width:100%;height:100%;filter:drop-shadow(0 2px 3px #0005)" aria-hidden="true">
+const OCTO_SVG=`<svg viewBox="0 0 64 64" style="width:100%;height:100%;filter:drop-shadow(0 0 6px #c77dffcc) drop-shadow(0 2px 4px #00000066)" aria-hidden="true">
   <defs>
-    <radialGradient id="octg" cx=".38" cy=".3"><stop offset="0" stop-color="#e5bcff"/><stop offset=".5" stop-color="#a55be0"/><stop offset="1" stop-color="#6b2aa0"/></radialGradient>
-    <linearGradient id="octt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8e42c8"/><stop offset="1" stop-color="#5c2090"/></linearGradient>
+    <radialGradient id="octg" cx=".38" cy=".28"><stop offset="0" stop-color="#f6ddff"/><stop offset=".45" stop-color="#c06bff"/><stop offset="1" stop-color="#7a24c9"/></radialGradient>
+    <linearGradient id="octt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b055f0"/><stop offset="1" stop-color="#5f14a5"/></linearGradient>
   </defs>
-  <g fill="url(#octt)" stroke="#4a1a70" stroke-width="1">
+  <g fill="url(#octt)" stroke="#30084f" stroke-width="1.8" stroke-linejoin="round">
     <path d="M15 37 C10 46 5 49 3 56 C10 54 15 49 18 43 Z"/>
     <path d="M22 41 C20 51 15 56 14 61 C22 58 26 51 27 44 Z"/>
     <path d="M31 43 C31 53 29 58 31 63 C36 58 36 51 36 44 Z"/>
     <path d="M41 41 C44 51 49 56 51 60 C53 53 48 47 45 43 Z"/>
     <path d="M49 37 C54 45 59 48 61 53 C62 46 57 40 52 36 Z"/>
   </g>
-  <g fill="#d9a8f5" opacity=".9">
-    <circle cx="7" cy="52" r="1.4"/><circle cx="17" cy="56" r="1.4"/><circle cx="32" cy="58" r="1.5"/>
-    <circle cx="47" cy="55" r="1.4"/><circle cx="57" cy="49" r="1.4"/>
+  <g fill="#ffd8f2" opacity=".95">
+    <circle cx="7" cy="52" r="1.6"/><circle cx="17" cy="56" r="1.6"/><circle cx="32" cy="58" r="1.7"/>
+    <circle cx="47" cy="55" r="1.6"/><circle cx="57" cy="49" r="1.6"/>
   </g>
-  <path d="M32 3 C18 3 9.5 14 9.5 26.5 C9.5 35.5 14 41 20 43.5 L44 43.5 C50 41 54.5 35.5 54.5 26.5 C54.5 14 46 3 32 3 Z" fill="url(#octg)" stroke="#4a1a70" stroke-width="1.3"/>
-  <ellipse cx="23" cy="12.5" rx="8" ry="4.6" fill="#fff" opacity=".4" transform="rotate(-18 23 12.5)"/>
-  <circle cx="24" cy="27" r="6.4" fill="#fff" stroke="#4a1a70" stroke-width=".6"/>
-  <circle cx="40" cy="27" r="6.4" fill="#fff" stroke="#4a1a70" stroke-width=".6"/>
-  <circle cx="25.6" cy="28" r="3.1" fill="#2a1240"/><circle cx="41.6" cy="28" r="3.1" fill="#2a1240"/>
-  <circle cx="24.7" cy="26.7" r="1.1" fill="#fff"/><circle cx="40.7" cy="26.7" r="1.1" fill="#fff"/>
-  <path d="M28.5 37 Q32 40 35.5 37" stroke="#4a1a70" stroke-width="1.7" fill="none" stroke-linecap="round"/>
-  <circle cx="17" cy="33.5" r="1.9" fill="#e77" opacity=".45"/><circle cx="47" cy="33.5" r="1.9" fill="#e77" opacity=".45"/>
+  <path d="M32 3 C18 3 9.5 14 9.5 26.5 C9.5 35.5 14 41 20 43.5 L44 43.5 C50 41 54.5 35.5 54.5 26.5 C54.5 14 46 3 32 3 Z" fill="url(#octg)" stroke="#30084f" stroke-width="2"/>
+  <path d="M12 30 C13 37 17 41 21 42.8 L43 42.8 C47 41 51 37 52 30 C48 35 40 37.5 32 37.5 C24 37.5 16 35 12 30 Z" fill="#5f14a5" opacity=".28"/>
+  <ellipse cx="22" cy="11.5" rx="8.5" ry="4.8" fill="#fff" opacity=".55" transform="rotate(-18 22 11.5)"/>
+  <circle cx="23.5" cy="26.5" r="7.6" fill="#fff" stroke="#30084f" stroke-width="1.4"/>
+  <circle cx="40.5" cy="26.5" r="7.6" fill="#fff" stroke="#30084f" stroke-width="1.4"/>
+  <circle cx="25.4" cy="27.6" r="3.9" fill="#1c0733"/><circle cx="42.4" cy="27.6" r="3.9" fill="#1c0733"/>
+  <circle cx="24.2" cy="26.2" r="1.5" fill="#fff"/><circle cx="41.2" cy="26.2" r="1.5" fill="#fff"/>
+  <circle cx="26.6" cy="29.4" r=".8" fill="#ffffffaa"/><circle cx="43.6" cy="29.4" r=".8" fill="#ffffffaa"/>
+  <path d="M27.5 37 Q32 41 36.5 37" stroke="#30084f" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+  <circle cx="15.5" cy="33" r="2.6" fill="#ff7d9e" opacity=".65"/><circle cx="48.5" cy="33" r="2.6" fill="#ff7d9e" opacity=".65"/>
 </svg>`;
 const OCT_MSGS=[
   '💡 Nouvelle idée !','Pas de bug ici 👌','sudo make café ☕','404 : pause introuvable',
@@ -5690,11 +5709,25 @@ async function exportAll(){
     const bodies=[[]];let n=0;
     for(const k of keys){const f=await idb.get('files',k);
       if(!f)continue;
-      const head=JSON.stringify({file:k,name:f.name,mime:f.mime,size:f.size||0});
-      let cur=bodies[bodies.length-1];
-      if(cur.length&&new Blob(cur).size+Math.ceil((f.size||0)*4/3)>PART_MAX){
-        cur=[];bodies.push(cur);}
-      await pushFileB64(cur,head,f.blob);
+      const size=f.size||f.blob.size||0;
+      const est=Math.ceil(size*4/3)+220;
+      if(est>PART_MAX*0.85){
+        /* pièce jointe géante : découpée en segments répartis sur plusieurs parties
+           (aucune partie ne dépasse ainsi la limite, même pour un très gros fichier) */
+        let segBytes=Math.floor(PART_MAX*0.6/4*3);segBytes-=segBytes%3; /* multiple de 3 → base64 concaténable */
+        const of=Math.ceil(size/segBytes);
+        for(let s=0;s<of;s++){
+          const from=s*segBytes,to=Math.min(size,(s+1)*segBytes);
+          let cur=bodies[bodies.length-1];
+          if(cur.length&&new Blob(cur).size+Math.ceil((to-from)*4/3)+220>PART_MAX){cur=[];bodies.push(cur);}
+          const head=JSON.stringify({file:k,name:f.name,mime:f.mime,size,seg:s+1,of});
+          await pushFileB64(cur,head,f.blob.slice(from,to));
+          toast(`⏳ Préparation… gros fichier ${s+1}/${of}`);}
+      }else{
+        const head=JSON.stringify({file:k,name:f.name,mime:f.mime,size});
+        let cur=bodies[bodies.length-1];
+        if(cur.length&&new Blob(cur).size+est>PART_MAX){cur=[];bodies.push(cur);}
+        await pushFileB64(cur,head,f.blob);}
       n++;if(n%5===0)toast(`⏳ Préparation… ${n} fichier(s)`);}
     const N=bodies.length,d=dstamp(),exported=new Date().toISOString();
     if(N===1){
@@ -5729,6 +5762,49 @@ async function exportAll(){
    par l'application hébergée (Cloudflare) — y compris sur iPad/iPhone,
    qui ne télécharge que les fichiers qui lui manquent.
    ========================================================== */
+/* ---------- Recherche d'une nouvelle version de l'application (le fichier HTML) ---------- */
+function verCmp(a,b){ /* '9.10' > '9.9' correctement */
+  const pa=String(a||'').split('.').map(Number),pb=String(b||'').split('.').map(Number);
+  for(let i=0;i<Math.max(pa.length,pb.length);i++){
+    const x=pa[i]||0,y=pb[i]||0;if(x!==y)return x-y;}
+  return 0;}
+function verOf(txt){const m=txt.match(/const APP_VERSION='([\d.]+)'/);return m?m[1]:null;}
+async function checkAppUpdate(manual){
+  if(manual)toast('⏳ Recherche d\'une nouvelle version de l\'application…');
+  let best=null; /* {ver, where, reloadable} */
+  /* 1. dossier de travail : les fichiers .html à la racine */
+  if(workDirHandle&&await workDirPerm(workDirHandle,manual)){
+    try{
+      for await(const e of workDirHandle.values()){
+        if(e.kind!=='file'||!/\.html?$/i.test(e.name))continue;
+        try{const f=await e.getFile();
+          if(f.size>8*1024*1024)continue;
+          const v=verOf(await f.text());
+          if(v&&(!best||verCmp(v,best.ver)>0))best={ver:v,where:'fichier « '+e.name+' » du dossier de travail',reloadable:false};
+        }catch(_){}}
+    }catch(_){}}
+  /* 2. application hébergée : elle-même, en version fraîche (sans cache) */
+  if(/^https?:$/.test(location.protocol)){
+    try{
+      const r=await fetch(location.pathname,{cache:'no-store'});
+      if(r.ok){const v=verOf(await r.text());
+        if(v&&(!best||verCmp(v,best.ver)>0))best={ver:v,where:'le serveur',reloadable:true};}
+    }catch(_){}}
+  if(!best){
+    if(manual)toast('⬆️ Vérification impossible — liez le dossier de travail contenant les fichiers HTML, ou utilisez l\'application hébergée');
+    return;}
+  if(verCmp(best.ver,APP_VERSION)<=0){
+    if(manual)toast('✅ Application à jour (v'+APP_VERSION+')');
+    return;}
+  if(best.reloadable){
+    if(await confirmDlg('Nouvelle version de l\'application',
+      `La version <b>v${best.ver}</b> est disponible sur ${best.where} (vous utilisez la v${APP_VERSION}).<br><br>Recharger maintenant ? Vos données ne bougent pas — seul le programme est mis à jour.`))
+      location.reload();
+  }else{
+    openModal('⬆️ Nouvelle version disponible',
+      `<p style="font-size:13.5px;line-height:1.7">La version <b>v${best.ver}</b> est disponible : ${esc(best.where)} (vous utilisez la v${APP_VERSION}).</p>
+       <p style="font-size:12.5px;color:var(--muted);line-height:1.65;margin-top:8px">Fermez l'application, puis ouvrez ce fichier à la place du vôtre (ou remplacez votre fichier HTML par celui-ci en <b>gardant votre nom de fichier habituel</b> pour conserver vos données). Vos données restent dans le navigateur : elles ne bougent pas.</p>`,
+      [{label:'Compris',primary:true}]);}}
 const LIB_DIR='Sauvegarde',LIB_MANIFEST='manifest.json';
 async function libExport(manual){
   if(!workDirHandle||!(await workDirPerm(workDirHandle,true))){
@@ -5855,11 +5931,12 @@ async function restoreFromParts(head,byPart){
     for(const u of Object.values(urlCache))URL.revokeObjectURL(u);urlCache={};
     try{for(const k of await idb.keys('kv'))if(String(k).startsWith('thumb_'))await idb.del('kv',k);}catch(_){}
     for(const k of Object.keys(thumbCache))delete thumbCache[k];
-    let nf=0;
-    for(let i=1;i<=head.of;i++){
-      await streamFileRecords(byPart[i],async()=>{},async(rec,blob)=>{
-        await idb.put('files',rec.file,{name:rec.name,mime:rec.mime,size:rec.size,blob});
-        nf++;if(nf%5===0)toast(`⏳ Restauration… partie ${i}/${head.of} · ${nf} fichier(s)`);});}
+    let nf=0,curPart=1;
+    const put=segAssembler(async(rec,blob)=>{
+      await idb.put('files',rec.file,{name:rec.name,mime:rec.mime,size:rec.size,blob});
+      nf++;if(nf%5===0)toast(`⏳ Restauration… partie ${curPart}/${head.of} · ${nf} fichier(s)`);});
+    for(let i=1;i<=head.of;i++){curPart=i;
+      await streamFileRecords(byPart[i],async()=>{},put);}
     data=head.data;
     normalizeData();
     state.open=new Set(data.settings.open||[]);
@@ -5918,9 +5995,10 @@ async function importAll(file){
       try{for(const k of await idb.keys('kv'))if(String(k).startsWith('thumb_'))await idb.del('kv',k);}catch(_){}
       for(const k of Object.keys(thumbCache))delete thumbCache[k];
       let nf=0;
-      await streamFileRecords(file,async()=>{},async(rec,blob)=>{
+      const put=segAssembler(async(rec,blob)=>{
         await idb.put('files',rec.file,{name:rec.name,mime:rec.mime,size:rec.size,blob});
         nf++;if(nf%5===0)toast(`⏳ Restauration… ${nf} fichier(s)`);});
+      await streamFileRecords(file,async()=>{},put);
       data=meta.data;
       normalizeData();
       state.open=new Set(data.settings.open||[]);
@@ -9091,7 +9169,8 @@ async function init(){
     const items=[
       {ic:'🔄',label:'Rechercher une mise à jour des données communes',fn:()=>checkUpdate(true)},
       {ic:'📁',label:'Dossier des mises à jour / de travail (OneDrive)…',fn:workDirModal},
-      {ic:'📚',label:'Récupérer la dernière sauvegarde (cloud / dossier)…',fn:()=>checkLibrary(true)}];
+      {ic:'📚',label:'Récupérer la dernière sauvegarde (cloud / dossier)…',fn:()=>checkLibrary(true)},
+      {ic:'⬆️',label:'Rechercher une nouvelle version de l\'application',fn:()=>checkAppUpdate(true)}];
     if(isAdmin())items.push({sep:true},{ic:'🌐',label:'Données communes / personnelles…',fn:sharedManagerModal});
     if(isEdit())items.push(
       {sep:true},
