@@ -1452,9 +1452,10 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='9.07';
+const APP_VERSION='9.08';
 const APP_VERSION_DATE='7 août 2026';
 const CHANGELOG=[
+  ['v9.08',"Sauvegarde fiable sur tous les navigateurs : nouvelle « bibliothèque de sauvegarde » au format dossier (Sauvegarde/ : inventaire, données légères et chaque pièce jointe en petit fichier binaire — plus jamais de fichier géant) · en local, « Exporter TOUT » l'écrit de façon incrémentale dans le dossier de travail (seuls les nouveaux fichiers sont copiés) et OneDrive la pousse vers SharePoint · en cloud, l'application hébergée détecte automatiquement une bibliothèque plus récente posée à côté d'elle et propose de la récupérer — y compris sur iPad/iPhone, qui ne télécharge que ce qui lui manque · entrée « 📚 Récupérer la dernière sauvegarde » pour tous les profils · Safari : parties d'export limitées à 900 Mo (téléchargements fiables) · correction HEIC : les photos iPhone/iPad sont converties en JPEG à l'import pour s'afficher partout"],
   ['v9.07',"Animations d'inactivité : l'écran s'assombrit et se floute en fondu derrière les personnages pour les faire ressortir (voile plus léger pendant la scène de la barre du haut) ; tout redevient net instantanément à la première interaction"],
   ['v9.06',"Vie à l'écran : retour visuel au survol de tout ce qui se clique (léger relief, ombre et halo sur tuiles, cartes, puces, lignes, boutons) · le carrousel reste affiché en permanence en haut du mur, collant comme la barre des boutons (sauf en mosaïque) · nouvelles animations d'inactivité aléatoires : un personnage part explorer l'écran ou joue à cache-cache depuis les bords en lançant ses citations, en plus de Pac qui dévore la barre du haut — le moindre mouvement, clic ou touche fait tout disparaître · nouveau menu admin 🎭 Personnages & citations : Pac, Octo (citations geek) et le Chef (citations à personnaliser), dessins SVG/PNG importables de même taille, ajout de personnages, activation, bouton ▶ pour tester · tout est diffusé via le pack commun et inclus dans les sauvegardes"],
   ['v9.05',"Carrousel du mur Documentation : trois modes d'affichage au choix via la molette 🎛 (mode édition) — 🖼 Panorama (une grande image, comme avant), 🎞 Vignettes défilantes (plusieurs cartes côte à côte, défilement automatique en boucle, flèches au survol), ▦ Mosaïque (toutes les vignettes en grille, sans défilement) — le mode choisi est diffusé aux collègues via le pack commun"],
@@ -1614,7 +1615,31 @@ function save(){clearTimeout(saveTimer);saveTimer=setTimeout(async()=>{
 },350);}
 
 /* ---------- Fichiers (blobs) ---------- */
+/* HEIC/HEIF (photos iPhone/iPad) : illisible sur PC — converti en JPEG à l'import,
+   sur l'appareil qui sait le décoder (Safari). Si le navigateur ne sait pas (PC),
+   le fichier est gardé tel quel avec un avertissement. */
+async function heicToJpeg(file){
+  try{
+    let bmp=null;
+    try{bmp=await createImageBitmap(file);}catch(_){
+      bmp=await new Promise((res,rej)=>{const im=new Image();
+        const u=URL.createObjectURL(file);
+        im.onload=()=>{URL.revokeObjectURL(u);res(im);};
+        im.onerror=()=>{URL.revokeObjectURL(u);rej();};
+        im.src=u;});}
+    const w=bmp.width||bmp.naturalWidth,h=bmp.height||bmp.naturalHeight;
+    if(!w||!h)return null;
+    const c=document.createElement('canvas');c.width=w;c.height=h;
+    c.getContext('2d').drawImage(bmp,0,0);
+    const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',0.87));
+    if(!blob)return null;
+    return new File([blob],file.name.replace(/\.hei[cf]$/i,'')+'.jpg',{type:'image/jpeg'});
+  }catch(_){return null;}}
 async function storeFile(file){const id='f_'+uid();
+  if(/\.hei[cf]$/i.test(file.name||'')||/hei[cf]/i.test(file.type||'')){
+    const j=await heicToJpeg(file);
+    if(j){file=j;toast('📷 Photo HEIC convertie en JPEG (lisible partout)');}
+    else toast('⚠️ Photo HEIC non convertible sur cet appareil — elle risque de ne pas s\'afficher sur PC (importez-la depuis l\'iPad/iPhone, la conversion y est automatique)');}
   await idb.put('files',id,{name:file.name,mime:file.type||'application/octet-stream',size:file.size,blob:file});
   return id;}
 async function fileMeta(id){const f=await idb.get('files',id);return f?{name:f.name,mime:f.mime,size:f.size}:null;}
@@ -5641,8 +5666,20 @@ const b64ToBlob=(b64,mime)=>{
   return new Blob(parts,{type:mime});};
 /* Taille maximale d'un fichier de sauvegarde : au-delà, découpage en parties.
    1,5 Go passe sous la limite classique de SharePoint (2 Go par fichier). */
-let PART_MAX=1536*1024*1024;
+let PART_MAX=/^((?!chrome|crios|android).)*safari/i.test(navigator.userAgent)?900*1024*1024:1536*1024*1024;
+/* Safari limité à ~900 Mo par fichier : ses téléchargements de très gros blobs sont fragiles */
 async function exportAll(){
+  /* dossier de travail lié : la bibliothèque incrémentale remplace le fichier géant
+     (fiable sur tous les navigateurs, chaque pièce jointe reste un petit fichier) */
+  if(workDirHandle){
+    try{
+      if(await libExport(true)){
+        try{await exportShared();}catch(e){console.error(e);}
+        try{await exportPerso();}catch(e){console.error(e);}
+        try{await exportWall();}catch(e){console.error(e);}
+        toast('💾 Jeu complet généré : bibliothèque de sauvegarde + données COMMUNES + PERSO + mur — rangé dans le dossier de travail');
+        return;}
+    }catch(e){console.error(e);toast('⚠️ Bibliothèque impossible ('+(e&&e.message||'erreur')+') — export classique en fichier(s)');}}
   toast('⏳ Préparation de la sauvegarde…');
   try{
     const keys=await idb.keys('files');
@@ -5681,6 +5718,113 @@ async function exportAll(){
     try{await exportWall();}catch(e){console.error(e);}
     toast('💾 Jeu complet généré : sauvegarde TOUT + données COMMUNES + PERSO + mur'+(workDirHandle?' — rangé dans le dossier de travail':''));
   }catch(e){console.error(e);toast('⚠️ Échec de l\'export : '+(e&&e.message?e.message:'erreur'));}}
+/* ==========================================================
+   Bibliothèque de sauvegarde (format dossier « Sauvegarde/ »)
+   — manifest.json : inventaire (révision, liste des fichiers)
+   — donnees.json  : les fiches et réglages (léger)
+   — fichiers/<id> : chaque pièce jointe en binaire BRUT (pas de base64,
+     jamais de fichier géant : fiable sur tous les navigateurs).
+   Écrite de façon INCRÉMENTALE dans le dossier de travail (Chrome/Edge),
+   synchronisée vers SharePoint par OneDrive, et relue automatiquement
+   par l'application hébergée (Cloudflare) — y compris sur iPad/iPhone,
+   qui ne télécharge que les fichiers qui lui manquent.
+   ========================================================== */
+const LIB_DIR='Sauvegarde',LIB_MANIFEST='manifest.json';
+async function libExport(manual){
+  if(!workDirHandle||!(await workDirPerm(workDirHandle,true))){
+    if(manual)toast('📚 Liez d\'abord un dossier de travail (Chrome/Edge) pour écrire la bibliothèque');
+    return false;}
+  toast('⏳ Mise à jour de la bibliothèque de sauvegarde…');
+  const root=await workDirHandle.getDirectoryHandle(LIB_DIR,{create:true});
+  const fdir=await root.getDirectoryHandle('fichiers',{create:true});
+  const have=new Set();
+  for await(const e of fdir.values())if(e.kind==='file')have.add(e.name);
+  const keys=await idb.keys('files');
+  const files=[];let nNew=0,tot=0;
+  for(const k of keys){const f=await idb.get('files',k);if(!f)continue;
+    const size=f.size||f.blob.size||0;tot+=size;
+    files.push({id:k,name:f.name,mime:f.mime,size});
+    if(!have.has(k)){
+      const fh=await fdir.getFileHandle(k,{create:true});
+      const w=await fh.createWritable();await w.write(f.blob);await w.close();
+      nNew++;if(nNew%5===0)toast('⏳ Bibliothèque… '+nNew+' nouveau(x) fichier(s)');}
+    have.delete(k);}
+  for(const nm of have)try{await fdir.removeEntry(nm);}catch(_){}
+  data.libRev=(data.libRev||0)+1;save();
+  {const dh=await root.getFileHandle('donnees.json',{create:true});
+   const w=await dh.createWritable();await w.write(JSON.stringify(data));await w.close();}
+  {const mh=await root.getFileHandle(LIB_MANIFEST,{create:true});
+   const w=await mh.createWritable();
+   await w.write(JSON.stringify({app:'RailDoc',format:'library',version:1,rev:data.libRev,
+     exported:new Date().toISOString(),dataFile:'donnees.json',files}));
+   await w.close();}
+  logEvt(`📚 Bibliothèque de sauvegarde rev ${data.libRev} (${files.length} fichier(s), ${fmtSize(tot)}, ${nNew} nouveau(x), ${have.size} retiré(s))`);
+  toast(`📚 Bibliothèque à jour (rev ${data.libRev}) — ${nNew} nouveau(x) fichier(s) écrit(s), ${files.length} au total`);
+  return true;}
+async function libImport(src,man,manual){
+  const when=man.exported?new Date(man.exported).toLocaleString('fr-FR'):'date inconnue';
+  const tot=man.files.reduce((s,f)=>s+(f.size||0),0);
+  const haveKeys=new Set(await idb.keys('files'));
+  const missing=man.files.filter(f=>!haveKeys.has(f.id));
+  if(!await confirmDlg('Récupérer la dernière sauvegarde',
+    `Bibliothèque <b>rev ${man.rev}</b> (${when}) : <b>${man.files.length} fichier(s)</b> (${fmtSize(tot)}), dont <b>${missing.length} à récupérer</b> sur cet appareil.<br><br>⚠️ Elle <b>remplacera intégralement</b> le contenu actuel de l'application sur cet appareil (fiches, réglages, tuiles).`))return;
+  toast('⏳ Récupération de la sauvegarde…');
+  try{
+    const dblob=await src.read(man.dataFile||'donnees.json');
+    if(!dblob)throw new Error('donnees.json introuvable');
+    const newData=JSON.parse(await dblob.text());
+    if(!newData||!Array.isArray(newData.nodes))throw new Error('données illisibles');
+    let nDl=0;
+    for(const f of man.files){
+      if(haveKeys.has(f.id))continue;
+      const b=await src.read('fichiers/'+f.id);
+      if(!b)throw new Error('fichier manquant : '+(f.name||f.id));
+      await idb.put('files',f.id,{name:f.name,mime:f.mime,size:f.size||b.size,blob:b});
+      nDl++;if(nDl%5===0)toast(`⏳ Récupération… ${nDl}/${missing.length} fichier(s)`);}
+    const wanted=new Set(man.files.map(f=>f.id));
+    for(const k of haveKeys)if(!wanted.has(k)){
+      await idb.del('files',k);
+      try{await idb.del('kv','thumb_'+k);}catch(_){}
+      delete thumbCache[k];
+      if(urlCache[k]){URL.revokeObjectURL(urlCache[k]);delete urlCache[k];}}
+    data=newData;
+    normalizeData();
+    data.libRev=man.rev;
+    state.open=new Set(data.settings.open||[]);
+    applyTheme();applyBrand();applyMode();
+    await idb.put('kv','data',JSON.parse(JSON.stringify(data)));
+    logEvt(`📚 Sauvegarde récupérée (rev ${man.rev}, ${nDl} fichier(s) téléchargé(s))`);
+    navigate('#/home');render();updateStats();
+    toast('✅ Sauvegarde récupérée (rev '+man.rev+', '+nDl+' fichier(s) récupéré(s)) !');
+  }catch(e){console.error(e);toast('⚠️ Échec de la récupération : '+(e&&e.message?e.message:'erreur'));}}
+async function libFind(){
+  /* dossier de travail d'abord, puis à côté de l'application hébergée (cloud) */
+  if(workDirHandle&&await workDirPerm(workDirHandle,false)){
+    try{const root=await workDirHandle.getDirectoryHandle(LIB_DIR);
+      const mh=await root.getFileHandle(LIB_MANIFEST);
+      const man=JSON.parse(await(await mh.getFile()).text());
+      const fdir=await root.getDirectoryHandle('fichiers');
+      return{man,src:{read:async p=>{try{
+        if(p.startsWith('fichiers/'))return await(await fdir.getFileHandle(p.slice(9))).getFile();
+        return await(await root.getFileHandle(p)).getFile();}catch(_){return null;}}}};
+    }catch(_){}}
+  if(/^https?:$/.test(location.protocol)){
+    try{const r=await fetch(LIB_DIR+'/'+LIB_MANIFEST,{cache:'no-store'});
+      if(r.ok){const man=await r.json();
+        return{man,src:{read:async p=>{try{const rr=await fetch(LIB_DIR+'/'+encodeURIComponent(p).replace(/%2F/g,'/'),{cache:'no-store'});
+          return rr.ok?await rr.blob():null;}catch(_){return null;}}}};}
+    }catch(_){}}
+  return null;}
+async function checkLibrary(manual){
+  const found=await libFind();
+  if(!(found&&found.man&&found.man.app==='RailDoc'&&found.man.format==='library')){
+    if(manual)toast('📚 Aucune bibliothèque trouvée — dossier « Sauvegarde/ » du dossier de travail, ou à côté de l\'application hébergée');
+    return;}
+  if((found.man.rev||0)<=(data.libRev||0)){
+    if(manual)toast('📚 Sauvegarde déjà à jour (rev '+(data.libRev||0)+')');
+    return;}
+  await libImport(found.src,found.man,manual);}
+
 /* ---------- Restauration d'une sauvegarde en plusieurs parties ---------- */
 async function importParts(file,head){
   if(head.part!==1||!head.data){
@@ -8940,12 +9084,14 @@ async function init(){
   checkAppVersion();
   setTimeout(autoLinkCheck,15000);
   workDirInit();
+  setTimeout(()=>checkLibrary(false),6000);
   $('#settingsBtn').onclick=e=>{e.stopPropagation();
     const r=e.currentTarget.getBoundingClientRect();
     /* lecture seule : menu minimal (MAJ + dossier) · Assistant : + import/exports · Admin : tout */
     const items=[
       {ic:'🔄',label:'Rechercher une mise à jour des données communes',fn:()=>checkUpdate(true)},
-      {ic:'📁',label:'Dossier des mises à jour / de travail (OneDrive)…',fn:workDirModal}];
+      {ic:'📁',label:'Dossier des mises à jour / de travail (OneDrive)…',fn:workDirModal},
+      {ic:'📚',label:'Récupérer la dernière sauvegarde (cloud / dossier)…',fn:()=>checkLibrary(true)}];
     if(isAdmin())items.push({sep:true},{ic:'🌐',label:'Données communes / personnelles…',fn:sharedManagerModal});
     if(isEdit())items.push(
       {sep:true},
