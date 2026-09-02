@@ -1452,9 +1452,10 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='9.06';
+const APP_VERSION='9.07';
 const APP_VERSION_DATE='7 août 2026';
 const CHANGELOG=[
+  ['v9.07',"Animations d'inactivité : l'écran s'assombrit et se floute en fondu derrière les personnages pour les faire ressortir (voile plus léger pendant la scène de la barre du haut) ; tout redevient net instantanément à la première interaction"],
   ['v9.06',"Vie à l'écran : retour visuel au survol de tout ce qui se clique (léger relief, ombre et halo sur tuiles, cartes, puces, lignes, boutons) · le carrousel reste affiché en permanence en haut du mur, collant comme la barre des boutons (sauf en mosaïque) · nouvelles animations d'inactivité aléatoires : un personnage part explorer l'écran ou joue à cache-cache depuis les bords en lançant ses citations, en plus de Pac qui dévore la barre du haut — le moindre mouvement, clic ou touche fait tout disparaître · nouveau menu admin 🎭 Personnages & citations : Pac, Octo (citations geek) et le Chef (citations à personnaliser), dessins SVG/PNG importables de même taille, ajout de personnages, activation, bouton ▶ pour tester · tout est diffusé via le pack commun et inclus dans les sauvegardes"],
   ['v9.05',"Carrousel du mur Documentation : trois modes d'affichage au choix via la molette 🎛 (mode édition) — 🖼 Panorama (une grande image, comme avant), 🎞 Vignettes défilantes (plusieurs cartes côte à côte, défilement automatique en boucle, flèches au survol), ▦ Mosaïque (toutes les vignettes en grille, sans défilement) — le mode choisi est diffusé aux collègues via le pack commun"],
   ['v9.04',"Correction : le menu de l'illustration (affichages, remplacer, retirer, carrousel) s'ouvrait puis se refermait aussitôt — le clic qui l'ouvrait le refermait dans la foulée ; il reste maintenant ouvert"],
@@ -5384,16 +5385,26 @@ function charEl(c,size){
   if(c.builtin==='pac'&&!c.img)d.classList.add('pac-guy');
   charFill(d,c);return d;}
 /* ---------- Animations d'inactivité (l'application reste affichée en permanence) ---------- */
-let pacTimer=null,pacRAF=null,pacEl=null,pacActive=false,idleTimers=[];
+let pacTimer=null,pacRAF=null,pacEl=null,pacActive=false,idleTimers=[],pacDim=null;
+/* voile assombri et flouté sous les animations pour les faire ressortir (fondu d'entrée) */
+function idleDim(strength){
+  if(pacDim)pacDim.remove();
+  pacDim=document.createElement('div');
+  pacDim.style.cssText='position:fixed;inset:0;z-index:89;pointer-events:none;background:rgba(8,10,18,'+(strength||.5)+');'
+    +'backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);opacity:0;transition:opacity .9s ease';
+  document.body.appendChild(pacDim);
+  requestAnimationFrame(()=>{if(pacDim)pacDim.style.opacity='1';});}
 function pacSchedule(){clearTimeout(pacTimer);
   pacTimer=setTimeout(idleRun,90000+Math.random()*210000);}
 function pacRestore(){
   if(pacRAF)cancelAnimationFrame(pacRAF);pacRAF=null;
   idleTimers.forEach(clearTimeout);idleTimers=[];
   if(pacEl){pacEl.remove();pacEl=null;}
+  if(pacDim){pacDim.remove();pacDim=null;}
   const lg=document.querySelector('#brandBox .logo');if(lg)lg.style.visibility='';
   pacActive=false;pacSchedule();}
-function idleLayer(){pacEl=document.createElement('div');
+function idleLayer(){idleDim(.5);
+  pacEl=document.createElement('div');
   pacEl.style.cssText='position:fixed;inset:0;z-index:90;pointer-events:none;overflow:hidden';
   document.body.appendChild(pacEl);return pacEl;}
 /* tirage d'une scène : Pac dévore la barre / un personnage explore l'écran / cache-cache */
@@ -5472,6 +5483,7 @@ function pacRun(){
   const lr=lg?lg.getBoundingClientRect():{left:8};
   pacActive=true;
   if(lg)lg.style.visibility='hidden';
+  idleDim(.38);
   pacEl=document.createElement('div');
   pacEl.style.cssText=`position:fixed;left:0;top:${r.top}px;width:100vw;height:${r.height}px;z-index:90;pointer-events:none;overflow:hidden`;
   pacEl.innerHTML=`
