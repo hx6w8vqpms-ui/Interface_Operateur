@@ -1559,9 +1559,10 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='9.30';
+const APP_VERSION='9.31';
 const APP_VERSION_DATE='25 octobre 2026';
 const CHANGELOG=[
+  ['v9.31',"Import d'une sauvegarde en plusieurs parties — correction « il manque la partie 1 » : la partie 1 contient toutes les fiches sur sa première ligne ; au-delà de 64 Mo (fiches avec images intégrées) l'ancienne lecture la tronquait, l'en-tête devenait illisible et la partie 1 n'était plus reconnue. Lecture sans limite pratique et ~100× plus rapide, reconnaissance des parties par leur seul en-tête, messages d'erreur précis (partie manquante / fichier incomplet avec sa taille)"],
   ['v9.30',"Appareillage — nouveau GESTIONNAIRE (bouton 🛠 en édition) : liste de TOUS les appareils avec recherche et filtres (série, famille), ajout, modification (fiche complète : nom, abréviations, descriptif, localisation, séries, image, bloc cabine…), suppression, et actions groupées sur la sélection (ajouter / retirer une série, changer la famille ou l'emplacement, supprimer) ; accès direct aux familles & emplacements, aux séries TGV, au regroupement des doublons et à un nouvel éditeur du BLOC CABINE (rangées et appareils de l'armoire), du BLOC PNEUMATIQUE et des libellés de schémas, par catalogue"],
   ['v9.29',"Import d'une sauvegarde en plusieurs parties (iPad) : le sélecteur de fichiers accepte maintenant la SÉLECTION MULTIPLE — choisissez les 4 fichiers d'un coup, l'application les reconnaît et les restaure ensemble ; si une seule partie est choisie, un bouton « Choisir les autres parties » s'affiche (Safari refusait d'ouvrir seul le second sélecteur) ; barre de progression à la restauration"],
   ['v9.28',"Correction mur d'accueil : les espaces vides entre les tuiles (emplacements vides) disparaissaient en mode lecture — le filtre COMMUN (appliqué d'office hors administrateur) les supprimait tous. Ils suivent désormais la portée de leur ligne, comme les tuiles : un espace d'une ligne commune reste visible en lecture"],
@@ -4860,9 +4861,8 @@ async function streamFileRecords(file,onFirstLine,onFileRec){
         continue;}
       if(mode===0){ /* première ligne : les données */
         const nl=s.indexOf('\n');
-        if(nl<0){buf+=s;s='';}
-        else{buf+=s.slice(0,nl);s=s.slice(nl+1);
-          await onFirstLine(buf);buf='';mode=1;}
+        if(nl<0){if(onFirstLine)buf+=s;s='';}
+        else{if(onFirstLine){buf+=s.slice(0,nl);await onFirstLine(buf);}s=s.slice(nl+1);buf='';mode=1;}
         continue;}
       /* mode 1 : en-tête (court) jusqu'au marqueur "b64":" */
       buf+=s;s='';
@@ -4898,7 +4898,7 @@ function segAssembler(onFileRec){
       await onFileRec(r2,full);}};}
 async function importFilesLines(file){
   let nf=0;
-  await streamFileRecords(file,async()=>{},segAssembler(async(rec,blob)=>{
+  await streamFileRecords(file,null,segAssembler(async(rec,blob)=>{
     await idb.put('files',rec.file,{name:rec.name,mime:rec.mime,size:rec.size,blob});nf++;}));
   return nf;}
 async function importCommonPack(file,meta,auto){
@@ -5758,20 +5758,22 @@ async function checkLibrary(manual){
 /* Sélection de plusieurs fichiers d'un coup (parties d'une même sauvegarde) */
 async function importMany(files){
   const heads=[];
-  for(const f of files){let o=null;try{o=JSON.parse(await rdFirstLine(f));}catch(_){}heads.push({f,o});}
-  const parts=heads.filter(h=>h.o&&h.o.app==='RailDoc'&&h.o.format==='ndjson-part');
+  for(const f of files)heads.push({f,p:await rdPartHead(f)});
+  const parts=heads.filter(h=>h.p&&h.p.format==='ndjson-part');
   if(!parts.length){
-    if(heads.length&&heads[0].o)importAll(heads[0].f);
-    else toast('⚠️ Fichiers non reconnus : sélectionnez les parties d\'une même sauvegarde RailDoc');
+    if(heads.length&&heads.some(h=>h.p))importAll(heads.find(h=>h.p).f);
+    else toast('⚠️ Fichiers non reconnus comme sauvegarde RailDoc — sélectionnez les parties d\'une même sauvegarde');
     return;}
-  const sets={};for(const h of parts)(sets[h.o.setId]=sets[h.o.setId]||[]).push(h);
+  const sets={};for(const h of parts)(sets[h.p.setId]=sets[h.p.setId]||[]).push(h);
   const cand=Object.values(sets).sort((a,b)=>b.length-a.length)[0];
-  const first=cand.find(h=>h.o.part===1&&h.o.data);
-  if(!first){toast('⚠️ La partie 1 manque dans la sélection — sélectionnez les '+(cand[0].o.of)+' fichiers ensemble');return;}
-  const have=new Set(cand.map(h=>h.o.part)),missing=[];
-  for(let i=1;i<=first.o.of;i++)if(!have.has(i))missing.push(i);
-  if(missing.length){toast(`⚠️ Partie(s) manquante(s) : ${missing.join(', ')} (sauvegarde en ${first.o.of} parties) — sélectionnez-les toutes ensemble`);return;}
-  await importParts(first.f,first.o,cand.filter(h=>h!==first).map(h=>h.f));}
+  const of=cand[0].p.of||cand.length;
+  const first=cand.find(h=>h.p.part===1);
+  const have=new Set(cand.map(h=>h.p.part)),missing=[];
+  for(let i=1;i<=of;i++)if(!have.has(i))missing.push(i);
+  if(missing.length){toast(`⚠️ Partie(s) manquante(s) : ${missing.join(', ')} sur ${of} — sélectionnez les ${of} fichiers ensemble (${cand.length} reconnu(s)${parts.length<heads.length?', '+(heads.length-parts.length)+' ignoré(s)':''})`);return;}
+  let head=null;try{head=JSON.parse(await rdFirstLine(first.f));}catch(_){}
+  if(!head||!head.data){toast(`⚠️ La partie 1 est présente (${fmtSize(first.f.size)}) mais ses données sont illisibles — fichier incomplet ou corrompu : refaites l'export`);return;}
+  await importParts(first.f,head,cand.filter(h=>h!==first).map(h=>h.f));}
 async function importParts(file,head,pre){
   if(head.part!==1||!head.data){
     toast('📦 Ceci est la partie '+head.part+' sur '+head.of+' — sélectionnez d\'abord la PARTIE 1 (les autres vous seront demandées ensuite)');
@@ -5795,8 +5797,8 @@ async function importParts(file,head,pre){
   /* vérifier l'ensemble : mêmes setId, toutes les parties présentes */
   const byPart={1:file};
   for(const f of others){
-    try{const o=JSON.parse(await rdFirstLine(f));
-      if(o&&o.format==='ndjson-part'&&o.setId===head.setId)byPart[o.part]=f;}catch(_){}}
+    const o=await rdPartHead(f);
+    if(o&&o.format==='ndjson-part'&&o.setId===head.setId)byPart[o.part]=f;}
   const missing=[];for(let i=1;i<=head.of;i++)if(!byPart[i])missing.push(i);
   if(missing.length){toast('⚠️ Partie(s) manquante(s) ou d\'une autre sauvegarde : '+missing.join(', '));return;}
   await restoreFromParts(head,byPart);}
@@ -5814,7 +5816,7 @@ async function restoreFromParts(head,byPart){
       await idb.put('files',rec.file,{name:rec.name,mime:rec.mime,size:rec.size,blob});
       nf++;if(nf%3===0||nf===1)expProg({title:'♻️ Restauration de la sauvegarde',pct:((curPart-1)/head.of)*95+3,label:`📦 Partie <b>${curPart}</b> / <b>${head.of}</b> · ${nf} fichier(s) restauré(s)`});});
     for(let i=1;i<=head.of;i++){curPart=i;
-      await streamFileRecords(byPart[i],async()=>{},put);}
+      await streamFileRecords(byPart[i],null,put);}
     data=head.data;
     normalizeData();
     markSync('import',Date.parse(head.exported));
@@ -5829,16 +5831,25 @@ async function restoreFromParts(head,byPart){
   finally{state.expBusy=false;lastAct=Date.now();}}
 /* Lecture en flux d'un fichier texte, ligne par ligne (jamais tout en mémoire) */
 async function rdFirstLine(file){
-  const reader=file.stream().getReader();const dec=new TextDecoder();let buf='';
+  const reader=file.stream().getReader();const dec=new TextDecoder();const pieces=[];let len=0;
   try{
     while(true){const{done,value}=await reader.read();
       if(done)break;
-      buf+=dec.decode(value,{stream:true});
-      const i=buf.indexOf('\n');
-      if(i>=0){try{reader.cancel();}catch(_){}return buf.slice(0,i);}
-      if(buf.length>64*1024*1024)break;}
+      const txt=dec.decode(value,{stream:true});
+      const i=txt.indexOf('\n'); /* on ne cherche que dans le nouveau morceau */
+      if(i>=0){pieces.push(txt.slice(0,i));try{reader.cancel();}catch(_){}return pieces.join('');}
+      pieces.push(txt);len+=txt.length;
+      if(len>900*1024*1024)break;}
   }catch(_){}
-  return buf;}
+  return pieces.join('');}
+/* En-tête d'une partie de sauvegarde, lu sur les premiers octets seulement (même si la ligne de données est énorme) */
+async function rdPartHead(file){
+  try{const t=await file.slice(0,8192).text();
+    if(!/"app":"RailDoc"/.test(t))return null;
+    const m=t.match(/"format":"([a-z-]+)"/);if(!m)return null;
+    const g=k=>{const r=t.match(new RegExp('"'+k+'":("?)([^",}]+)\\1'));return r?r[2]:null;};
+    return{format:m[1],part:+g('part')||null,of:+g('of')||null,setId:g('setId')};
+  }catch(_){return null;}}
 async function rdLines(file,onLine){
   const reader=file.stream().getReader();const dec=new TextDecoder();let buf='';
   while(true){const{done,value}=await reader.read();
@@ -5863,6 +5874,13 @@ async function importAll(file){
       if(o&&o.app==='RailDoc'&&o.format==='ndjson'&&o.data&&Array.isArray(o.data.nodes))meta=o;
     }catch(_){meta=null;}}
   if(!meta&&file.stream){
+    const pp=await rdPartHead(file);
+    if(pp&&pp.format==='ndjson-part'){
+      if(pp.part!==1){toast(`📦 Ceci est la partie ${pp.part} sur ${pp.of} : sélectionnez TOUTES les parties ensemble (ou la partie 1 d'abord)`);return;}
+      let o1=null;try{o1=JSON.parse(await rdFirstLine(file));}catch(_){}
+      if(o1&&o1.data){importParts(file,o1);return;}
+      toast(`⚠️ La partie 1 (${fmtSize(file.size)}) est illisible — fichier incomplet ou corrompu : refaites l'export`);return;}}
+  if(!meta&&file.stream){
     try{const o=JSON.parse(await rdFirstLine(file));
       if(o&&o.app==='RailDoc'&&o.format==='ndjson-part'){importParts(file,o);return;}
       if(o&&o.app==='RailDoc'&&o.format==='wall'&&Array.isArray(o.tiles)){importWall(file);return;}
@@ -5884,7 +5902,7 @@ async function importAll(file){
       const put=segAssembler(async(rec,blob)=>{
         await idb.put('files',rec.file,{name:rec.name,mime:rec.mime,size:rec.size,blob});
         nf++;if(nf%5===0)toast(`⏳ Restauration… ${nf} fichier(s)`);});
-      await streamFileRecords(file,async()=>{},put);
+      await streamFileRecords(file,null,put);
       data=meta.data;
       normalizeData();
       markSync('import',Date.parse(meta.exported));
