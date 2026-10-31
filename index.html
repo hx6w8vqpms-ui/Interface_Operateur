@@ -767,7 +767,7 @@ html[data-theme="dark"] .eq-panel.gp{background:#4d4b47;border-color:#333}
   .gp-cell{flex-basis:26px;max-width:26px;min-width:26px}
 }
 @keyframes gpPulse{0%,100%{box-shadow:0 0 0 2px #fff,0 0 8px var(--accent)}50%{box-shadow:0 0 0 3px #fff,0 0 22px var(--accent)}}
-html[data-mode="read"] #eqAddBtn,html[data-mode="read"] #eqDupBtn,html[data-mode="read"] #famBtn{display:none}
+html[data-mode="read"] #eqAddBtn,html[data-mode="read"] #eqDupBtn,html[data-mode="read"] #eqMgrBtn,html[data-mode="read"] #famBtn{display:none}
 .eq-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .eq-train{width:100%;height:auto;margin:4px 0 8px;display:block}
 .eq-veh{width:100%;height:auto;margin:2px 0 8px;display:block}
@@ -1272,6 +1272,12 @@ html.locked #lockOv{display:flex}
             <circle cx="12" cy="12" r="10" fill="url(#i3add)" stroke="#0b6b2d" stroke-width=".8"/>
             <path d="M12 7v10M7 12h10" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>
             <ellipse cx="9.4" cy="8.4" rx="3" ry="1.7" transform="rotate(-30 9.4 8.4)" fill="#fff" opacity=".4"/></svg></button>
+          <button class="side-mini ic3d" id="eqMgrBtn" title="Gestionnaire d'appareillage : ajouter, modifier, supprimer tous les appareils, séries, familles, bloc cabine…">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="i3mgr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9aa6b2"/><stop offset="1" stop-color="#4b5563"/></linearGradient></defs>
+            <rect x="3" y="3.5" width="18" height="17" rx="3.4" fill="url(#i3mgr)" stroke="#2f3742" stroke-width=".8"/>
+            <path d="M6.5 8.5h11M6.5 12h11M6.5 15.5h11" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/>
+            <circle cx="9" cy="8.5" r="1.7" fill="#ffd34d" stroke="#a86c00" stroke-width=".6"/><circle cx="15" cy="12" r="1.7" fill="#ffd34d" stroke="#a86c00" stroke-width=".6"/><circle cx="10.5" cy="15.5" r="1.7" fill="#ffd34d" stroke="#a86c00" stroke-width=".6"/>
+            <ellipse cx="9" cy="5.6" rx="5" ry="1.2" fill="#fff" opacity=".3"/></svg></button>
           <button class="side-mini ic3d" id="eqDupBtn" title="Repérer et regrouper les doublons (appareil commun à plusieurs séries)">
             <svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="i3dup" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b98bff"/><stop offset="1" stop-color="#6a2fd0"/></linearGradient></defs>
             <rect x="3" y="3.5" width="12.5" height="12.5" rx="3" fill="url(#i3dup)" stroke="#4a1d9a" stroke-width=".7" opacity=".85"/>
@@ -1522,7 +1528,7 @@ html.locked #lockOv{display:flex}
 
 <!-- Entrées fichiers cachées -->
 <input type="file" id="fiAttach" accept="image/*,.pdf,application/pdf,.doc,.docx,.docm,.xls,.xlsx,.xlsm,.ppt,.pptx,.pptm" multiple hidden>
-<input type="file" id="fiImport" accept=".json,.raildoc,application/json" hidden>
+<input type="file" id="fiImport" accept=".json,.raildoc,application/json" multiple hidden>
 <input type="file" id="fiImportParts" accept=".json,application/json" multiple hidden>
 <input type="file" id="fiImportWall" accept=".json,application/json" hidden>
 <input type="file" id="fiUpdPick" accept=".json,application/json" hidden>
@@ -1553,9 +1559,11 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='9.28';
+const APP_VERSION='9.30';
 const APP_VERSION_DATE='25 octobre 2026';
 const CHANGELOG=[
+  ['v9.30',"Appareillage — nouveau GESTIONNAIRE (bouton 🛠 en édition) : liste de TOUS les appareils avec recherche et filtres (série, famille), ajout, modification (fiche complète : nom, abréviations, descriptif, localisation, séries, image, bloc cabine…), suppression, et actions groupées sur la sélection (ajouter / retirer une série, changer la famille ou l'emplacement, supprimer) ; accès direct aux familles & emplacements, aux séries TGV, au regroupement des doublons et à un nouvel éditeur du BLOC CABINE (rangées et appareils de l'armoire), du BLOC PNEUMATIQUE et des libellés de schémas, par catalogue"],
+  ['v9.29',"Import d'une sauvegarde en plusieurs parties (iPad) : le sélecteur de fichiers accepte maintenant la SÉLECTION MULTIPLE — choisissez les 4 fichiers d'un coup, l'application les reconnaît et les restaure ensemble ; si une seule partie est choisie, un bouton « Choisir les autres parties » s'affiche (Safari refusait d'ouvrir seul le second sélecteur) ; barre de progression à la restauration"],
   ['v9.28',"Correction mur d'accueil : les espaces vides entre les tuiles (emplacements vides) disparaissaient en mode lecture — le filtre COMMUN (appliqué d'office hors administrateur) les supprimait tous. Ils suivent désormais la portée de leur ligne, comme les tuiles : un espace d'une ligne commune reste visible en lecture"],
   ['v9.27',"Barre du haut : même écart entre COMMUN/PERSO et l'œil/cadenas qu'entre l'œil/cadenas et la recherche (l'œil ne bouge pas) ; le contour de COMMUN/PERSO reprend celui du bouton d'état (violet en édition) ; fond violet en « tout » et « perso », AUCUN fond en « commun uniquement »"],
   ['v9.26',"(1) le bouton « Verrouiller maintenant » est supprimé : un clic sur le logo ou le titre de l'application verrouille immédiatement (le double-clic / clic droit sur le titre et le menu ⚙ gardent la modification de l'identité) ; (2) le champ de recherche ne bouge plus selon les modes : les boutons COMMUN/PERSO et ⚙ gardent leur place (invisibles quand ils ne s'appliquent pas) ; (3) bouton d'état : cadenas ROUGE fermé = verrouillé, œil = lecture, cadenas VERT ouvert = édition ; (4) déverrouillage : code de déverrouillage → lecture, code admin → édition"],
@@ -1997,6 +2005,7 @@ function normalizeData(){
   for(const n of data.nodes)for(const c of(n.contacts||[]))if(!c.id)c.id='c_'+Math.random().toString(36).slice(2,9);
   if(!data.equipMeta)data.equipMeta={};
   if(!data.equipMerge)data.equipMerge={};
+  if(!data.equipCatOver)data.equipCatOver={};
   for(const n of data.nodes)if(n.equip&&n.equip.length&&Object.keys(data.equipMerge).length)n.equip=[...new Set(n.equip.map(id=>eqMergeTarget(id)))];
   if(!Array.isArray(data.equipPlaces)||!data.equipPlaces.length)
     data.equipPlaces=['Motrice','Remorques','Bloc Cabine','Bloc Moteur','Bloc H-AUX','Bloc Commun','Armoire Pneumatique'];
@@ -5746,19 +5755,42 @@ async function checkLibrary(manual){
   await libImport(found.src,found.man,manual);}
 
 /* ---------- Restauration d'une sauvegarde en plusieurs parties ---------- */
-async function importParts(file,head){
+/* Sélection de plusieurs fichiers d'un coup (parties d'une même sauvegarde) */
+async function importMany(files){
+  const heads=[];
+  for(const f of files){let o=null;try{o=JSON.parse(await rdFirstLine(f));}catch(_){}heads.push({f,o});}
+  const parts=heads.filter(h=>h.o&&h.o.app==='RailDoc'&&h.o.format==='ndjson-part');
+  if(!parts.length){
+    if(heads.length&&heads[0].o)importAll(heads[0].f);
+    else toast('⚠️ Fichiers non reconnus : sélectionnez les parties d\'une même sauvegarde RailDoc');
+    return;}
+  const sets={};for(const h of parts)(sets[h.o.setId]=sets[h.o.setId]||[]).push(h);
+  const cand=Object.values(sets).sort((a,b)=>b.length-a.length)[0];
+  const first=cand.find(h=>h.o.part===1&&h.o.data);
+  if(!first){toast('⚠️ La partie 1 manque dans la sélection — sélectionnez les '+(cand[0].o.of)+' fichiers ensemble');return;}
+  const have=new Set(cand.map(h=>h.o.part)),missing=[];
+  for(let i=1;i<=first.o.of;i++)if(!have.has(i))missing.push(i);
+  if(missing.length){toast(`⚠️ Partie(s) manquante(s) : ${missing.join(', ')} (sauvegarde en ${first.o.of} parties) — sélectionnez-les toutes ensemble`);return;}
+  await importParts(first.f,first.o,cand.filter(h=>h!==first).map(h=>h.f));}
+async function importParts(file,head,pre){
   if(head.part!==1||!head.data){
     toast('📦 Ceci est la partie '+head.part+' sur '+head.of+' — sélectionnez d\'abord la PARTIE 1 (les autres vous seront demandées ensuite)');
     return;}
   const nb=head.data.nodes.length;
   const when=head.exported?new Date(head.exported).toLocaleString('fr-FR'):'date inconnue';
   if(!await confirmDlg('Restaurer une sauvegarde en '+head.of+' parties',
-    `Cette sauvegarde (${when}) contient <b>${nb} fiche(s)</b> et a été découpée en <b>${head.of} fichiers</b>.<br><br>Après confirmation, sélectionnez les <b>${head.of-1} autre(s) partie(s)</b> (partie 2 à ${head.of}).<br><br>⚠️ Elle <b>remplacera intégralement</b> le contenu actuel de l'application sur cet appareil.`))return;
-  let others=[];
-  if(head.of>1){
-    others=await new Promise(res=>{const fi=$('#fiImportParts');
-      fi.onchange=e=>{const fs=[...e.target.files];fi.value='';res(fs);};
-      fi.click();});
+    `Cette sauvegarde (${when}) contient <b>${nb} fiche(s)</b> et a été découpée en <b>${head.of} fichiers</b>.<br><br>${pre?'':`Après confirmation, sélectionnez les <b>${head.of-1} autre(s) partie(s)</b> (partie 2 à ${head.of}).<br><br>`}⚠️ Elle <b>remplacera intégralement</b> le contenu actuel de l'application sur cet appareil.`))return;
+  let others=pre||[];
+  if(!pre&&head.of>1){
+    await new Promise(r=>setTimeout(r,80)); /* laisser se refermer la fenêtre de confirmation */
+    /* Safari/iPad n'ouvre un sélecteur que sur un APPUI direct : bouton dédié */
+    others=await new Promise(res=>{
+      openModal('📦 Autres parties de la sauvegarde',`<p style="font-size:13px;line-height:1.7">Appuyez sur le bouton ci-dessous, puis sélectionnez <b>les ${head.of-1} autre(s) fichier(s)</b> (parties 2 à ${head.of}) — vous pouvez les choisir <b>tous en une fois</b>.</p>`,
+        [{label:'Annuler',fn:()=>{res([]);}},
+         {label:'📂 Choisir les autres parties…',primary:true,fn:()=>{
+           const fi=$('#fiImportParts');
+           fi.onchange=e=>{const fs=[...e.target.files];fi.value='';closeModal();res(fs);};
+           fi.click();return false;}}]);});
     if(!others.length){toast('⚠️ Restauration annulée — les autres parties n\'ont pas été sélectionnées');return;}}
   /* vérifier l'ensemble : mêmes setId, toutes les parties présentes */
   const byPart={1:file};
@@ -5770,6 +5802,8 @@ async function importParts(file,head){
   await restoreFromParts(head,byPart);}
 async function restoreFromParts(head,byPart){
   toast('⏳ Restauration en cours…');
+  state.expBusy=true;
+  expProg({title:'♻️ Restauration de la sauvegarde',pct:0,label:`${head.of} parties à lire…`});
   try{
     await idb.clear('files');
     for(const u of Object.values(urlCache))URL.revokeObjectURL(u);urlCache={};
@@ -5778,7 +5812,7 @@ async function restoreFromParts(head,byPart){
     let nf=0,curPart=1;
     const put=segAssembler(async(rec,blob)=>{
       await idb.put('files',rec.file,{name:rec.name,mime:rec.mime,size:rec.size,blob});
-      nf++;if(nf%5===0)toast(`⏳ Restauration… partie ${curPart}/${head.of} · ${nf} fichier(s)`);});
+      nf++;if(nf%3===0||nf===1)expProg({title:'♻️ Restauration de la sauvegarde',pct:((curPart-1)/head.of)*95+3,label:`📦 Partie <b>${curPart}</b> / <b>${head.of}</b> · ${nf} fichier(s) restauré(s)`});});
     for(let i=1;i<=head.of;i++){curPart=i;
       await streamFileRecords(byPart[i],async()=>{},put);}
     data=head.data;
@@ -5789,8 +5823,10 @@ async function restoreFromParts(head,byPart){
     await idb.put('kv','data',JSON.parse(JSON.stringify(data)));
     logEvt(`♻️ Sauvegarde en ${head.of} parties restaurée (${nf} fichier(s))`);
     navigate('#/home');render();updateStats();
+    expProg({title:'✅ Sauvegarde restaurée',pct:100,done:true,label:`${head.of} parties · ${nf} fichier(s)`});
     toast('✅ Sauvegarde restaurée ('+head.of+' parties, '+nf+' fichier(s)) !');
-  }catch(e){console.error(e);toast('⚠️ Échec de la restauration : '+(e&&e.message?e.message:'erreur'));}}
+  }catch(e){console.error(e);expProg({title:'⚠️ Échec de la restauration',pct:0,done:true,stay:9000,label:esc(e&&e.message?e.message:'erreur')});toast('⚠️ Échec de la restauration : '+(e&&e.message?e.message:'erreur'));}
+  finally{state.expBusy=false;lastAct=Date.now();}}
 /* Lecture en flux d'un fichier texte, ligne par ligne (jamais tout en mémoire) */
 async function rdFirstLine(file){
   const reader=file.stream().getReader();const dec=new TextDecoder();let buf='';
@@ -8389,11 +8425,15 @@ function wireEqNav(det){
     if(hitIt){state.eqSel=hitIt.id;state.eqRep=null;state.eqVarSerie=null;
       state.eqQuery='';const si=$('#eqSearch');if(si)si.value='';renderEquip();}
     else toast('Aucune fiche appareil pour « '+el.title.split(' — ')[0]+' »');});}
+const eqCatOv=cat=>((typeof data!=='undefined'&&data&&data.equipCatOver)||{})[cat.key]||{};
+const eqPanelRows=cat=>eqCatOv(cat).panel||cat.panel||[];
+const eqPneuList=cat=>eqCatOv(cat).pneu||cat.pneu||[];
+const eqSchemas=cat=>Object.assign({},cat.schemas||{},eqCatOv(cat).schemas||{});
 function eqPanelHtml(codes,pos,cat){
   cat=cat||EQ_CATALOGS.duplex;
   const al=cat.aliases||{};
   const want=new Set(codes.map(c=>al[c]||c));
-  const rows=cat.panel.map((row,ri)=>{
+  const rows=eqPanelRows(cat).map((row,ri)=>{
     const k=row.k||'cc';
     return `<div class="gp-row" data-k="${k}">${row.c.map((c,ci)=>{
       const n=al[eqNorm(c)]||eqNorm(c);
@@ -8410,10 +8450,10 @@ function eqPneuHtml(codes,cat){
   const al=cat.aliases||{};
   const want=new Set(codes.map(c=>al[c]||c));
   return `<div class="eq-panel"><div class="eq-panel-title">${cat.pneuTitle} <span>${cat.pneuSub}</span></div>
-    <div class="eq-prow">${cat.pneu.map(c=>{
+    <div class="eq-prow">${eqPneuList(cat).map(c=>{
       const n=al[eqNorm(c)]||eqNorm(c);
       return `<span class="eq-cell rb${want.has(n)?' hit':''}">${esc(c)}</span>`;}).join('')}</div></div>`;}
-function eqSchemaLabel(s,cat){return ((cat||EQ_CATALOGS.duplex).schemas)[s]||'';}
+function eqSchemaLabel(s,cat){return eqSchemas(cat||EQ_CATALOGS.duplex)[s]||'';}
 function eqKey(it){return eqNorm(it.a[0])+'|'+it.s+'|'+(it.r[0]||'')+'|'+eqNorm(it.d).slice(0,12);}
 /* Catalogue effectif : catalogue de base (GDA Duplex) + modifications + appareils personnalisés */
 function eqAllItems(){
@@ -8570,7 +8610,7 @@ function famPlaceModal(){
   $('#mFamAdd').onclick=()=>{grp['g_'+uid()]='Nouvelle famille';draw();};
   $('#mPlaceAdd').onclick=()=>{places.push('Nouvel emplacement');draw();};
   draw();}
-function eqEditModal(it){
+function eqEditModal(it,back){
   if(!isEdit()){toast('🔒 Mode lecture seule');return;}
   const isNew=!it;
   const mcat=it?eqCatOf(it):(eqCatForSerie(state.eqSerie)||EQ_CATALOGS.duplex);
@@ -8600,7 +8640,7 @@ function eqEditModal(it){
       <input id="eZ" style="${ic}" value="${esc(w.z)}" placeholder="Précision (ex : face arrière, rangée du haut…)">
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div><label style="${lb}">Schéma (type de véhicule)</label><select id="eS" style="${ic}">${Object.keys(mcat.schemas).map(s=>`<option value="${s}"${w.s===+s?' selected':''}>${s} — ${mcat.schemas[s]}</option>`).join('')}</select></div>
+      <div><label style="${lb}">Schéma (type de véhicule)</label><select id="eS" style="${ic}">${Object.keys(eqSchemas(mcat)).map(s=>`<option value="${s}"${w.s===+s?' selected':''}>${s} — ${eqSchemas(mcat)[s]}</option>`).join('')}</select></div>
       <div><label style="${lb}">Repères <span style="font-weight:400">(virgules)</span></label><input id="eR" style="${ic}" value="${esc(w.r)}" placeholder="ex : 8, 26"></div>
     </div>
     <div id="eVarBox"></div>
@@ -8613,7 +8653,7 @@ function eqEditModal(it){
     <label style="${lb}">Commentaire</label>
     <textarea id="eCom" style="${ic};min-height:64px;resize:vertical" placeholder="Particularités, pièges, retours d'expérience…">${esc(w.comment)}</textarea>
     <div id="eCabBox"></div>`,
-    [{label:'Annuler'},{label:isNew?'Ajouter':'Enregistrer',primary:true,fn:async()=>{
+    [{label:'Annuler',fn:()=>{if(back)setTimeout(back,30);}},{label:isNew?'Ajouter':'Enregistrer',primary:true,fn:async()=>{
       const d=$('#eD').value.trim();
       if(!d){toast('Indiquez une désignation');return false;}
       const abbrs=$('#eA').value.split(',').map(x=>x.trim()).filter(Boolean);
@@ -8639,7 +8679,8 @@ function eqEditModal(it){
       else{data.equipOver[it.id]=obj;logEvt('✏️ Appareil modifié : « '+d+' »');}
       save();
       if(origImg&&origImg!==w.img)await maybeDeleteBlob(origImg);
-      renderEquip();toast(isNew?'Appareil ajouté':'Appareil enregistré');}}]);
+      renderEquip();toast(isNew?'Appareil ajouté':'Appareil enregistré');
+      if(back)setTimeout(back,30);}}]);
   /* --- variantes d'emplacement par série (hors armoire) --- */
   const drawVars=()=>{
     const sers=[...$('#eSer').querySelectorAll('input:checked')].map(i=>i.value).filter(sid=>sid!==mcat.serie);
@@ -8655,7 +8696,7 @@ function eqEditModal(it){
             <input type="text" data-vf="z" data-vs2="${sid}" value="${esc(v.z||'')}" placeholder="Précision (texte)" style="${ic}">
           </div>
           ${vc?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
-            <select data-vf="s" data-vs2="${sid}" style="${ic}">${Object.keys(vc.schemas).map(sc=>`<option value="${sc}"${(v.s||1)===+sc?' selected':''}>schéma ${sc} — ${vc.schemas[sc]}</option>`).join('')}</select>
+            <select data-vf="s" data-vs2="${sid}" style="${ic}">${Object.keys(eqSchemas(vc)).map(sc=>`<option value="${sc}"${(v.s||1)===+sc?' selected':''}>schéma ${sc} — ${eqSchemas(vc)[sc]}</option>`).join('')}</select>
             <input type="text" data-vf="r" data-vs2="${sid}" value="${esc((v.r||[]).join(', '))}" placeholder="Repères" style="${ic}">
           </div>`:''}`:''}
         </div>`;}).join(''):'';
@@ -8697,7 +8738,7 @@ function eqEditModal(it){
           <label style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;cursor:pointer">
             <input type="checkbox" data-cb="${sid}"${pan?' checked':''} style="accent-color:var(--accent)">${esc(c.label)} : position dans l'armoire du bloc cabine</label>
           ${pan?`<div style="display:flex;gap:8px;align-items:center;margin:7px 0">
-              <input type="number" data-cr="${sid}" min="1" max="${c.panel.length}" value="${pan.row||''}" placeholder="Ligne" style="${ic};width:95px">
+              <input type="number" data-cr="${sid}" min="1" max="${eqPanelRows(c).length}" value="${pan.row||''}" placeholder="Ligne" style="${ic};width:95px">
               <input type="number" data-cc2="${sid}" min="1" value="${pan.col||''}" placeholder="Colonne" style="${ic};width:95px">
             </div>
             <div data-grid="${sid}"></div>`:''}
@@ -8853,9 +8894,153 @@ function eqDupModal(){
   $('#dupAll').onclick=()=>{document.querySelectorAll('#dupList .dupgchk').forEach(c=>c.checked=true);upd();};
   $('#dupNone').onclick=()=>{document.querySelectorAll('#dupList .dupgchk').forEach(c=>c.checked=false);upd();};
   upd();}
+/* ---------- Gestionnaire d'appareillage : liste, ajout, modification, suppression, actions groupées ---------- */
+function eqPatchItem(it,patch){
+  if(it.custom){const t=(data.equipCustom||[]).find(x=>x.id===it.id);if(t)Object.assign(t,patch);}
+  else{data.equipOver=data.equipOver||{};data.equipOver[it.id]=Object.assign({},data.equipOver[it.id]||{},patch);}}
+const eqMgrState={q:'',ser:'ALL',fam:'ALL',sel:new Set(),lim:120};
+function eqMgrModal(){
+  if(!isEdit()){toast('🔒 Mode lecture seule');return;}
+  const st=eqMgrState;
+  const fleet=data.fleet||[];
+  const serName=id=>{const f=fleet.find(x=>x.id===id);return f?f.name:id;};
+  const back=()=>eqMgrModal();
+  const filt=()=>{const q=st.q.trim();
+    return eqAllItems().filter(it=>(st.ser==='ALL'||eqSeriesOf(it).includes(st.ser))&&(st.fam==='ALL'||it.g===st.fam)&&(!q||eqMatches(it,q)));};
+  const sel0=`border:1px solid var(--border-strong);background:var(--panel);border-radius:9px;padding:6px 8px;font-size:12px;font-family:inherit;color:var(--text)`;
+  const fams=eqGroups(),places=data.equipPlaces||[];
+  openModal('🛠 Gestionnaire d\'appareillage',`
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+      <button class="btn small primary" id="mgNew">＋ Nouvel appareil</button>
+      <button class="btn small" id="mgFam" title="Familles d'appareils et emplacements">📁 Familles &amp; emplacements</button>
+      <button class="btn small" id="mgSer" title="Séries TGV, sous-séries, tranches de rames">🚄 Séries TGV</button>
+      <button class="btn small" id="mgCab" title="Bloc cabine, bloc pneumatique, libellés de schémas">🗄 Bloc cabine / pneumatique</button>
+      <button class="btn small" id="mgDup" title="Regrouper les doublons en appareil multi-séries">🧩 Doublons</button></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+      <input id="mgQ" type="search" placeholder="🔍 Rechercher (nom, abréviation, mot-clé…)" value="${esc(st.q)}" style="${sel0};flex:1;min-width:180px">
+      <select id="mgSerF" style="${sel0}"><option value="ALL">Toutes les séries</option>${fleet.map(f=>`<option value="${f.id}"${st.ser===f.id?' selected':''}>${esc(f.name)}</option>`).join('')}</select>
+      <select id="mgFamF" style="${sel0}"><option value="ALL">Toutes les familles</option>${Object.entries(fams).map(([k,v])=>`<option value="${k}"${st.fam===k?' selected':''}>${esc(v)}</option>`).join('')}</select></div>
+    <div id="mgBulk" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:7px 9px;border:1px dashed var(--border-strong);border-radius:10px;margin-bottom:8px;font-size:12px">
+      <b id="mgSelN">0 sélectionné(s)</b>
+      <button class="btn small ghost" id="mgAll">Tout cocher (filtre)</button><button class="btn small ghost" id="mgNone">Aucun</button>
+      <span style="flex:1"></span>
+      <select id="mgBSer" style="${sel0}">${fleet.map(f=>`<option value="${f.id}">${esc(f.name)}</option>`).join('')}</select>
+      <button class="btn small" id="mgSerAdd">＋ série</button><button class="btn small" id="mgSerDel">－ série</button>
+      <select id="mgBFam" style="${sel0}">${Object.entries(fams).map(([k,v])=>`<option value="${k}">${esc(v)}</option>`).join('')}</select>
+      <button class="btn small" id="mgFamSet">Famille →</button>
+      <select id="mgBPl" style="${sel0}"><option value="">— emplacement —</option>${places.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('')}</select>
+      <button class="btn small" id="mgPlSet">Emplacement →</button>
+      <button class="btn small danger" id="mgDel">🗑 Supprimer</button></div>
+    <div id="mgCount" style="font-size:11.5px;color:var(--muted);margin-bottom:4px"></div>
+    <div id="mgList" style="max-height:44vh;overflow:auto;border:1px solid var(--border);border-radius:10px"></div>`,
+    [{label:'Fermer',primary:true}]);
+  $('#modal').classList.add('wide');
+  const draw=()=>{
+    const items=filt(),shown=items.slice(0,st.lim);
+    $('#mgCount').textContent=`${items.length} appareil(s) sur ${eqAllItems().length}`+(items.length>shown.length?` — ${shown.length} affichés`:'');
+    $('#mgList').innerHTML=shown.map(it=>`<div class="mgrow" data-id="${it.id}" style="display:flex;gap:8px;align-items:center;padding:6px 9px;border-bottom:1px solid var(--border);font-size:12px;cursor:pointer">
+      <input type="checkbox" class="mgchk" ${st.sel.has(it.id)?'checked':''} style="accent-color:var(--accent)">
+      <span class="eq-abbr" style="flex:none;max-width:130px;overflow:hidden;text-overflow:ellipsis">${esc(it.a[0]==='—'?'●':it.a[0])}</span>
+      <div style="flex:1;min-width:0"><b>${esc(it.d)}</b><br><span style="color:var(--muted);font-size:10.5px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(eqGroups()[it.g]||it.g)} · ${esc(eqSeriesOf(it).map(serName).join(', '))} · ${esc([it.pl,it.z].filter(Boolean).join(' — ')||'—')}</span></div>
+      <button class="btn small mgedit" title="Modifier">✏️</button><button class="btn small danger mgdel" title="Supprimer">🗑</button></div>`).join('')
+      +(items.length>shown.length?`<div style="padding:8px;text-align:center"><button class="btn small" id="mgMore">Afficher ${Math.min(200,items.length-shown.length)} de plus…</button></div>`:'')
+      ||'<div class="empty-hint" style="padding:14px">Aucun appareil.</div>';
+    $('#mgSelN').textContent=st.sel.size+' sélectionné(s)';
+    const mr=$('#mgMore');if(mr)mr.onclick=()=>{st.lim+=200;draw();};
+    $('#mgList').querySelectorAll('.mgrow').forEach(r=>{
+      const id=r.dataset.id;
+      r.querySelector('.mgchk').onchange=e=>{e.target.checked?st.sel.add(id):st.sel.delete(id);$('#mgSelN').textContent=st.sel.size+' sélectionné(s)';};
+      r.querySelector('.mgchk').onclick=e=>e.stopPropagation();
+      r.onclick=()=>{const it=eqById(id);if(it)eqEditModal(it,back);};
+      r.querySelector('.mgedit').onclick=e=>{e.stopPropagation();const it=eqById(id);if(it)eqEditModal(it,back);};
+      r.querySelector('.mgdel').onclick=async e=>{e.stopPropagation();const it=eqById(id);if(!it)return;
+        if(!await confirmDlg('Supprimer l\'appareil','Supprimer « '+esc(it.d)+' » du catalogue ?'))return;
+        await eqDeleteCore(it);st.sel.delete(id);renderEquip();toast('Appareil supprimé');eqMgrModal();};});};
+  draw();
+  const selIds=()=>[...st.sel].filter(id=>eqById(id));
+  const bulk=async(label,fn)=>{
+    const ids=selIds();if(!ids.length){toast('Cochez d\'abord des appareils');return;}
+    let n=0;for(const id of ids){const it=eqById(id);if(it&&await fn(it)!==false)n++;}
+    save();logEvt(`🛠 Appareillage : ${label} sur ${n} appareil(s)`);renderEquip();toast(`${label} : ${n} appareil(s)`);eqMgrModal();};
+  $('#mgNew').onclick=()=>eqEditModal(null,back);
+  $('#mgFam').onclick=()=>famPlaceModal();
+  $('#mgSer').onclick=()=>fleetModal();
+  $('#mgCab').onclick=()=>eqCabModal();
+  $('#mgDup').onclick=()=>eqDupModal();
+  $('#mgQ').oninput=e=>{st.q=e.target.value;st.lim=120;draw();};
+  $('#mgSerF').onchange=e=>{st.ser=e.target.value;st.lim=120;draw();};
+  $('#mgFamF').onchange=e=>{st.fam=e.target.value;st.lim=120;draw();};
+  $('#mgAll').onclick=()=>{filt().forEach(it=>st.sel.add(it.id));draw();};
+  $('#mgNone').onclick=()=>{st.sel.clear();draw();};
+  $('#mgSerAdd').onclick=()=>bulk('Série ajoutée',it=>{const sid=$('#mgBSer').value;
+    if(eqSeriesOf(it).includes(sid))return false;eqPatchItem(it,{series:[...eqSeriesOf(it),sid]});});
+  $('#mgSerDel').onclick=()=>bulk('Série retirée',it=>{const sid=$('#mgBSer').value;const cur=eqSeriesOf(it);
+    if(!cur.includes(sid)||cur.length<2)return false; /* un appareil garde au moins une série */
+    const v=JSON.parse(JSON.stringify(it.variants||{}));delete v[sid];
+    eqPatchItem(it,{series:cur.filter(x=>x!==sid),variants:v});});
+  $('#mgFamSet').onclick=()=>bulk('Famille modifiée',it=>{eqPatchItem(it,{g:$('#mgBFam').value});});
+  $('#mgPlSet').onclick=()=>bulk('Emplacement modifié',it=>{eqPatchItem(it,{pl:$('#mgBPl').value});});
+  $('#mgDel').onclick=async()=>{const ids=selIds();if(!ids.length){toast('Cochez d\'abord des appareils');return;}
+    if(!await confirmDlg('Supprimer la sélection',`Supprimer <b>${ids.length}</b> appareil(s) du catalogue ? Cette action est définitive (restaurable seulement depuis une sauvegarde).`))return;
+    for(const id of ids){const it=eqById(id);if(it)await eqDeleteCore(it);st.sel.delete(id);}
+    renderEquip();toast(ids.length+' appareil(s) supprimé(s)');eqMgrModal();};}
+/* Éditeur du bloc cabine (armoire), du bloc pneumatique et des libellés de schémas, par catalogue */
+function eqCabModal(key){
+  const cats=Object.values(EQ_CATALOGS);
+  key=key||(eqMgrState.cabKey)||cats[0].key;eqMgrState.cabKey=key;
+  const cat=EQ_CATALOGS[key]||cats[0];
+  const rows=JSON.parse(JSON.stringify(eqPanelRows(cat)));
+  const sch=Object.assign({},eqSchemas(cat));
+  const kinds={cc:'Disrupteurs',led:'Voyants / DJ signalisation',bp:'Boutons-poussoirs',z:'Commutateurs',meter:'Voltmètres / manip.'};
+  const ic='border:1px solid var(--border-strong);background:var(--panel);border-radius:8px;padding:5px 8px;font-size:12px;font-family:inherit;box-sizing:border-box;color:var(--text)';
+  openModal('🗄 Bloc cabine & bloc pneumatique',`
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
+      <b style="font-size:12px">Catalogue :</b>
+      <select id="cbCat" style="${ic}">${cats.map(c=>`<option value="${c.key}"${c.key===cat.key?' selected':''}>${esc(c.label)}</option>`).join('')}</select>
+      <span style="font-size:11px;color:var(--muted)">Les modifications s'appliquent à l'armoire dessinée pour ce catalogue.</span></div>
+    <p style="font-size:11.5px;color:var(--muted);line-height:1.6;margin-bottom:8px">⚠️ La position d'un appareil dans l'armoire est mémorisée par <b>ligne / colonne</b> : si vous ajoutez, supprimez ou déplacez des rangées ou des appareils, vérifiez les positions des appareils concernés.</p>
+    <div style="font-weight:800;font-size:12px;margin-bottom:4px">Rangées de l'armoire (${esc(cat.panelTitle||'')})</div>
+    <div id="cbRows"></div>
+    <button class="btn small" id="cbAddRow" style="margin:6px 0 12px">＋ Ajouter une rangée</button>
+    <div style="font-weight:800;font-size:12px;margin-bottom:4px">Bloc pneumatique <span style="font-weight:400;color:var(--muted)">(appareils séparés par des virgules)</span></div>
+    <textarea id="cbPneu" style="${ic};width:100%;min-height:60px">${esc(eqPneuList(cat).join(', '))}</textarea>
+    <div style="font-weight:800;font-size:12px;margin:12px 0 4px">Libellés des schémas (types de véhicule)</div>
+    <div id="cbSch" style="display:grid;grid-template-columns:40px 1fr;gap:6px;align-items:center"></div>`,
+    [{label:'Fermer',fn:()=>{setTimeout(()=>eqMgrModal(),30);}},
+     {label:'↺ Origine',fn:async()=>{
+        if(!await confirmDlg('Revenir à l\'origine','Rétablir l\'armoire, le bloc pneumatique et les libellés d\'origine de « '+esc(cat.label)+' » ?'))return false;
+        delete data.equipCatOver[cat.key];save();renderEquip();toast('Catalogue rétabli');setTimeout(()=>eqCabModal(cat.key),30);}},
+     {label:'Enregistrer',primary:true,fn:()=>{
+        const out=rows.map(r=>({k:r.k||'cc',t:(r.t||'').trim(),c:(r.c||[]).map(x=>String(x).trim()).filter(Boolean)})).filter(r=>r.c.length);
+        const pn=$('#cbPneu').value.split(/[,\n]/).map(x=>x.trim()).filter(Boolean);
+        data.equipCatOver=data.equipCatOver||{};
+        data.equipCatOver[cat.key]={panel:out,pneu:pn,schemas:sch};
+        save();logEvt('🗄 Bloc cabine / pneumatique modifié : '+cat.label);renderEquip();toast('Catalogue enregistré');setTimeout(()=>eqMgrModal(),30);}}]);
+  $('#modal').classList.add('wide');
+  const drawRows=()=>{
+    $('#cbRows').innerHTML=rows.map((r,i)=>`<div class="cbr" data-i="${i}" style="display:grid;grid-template-columns:1fr 150px auto;gap:6px;margin-bottom:6px;padding:6px;border:1px solid var(--border);border-radius:9px">
+      <input class="cbT" value="${esc(r.t||'')}" placeholder="Titre de la rangée" style="${ic}">
+      <select class="cbK" style="${ic}">${Object.entries(kinds).map(([k,v])=>`<option value="${k}"${(r.k||'cc')===k?' selected':''}>${v}</option>`).join('')}</select>
+      <div style="display:flex;gap:3px"><button class="btn small cbUp" title="Monter">▲</button><button class="btn small cbDn" title="Descendre">▼</button><button class="btn small danger cbX" title="Supprimer la rangée">✕</button></div>
+      <textarea class="cbC" style="${ic};grid-column:1/4;min-height:48px" placeholder="Appareils de la rangée, séparés par des virgules">${esc((r.c||[]).join(', '))}</textarea></div>`).join('');
+    $('#cbRows').querySelectorAll('.cbr').forEach(el=>{const i=+el.dataset.i;
+      el.querySelector('.cbT').oninput=e=>{rows[i].t=e.target.value;};
+      el.querySelector('.cbK').onchange=e=>{rows[i].k=e.target.value;};
+      el.querySelector('.cbC').oninput=e=>{rows[i].c=e.target.value.split(/[,\n]/).map(x=>x.trim()).filter(Boolean);};
+      el.querySelector('.cbUp').onclick=()=>{if(i>0){[rows[i-1],rows[i]]=[rows[i],rows[i-1]];drawRows();}};
+      el.querySelector('.cbDn').onclick=()=>{if(i<rows.length-1){[rows[i+1],rows[i]]=[rows[i],rows[i+1]];drawRows();}};
+      el.querySelector('.cbX').onclick=()=>{rows.splice(i,1);drawRows();};});};
+  drawRows();
+  $('#cbAddRow').onclick=()=>{rows.push({k:'cc',t:'Nouvelle rangée',c:[]});drawRows();};
+  $('#cbSch').innerHTML=Object.keys(sch).map(k=>`<b style="font-size:12px">${k}</b><input data-sk="${k}" value="${esc(sch[k])}" style="${ic}">`).join('');
+  $('#cbSch').querySelectorAll('input').forEach(inp=>inp.oninput=()=>{sch[inp.dataset.sk]=inp.value;});
+  $('#cbCat').onchange=e=>eqCabModal(e.target.value);}
 async function eqDelete(it){
   if(!isEdit()){toast('🔒 Mode lecture seule');return;}
   if(!await confirmDlg('Supprimer l\'appareil','Supprimer « '+it.d+' » du catalogue ? La fiche liée éventuelle n\'est pas supprimée.'))return;
+  await eqDeleteCore(it);
+  renderEquip();toast('Appareil supprimé');}
+async function eqDeleteCore(it){
   const img=it.img;
   if(it.custom)data.equipCustom=(data.equipCustom||[]).filter(x=>x.id!==it.id);
   else data.equipOver[it.id]=Object.assign({},data.equipOver[it.id]||{},{deleted:true});
@@ -8865,8 +9050,7 @@ async function eqDelete(it){
   for(const f of metaFiles)await maybeDeleteBlob(f.fileId);
   state.eqSel=null;
   save();logEvt('🗑 Appareil supprimé du catalogue : « '+it.d+' »');
-  if(img)await maybeDeleteBlob(img);
-  renderEquip();toast('Appareil supprimé');}
+  if(img)await maybeDeleteBlob(img);}
 async function eqKwFromPdf(blob,name,apply){
   toast('⏳ Lecture du document…');
   const off=officeInfo(name);
@@ -9171,6 +9355,7 @@ async function init(){
   $('#fleetBtn').onclick=fleetModal;
   $('#eqAddBtn').onclick=()=>eqEditModal(null);
   $('#eqDupBtn').onclick=eqDupModal;
+  $('#eqMgrBtn').onclick=eqMgrModal;
   $('#famBtn').onclick=famPlaceModal;
   $$('.fld-clr').forEach(b=>b.onclick=e=>{e.stopPropagation();
     const inp=b.parentElement.querySelector('input');
@@ -9355,7 +9540,7 @@ async function init(){
       :'🌐👤 Affichage : tout (commun et perso)');};
   applyScopeBtn();
 
-  $('#fiImport').addEventListener('change',e=>{const f=e.target.files[0];e.target.value='';if(f)importAll(f);});
+  $('#fiImport').addEventListener('change',e=>{const fs=[...e.target.files];e.target.value='';if(fs.length>1)importMany(fs);else if(fs[0])importAll(fs[0]);});
   $('#fiImportWall').addEventListener('change',e=>{const f=e.target.files[0];e.target.value='';if(f)importWall(f);});
 
   /* recherche */
