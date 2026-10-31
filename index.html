@@ -788,7 +788,18 @@ html[data-theme="dark"] .eq-cell.rb{background:#22301a;color:#9fce7a;border-colo
   background:var(--accent-soft);color:var(--accent)}
 .eq-replink:hover{background:var(--accent);color:#fff}
 .eq-src{font-size:10.5px;color:var(--muted);margin-top:10px;font-style:italic}
-.side-big{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 10px 6px}
+.side-big{display:grid;grid-template-columns:1fr 1fr 46px;gap:8px;padding:10px 10px 4px}
+.side-io{display:flex;flex-direction:column;gap:8px}
+.side-io .sf-btn{flex:1;padding:0;border-radius:12px;min-height:34px}
+.side-io .sf-btn .lb{display:none}
+.side-io .sf-btn .ic svg{width:16px;height:16px;filter:drop-shadow(0 1px 1px #0005)}
+.side-io .sf-btn .ic{padding:0}
+.sf-meta{padding:0 14px 6px}
+.sf-meta .sf-line{font-size:10.5px}
+.sf-meta .syncRow{font-size:10.5px;padding:0 4px;margin:0 -4px}
+.sf-meta #verLine{cursor:pointer;opacity:.85}
+#sidebar>.sf-width{padding:0 14px 4px;border-bottom:0;gap:6px}
+#sidebar>.sf-width input[type=range]{height:16px}
 .bigbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;height:76px;padding:6px;border-radius:14px;
   border:1px solid var(--border-strong);background:var(--panel);font-size:12px;font-weight:700;
   white-space:nowrap;overflow:hidden;box-shadow:0 1px 2px #0000000d;transition:all .15s}
@@ -867,7 +878,7 @@ html.locked #modeBtn .ic-eye{display:none !important}
 html.locked #modeBtn .ic-lock{display:block !important}
 html.locked #modeBtn{background:#d0342c26;box-shadow:0 0 0 2px #d0342c55;border-radius:12px;animation:pulseWarn 2.4s ease-in-out infinite}
 #lkPwd::placeholder,#mPwd::placeholder{color:#8b909a;opacity:1;letter-spacing:6px}
-html.ios-sa{--st:max(env(safe-area-inset-top,0px),28px)}
+html.ios-sa{--st:max(env(safe-area-inset-top,0px),20px);--header-h:54px}
 #expProg{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:140;width:min(440px,calc(100vw - 28px));background:var(--panel);border:1px solid var(--border-strong);border-radius:16px;box-shadow:0 12px 40px #000a;padding:14px 16px;display:none}
 #expProg.on{display:block}
 #expProg .ep-t{font-size:13px;font-weight:800;display:flex;justify-content:space-between;gap:10px}
@@ -1253,7 +1264,33 @@ html.locked #lockOv{display:flex}
           <ellipse cx="21.5" cy="20.5" rx="6.5" ry="4.2" transform="rotate(-32 21.5 20.5)" fill="#fff" opacity=".8"/>
           <path d="M13.5 33.5 A14.6 14.6 0 0 0 36 36.5" stroke="#ffffff66" stroke-width="2" fill="none"/>
         </svg></span>Appareillages</button>
+    <div class="side-io">
+        <button type="button" id="sfImport" class="sf-btn imp" title="Importer une sauvegarde"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <defs>
+            <linearGradient id="i3imT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8cc0ff"/><stop offset="1" stop-color="#2160e6"/></linearGradient>
+            <linearGradient id="i3imA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#bfd8ff"/></linearGradient>
+          </defs>
+          <g transform="translate(0 1.15)" opacity=".9"><path d="M8.3 9.9H6.4A2.4 2.4 0 0 0 4 12.3v5A2.4 2.4 0 0 0 6.4 19.7h11.2A2.4 2.4 0 0 0 20 17.3v-5a2.4 2.4 0 0 0-2.4-2.4h-1.9" stroke="#0d2f8f" stroke-width="2.7"/><path d="M12 3.6v11M7.9 10.7 12 14.8l4.1-4.1" stroke="#2c56b8" stroke-width="2.9"/></g>
+          <path d="M8.3 9.9H6.4A2.4 2.4 0 0 0 4 12.3v5A2.4 2.4 0 0 0 6.4 19.7h11.2A2.4 2.4 0 0 0 20 17.3v-5a2.4 2.4 0 0 0-2.4-2.4h-1.9" stroke="url(#i3imT)" stroke-width="2.7"/>
+          <path d="M12 3.6v11M7.9 10.7 12 14.8l4.1-4.1" stroke="url(#i3imA)" stroke-width="2.9"/>
+          <path d="M8.3 9.9H6.4A2.4 2.4 0 0 0 4 12.3v5A2.4 2.4 0 0 0 6.4 19.7h11.2A2.4 2.4 0 0 0 20 17.3v-5a2.4 2.4 0 0 0-2.4-2.4h-1.9" stroke="#fff" stroke-width=".8" opacity=".5" transform="translate(-.25 -.55)"/>
+          <path d="M12 3.6v11" stroke="#fff" stroke-width=".8" opacity=".7" transform="translate(-.5 0)"/>
+        </svg></span><span class="lb">Importer</span></button>
+        <button type="button" id="sfExport" class="sf-btn exp" title="Exporter une sauvegarde complète (admin)"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <defs>
+            <linearGradient id="i3exT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6fe39b"/><stop offset="1" stop-color="#13923f"/></linearGradient>
+            <linearGradient id="i3exA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#c8f3da"/></linearGradient>
+          </defs>
+          <g transform="translate(0 1.15)" opacity=".9"><path d="M8.3 9.9H6.4A2.4 2.4 0 0 0 4 12.3v5A2.4 2.4 0 0 0 6.4 19.7h11.2A2.4 2.4 0 0 0 20 17.3v-5a2.4 2.4 0 0 0-2.4-2.4h-1.9" stroke="#0a5a26" stroke-width="2.7"/><path d="M12 14.9V3.8M7.9 7.9 12 3.8l4.1 4.1" stroke="#1f8a4c" stroke-width="2.9"/></g>
+          <path d="M8.3 9.9H6.4A2.4 2.4 0 0 0 4 12.3v5A2.4 2.4 0 0 0 6.4 19.7h11.2A2.4 2.4 0 0 0 20 17.3v-5a2.4 2.4 0 0 0-2.4-2.4h-1.9" stroke="url(#i3exT)" stroke-width="2.7"/>
+          <path d="M12 14.9V3.8M7.9 7.9 12 3.8l4.1 4.1" stroke="url(#i3exA)" stroke-width="2.9"/>
+          <path d="M8.3 9.9H6.4A2.4 2.4 0 0 0 4 12.3v5A2.4 2.4 0 0 0 6.4 19.7h11.2A2.4 2.4 0 0 0 20 17.3v-5a2.4 2.4 0 0 0-2.4-2.4h-1.9" stroke="#fff" stroke-width=".8" opacity=".5" transform="translate(-.25 -.55)"/>
+          <path d="M12 14.9V3.8" stroke="#fff" stroke-width=".8" opacity=".7" transform="translate(-.5 0)"/>
+        </svg></span><span class="lb">Exporter</span></button>
+      </div>
     </div>
+    <div class="sf-width" title="Largeur du panneau — glisser le curseur (ou la poignée du bord) · double-clic sur ↔ = standard"><span class="sf-wi" id="sfWi">↔</span><input type="range" id="sfRange" min="210" max="520" step="2" value="288" aria-label="Largeur du panneau de gauche"><b id="sfVal">288</b></div>
+    <div class="sf-meta" id="sfMeta"><div class="sf-line"><span id="statsLine"></span><span id="verLine" title="Informations sur la version">RailDoc</span></div></div>
     <div id="docSide">
       <div class="side-head"><span>Documentation</span>
         <div style="display:flex;gap:2px;align-items:center">
@@ -1313,34 +1350,7 @@ html.locked #lockOv{display:flex}
       <div id="eqCount" style="font-size:10.5px;color:var(--muted);font-weight:700;padding:0 2px"></div>
       <div class="eq-list" id="eqList"></div>
     </div>
-    <div class="side-foot">
-      <div class="sf-width" title="Largeur du panneau — glisser le curseur (ou la poignée du bord) · double-clic sur ↔ = standard"><span class="sf-wi" id="sfWi">↔</span><input type="range" id="sfRange" min="210" max="520" step="2" value="288" aria-label="Largeur du panneau de gauche"><b id="sfVal">288</b></div>
-      <div class="sf-line"><span id="statsLine"></span><span id="verLine" title="Informations sur la version">RailDoc</span></div>
-      <div class="sf-btns">
-        <button type="button" id="sfImport" class="sf-btn imp"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <defs>
-            <linearGradient id="i3imT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8cc0ff"/><stop offset="1" stop-color="#2160e6"/></linearGradient>
-            <linearGradient id="i3imA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#bfd8ff"/></linearGradient>
-          </defs>
-          <g transform="translate(0 1.15)" opacity=".9"><path d="M8.3 9.9H6.4A2.4 2.4 0 0 0 4 12.3v5A2.4 2.4 0 0 0 6.4 19.7h11.2A2.4 2.4 0 0 0 20 17.3v-5a2.4 2.4 0 0 0-2.4-2.4h-1.9" stroke="#0d2f8f" stroke-width="2.7"/><path d="M12 3.6v11M7.9 10.7 12 14.8l4.1-4.1" stroke="#2c56b8" stroke-width="2.9"/></g>
-          <path d="M8.3 9.9H6.4A2.4 2.4 0 0 0 4 12.3v5A2.4 2.4 0 0 0 6.4 19.7h11.2A2.4 2.4 0 0 0 20 17.3v-5a2.4 2.4 0 0 0-2.4-2.4h-1.9" stroke="url(#i3imT)" stroke-width="2.7"/>
-          <path d="M12 3.6v11M7.9 10.7 12 14.8l4.1-4.1" stroke="url(#i3imA)" stroke-width="2.9"/>
-          <path d="M8.3 9.9H6.4A2.4 2.4 0 0 0 4 12.3v5A2.4 2.4 0 0 0 6.4 19.7h11.2A2.4 2.4 0 0 0 20 17.3v-5a2.4 2.4 0 0 0-2.4-2.4h-1.9" stroke="#fff" stroke-width=".8" opacity=".5" transform="translate(-.25 -.55)"/>
-          <path d="M12 3.6v11" stroke="#fff" stroke-width=".8" opacity=".7" transform="translate(-.5 0)"/>
-        </svg></span><span class="lb">Importer</span></button>
-        <button type="button" id="sfExport" class="sf-btn exp"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <defs>
-            <linearGradient id="i3exT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6fe39b"/><stop offset="1" stop-color="#13923f"/></linearGradient>
-            <linearGradient id="i3exA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#c8f3da"/></linearGradient>
-          </defs>
-          <g transform="translate(0 1.15)" opacity=".9"><path d="M8.3 9.9H6.4A2.4 2.4 0 0 0 4 12.3v5A2.4 2.4 0 0 0 6.4 19.7h11.2A2.4 2.4 0 0 0 20 17.3v-5a2.4 2.4 0 0 0-2.4-2.4h-1.9" stroke="#0a5a26" stroke-width="2.7"/><path d="M12 14.9V3.8M7.9 7.9 12 3.8l4.1 4.1" stroke="#1f8a4c" stroke-width="2.9"/></g>
-          <path d="M8.3 9.9H6.4A2.4 2.4 0 0 0 4 12.3v5A2.4 2.4 0 0 0 6.4 19.7h11.2A2.4 2.4 0 0 0 20 17.3v-5a2.4 2.4 0 0 0-2.4-2.4h-1.9" stroke="url(#i3exT)" stroke-width="2.7"/>
-          <path d="M12 14.9V3.8M7.9 7.9 12 3.8l4.1 4.1" stroke="url(#i3exA)" stroke-width="2.9"/>
-          <path d="M8.3 9.9H6.4A2.4 2.4 0 0 0 4 12.3v5A2.4 2.4 0 0 0 6.4 19.7h11.2A2.4 2.4 0 0 0 20 17.3v-5a2.4 2.4 0 0 0-2.4-2.4h-1.9" stroke="#fff" stroke-width=".8" opacity=".5" transform="translate(-.25 -.55)"/>
-          <path d="M12 14.9V3.8" stroke="#fff" stroke-width=".8" opacity=".7" transform="translate(-.5 0)"/>
-        </svg></span><span class="lb">Exporter</span></button>
-      </div>
-    </div>
+    
   </nav>
   <div id="sideBackdrop"></div>
   <div id="sideResize" title="Glisser pour ajuster la largeur du panneau"></div>
@@ -1559,9 +1569,11 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='9.31';
+const APP_VERSION='9.33';
 const APP_VERSION_DATE='25 octobre 2026';
 const CHANGELOG=[
+  ['v9.33',"Icônes Importer / Exporter : flèches plus petites, centrées, sans toucher les bords ; version de l'application et date de la dernière sauvegarde affichées sur une fine ligne sous le curseur de largeur (vert = à jour, orange = modifications non sauvegardées, clic = détails)"],
+  ['v9.32',"iPad plein écran : espace vide sous la barre d'état réduit (marge haute 20 px au lieu de 28, barre du haut plus basse) ; Importer / Exporter passent en icônes à droite des boutons Documentation / Appareillages et le curseur de largeur en fine ligne sous eux : le pied de la barre de gauche disparaît, la liste des fiches descend jusqu'en bas"],
   ['v9.31',"Import d'une sauvegarde en plusieurs parties — correction « il manque la partie 1 » : la partie 1 contient toutes les fiches sur sa première ligne ; au-delà de 64 Mo (fiches avec images intégrées) l'ancienne lecture la tronquait, l'en-tête devenait illisible et la partie 1 n'était plus reconnue. Lecture sans limite pratique et ~100× plus rapide, reconnaissance des parties par leur seul en-tête, messages d'erreur précis (partie manquante / fichier incomplet avec sa taille)"],
   ['v9.30',"Appareillage — nouveau GESTIONNAIRE (bouton 🛠 en édition) : liste de TOUS les appareils avec recherche et filtres (série, famille), ajout, modification (fiche complète : nom, abréviations, descriptif, localisation, séries, image, bloc cabine…), suppression, et actions groupées sur la sélection (ajouter / retirer une série, changer la famille ou l'emplacement, supprimer) ; accès direct aux familles & emplacements, aux séries TGV, au regroupement des doublons et à un nouvel éditeur du BLOC CABINE (rangées et appareils de l'armoire), du BLOC PNEUMATIQUE et des libellés de schémas, par catalogue"],
   ['v9.29',"Import d'une sauvegarde en plusieurs parties (iPad) : le sélecteur de fichiers accepte maintenant la SÉLECTION MULTIPLE — choisissez les 4 fichiers d'un coup, l'application les reconnaît et les restaure ensemble ; si une seule partie est choisie, un bouton « Choisir les autres parties » s'affiche (Safari refusait d'ouvrir seul le second sélecteur) ; barre de progression à la restauration"],
@@ -9469,6 +9481,7 @@ async function init(){
     sfSync();}
   /* boutons permanents Importer / Exporter */
   $('#sfImport').onclick=()=>$('#fiImport').click();
+  $('#verLine').onclick=()=>versionModal();
   $('#sfExport').onclick=()=>{if(!isAdmin()){toast('🔒 Export réservé au mode administrateur');return;}syncExportNow();};
 
   /* accueil */
