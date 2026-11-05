@@ -1569,9 +1569,10 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='9.33';
+const APP_VERSION='9.34';
 const APP_VERSION_DATE='25 octobre 2026';
 const CHANGELOG=[
+  ['v9.34',"(1) Export à toute épreuve : une pièce jointe illisible (« The object can not be found here » sur Safari/iPad — enregistrement du navigateur perdu ou corrompu) ne bloque plus la sauvegarde : elle est ignorée après une 2e tentative, le reste est exporté, et un message liste les fichiers écartés · (2) Nouveau module ⚙ → « Fichiers & pièces jointes… » : analyse tous les fichiers stockés, indique ceux utilisés (et dans quelles fiches / murs), ceux qui ne le sont plus et ceux qui sont illisibles ; filtres, sélection, aperçu et suppression groupée avec espace libéré"],
   ['v9.33',"Icônes Importer / Exporter : flèches plus petites, centrées, sans toucher les bords ; version de l'application et date de la dernière sauvegarde affichées sur une fine ligne sous le curseur de largeur (vert = à jour, orange = modifications non sauvegardées, clic = détails)"],
   ['v9.32',"iPad plein écran : espace vide sous la barre d'état réduit (marge haute 20 px au lieu de 28, barre du haut plus basse) ; Importer / Exporter passent en icônes à droite des boutons Documentation / Appareillages et le curseur de largeur en fine ligne sous eux : le pied de la barre de gauche disparaît, la liste des fiches descend jusqu'en bas"],
   ['v9.31',"Import d'une sauvegarde en plusieurs parties — correction « il manque la partie 1 » : la partie 1 contient toutes les fiches sur sa première ligne ; au-delà de 64 Mo (fiches avec images intégrées) l'ancienne lecture la tronquait, l'en-tête devenait illisible et la partie 1 n'était plus reconnue. Lecture sans limite pratique et ~100× plus rapide, reconnaissance des parties par leur seul en-tête, messages d'erreur précis (partie manquante / fichier incomplet avec sa taille)"],
@@ -1806,6 +1807,76 @@ async function maybeDeleteBlob(id){if(fileRefCount(id)===0){await idb.del('files
   try{await idb.del('kv','thumb_'+id);}catch(_){}
   delete thumbCache[id];
   if(urlCache[id]){URL.revokeObjectURL(urlCache[id]);delete urlCache[id];}}}
+
+/* ---------- Fichiers & pièces jointes : état d'usage, nettoyage ---------- */
+async function filesAudit(onProg){
+  const keys=await idb.keys('files');
+  const nodes=data.nodes||[];
+  const nodeJson=nodes.map(n=>JSON.stringify(n));
+  const wallJson=JSON.stringify(data.tiles||[]);
+  const restJson=JSON.stringify({...data,nodes:[],tiles:[],log:[]});
+  const out=[];let i=0;
+  for(const k of keys){
+    const r={id:k,name:String(k),size:0,mime:'',ok:true,where:[],refs:0};
+    try{
+      const f=await idb.get('files',k);
+      if(!f||!f.blob){r.ok=false;r.err='enregistrement vide';}
+      else{r.name=f.name||String(k);r.mime=f.mime||'';r.size=f.size||f.blob.size||0;
+        if(f.blob.size){await f.blob.slice(0,1).arrayBuffer();await f.blob.slice(Math.max(0,f.blob.size-1)).arrayBuffer();}}
+    }catch(e){r.ok=false;r.err=(e&&e.message)||'illisible';}
+    nodes.forEach((n,ix)=>{if(nodeJson[ix].includes(k)){r.where.push(n.title||'Sans titre');r.refs++;}});
+    if(wallJson.includes(k)){r.where.push('Mur d\'accueil');r.refs++;}
+    if(restJson.includes(k)){r.where.push('Réglages / appareillage / logo');r.refs++;}
+    out.push(r);
+    if(++i%10===0){onProg&&onProg(i,keys.length);await new Promise(res=>setTimeout(res,0));}}
+  return out;}
+async function filesModal(){
+  let rows=[],filter='all',sel=new Set();
+  const ic=r=>!r.ok?'❌':/pdf/i.test(r.mime)?'📕':/^image\//.test(r.mime)?'🖼️':/word|officedocument|msword/i.test(r.mime)?'📝':'📄';
+  const render=()=>{
+    const box=$('#fmBox');if(!box)return;
+    const unused=rows.filter(r=>r.ok&&!r.refs),bad=rows.filter(r=>!r.ok);
+    const vis=rows.filter(r=>filter==='all'||(filter==='unused'&&r.ok&&!r.refs)||(filter==='bad'&&!r.ok));
+    const tot=rows.reduce((a,r)=>a+r.size,0),uSz=unused.reduce((a,r)=>a+r.size,0);
+    const chip=(k,l,n)=>`<button type="button" class="fm-chip ${filter===k?'on':''}" data-f="${k}">${l} <b>${n}</b></button>`;
+    const selSz=[...sel].reduce((a,id)=>{const r=rows.find(x=>x.id===id);return a+(r?r.size:0);},0);
+    box.innerHTML=`
+      <div style="font-size:12.5px;color:var(--muted);margin-bottom:8px">${rows.length} fichier(s) stocké(s) · ${fmtSize(tot)} au total — dont <b style="color:#e8890c">${unused.length} inutilisé(s)</b> (${fmtSize(uSz)} récupérables)${bad.length?` et <b style="color:#d0342c">${bad.length} illisible(s)</b>`:''}.</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">${chip('all','Tous',rows.length)}${chip('unused','Inutilisés',unused.length)}${chip('bad','Illisibles',bad.length)}
+        <button type="button" class="fm-chip" id="fmSelAll" style="margin-left:auto">${vis.length&&vis.every(r=>sel.has(r.id))?'☐ Tout désélectionner':'☑ Sélectionner les '+vis.length+' affichés'}</button></div>
+      <div class="ver-log" style="max-height:340px;overflow-y:auto">${vis.length?vis.map(r=>`
+        <div class="fm-row" data-id="${esc(r.id)}" style="display:flex;gap:8px;align-items:flex-start;padding:6px 4px;border-bottom:1px solid var(--border)">
+          <input type="checkbox" class="fm-ck" ${sel.has(r.id)?'checked':''} style="margin-top:3px;flex:none">
+          <span style="flex:none">${ic(r)}</span>
+          <div style="min-width:0;flex:1"><div style="font-weight:600;word-break:break-word;${r.ok?'cursor:pointer':''}" class="fm-nm">${esc(r.name)}</div>
+            <div style="font-size:11.5px;color:var(--muted)">${fmtSize(r.size)} · ${!r.ok?`<span style="color:#d0342c;font-weight:700">illisible (${esc(r.err||'')})${r.refs?' — référencé dans '+esc(r.where.slice(0,3).join(', ')):''}</span>`
+              :r.refs?`<span style="color:#128a3e">utilisé : ${esc(r.where.slice(0,3).join(' · '))}${r.where.length>3?' (+'+(r.where.length-3)+')':''}</span>`:'<span style="color:#e8890c;font-weight:700">non utilisé</span>'}</div></div>
+        </div>`).join(''):'<div style="padding:14px;color:var(--muted)">Aucun fichier dans cette catégorie.</div>'}</div>
+      <div id="fmSel" style="margin-top:8px;font-size:12px;font-weight:700">${sel.size?`${sel.size} sélectionné(s) · ${fmtSize(selSz)}`:'Cochez les fichiers à supprimer (un fichier utilisé le sera aussi : à vérifier).'}</div>`;
+    box.querySelectorAll('.fm-chip[data-f]').forEach(b=>b.onclick=()=>{filter=b.dataset.f;render();});
+    const sa=$('#fmSelAll');if(sa)sa.onclick=()=>{const all=vis.every(r=>sel.has(r.id));vis.forEach(r=>all?sel.delete(r.id):sel.add(r.id));render();};
+    box.querySelectorAll('.fm-row').forEach(el=>{const id=el.dataset.id;
+      el.querySelector('.fm-ck').onchange=e=>{e.target.checked?sel.add(id):sel.delete(id);render();};
+      el.querySelector('.fm-nm').onclick=()=>{const r=rows.find(x=>x.id===id);if(r&&r.ok)downloadFileById(id);};});};
+  openModal('🗂 Fichiers & pièces jointes',`<style>.fm-chip{border:1px solid var(--border-strong);background:var(--panel-2);color:var(--text);border-radius:999px;padding:4px 10px;font-size:12px;cursor:pointer}.fm-chip.on{background:var(--accent);color:#fff;border-color:transparent}</style><div id="fmBox"><div style="padding:18px;color:var(--muted)" id="fmProg">Analyse des fichiers…</div></div>`,
+    [{label:'Fermer'},
+     {label:'🗑 Supprimer la sélection',primary:true,fn:async()=>{
+        if(!isEdit()){toast('🔒 Mode lecture seule');return false;}
+        if(!sel.size){toast('Aucun fichier sélectionné');return false;}
+        const picked=rows.filter(r=>sel.has(r.id)),used=picked.filter(r=>r.ok&&r.refs).length;
+        if(!await confirmDlg('Supprimer définitivement',`${picked.length} fichier(s) (${fmtSize(picked.reduce((a,r)=>a+r.size,0))}) seront effacés de cet appareil.`+(used?`\n⚠️ ${used} d'entre eux sont encore utilisés : les fiches concernées afficheront « fichier introuvable ».`:'')+'\nPensez à exporter une sauvegarde avant.'))return false;
+        for(const r of picked){
+          try{await idb.del('files',r.id);}catch(_){}
+          try{await idb.del('kv','thumb_'+r.id);}catch(_){}
+          delete thumbCache[r.id];if(urlCache[r.id]){try{URL.revokeObjectURL(urlCache[r.id]);}catch(_){}delete urlCache[r.id];}}
+        logEvt(`🗑 ${picked.length} fichier(s) supprimé(s) depuis « Fichiers & pièces jointes »`);
+        rows=rows.filter(r=>!sel.has(r.id));sel.clear();save();updateStats();render();
+        toast('🗑 '+picked.length+' fichier(s) supprimé(s)');return false;}}]);
+  try{rows=await filesAudit((i,n)=>{const p=$('#fmProg');if(p)p.textContent=`Analyse des fichiers… ${i} / ${n}`;});}
+  catch(e){const b=$('#fmBox');if(b)b.textContent='Analyse impossible : '+(e&&e.message||'erreur');return;}
+  rows.sort((a,b)=>(a.ok-b.ok)||((!a.refs)-(!b.refs))*-1||b.size-a.size);
+  if(rows.some(r=>!r.ok))filter='bad';else if(rows.some(r=>!r.refs))filter='unused';
+  render();}
 /* Aperçu de la première page d'un PDF (rendu une fois, puis mis en cache) */
 const thumbCache={};
 async function pdfThumb(fileId){
@@ -5600,14 +5671,18 @@ async function exportAll(){
        Si l'ensemble dépasse PART_MAX, la sauvegarde sort en plusieurs fichiers
        « partie X sur N » (SharePoint refuse > 2 Go ; Safari iPad : mémoire limitée). */
     let totBytes=0;
-    for(const k of keys){const f=await idb.get('files',k);if(f)totBytes+=f.size||(f.blob&&f.blob.size)||0;}
-    const bodies=[[]],bsz=[0];let n=0,done=0;
+    for(const k of keys){try{const f=await idb.get('files',k);if(f)totBytes+=f.size||(f.blob&&f.blob.size)||0;}catch(_){}}
+    const bodies=[[]],bsz=[0];let n=0,done=0;const bad=[];
     const NF=keys.length;
     const upd=extra=>expProg({title:T,pct:totBytes?Math.min(88,done/totBytes*88):(NF?n/NF*88:50),
       label:`📎 Fichier <b>${Math.min(n+1,NF)}</b> / <b>${NF}</b> · ${fmtSize(done)} sur ${fmtSize(totBytes)} · ${bodies.length} partie(s) en préparation${extra?'<br>'+extra:''}`});
     upd();
-    for(const k of keys){const f=await idb.get('files',k);
-      if(!f){n++;continue;}
+    for(const k of keys){let f=null;
+     for(let attempt=0;attempt<2;attempt++){
+      const snap={l:bodies.map(b=>b.length),z:bsz.slice(),d:done};
+      try{
+      f=await idb.get('files',k);
+      if(!f){break;}
       const size=f.size||f.blob.size||0;
       const est=Math.ceil(size*4/3)+220;
       if(est>PART_MAX*0.85){
@@ -5626,16 +5701,27 @@ async function exportAll(){
         let ci=bodies.length-1;
         if(bodies[ci].length&&bsz[ci]+est>PART_MAX){bodies.push([]);bsz.push(0);ci++;}
         await pushFileB64(bodies[ci],head,f.blob);bsz[ci]+=est;done+=size;}
+      f.__ok=true;break;
+      }catch(err){
+        /* retour arrière : aucune ligne à moitié écrite dans la sauvegarde */
+        bodies.length=snap.l.length;snap.l.forEach((L,i)=>{bodies[i].length=L;});bsz.length=snap.z.length;snap.z.forEach((z,i)=>{bsz[i]=z;});done=snap.d;
+        console.warn('Pièce jointe illisible',k,err);
+        if(attempt===1){bad.push({id:k,name:(f&&f.name)||k,err:(err&&err.message)||String(err)});}
+        else await expSleep(120);
+      }}
       n++;upd();if(n%4===0)await expSleep(0);}
+    const NFok=NF-bad.length;
+    if(bad.length){logEvt(`⚠️ Export : ${bad.length} pièce(s) jointe(s) illisible(s) ignorée(s) — ${bad.slice(0,8).map(b=>b.name).join(', ')}`);}
+    const badMsg=()=>bad.length?`<br>⚠️ <b>${bad.length} pièce(s) jointe(s) illisible(s) non incluse(s)</b> : ${esc(bad.slice(0,4).map(b=>b.name).join(', '))}${bad.length>4?'…':''}<br>→ ⚙ Fichiers &amp; pièces jointes pour les retrouver/nettoyer`:'';
     const N=bodies.length,d=dstamp(),exported=new Date().toISOString();
     if(N===1){
-      expProg({title:T,pct:92,label:`Assemblage et enregistrement du fichier unique…<br>📎 ${NF} fichier(s) · ${fmtSize(done)}`});
+      expProg({title:T,pct:92,label:`Assemblage et enregistrement du fichier unique…<br>📎 ${NFok} fichier(s) · ${fmtSize(done)}`});
       await expSleep(30);
       const blob=new Blob([new Blob([JSON.stringify({app:'RailDoc',version:2,format:'ndjson',exported,data})+'\n']),...bodies[0]],{type:'application/json'});
       await saveExport(blob,`RailDoc-sauvegarde-${d}.json`,'Sauvegardes','💾 Sauvegarde complète');
-      logEvt(`💾 Sauvegarde exportée (${fmtSize(blob.size)}, ${NF} fichier(s))`);
+      logEvt(`💾 Sauvegarde exportée (${fmtSize(blob.size)}, ${NFok} fichier(s))`);
       markSync('export',null,workDirHandle?data.libRev:undefined);save();
-      expProg({title:'✅ Sauvegarde terminée',pct:100,done:true,label:`1 fichier de ${fmtSize(blob.size)} · ${NF} pièce(s) jointe(s) incluse(s)`});
+      expProg({title:'✅ Sauvegarde terminée',pct:100,done:true,stay:bad.length?15000:undefined,label:`1 fichier de ${fmtSize(blob.size)} · ${NFok} pièce(s) jointe(s) incluse(s)`+badMsg()});
     }else{
       const setId='set_'+uid();let tot=0;
       for(let i=0;i<N;i++){
@@ -5647,10 +5733,10 @@ async function exportAll(){
         tot+=blob.size;
         await saveExport(blob,`RailDoc-sauvegarde-${d}-partie${i+1}sur${N}.json`,'Sauvegardes',`💾 Sauvegarde partie ${i+1}/${N}`);
         if(!workDirHandle&&i<N-1)await expSleep(IS_IOS?1500:700);} /* pause : Safari refuse les téléchargements en rafale */
-      logEvt(`💾 Sauvegarde exportée en ${N} parties (${fmtSize(tot)}, ${NF} fichier(s))`);
+      logEvt(`💾 Sauvegarde exportée en ${N} parties (${fmtSize(tot)}, ${NFok} fichier(s))`);
       markSync('export',null,workDirHandle?data.libRev:undefined);save();
-      expProg({title:`✅ Sauvegarde terminée — ${N} fichiers`,pct:100,done:true,stay:12000,
-        label:`${N} parties (${fmtSize(tot)}) · ${NF} pièce(s) jointe(s)<br><b>Conservez les ${N} fichiers ensemble</b> : ils sont tous nécessaires pour restaurer (sélectionnez la partie 1 à l'import).`});}
+      expProg({title:`✅ Sauvegarde terminée — ${N} fichiers`,pct:100,done:true,stay:bad.length?20000:12000,
+        label:`${N} parties (${fmtSize(tot)}) · ${NFok} pièce(s) jointe(s)${badMsg()}<br><b>Conservez les ${N} fichiers ensemble</b> : ils sont tous nécessaires pour restaurer (sélectionnez la partie 1 à l'import).`});}
   }catch(e){console.error(e);
     expProg({title:'⚠️ Échec de l\'export',done:true,stay:9000,pct:0,label:esc(e&&e.message?e.message:'erreur')});
     toast('⚠️ Échec de l\'export : '+(e&&e.message?e.message:'erreur'));}
@@ -9443,6 +9529,7 @@ async function init(){
         {ic:'🎭',label:'Personnages & citations (animations)…',fn:charsModal},
         {ic:'🔗',label:nLk?('Liens à vérifier — ⚠️ '+nLk+' problème(s)'):'Vérifier les liens (liens morts)',fn:()=>{
           linkReportIssues().length?linkReportModal():checkAllLinks(true);}},
+        {ic:'🗂',label:'Fichiers & pièces jointes (nettoyage)…',fn:filesModal},
         {ic:'ℹ️',label:'Informations & statistiques',fn:infoModal},
         {ic:'🕘',label:'Historique des versions',fn:versionModal},
         {sep:true},
