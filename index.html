@@ -1569,9 +1569,10 @@ const fmtWhen=t=>{const d=Date.now()-t;if(d<60000)return"à l'instant";if(d<3600
   if(d<86400000)return Math.round(d/3600000)+' h';if(d<7*86400000)return Math.round(d/86400000)+' j';
   return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})};
 
-const APP_VERSION='9.34';
+const APP_VERSION='9.35';
 const APP_VERSION_DATE='25 octobre 2026';
 const CHANGELOG=[
+  ['v9.35',"Safari iPad : « Failed to execute 'transaction' on 'IDBDatabase': the database connection is closing » — iOS ferme parfois la connexion à la base du navigateur (mémoire, mise en veille, gros import). Toutes les lectures/écritures se reconnectent maintenant automatiquement et réessaient (jusqu'à 4 fois), les écritures ne sont validées qu'une fois réellement enregistrées, et « Tout effacer » dispose d'une 2e voie (suppression complète de la base puis recréation) si l'effacement normal échoue"],
   ['v9.34',"(1) Export à toute épreuve : une pièce jointe illisible (« The object can not be found here » sur Safari/iPad — enregistrement du navigateur perdu ou corrompu) ne bloque plus la sauvegarde : elle est ignorée après une 2e tentative, le reste est exporté, et un message liste les fichiers écartés · (2) Nouveau module ⚙ → « Fichiers & pièces jointes… » : analyse tous les fichiers stockés, indique ceux utilisés (et dans quelles fiches / murs), ceux qui ne le sont plus et ceux qui sont illisibles ; filtres, sélection, aperçu et suppression groupée avec espace libéré"],
   ['v9.33',"Icônes Importer / Exporter : flèches plus petites, centrées, sans toucher les bords ; version de l'application et date de la dernière sauvegarde affichées sur une fine ligne sous le curseur de largeur (vert = à jour, orange = modifications non sauvegardées, clic = détails)"],
   ['v9.32',"iPad plein écran : espace vide sous la barre d'état réduit (marge haute 20 px au lieu de 28, barre du haut plus basse) ; Importer / Exporter passent en icônes à droite des boutons Documentation / Appareillages et le curseur de largeur en fine ligne sous eux : le pied de la barre de gauche disparaît, la liste des fiches descend jusqu'en bas"],
@@ -1729,25 +1730,54 @@ let DB=null, data=null, urlCache={};
 const state={view:'home',nodeId:null,editWallOwner:null,open:new Set(),searchSel:-1,quickMode:false,quickSel:new Set(),role:'read'};
 
 /* ---------- IndexedDB ---------- */
+/* Safari/iPadOS ferme parfois la connexion (mémoire, veille, gros import) : « the database
+   connection is closing ». Chaque opération se reconnecte alors et réessaie. */
 function openDB(){return new Promise((res,rej)=>{
   const rq=indexedDB.open('raildoc',1);
   rq.onupgradeneeded=e=>{const db=e.target.result;
     if(!db.objectStoreNames.contains('kv'))db.createObjectStore('kv');
     if(!db.objectStoreNames.contains('files'))db.createObjectStore('files');};
-  rq.onsuccess=e=>res(e.target.result);
-  rq.onerror=e=>rej(e.target.error);});}
+  rq.onsuccess=e=>{const db=e.target.result;
+    db.onclose=()=>{if(DB===db)DB=null;};
+    db.onversionchange=()=>{try{db.close();}catch(_){}if(DB===db)DB=null;};
+    res(db);};
+  rq.onerror=e=>rej(e.target.error);
+  rq.onblocked=()=>{};});}
+let dbOpening=null;
+function dbEnsure(){
+  if(DB)return Promise.resolve(DB);
+  if(!dbOpening)dbOpening=openDB().then(d=>{DB=d;return d;}).finally(()=>{dbOpening=null;});
+  return dbOpening;}
+const dbTransient=e=>{const m=String((e&&(e.message||''))+' '+(e&&e.name||''));
+  return /InvalidState|clos(ing|ed)|connection|Internal error|UnknownError|aborted/i.test(m);};
+async function dbRun(fn){let last;
+  for(let a=0;a<4;a++){
+    try{const db=await dbEnsure();return await fn(db);}
+    catch(e){last=e;if(!dbTransient(e))throw e;
+      console.warn('IndexedDB : reconnexion (essai '+(a+1)+')',e);
+      try{if(DB)DB.close();}catch(_){}DB=null;
+      await new Promise(r=>setTimeout(r,200*(a+1)));}}
+  throw last;}
+/* écriture : validée seulement quand la transaction est réellement terminée */
+const dbWrite=(store,fn)=>dbRun(db=>new Promise((res,rej)=>{
+  const tx=db.transaction(store,'readwrite');let out;
+  tx.oncomplete=()=>res(out);tx.onerror=()=>rej(tx.error);tx.onabort=()=>rej(tx.error||new Error('transaction annulée'));
+  const r=fn(tx.objectStore(store));r.onsuccess=()=>{out=r.result;};}));
+const dbRead=(store,fn)=>dbRun(db=>new Promise((res,rej)=>{
+  const r=fn(db.transaction(store).objectStore(store));r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);}));
 const idb={
-  get:(store,key)=>new Promise((res,rej)=>{const r=DB.transaction(store).objectStore(store).get(key);
-    r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);}),
-  put:(store,key,val)=>new Promise((res,rej)=>{const r=DB.transaction(store,'readwrite').objectStore(store).put(val,key);
-    r.onsuccess=()=>res();r.onerror=()=>rej(r.error);}),
-  del:(store,key)=>new Promise((res,rej)=>{const r=DB.transaction(store,'readwrite').objectStore(store).delete(key);
-    r.onsuccess=()=>res();r.onerror=()=>rej(r.error);}),
-  keys:store=>new Promise((res,rej)=>{const r=DB.transaction(store).objectStore(store).getAllKeys();
-    r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);}),
-  clear:store=>new Promise((res,rej)=>{const r=DB.transaction(store,'readwrite').objectStore(store).clear();
-    r.onsuccess=()=>res();r.onerror=()=>rej(r.error);})
+  get:(store,key)=>dbRead(store,o=>o.get(key)),
+  put:(store,key,val)=>dbWrite(store,o=>o.put(val,key)).then(()=>{}),
+  del:(store,key)=>dbWrite(store,o=>o.delete(key)).then(()=>{}),
+  keys:store=>dbRead(store,o=>o.getAllKeys()),
+  clear:store=>dbWrite(store,o=>o.clear()).then(()=>{})
 };
+/* dernier recours : supprimer toute la base puis la recréer */
+async function idbNuke(){
+  try{if(DB)DB.close();}catch(_){}DB=null;
+  await new Promise((res,rej)=>{const rq=indexedDB.deleteDatabase('raildoc');
+    rq.onsuccess=()=>res();rq.onerror=()=>rej(rq.error);rq.onblocked=()=>setTimeout(res,2000);});
+  await dbEnsure();}
 
 /* ---------- Sauvegarde automatique (débouncée) ---------- */
 let saveTimer=null;
@@ -4861,8 +4891,10 @@ function codesModal(){
 /* ---------- Tout effacer : application vierge (état du premier lancement) ---------- */
 async function doFactoryReset(){
   try{
-    await idb.clear('files');
-    try{for(const k of await idb.keys('kv'))await idb.del('kv',k);}catch(_){}
+    try{
+      await idb.clear('files');
+      for(const k of await idb.keys('kv'))await idb.del('kv',k);
+    }catch(e0){console.warn('Effacement normal impossible, suppression de la base',e0);await idbNuke();}
     for(const u of Object.values(urlCache))URL.revokeObjectURL(u);urlCache={};
     for(const k of Object.keys(thumbCache))delete thumbCache[k];
     try{localStorage.removeItem('rd_fore');localStorage.removeItem('rd_hilite');}catch(_){}
@@ -4878,7 +4910,7 @@ async function doFactoryReset(){
     applyTheme();applyBrand();applyMode();
     navigate('#/home');render();updateStats();
     toast('🧹 Application remise à zéro — comme au premier lancement, prête à être personnalisée');
-  }catch(e){console.error(e);toast('⚠️ Échec de la remise à zéro');}}
+  }catch(e){console.error(e);toast('⚠️ Échec de la remise à zéro : '+(e&&e.message||e&&e.name||'erreur')+' — fermez les autres onglets de l\'application puis réessayez');}}
 function resetAllModal(){
   openModal('🧹 Tout effacer — application vierge',`
     <p style="font-size:13.5px;line-height:1.65">Cette action efface <b>tout le contenu de cet appareil</b> : fiches, notes, fichiers importés, murs et tuiles, ouverture rapide, contacts, flotte, appareillages personnalisés, illustrations et réglages (mot de passe compris).</p>
